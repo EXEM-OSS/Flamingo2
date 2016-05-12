@@ -46,7 +46,7 @@ Flamingo는 Apache Hadoop EcoSystem을 기반으로한 빅데이터 인프라 �
 * MySQL 5.1 이상 (UTF-8)
 * node.js
 * R 3.0
-* Pivotal HAWQ 1.0 이상 (PHD 2 이상)
+* Apache HAWQ 1.0 이상 (PHD 2 이상)
 
 ### 제공하는 기능
 
