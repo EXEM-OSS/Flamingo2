@@ -1,0 +1,67 @@
+{
+  "list": [
+    {
+      "req_id": "REQ001001001001",
+      "req_stts": "성공",
+      "user_id": "edard",
+      "user_nm": "박효근",
+      "vm_id": "c504e367-20d6-47c6-a82c-183b12d357f2",
+      "event_msg": "서비스 생셩 요청",
+      "event_dt": "2014-01-01 09:00:00"
+    },
+    {
+      "req_id": "REQ001001001001",
+      "req_stts": "성공",
+      "user_id": "edard",
+      "user_nm": "박효근",
+      "vm_id": "c504e367-20d6-47c6-a82c-183b12d357f2",
+      "event_msg": "VM 생성 요청",
+      "event_dt": "2014-01-01 09:00:00"
+    },
+    {
+      "req_id": "REQ001001001001",
+      "req_stts": "성공",
+      "user_id": "edard",
+      "user_nm": "박효근",
+      "vm_id": "c504e367-20d6-47c6-a82c-183b12d357f2",
+      "event_msg": "VM 생성 완료",
+      "event_dt": "2014-01-01 09:00:00"
+    },
+    {
+      "req_id": "REQ001001001001",
+      "req_stts": "성공",
+      "user_id": "edard",
+      "user_nm": "박효근",
+      "vm_id": "c504e367-20d6-47c6-a82c-183b12d357f2",
+      "event_msg": "서버 정지 요청",
+      "event_dt": "2014-01-01 09:00:00"
+    },
+    {
+      "req_id": "REQ001001001001",
+      "req_stts": "성공",
+      "user_id": "edard",
+      "user_nm": "박효근",
+      "vm_id": "c504e367-20d6-47c6-a82c-183b12d357f2",
+      "event_msg": "서버 정지 완료",
+      "event_dt": "2014-01-01 09:00:00"
+    },
+    {
+      "req_id": "REQ001001001001",
+      "req_stts": "성공",
+      "user_id": "edard",
+      "user_nm": "박효근",
+      "vm_id": "c504e367-20d6-47c6-a82c-183b12d357f2",
+      "event_msg": "서버 시작 요청",
+      "event_dt": "2014-01-01 09:00:00"
+    },
+    {
+      "req_id": "REQ001001001001",
+      "req_stts": "성공",
+      "user_id": "edard",
+      "user_nm": "박효근",
+      "vm_id": "c504e367-20d6-47c6-a82c-183b12d357f2",
+      "event_msg": "서버 시작 완료",
+      "event_dt": "2014-01-01 09:00:00"
+    }
+  ]
+}

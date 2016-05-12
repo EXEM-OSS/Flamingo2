@@ -1,0 +1,24 @@
+{
+  "list": [
+    {
+      "service_id": "SVC001001001001",
+      "service_type": "FLAMINGO",
+      "user_id": "edard",
+      "user_nm": "박효근",
+      "vm_id": "c504e367-20d6-47c6-a82c-183b12d357f2",
+      "vm_spec": "1 CPU, 2G RAM, 100GB HDD",
+      "vm_create_dt": "2015-02-22 12:00:00",
+      "vm_stts": "RUNNING"
+    },
+    {
+      "service_id": "SVC002001002002",
+      "service_type": "JENKINS",
+      "user_id": "sky",
+      "user_nm": "김하늘",
+      "vm_id": "c504e367-20d6-47c6-a82c-183b12d357f2",
+      "vm_spec": "1 CPU, 2G RAM, 100GB HDD",
+      "vm_create_dt": "2015-02-22 12:00:00",
+      "vm_stts": "RUNNING"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Edward KI(fharenheit@gmail.com)</author>
+        <title>Apache Hadoop based Workflow Engine, MapReduce ETL, Workflow Designer</title>
+    </properties>
+    <meta name="keyword" content="hadoop,etl,workflow,engine,designer"/>
+    <body>
+        <section name="기본 사상과 개념">
+            <p>
+                An easy way to realize monitoring in existing or new Java based software projects.
+                This monitoring solution reduces the complexity of software monitoring to a minimum.
+                Developers have only to configure the Simple Monitoring Plugin in
+                Maven project file (pom.xml). It automatically analyzes the control flow
+                respectively data flow of your software logic and remembers the method calls and
+                exceptions as measurement values.
+            </p>
+            <p>Flamingo는 다음의 기능을 제공합니다:</p>
+            <ul>
+                <li>MapReduce 기반 고성능 ETL 모듈</li>
+                <li>Big Data 처리를 위한 Hadoop에 최적화되어 있는 Workflow Engine</li>
+                <li>Big Data 처리를 위한 Hadoop에 최적화되어 있는 Workflow Designer</li>
+            </ul>
+        </section>
+    </body>
+</document>

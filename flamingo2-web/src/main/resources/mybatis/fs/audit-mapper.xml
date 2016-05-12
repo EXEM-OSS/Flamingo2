@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.fs.audit.AuditRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <resultMap id="auditHistoryMap" type="org.opencloudengine.flamingo2.model.rest.AuditHistory">
+        <result property="id"                column="ID"             jdbcType="BIGINT"/>
+        <result property="clusterId"         column="CLUSTER_ID"     jdbcType="VARCHAR"/>
+        <result property="clusterName"       column="CLUSTER_NAME"   jdbcType="VARCHAR"/>
+        <result property="from"              column="FROM_PATH"      jdbcType="VARCHAR"/>
+        <result property="to"                column="TO_PATH"        jdbcType="VARCHAR"/>
+        <result property="length"            column="LENGTH"         jdbcType="BIGINT"/>
+        <result property="fileSystemType"    column="FS_TYPE"        jdbcType="VARCHAR"/>
+        <result property="auditType"         column="AUDIT_TYPE"     jdbcType="VARCHAR"/>
+        <result property="fileType"          column="FILE_TYPE"      jdbcType="VARCHAR"/>
+        <result property="workDate"          column="WORK_DATE"      jdbcType="TIMESTAMP"/>
+        <result property="requestType"       column="REQ_TYPE"       jdbcType="VARCHAR"/>
+        <result property="yyyy"              column="YYYY"           jdbcType="VARCHAR"/>
+        <result property="mm"                column="MM"             jdbcType="VARCHAR"/>
+        <result property="dd"                column="DD"             jdbcType="VARCHAR"/>
+        <result property="username"          column="USERNAME"       jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="top10Map" type="org.opencloudengine.flamingo2.model.rest.Top10">
+        <result property="no"                column="NO"             jdbcType="BIGINT"/>
+        <result property="name"              column="NAME"           jdbcType="VARCHAR"/>
+        <result property="cnt"               column="CNT"            jdbcType="BIGINT"/>
+    </resultMap>
+
+    <resultMap id="nowStatusMap" type="org.opencloudengine.flamingo2.model.rest.NowStatus">
+        <result property="x"                 column="x"              jdbcType="VARCHAR"/>
+        <result property="y"                 column="y"              jdbcType="BIGINT"/>
+    </resultMap>
+
+    <resultMap id="trendsMap" type="org.opencloudengine.flamingo2.model.rest.Trends">
+        <result property="time"              column="TIME"           jdbcType="VARCHAR"/>
+        <result property="count"             column="COUNT"          jdbcType="BIGINT"/>
+        <result property="searchType"        column="SEARCH_TYPE"    jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Sql Fragments -->
+    <!-- ==================================================================================== -->
+
+    <sql id="wherePK">WHERE ID = #{id}</sql>
+
+    <sql id="whereUsername">WHERE USERNAME = #{username}</sql>
+
+    <sql id="whereType">WHERE USERNAME = #{username} AND ACTION_TYPE = #{type}</sql>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="select" resultMap="auditHistoryMap">
+        SELECT * FROM FL_FS_AUDIT
+        <include refid="wherePK"/>
+    </select>
+
+    <select id="selectAll" resultMap="auditHistoryMap">
+        SELECT * FROM FL_FS_AUDIT
+    </select>
+
+    <select id="selectByType" parameterType="auditHistory" resultMap="auditHistoryMap">
+        SELECT * FROM FL_FS_AUDIT
+        <include refid="whereType"/>
+    </select>
+
+    <select id="selectByUsername" resultMap="auditHistoryMap">
+        SELECT * FROM FL_FS_AUDIT
+        <include refid="whereUsername"/>
+    </select>
+
+    <select id="selectByCondition" parameterType="map" resultMap="auditHistoryMap">
+        SELECT
+            ID,
+            CLUSTER_ID,
+            CLUSTER_NAME,
+            FROM_PATH,
+            TO_PATH,
+            LENGTH,
+            FS_TYPE,
+            AUDIT_TYPE,
+            FILE_TYPE,
+            WORK_DATE,
+            REQ_TYPE,
+            YYYY,
+            MM,
+            DD,
+            USERNAME
+        FROM FL_FS_AUDIT
+        WHERE 1=1
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+        <if test="auditType != null and auditType != '' and auditType != 'ALL'">
+            AND AUDIT_TYPE = #{auditType}
+        </if>
+        <choose>
+            <when test="startDate == null or startDate == '' and endDate != null and endDate != ''">
+                <![CDATA[ AND WORK_DATE <= #{endDate} ]]>
+            </when>
+            <when test="startDate != null and startDate != '' and endDate == null or endDate == ''">
+                <![CDATA[ AND WORK_DATE >= #{startDate} ]]>
+            </when>
+            <when test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                AND DATE(WORK_DATE) BETWEEN #{startDate} AND #{endDate}
+            </when>
+        </choose>
+        <if test="path != null and path != ''">
+            AND (FROM_PATH LIKE '%${path}%' OR TO_PATH LIKE '%${path}%')
+        </if>
+        ORDER BY WORK_DATE DESC
+        LIMIT ${startRow}, ${limit}
+    </select>
+
+    <select id="getTotalCountByUsername" parameterType="map" resultType="Integer">
+        SELECT COUNT(*) FROM FL_FS_AUDIT
+        WHERE 1=1
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND DATE(WORK_DATE) BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="auditType != null and auditType != '' and auditType != 'ALL'">
+            AND AUDIT_TYPE = #{auditType}
+        </if>
+        <if test="path != null and path != ''">
+            AND FROM_PATH LIKE '%${path}%' OR TO_PATH LIKE '%${path}%'
+        </if>
+    </select>
+
+    <select id="selectTop10" parameterType="map" resultMap="top10Map">
+        SELECT
+            (@row_number:=@row_number + 1) as no,
+            A.NAME as name,
+            A.CNT as cnt
+        FROM (SELECT ${searchType} as NAME, count(${searchType}) as CNT
+              FROM FL_FS_AUDIT
+              WHERE DATE(WORK_DATE)
+              BETWEEN #{startDate} AND #{endDate}
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+              AND (@row_number:=0)=0
+              GROUP BY ${searchType}
+              ORDER BY count(${searchType}) DESC) A
+    </select>
+
+    <select id="selectNowStatus" parameterType="map" resultMap="nowStatusMap">
+        SELECT
+            A.NAME as name,
+            A.CNT as cnt
+        FROM (SELECT ${searchType} as NAME, count(${searchType}) as CNT
+              FROM FL_FS_AUDIT
+              WHERE DATE(WORK_DATE)
+              BETWEEN #{startDate} AND #{endDate}
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+              GROUP BY ${searchType}
+              ORDER BY count(${searchType}) DESC) A
+    </select>
+
+    <select id="selectTrend" parameterType="map" resultMap="trendsMap">
+        SELECT
+            DATE_FORMAT(WORK_DATE, '%Y-%m-%d') as time,
+            ${searchType} as searchType,
+            COUNT(WORK_DATE) as count
+        FROM FL_FS_AUDIT
+        WHERE DATE(WORK_DATE)
+        BETWEEN #{startDate} AND #{endDate}
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+        GROUP BY DATE_FORMAT(WORK_DATE, '%Y-%m-%d'), ${searchType}
+        ORDER BY WORK_DATE
+    </select>
+
+
+<!--    SELECT
+    date_format(work_date, #{dateExp}) as time, sum(work_date) as count
+    FROM FL_FS_AUDIT
+    <![CDATA[ WHERE work_date >= #{startDate} AND work_date < #{endDate} ]]>
+    GROUP BY date_format(work_date, #{dateExp})-->
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Exist Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="exist" parameterType="Integer" resultType="Integer">
+        SELECT COUNT(*) FROM FL_FS_AUDIT
+        <include refid="wherePK"/>
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 4. Insert Statements -->
+    <!-- ==================================================================================== -->
+
+    <insert id="insert" parameterType="auditHistory" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO FL_FS_AUDIT
+        (
+            ID,
+            CLUSTER_ID,
+            CLUSTER_NAME,
+            FROM_PATH,
+            TO_PATH,
+            LENGTH,
+            FS_TYPE,
+            AUDIT_TYPE,
+            FILE_TYPE,
+            WORK_DATE,
+            REQ_TYPE,
+            YYYY,
+            MM,
+            DD,
+            USERNAME
+        )
+        VALUES
+        (
+            #{id},
+            #{clusterId},
+            #{clusterName},
+            #{from},
+            #{to},
+            #{length},
+            #{fileSystemType},
+            #{auditType},
+            #{fileType},
+            #{workDate},
+            #{requestType},
+            #{yyyy},
+            #{mm},
+            #{dd},
+            #{username}
+        )
+
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <!-- ==================================================================================== -->
+    <!-- 5. Update Statements -->
+    <!-- ==================================================================================== -->
+
+    <update id="update" parameterType="auditHistory">
+        UPDATE FL_FS_AUDIT
+        SET
+            CLUSTER_ID = #{clusterId},
+            CLUSTER_NAME = #{clusterName},
+            FROM_PATH = #{from},
+            TO_PATH = #{to},
+            LENGTH = #{length},
+            FS_TYPE = #{fileSystemType},
+            AUDIT_TYPE = #{auditType},
+            FILE_TYPE = #{auditType},
+            WORK_DATE = #{workDate},
+            REQ_TYPE = #{requestType},
+            YYYY = #{yyyy},
+            MM = #{mm},
+            DD = #{dd},
+            USERNAME = #{username}
+        <include refid="wherePK"/>
+    </update>
+
+    <!-- ==================================================================================== -->
+    <!-- 6. Delete Statements -->
+    <!-- ==================================================================================== -->
+
+    <delete id="delete" parameterType="Integer">
+        DELETE FROM FL_FS_AUDIT
+        <include refid="wherePK"/>
+    </delete>
+</mapper>

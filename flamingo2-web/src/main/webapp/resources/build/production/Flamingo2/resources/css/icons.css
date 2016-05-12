@@ -1,0 +1,168 @@
+/*Left menu icons*/
+.menu-archive       { background-image: url(../images/icons/menu-archive.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-batch         { background-image: url(../images/icons/menu-batch.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-filesystem    { background-image: url(../images/icons/menu-filesystem.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-hawq          { background-image: url(../images/icons/menu-hawq.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-hive          { background-image: url(../images/icons/menu-hive.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-monitoring    { background-image: url(../images/icons/menu-monitoring.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-pig           { background-image: url(../images/icons/menu-pig.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-rstudio       { background-image: url(../images/icons/menu-rstudio.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-system        { background-image: url(../images/icons/menu-system.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-visual        { background-image: url(../images/icons/menu-visual.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-workflow      { background-image: url(../images/icons/menu-workflow.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+.menu-terminal      { background-image: url(../images/icons/menu-terminal.png) !important; width: 22px; height: 22px; background-size: 22px; background-repeat: no-repeat}
+
+/* common icons */
+.common-add                  { background-image: url(../images/icons/add.png) !important; }
+.common-cancel               { background-image: url(../images/icons/cancel.png) !important; }
+.common-collapse             { background-image: url(../images/icons/collapse.png) !important; }
+.common-column-add           { background-image: url(../images/icons/column-add.png) !important; }
+.common-column-remove        { background-image: url(../images/icons/column-remove.png) !important; }
+.common-complete             { background-image: url(../images/icons/complete.png) !important; }
+.common-database-add         { background-image: url(../images/icons/database-add.png) !important; }
+.common-database-remove      { background-image: url(../images/icons/database-remove.png) !important; }
+.common-delete               { background-image: url(../images/icons/delete.png) !important; }
+.common-directory-close      { background-image: url(../images/icons/directory-close.png) !important; }
+.common-directory-merge      { background-image: url(../images/icons/directory-merge.png) !important; }
+.common-directory-move       { background-image: url(../images/icons/directory-move.png) !important; }
+.common-directory-open       { background-image: url(../images/icons/directory-open.png) !important; }
+.common-directory-remove     { background-image: url(../images/icons/directory-remove.png) !important; }
+.common-directory-rename     { background-image: url(../images/icons/directory-rename.png) !important; }
+.common-download             { background-image: url(../images/icons/download.png) !important; }
+.common-directory-add        { background-image: url(../images/icons/directory-add.png) !important; }
+.common-directory-copy       { background-image: url(../images/icons/directory-copy.png) !important; }
+.common-execute              { background-image: url(../images/icons/execute.png) !important; }
+.common-expand               { background-image: url(../images/icons/expand.png) !important; }
+.common-external-add         { background-image: url(../images/icons/external-add.png) !important; }
+.common-external-remove      { background-image: url(../images/icons/external-remove.png) !important; }
+.common-file-copy            { background-image: url(../images/icons/file-copy.png) !important; }
+.common-file-move            { background-image: url(../images/icons/file-move.png) !important; }
+.common-file-rename          { background-image: url(../images/icons/file-rename.png) !important; }
+.common-file-view            { background-image: url(../images/icons/file-view.png) !important; }
+.common-function-add         { background-image: url(../images/icons/function-add.png) !important; }
+.common-function-remove      { background-image: url(../images/icons/function-remove.png) !important; }
+.common-group-add            { background-image: url(../images/icons/group-add.png) !important; }
+.common-group-remove         { background-image: url(../images/icons/group-remove.png) !important; }
+.common-group-modify         { background-image: url(../images/icons/group-modify.png) !important; }
+.common-hawq-plan            { background-image: url(../images/icons/hawq-plan.png) !important; }
+.common-information          { background-image: url(../images/icons/information.png) !important; }
+.common-new                  { background-image: url(../images/icons/new.png) !important; }
+.common-ok                   { background-image: url(../images/icons/ok.png) !important; }
+.common-pause                { background-image: url(../images/icons/pause.png) !important; }
+.common-question             { background-image: url(../images/icons/question.png) !important; }
+.common-redo                 { background-image: url(../images/icons/redo.png) !important; }
+.common-refresh              { background-image: url(../images/icons/refresh.png) !important; }
+.common-remove               { background-image: url(../images/icons/remove.png) !important; }
+.common-rename               { background-image: url(../images/icons/rename.png) !important; }
+.common-replay               { background-image: url(../images/icons/replay.png) !important; }
+.common-save                 { background-image: url(../images/icons/save.png) !important; }
+.common-schema-add           { background-image: url(../images/icons/schema-add.png) !important; }
+.common-schema-remove        { background-image: url(../images/icons/schema-remove.png) !important; }
+.common-search-clear         { background-image: url(../images/icons/search-clear.png) !important; }
+.common-search               { background-image: url(../images/icons/search.png) !important; }
+.common-stop                 { background-image: url(../images/icons/stop.png) !important; }
+.common-table-add            { background-image: url(../images/icons/table-add.png) !important; }
+.common-table-alter          { background-image: url(../images/icons/table-alter.png) !important; }
+.common-table-remove         { background-image: url(../images/icons/table-remove.png) !important; }
+.common-undo                 { background-image: url(../images/icons/undo.png) !important; }
+.common-upload               { background-image: url(../images/icons/upload.png) !important; }
+.common-user-auth            { background-image: url(../images/icons/user-auth.png) !important; }
+.common-user-add             { background-image: url(../images/icons/user-add.png) !important; }
+.common-user-remove          { background-image: url(../images/icons/user-remove.png) !important; }
+.common-user-modify          { background-image: url(../images/icons/user-modify.png) !important; }
+.common-xls                  { background-image: url(../images/icons/xls.png) !important; }
+
+
+/* status icons */
+.status-green           { background: url(../images/status/green.png) no-repeat; background-position:left; }
+.status-red             { background: url(../images/status/red.png) no-repeat;  background-position:left; }
+.status-sky             { background: url(../images/status/sky.png) no-repeat; background-position:left; }
+.status-yellow          { background: url(../images/status/yellow.png) no-repeat; background-position:left; }
+.status-brown           { background: url(../images/status/brown.png) no-repeat; background-position:left; }
+
+/* HDFS Browser icons */
+.hdfs-directory-create     { background-image: url(../images/fs/hdfs/directory-create.png) !important; }
+.hdfs-directory-delete     { background-image: url(../images/fs/hdfs/directory-delete.png) !important; }
+.hdfs-directory-copy       { background-image: url(../images/fs/hdfs/directory-copy.png) !important; }
+.hdfs-directory-info       { background-image: url(../images/fs/hdfs/information.png) !important; }
+.hdfs-directory-move       { background-image: url(../images/fs/hdfs/directory-move.png) !important; }
+.hdfs-directory-rename     { background-image: url(../images/fs/hdfs/directory-rename.png) !important; }
+.hdfs-directory-merge      { background-image: url(../images/fs/hdfs/directory-merge.png) !important; }
+.hdfs-directory-auth       { background-image: url(../images/fs/hdfs/directory-auth.png) !important; }
+.hdfs-file-copy            { background-image: url(../images/fs/hdfs/file-copy.png) !important; }
+.hdfs-file-delete          { background-image: url(../images/fs/hdfs/file-delete.png) !important; }
+.hdfs-file-move            { background-image: url(../images/fs/hdfs/file-move.png) !important; }
+.hdfs-file-rename          { background-image: url(../images/fs/hdfs/file-rename.png) !important; }
+.hdfs-file-select          { background-image: url(../images/fs/hdfs/file-select.png) !important; }
+.hdfs-file-upload          { background-image: url(../images/fs/hdfs/file-upload.png) !important; }
+.hdfs-file-download        { background-image: url(../images/fs/hdfs/file-download.png) !important; }
+.hdfs-file-info            { background-image: url(../images/fs/hdfs/information.png) !important; }
+.hdfs-file-view            { background-image: url(../images/fs/hdfs/file-view.png) !important; }
+.hdfs-database             { background-image: url(../images/fs/hdfs/hive-database.png) !important; }
+.hdfs-table                { background-image: url(../images/fs/hdfs/hive-table.png) !important; }
+
+
+/* WFDesigner icons */
+.designer-create        { background-image: url(../images/designer/create.png) !important; }
+.designer-hdfs          { background-image: url(../images/designer/hdfs.png) !important; }
+.designer-save          { background-image: url(../images/designer/save.png) !important; }
+.designer-loading       { background-image: url(../images/designer/loading.png) !important; }
+.designer-explanation   { background-image: url(../images/designer/explanation.png) !important; }
+.designer-action        { background-image: url(../images/designer/action.png) !important; }
+.designer-workflow-xml  { background-image: url(../images/designer/xml.png) !important; }
+
+/*ggplot icons*/
+.ggplot_dataload        { background-image: url(../images/ggplot/dataload.png) !important; width: 24px; height: 24px; background-size: 24px;}
+.ggplot_dataclose       { background-image: url(../images/ggplot/dataclose.png) !important; width: 24px; height: 24px; background-size: 24px;}
+.ggplot_drawplot        { background-image: url(../images/ggplot/drawplot.png) !important; width: 24px; height: 24px; background-size: 24px;}
+.ggplot_resetplot       { background-image: url(../images/ggplot/resetplot.png) !important; width: 24px; height: 24px; background-size: 24px;}
+.ggplot_export          { background-image: url(../images/ggplot/export.png) !important; width: 24px; height: 24px; background-size: 24px;}
+.ggplot_icon_density    { background-image:url(../images/ggplot/icon_density.png) !important;}
+.ggplot_icon_histogram  { background-image:url(../images/ggplot/icon_bar.png) !important;}
+.ggplot_icon_freqpoly   { background-image:url(../images/ggplot/icon_freqpoly.png) !important;}
+.ggplot_icon_area       { background-image:url(../images/ggplot/icon_area.png) !important;}
+.ggplot_icon_facet      { background-image:url(../images/ggplot/icon_facet.png) !important;}
+.ggplot_icon_bin2d      { background-image:url(../images/ggplot/icon_bin2d.png) !important;}
+.ggplot_icon_bar        { background-image:url(../images/ggplot/icon_bar.png) !important;}
+.ggplot_icon_contour    { background-image:url(../images/ggplot/icon_contour.png) !important;}
+.ggplot_icon_density2d  { background-image:url(../images/ggplot/icon_density2d.png) !important;}
+.ggplot_icon_hex        { background-image:url(../images/ggplot/icon_hex.png) !important;}
+.ggplot_icon_rug        { background-image:url(../images/ggplot/icon_rug.png) !important;}
+.ggplot_icon_path       { background-image:url(../images/ggplot/icon_path.png) !important;}
+.ggplot_icon_polygon    { background-image:url(../images/ggplot/icon_polygon.png) !important;}
+.ggplot_icon_boxplot    { background-image:url(../images/ggplot/icon_boxplot.png) !important;}
+.ggplot_icon_tile       { background-image:url(../images/ggplot/icon_tile.png) !important;}
+.ggplot_icon_hex        { background-image:url(../images/ggplot/icon_hex.png) !important;}
+.ggplot_icon_point      { background-image:url(../images/ggplot/icon_point.png) !important;}
+.ggplot_icon_smooth     { background-image:url(../images/ggplot/icon_smooth.png) !important;}
+.ggplot_icon_text       { background-image:url(../images/ggplot/icon_text.png) !important;}
+.ggplot_icon_quantile   { background-image:url(../images/ggplot/icon_quantile.png) !important;}
+.ggplot_icon_step       { background-image:url(../images/ggplot/icon_step.png) !important;}
+.ggplot_icon_abline     { background-image:url(../images/ggplot/icon_abline.png) !important;}
+.ggplot_icon_hline      { background-image:url(../images/ggplot/icon_hline.png) !important;}
+.ggplot_icon_vline      { background-image:url(../images/ggplot/icon_vline.png) !important;}
+.ggplot_icon_crossbar   { background-image:url(../images/ggplot/icon_crossbar.png) !important;}
+.ggplot_icon_errorbar   { background-image:url(../images/ggplot/icon_errorbar.png) !important;}
+.ggplot_icon_errorbarh  { background-image:url(../images/ggplot/icon_errorbarh.png) !important;}
+.ggplot_icon_linerange  { background-image:url(../images/ggplot/icon_linerange.png) !important;}
+.ggplot_icon_pointrange { background-image:url(../images/ggplot/icon_pointrange.png) !important;}
+.ggplot_icon_ribbon     { background-image:url(../images/ggplot/icon_smooth.png) !important;}
+
+/* Workflow Designer icons */
+.workflow-bash              { background-image:url(../images/icons/workflow/workflow-bash.png) !important;}
+.workflow-condition-end     { background-image:url(../images/icons/workflow/workflow-condition-end.png) !important;}
+.workflow-condition-if      { background-image:url(../images/icons/workflow/workflow-condition-if.png) !important;}
+.workflow-etl               { background-image:url(../images/icons/workflow/workflow-etl.png) !important;}
+.workflow-export            { background-image:url(../images/icons/workflow/workflow-java.png) !important;}
+.workflow-hadoop            { background-image:url(../images/icons/workflow/workflow-hadoop.png) !important;}
+.workflow-hive              { background-image:url(../images/icons/workflow/workflow-hive.png) !important;}
+.workflow-import            { background-image:url(../images/icons/workflow/workflow-java.png) !important;}
+.workflow-java              { background-image:url(../images/icons/workflow/workflow-java.png) !important;}
+.workflow-pararell-end      { background-image:url(../images/icons/workflow/workflow-pararell-end.png) !important;}
+.workflow-pararell-process  { background-image:url(../images/icons/workflow/workflow-pararell-process.png) !important;}
+.workflow-pig               { background-image:url(../images/icons/workflow/workflow-pig.png) !important;}
+.workflow-python            { background-image:url(../images/icons/workflow/workflow-python.png) !important;}
+.workflow-rstudio           { background-image:url(../images/icons/workflow/workflow-r.png) !important;}
+.workflow-ruby              { background-image:url(../images/icons/workflow/workflow-ruby.png) !important;}
+.workflow-spark             { background-image:url(../images/icons/workflow/workflow-spark.png) !important;}
+.workflow-kill              { background-image:url(../images/icons/workflow/workflow-kill.png) !important;}

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.designer.activiti.WorkflowRepository">
+
+    <!-- =======================================-->
+    <!-- 1. Insert                              -->
+    <!-- =======================================-->
+
+    <insert id="insert" parameterType="map" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO FL_WORKFLOW (
+            WORKFLOW_ID,
+            WORKFLOW_NAME,
+            VARIABLE,
+            WORKFLOW_XML,
+            DESIGNER_XML,
+            CREATE_DT,
+            STATUS,
+            TREE_ID,
+            USERNAME
+        )
+        VALUES (
+            #{workflowId},
+            #{workflowName},
+            #{variable},
+            #{workflowXml},
+            #{designerXml},
+            #{create},
+            #{status},
+            #{treeId},
+            #{username}
+        )
+    </insert>
+
+    <!-- =======================================-->
+    <!-- 2. Delete                              -->
+    <!-- =======================================-->
+
+	<update id="deleteByUsername" parameterType="string">
+		DELETE FROM FL_WORKFLOW
+		WHERE USERNAME = #{value}
+	</update>
+
+	<update id="delete" parameterType="string">
+		DELETE FROM FL_WORKFLOW
+		WHERE ID = #{value}
+	</update>
+
+	<update id="deleteByWid" parameterType="string">
+		DELETE FROM FL_WORKFLOW
+		WHERE ID = #{value}
+	</update>
+
+	<update id="deleteByTreeId" parameterType="long">
+		DELETE FROM FL_WORKFLOW
+		WHERE TREE_ID = #{value}
+	</update>
+
+	<!-- =======================================-->
+    <!-- 3. Select                              -->
+    <!-- =======================================-->
+
+    <select id="selectByWid" resultType="map"  parameterType="string">
+        SELECT
+            ID as id,
+            WORKFLOW_NAME as workflowName,
+            WID as wid,
+            DESIGNER_XML as designerXml,
+            BPMN_XML as bpmnXml,
+            VARS as vars,
+            YYYY as yyyy,
+            MM as mm,
+            DD as dd,
+            STATUS as status,
+            STEPS as steps,
+            TREE_ID as treeId
+        FROM FL_WORKFLOW
+		WHERE WID = #{wid}
+    </select>
+
+    <select id="selectByTreeId" parameterType="long" resultType="org.opencloudengine.flamingo2.model.rest.Workflow">
+        SELECT
+            ID as id,
+            WORKFLOW_ID as workflowId,
+            WORKFLOW_NAME as workflowName,
+            VARIABLE as variable,
+            WORKFLOW_XML as workflowXml,
+            DESIGNER_XML as designerXml,
+            CREATE_DT as createDate,
+            STATUS as status,
+            TREE_ID as treeId,
+            USERNAME as username
+        FROM FL_WORKFLOW
+		WHERE TREE_ID = #{value}
+    </select>
+
+    <select id="selectByWorkflowId" parameterType="string" resultType="org.opencloudengine.flamingo2.model.rest.Workflow">
+        SELECT
+            ID as id,
+            WORKFLOW_ID as workflowId,
+            WORKFLOW_NAME as workflowName,
+            VARIABLE as variable,
+            WORKFLOW_XML as workflowXml,
+            DESIGNER_XML as designerXml,
+            CREATE_DT as createDate,
+            STATUS as status,
+            TREE_ID as treeId,
+            USERNAME as username
+        FROM FL_WORKFLOW
+        WHERE WORKFLOW_ID = #{value}
+    </select>
+
+    <select id="totalCount" resultType="long"  parameterType="string">
+        SELECT count(*)
+        FROM FL_WORKFLOW
+		WHERE USERNAME = #{value}
+    </select>
+
+    <select id="selectRecentDefinitions" resultType="long"  parameterType="string">
+        SELECT *
+        FROM ACT_RE_PROCDEF
+        INNER JOIN (
+            SELECT KEY_, MAX(VERSION_) AS VERSION_
+            FROM ACT_RE_PROCDEF
+            GROUP BY KEY_) A
+            ON (ACT_RE_PROCDEF.KEY_ = A.KEY_ AND ACT_RE_PROCDEF.VERSION_ = A.VERSION_)
+        GROUP BY ACT_RE_PROCDEF.KEY_
+    </select>
+
+    <select id="selectCurrentDefinitions" resultType="long"  parameterType="string">
+        SELECT
+            B.ID as id,
+            B.WORKFLOW_NAME as workflowName,
+            A.VERSION_ as version,
+            B.DEPLOYMENT_ID as deploymentId,
+            B.DEFINITION_ID as definitionId,
+            B.DESIGNER_XML as designerXml,
+            B.BPMN_XML as bpmnXml,
+            B.VARS as vars,
+            B.TREE_ID as treeId
+        FROM FL_WORKFLOW B, ACT_RE_PROCDEF A
+        WHERE B.DEFINITION_ID = A.ID_
+    </select>
+
+    <!-- =======================================-->
+    <!-- 4. Update                              -->
+    <!-- =======================================-->
+
+    <update id="update" parameterType="map">
+        UPDATE
+            FL_WORKFLOW
+        SET
+            WORKFLOW_ID = #{workflowId},
+            WORKFLOW_NAME = #{workflowName},
+            VARIABLE = #{variable},
+            WORKFLOW_XML = #{workflowXml},
+            DESIGNER_XML = #{designerXml},
+            CREATE_DT = now(),
+            STATUS = #{status},
+            TREE_ID = #{treeId},
+            USERNAME = #{username}
+        WHERE TREE_ID = #{treeId}
+    </update>
+
+    <update id="updateWorkflowName" parameterType="map">
+        UPDATE
+            FL_WORKFLOW
+        SET
+            WORKFLOW_NAME = #{workflowName}
+        WHERE TREE_ID = #{treeId}
+    </update>
+
+</mapper>

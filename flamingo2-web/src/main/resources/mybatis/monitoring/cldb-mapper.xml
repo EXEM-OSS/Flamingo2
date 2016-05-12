@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.monitoring.CLDBRepository">
+
+    <select id="select" resultType="map" parameterType="map">
+        SELECT
+            (@row:=@row+1) as num,
+            id,
+            system,
+            name,
+            type,
+            fileServerCount,
+            volumeCount,
+            replNumContainerCopied,
+            replNumMBCopied,
+            replSerializedSize,
+            used * 10 * 1024 as used,
+            free * 1024 * 1024 as free,
+            total * 1024 * 1024 as total,
+            totalFiles,
+            jvmMaxMemory,
+            jvmTotalMemory,
+            jvmFreeMemory,
+            jvmUsedMemory,
+            reg_dt,
+            yyyy,
+            mm,
+            dd
+        FROM FL_CL_CLDB, (SELECT @row := 0) r
+        WHERE 1=1
+            AND system = #{system}
+            AND reg_dt > DATE_ADD(now(), INTERVAL -7 DAY)
+        ORDER BY reg_dt ASC
+    </select>
+
+</mapper>

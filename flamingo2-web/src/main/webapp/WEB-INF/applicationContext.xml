@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/util                  http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- ========================= PROPERTY PLACE HOLDER DEFINITION ========================= -->
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>/WEB-INF/config.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- ========================= PROPERTIES DEFINITION ========================= -->
+
+    <util:properties id="config" location="/WEB-INF/config.properties"/>
+    <util:properties id="app" location="/WEB-INF/app.properties"/>
+    <util:properties id="hadoop" location="/WEB-INF/hadoop.properties"/>
+
+    <!-- ========================= REST TEMPLATE DEFINITION ========================= -->
+
+    <bean id="httpClient" class="org.opencloudengine.flamingo2.web.util.SslHttpClientFactoryBean"/>
+
+    <bean id="sslRestTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg>
+            <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+                <constructor-arg ref="httpClient"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <!-- ========================= SIGAR DEFINITION ========================= -->
+
+    <bean id="sigar" class="org.opencloudengine.flamingo2.util.SigarFactory"/>
+    <bean id="sigarProxy" class="org.opencloudengine.flamingo2.util.SigarProxyFactory">
+        <property name="sigar" ref="sigar"/>
+    </bean>
+
+</beans>

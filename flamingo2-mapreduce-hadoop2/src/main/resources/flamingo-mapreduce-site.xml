@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+    <property>
+        <name>tempDir</name>
+        <value>/temp/${user.home}</value>
+        <description>Default Temporary Directory for MapReduce Job</description>
+    </property>
+
+    <property>
+        <name>tempDir.date.pattern</name>
+        <value>yyyyMMdd-HHmmss-SSS</value>
+        <description>Default Temporary Directory Name Pattern for MapReduce Job</description>
+    </property>
+</configuration>

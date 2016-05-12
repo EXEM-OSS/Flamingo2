@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.web.system.HdfsBrowserAuthRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <resultMap id="hdfsBrowserAuthMap" type="org.opencloudengine.flamingo2.model.rest.HdfsBrowserAuth">
+        <result property="id"               column="ID"                 jdbcType="BIGINT"/>
+        <result property="hdfsPathPattern"  column="HDFS_PATH_PATTERN"  jdbcType="VARCHAR"/>
+        <result property="createDir"        column="CREATE_DIR"         jdbcType="BOOLEAN"/>
+        <result property="copyDir"          column="COPY_DIR"           jdbcType="BOOLEAN"/>
+        <result property="moveDir"          column="MOVE_DIR"           jdbcType="BOOLEAN"/>
+        <result property="renameDir"        column="RENAME_DIR"         jdbcType="BOOLEAN"/>
+        <result property="deleteDir"        column="DELETE_DIR"         jdbcType="BOOLEAN"/>
+        <result property="mergeDir"         column="MERGE_DIR"          jdbcType="BOOLEAN"/>
+        <result property="permissionDir"    column="PERMISSION_DIR"     jdbcType="BOOLEAN"/>
+        <result property="createDbDir"      column="CREATE_DB_DIR"      jdbcType="BOOLEAN"/>
+        <result property="createTableDir"   column="CREATE_TABLE_DIR"   jdbcType="BOOLEAN"/>
+        <result property="copyFile"         column="COPY_FILE"          jdbcType="BOOLEAN"/>
+        <result property="moveFile"         column="MOVE_FILE"          jdbcType="BOOLEAN"/>
+        <result property="renameFile"       column="RENAME_FILE"        jdbcType="BOOLEAN"/>
+        <result property="deleteFile"       column="DELETE_FILE"        jdbcType="BOOLEAN"/>
+        <result property="uploadFile"       column="UPLOAD_FILE"        jdbcType="BOOLEAN"/>
+        <result property="downloadFile"     column="DOWNLOAD_FILE"      jdbcType="BOOLEAN"/>
+        <result property="viewFile"         column="VIEW_FILE"          jdbcType="BOOLEAN"/>
+        <result property="permissionFile"   column="PERMISSION_FILE"    jdbcType="BOOLEAN"/>
+        <result property="registerDate"     column="REG_DT"             jdbcType="TIMESTAMP"/>
+        <result property="updateDate"       column="UPD_DT"             jdbcType="TIMESTAMP"/>
+        <result property="authId"           column="AUTH_ID"            jdbcType="BIGINT"/>
+        <result property="level"            column="LEVEL"              jdbcType="SMALLINT"/>
+    </resultMap>
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Sql Fragments -->
+    <!-- ==================================================================================== -->
+
+    <sql id="wherePK">WHERE ID = #{id}</sql>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="selectHdfsAuthAll" resultType="map">
+        SELECT
+          hpa.ID as id,
+          hpa.HDFS_PATH_PATTERN as hdfs_path_pattern,
+          hpa.LEVEL as level,
+          hpa.AUTH_ID as auth_id,
+          auth.AUTHORITY_NM as auth_name,
+          ulvl.LEVEL_NM as level_name
+        FROM FL_HDFS_PATH_AUTH hpa, FL_AUTHORITIES auth, FL_USER_LEVEL ulvl
+        WHERE hpa.AUTH_ID = auth.ID
+          AND hpa.LEVEL = ulvl.LEVEL
+        LIMIT 12
+    </select>
+
+    <select id="selectHdfsAuthDetail" parameterType="map" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT
+          hpa.ID as id,
+          hpa.HDFS_PATH_PATTERN as hdfs_path_pattern,
+          hpa.CREATE_DIR as create_dir,
+          hpa.COPY_DIR as copy_dir,
+          hpa.MOVE_DIR as move_dir,
+          hpa.RENAME_DIR as rename_dir,
+          hpa.DELETE_DIR as delete_dir,
+          hpa.MERGE_DIR as merge_dir,
+          hpa.PERMISSION_DIR  as permission_dir,
+          hpa.CREATE_DB_DIR as create_db_dir,
+          hpa.CREATE_TABLE_DIR as create_table_dir,
+          hpa.COPY_FILE as copy_file,
+          hpa.MOVE_FILE as move_file,
+          hpa.RENAME_FILE as rename_file,
+          hpa.DELETE_FILE as delete_file,
+          hpa.UPLOAD_FILE as upload_file,
+          hpa.DOWNLOAD_FILE as download_file,
+          hpa.VIEW_FILE as view_file,
+          hpa.REG_DT as register_date,
+          hpa.UPD_DT as update_date,
+          hpa.AUTH_ID as auth_id,
+          hpa.LEVEL as level,
+          ulvl.LEVEL_NM as level_name,
+          auth.AUTHORITY_NM as auth_name
+        FROM FL_HDFS_PATH_AUTH hpa, FL_AUTHORITIES auth, FL_USER_LEVEL ulvl
+        WHERE hpa.HDFS_PATH_PATTERN = #{hdfsPathPattern}
+            AND hpa.AUTH_ID = #{authId}
+            AND hpa.LEVEL = #{level}
+            AND hpa.AUTH_ID = auth.ID
+            AND hpa.LEVEL = ulvl.LEVEL
+    </select>
+
+    <select id="selectUserAuthAll" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT
+          ID as auth_id,
+          AUTHORITY as authority,
+          AUTHORITY_NM as auth_name
+        FROM FL_AUTHORITIES
+    </select>
+
+    <select id="selectUserLevelAll" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT
+          LEVEL as level,
+          LEVEL_NM as level_name
+        FROM FL_USER_LEVEL
+    </select>
+
+
+    <select id="selectHdfsBrowserPatternAll" resultType="String">
+        SELECT hpa.HDFS_PATH_PATTERN
+        FROM FL_HDFS_PATH_AUTH hpa
+        WHERE hpa.LEVEL = ( SELECT usr.LEVEL
+                              FROM FL_USER usr
+                              WHERE usr.USER_NM = #{username} )
+        ORDER BY LENGTH (hpa.HDFS_PATH_PATTERN)
+    </select>
+
+    <select id="selectHdfsBrowserUserDirAuth" resultType="Integer">
+        SELECT COUNT(1)
+        FROM FL_HDFS_PATH_AUTH hpa
+        WHERE hpa.HDFS_PATH_PATTERN = #{hdfsPathPattern}
+        AND hpa.AUTH_ID = ( SELECT usr.AUTH_ID
+        FROM FL_USER usr
+        WHERE usr.USER_NM = #{username} )
+        AND hpa.LEVEL = ( SELECT usr.LEVEL
+        FROM FL_USER usr
+        WHERE usr.USER_NM = #{username} )
+        <if test="condition == 'createDir'">
+            AND hpa.CREATE_DIR = TRUE
+        </if>
+        <if test="condition == 'copyDir'">
+            AND hpa.COPY_DIR = TRUE
+        </if>
+        <if test="condition == 'moveDir'">
+            AND hpa.MOVE_DIR = TRUE
+        </if>
+        <if test="condition == 'renameDir'">
+            AND hpa.RENAME_DIR = TRUE
+        </if>
+        <if test="condition == 'deleteDir'">
+            AND hpa.DELETE_DIR = TRUE
+        </if>
+        <if test="condition == 'mergeDir'">
+            AND hpa.MERGE_DIR = TRUE
+        </if>
+        <if test="condition == 'permissionDir'">
+            AND hpa.PERMISSION_DIR = TRUE
+        </if>
+        <if test="condition == 'createDbDir'">
+            AND hpa.CREATE_DB_DIR = TRUE
+        </if>
+        <if test="condition == 'createTableDir'">
+            AND hpa.CREATE_TABLE_DIR = TRUE
+        </if>
+    </select>
+
+    <select id="selectHdfsBrowserUserFileAuth" resultType="Integer">
+        SELECT COUNT(1)
+        FROM FL_HDFS_PATH_AUTH hpa
+        WHERE hpa.HDFS_PATH_PATTERN = #{hdfsPathPattern}
+        AND hpa.AUTH_ID = ( SELECT usr.AUTH_ID
+        FROM FL_USER usr
+        WHERE usr.USER_NM = #{username} )
+        AND hpa.LEVEL = ( SELECT usr.LEVEL
+        FROM FL_USER usr
+        WHERE usr.USER_NM = #{username} )
+        <if test="condition == 'copyFile'">
+            AND hpa.COPY_FILE = TRUE
+        </if>
+        <if test="condition == 'moveFile'">
+            AND hpa.MOVE_FILE = TRUE
+        </if>
+        <if test="condition == 'renameFile'">
+            AND hpa.RENAME_FILE = TRUE
+        </if>
+        <if test="condition == 'deleteFile'">
+            AND hpa.DELETE_FILE = TRUE
+        </if>
+        <if test="condition == 'uploadFile'">
+            AND hpa.UPLOAD_FILE = TRUE
+        </if>
+        <if test="condition == 'downloadFile'">
+            AND hpa.DOWNLOAD_FILE = TRUE
+        </if>
+        <if test="condition == 'viewFile'">
+            AND hpa.VIEW_FILE = TRUE
+        </if>
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Exist Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="exist" parameterType="map" resultType="Integer">
+        SELECT COUNT(1)
+        FROM FL_HDFS_PATH_AUTH
+        WHERE HDFS_PATH_PATTERN = #{hdfsPathPattern}
+            AND AUTH_ID = #{authId}
+            AND LEVEL = #{level}
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 4. Insert Statements -->
+    <!-- ==================================================================================== -->
+
+    <select id="insertHdfsBrowserAuth" parameterType="map">
+        <if test="ackKey == null and ackKey == ''">
+            INSERT INTO FL_HDFS_PATH_AUTH (
+                HDFS_PATH_PATTERN, AUTH_ID, LEVEL, UPD_DT)
+            VALUES (
+                #{hdfsPathPattern},
+                #{authId},
+                #{level},
+                NOW())
+        </if>
+        <if test="ackKey == 'approved'">
+            INSERT INTO FL_HDFS_PATH_AUTH (
+                HDFS_PATH_PATTERN,
+                CREATE_DIR, COPY_DIR, MOVE_DIR, RENAME_DIR, DELETE_DIR, MERGE_DIR, PERMISSION_DIR,
+                CREATE_DB_DIR, CREATE_TABLE_DIR,
+                COPY_FILE, MOVE_FILE, RENAME_FILE, DELETE_FILE, UPLOAD_FILE, DOWNLOAD_FILE, VIEW_FILE,
+                UPD_DT, AUTH_ID, LEVEL
+                )
+            VALUES (
+                #{hdfsPathPattern},
+                TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+                TRUE, TRUE,
+                TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,TRUE,
+                NOW(),
+                #{authId},
+                #{level})
+        </if>
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 5. Update Statements -->
+    <!-- ==================================================================================== -->
+
+    <select id="updatedHdfsBrowserAuth" parameterType="map">
+        UPDATE FL_HDFS_PATH_AUTH
+        <set>
+            <if test="new_hdfs_path_pattern == 'isNewValue'">
+                HDFS_PATH_PATTERN = #{hdfs_path_pattern},
+            </if>
+            <if test="new_user_auth == 'isNewValue'">
+                AUTH_ID = #{auth_id},
+            </if>
+            <if test="new_user_level == 'isNewValue'">
+                LEVEL = #{level},
+            </if>
+                CREATE_DIR = #{create_dir},
+                COPY_DIR = #{copy_dir},
+                MOVE_DIR = #{move_dir},
+                RENAME_DIR = #{rename_dir},
+                DELETE_DIR = #{delete_dir},
+                MERGE_DIR = #{merge_dir},
+                PERMISSION_DIR = #{permission_dir},
+                CREATE_DB_DIR = #{create_db_dir},
+                CREATE_TABLE_DIR = #{create_table_dir},
+                COPY_FILE = #{copy_file},
+                MOVE_FILE = #{move_file},
+                RENAME_FILE = #{rename_file},
+                DELETE_FILE = #{delete_file},
+                UPLOAD_FILE = #{upload_file},
+                DOWNLOAD_FILE = #{download_file},
+                VIEW_FILE = #{view_file},
+                UPD_DT = NOW()
+        </set>
+        <include refid="wherePK"/>
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 6. Delete Statements -->
+    <!-- ==================================================================================== -->
+
+    <delete id="deleteHdfsBrowserAuth" parameterType="map">
+        DELETE FROM FL_HDFS_PATH_AUTH
+        WHERE AUTH_ID = #{authId}
+        AND LEVEL = #{level}
+        <if test="deleteCondition == null and deleteCondition == ''">
+            AND HDFS_PATH_PATTERN = #{hdfsPathPattern}
+        </if>
+        <if test="deleteCondition == 'deleteUser'">
+            AND HDFS_PATH_PATTERN LIKE #{hdfsPathPattern}
+        </if>
+    </delete>
+
+</mapper>

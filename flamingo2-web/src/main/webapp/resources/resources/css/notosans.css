@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 300;
+    src: url('../font/notosans/NotoSansKR-DemiLight.eot?') format('eot'),
+    url('../font/notosans/NotoSansKR-DemiLight.woff2') format('woff2'),
+    url('../font/notosans/NotoSansKR-DemiLight.woff') format('woff'),
+    url('../font/notosans/NotoSansKR-DemiLight.ttf')  format('truetype'),
+    url('../font/notosans/NotoSansKR-DemiLight.svg#NotoSansKR-DemiLight') format('svg');
+}

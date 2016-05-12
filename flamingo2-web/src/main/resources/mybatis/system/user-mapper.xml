@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.web.system.UserRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <resultMap id="userMap" type="org.opencloudengine.flamingo2.model.rest.User">
+        <result property="id"               column="ID"                 jdbcType="BIGINT"/>
+        <result property="username"         column="USER_NM"            jdbcType="VARCHAR"/>
+        <result property="password"         column="PASSWD"             jdbcType="VARCHAR"/>
+        <result property="email"            column="EMAIL"              jdbcType="VARCHAR"/>
+        <result property="name"             column="NM"                 jdbcType="VARCHAR"/>
+        <result property="level"            column="LEVEL"              jdbcType="SMALLINT"/>
+        <result property="description"      column="DESCRIPTION"        jdbcType="VARCHAR"/>
+        <result property="linuxUserHome"    column="LINUX_USER_HOME"    jdbcType="VARCHAR"/>
+        <result property="hdfsUserHome"     column="HDFS_USER_HOME"     jdbcType="VARCHAR"/>
+        <result property="userGroup"        column="USER_GROUP"         jdbcType="VARCHAR"/>
+        <result property="registerDate"     column="REG_DT"             jdbcType="TIMESTAMP"/>
+        <result property="updateDate"       column="UPD_DT"             jdbcType="TIMESTAMP"/>
+        <result property="enabled"          column="ENABLED"            jdbcType="BOOLEAN"/>
+        <result property="orgId"            column="ORG_ID"             jdbcType="BIGINT"/>
+        <result property="authId"           column="AUTH_ID"            jdbcType="BIGINT"/>
+    </resultMap>
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Sql Fragments -->
+    <!-- ==================================================================================== -->
+
+    <sql id="wherePK">WHERE USER_NM = #{username}</sql>
+    <sql id="whereOrgPK">WHERE ORG_ID = #{id}</sql>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="selectByUsername" parameterType="string" resultMap="userMap">
+        SELECT ID, USER_NM, PASSWD, EMAIL, NM, LEVEL, ORG_ID, USER_GROUP
+        FROM FL_USER
+        <include refid="wherePK"/>
+    </select>
+
+    <select id="selectByOrgId" parameterType="long" resultType="map">
+        SELECT DISTINCT org.*
+        FROM FL_USER usr, FL_ORG org
+        WHERE usr.ORG_ID = org.ID
+        AND usr.ORG_ID = #{orgId}
+    </select>
+
+    <select id="selectAll" parameterType="map" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT
+            usr.ID as user_id,
+            usr.USER_NM as username,
+            usr.EMAIL,
+            usr.NM as name,
+            usr.LEVEL,
+            usr.DESCRIPTION as user_description,
+            usr.LINUX_USER_HOME as linux_user_home,
+            usr.HDFS_USER_HOME as hdfs_user_home,
+            usr.USER_GROUP as user_group,
+            usr.REG_DT as register_date,
+            usr.UPD_DT as update_date,
+            usr.ENABLED,
+            org.ID as org_id,
+            org.ORG_CD as org_code,
+            org.ORG_NM as org_name,
+            org.DESCRIPTION as org_description,
+            auth.ID as auth_id,
+            auth.AUTHORITY,
+            auth.AUTHORITY_NM as auth_name
+        FROM FL_USER usr, FL_AUTHORITIES auth, FL_USER_LEVEL ulvl, FL_ORG org
+        WHERE usr.AUTH_ID = auth.ID
+        AND usr.ORG_ID = org.ID
+        AND usr.LEVEL = ulvl.LEVEL
+        <if test="orgId != null and orgId != '' and orgId != 0">
+            AND usr.ORG_ID = #{orgId}
+        </if>
+        <if test="conditionKey == 'NAME'">
+            AND usr.NM = #{condition}
+        </if>
+        <if test="conditionKey == 'ORG'">
+            AND org.ORG_NM = #{condition}
+        </if>
+        <if test="conditionKey == 'EMAIL'">
+            AND usr.EMAIL = #{condition}
+        </if>
+        <if test="conditionKey == 'USERNAME'">
+            AND usr.USER_NM = #{condition}
+        </if>
+    </select>
+
+    <select id="selectUserIdByUsername" parameterType="string" resultType="Long">
+        SELECT ID as USER_ID
+        FROM FL_USER
+        <include refid="wherePK"/>
+    </select>
+
+    <select id="selectPasswordByUsername" parameterType="string" resultType="String">
+        SELECT PASSWD
+        FROM FL_USER
+        <include refid="wherePK"/>
+    </select>
+
+    <select id="selectUserByOrgId" parameterType="long" resultType="Integer">
+        SELECT COUNT(*)
+        FROM FL_USER
+        WHERE ORG_ID = #{value}
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Exist Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="exist" parameterType="string" resultType="Integer">
+        SELECT COUNT(1)
+        FROM FL_USER
+        <include refid="wherePK"/>
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 4. Insert Statements -->
+    <!-- ==================================================================================== -->
+
+    <select id="insertByUser" parameterType="map">
+        INSERT INTO FL_USER (USER_NM, PASSWD, NM, EMAIL, USER_GROUP, UPD_DT)
+        VALUES (
+            #{username},
+            #{password},
+            #{name},
+            #{email},
+            #{username},
+            NOW()
+        )
+    </select>
+
+    <select id="insertByManager" parameterType="map">
+        INSERT INTO FL_USER (USER_NM, PASSWD, NM, EMAIL, UPD_DT, ORG_ID, AUTH_ID, LEVEL, USER_GROUP)
+        VALUES (
+            #{username},
+            #{password},
+            #{name},
+            #{email},
+            NOW(),
+            #{orgId},
+            #{authId},
+            #{level},
+            #{username}
+        )
+    </select>
+
+    <select id="insertByAuth" parameterType="long">
+        INSERT INTO FL_USER_AUTH (USER_ID)
+        VALUES (
+            #{userId}
+        )
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 5. Update Statements -->
+    <!-- ==================================================================================== -->
+
+    <update id="updateUserInfo" parameterType="map">
+        UPDATE FL_USER
+        <set>
+            <if test="password != '' and password != null">
+                PASSWD = #{password},
+            </if>
+            NM = #{name},
+            EMAIL = #{email},
+            LEVEL = #{level},
+            ORG_ID = #{orgId},
+            AUTH_ID = #{authId},
+            UPD_DT = CURRENT_TIMESTAMP
+        </set>
+        <include refid="wherePK"/>
+    </update>
+
+    <select id="updateByAck" parameterType="string">
+        UPDATE FL_USER
+        SET
+            PASSWD = #{password},
+            ENABLED = TRUE,
+            UPD_DT = CURRENT_TIMESTAMP
+        <include refid="wherePK"/>
+
+    </select>
+
+    <update id="updatePassword" parameterType="map">
+        UPDATE FL_USER
+        SET
+            PASSWD = #{password},
+	        UPD_DT = CURRENT_TIMESTAMP
+        <include refid="wherePK"/>
+    </update>
+
+    <update id="updateById" parameterType="map">
+        UPDATE FL_USER
+        SET
+            ORG_ID = 1,
+            UPD_DT = CURRENT_TIMESTAMP
+        <include refid="whereOrgPK"/>
+    </update>
+
+    <update id="updateUserHomeInfo" parameterType="map">
+        UPDATE FL_USER
+        SET
+          LINUX_USER_HOME = #{linuxUserHome},
+          HDFS_USER_HOME = #{hdfsUserHome},
+          UPD_DT = CURRENT_TIMESTAMP
+        <include refid="wherePK"/>
+    </update>
+
+    <!-- ==================================================================================== -->
+    <!-- 6. Delete Statements -->
+    <!-- ==================================================================================== -->
+
+    <delete id="deleteByUsername" parameterType="string">
+        DELETE FROM FL_USER
+        <include refid="wherePK"/>
+    </delete>
+
+</mapper>

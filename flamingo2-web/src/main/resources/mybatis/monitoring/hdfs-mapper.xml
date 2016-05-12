@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.monitoring.HdfsRepository">
+
+    <select id="select" resultType="map" parameterType="map">
+        SELECT
+            (@row:=@row+1) as num,
+            id,
+            system,
+            name,
+            type,
+            nodeAll,
+            nodeDead,
+            nodeLive,
+            nodeDecommisioning,
+            blocksTotal,
+            corrupt,
+            underReplicatedBlocks,
+            totalFiles,
+            totalBlocks,
+            totalLoad,
+            capacityRemaining,
+            capacityRemainingPercent,
+            capacityTotal,
+            capacityUsed,
+            capacityUsedNonDFS,
+            capacityUsedPercent,
+            editLogSize,
+            free,
+            used,
+            total,
+            threads,
+            jvmMaxMemory,
+            jvmTotalMemory,
+            jvmFreeMemory,
+            jvmUsedMemory,
+            reg_dt,
+            yyyy,
+            mm,
+            dd
+        FROM FL_CL_HDFS, (SELECT @row := 0) r
+        WHERE 1=1
+            AND system = #{system}
+            AND reg_dt > DATE_ADD(now(), INTERVAL -7 DAY)
+        ORDER BY reg_dt ASC
+    </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+    <bannerLeft>
+        <name>MapReduce ETL</name>
+        <src>images/logo.png</src>
+        <href>http://www.openflamingo.org</href>
+    </bannerLeft>
+    <!--
+        <bannerRight>
+            <src>images/title.png</src>
+        </bannerRight>
+    -->
+    <body>
+        <menu name="Official Site">
+            <item name="Blog" href="http://www.openflamingo.org"/>
+            <item name="Maven Repository" href="http://nexus.openflamingo.org"/>
+            <item name="Issue Tracker" href="http://jira.openflamingo.org"/>
+            <item name="Wiki" href="http://confluence.openflamingo.org"/>
+            <item name="FishEye" href="http://fisheye.openflamingo.org"/>
+            <item name="Subversion" href="http://www.openflamingo.org/svn/openflamingo/flamingo"/>
+        </menu>
+        <menu name="MapReduce ETL">
+            <item name="Clean ETL" href="clean.html"/>
+            <item name="Aggregate ETL" href="aggregate.html"/>
+        </menu>
+        <menu ref="reports"/>
+    </body>
+
+</project>

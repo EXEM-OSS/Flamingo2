@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.backend.UserEventRepository">
+
+    <insert id="insert" parameterType="org.opencloudengine.flamingo2.engine.backend.UserEvent"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO FL_USER_EVENTS
+        (
+            NAME,
+            REG_DT,
+            STATUS,
+            MESSAGE,
+            IS_SEE,
+	        IDENTIFIER,
+	        REF_ID,
+            USERNAME,
+            YYYY,
+            MM,
+            DD
+        )
+        VALUES
+        (
+            #{name},
+            #{registrationDate},
+            #{status},
+            #{message},
+            #{isSee},
+            #{identifier},
+            #{referenceId},
+            #{username},
+            #{yyyy},
+            #{mm},
+            #{dd}
+        )
+    </insert>
+
+    <update id="updateByIdentifier" parameterType="org.opencloudengine.flamingo2.engine.backend.UserEvent">
+        UPDATE
+            FL_USER_EVENTS
+        SET
+            NAME = #{name},
+            MESSAGE = #{message},
+            STATUS = #{status}
+        WHERE IDENTIFIER = #{identifier}
+    </update>
+
+    <update id="updateSawEvent">
+        UPDATE
+            FL_USER_EVENTS
+        SET
+            IS_SEE = TRUE
+        WHERE IDENTIFIER = #{value}
+    </update>
+
+    <select id="select" parameterType="map" resultType="org.opencloudengine.flamingo2.engine.backend.UserEvent">
+        SELECT
+            ID as id,
+            NAME as name,
+            REG_DT as registrationDate,
+            STATUS as status,
+            MESSAGE as message,
+            IS_SEE as isSee,
+	        IDENTIFIER as identifier,
+	        REF_ID as referenceId,
+            USERNAME as username,
+            YYYY as yyyy,
+            MM as mm,
+            DD as dd
+        FROM FL_USER_EVENTS
+	    WHERE 1=1
+	  		<if test="conditionKey != null and conditionKey != ''">
+	  			AND ${conditionKey} like concat('%', #{conditionValue}, '%')
+	  		</if>
+    </select>
+
+    <select id="selectByIdentifier" resultType="org.opencloudengine.flamingo2.engine.backend.UserEvent">
+        SELECT
+            ID as id,
+            NAME as name,
+            REG_DT as registrationDate,
+            STATUS as status,
+            MESSAGE as message,
+            IS_SEE as isSee,
+	        IDENTIFIER as identifier,
+	        REF_ID as referenceId,
+            USERNAME as username,
+            YYYY as yyyy,
+            MM as mm,
+            DD as dd
+        FROM FL_USER_EVENTS
+	    WHERE 1=1
+        AND IDENTIFIER = #{value}
+    </select>
+
+    <select id="selectBySee" parameterType="string" resultType="org.opencloudengine.flamingo2.engine.backend.UserEvent">
+        SELECT
+            ID as id,
+            NAME as name,
+            REG_DT as registrationDate,
+            STATUS as status,
+            MESSAGE as message,
+            IS_SEE as isSee,
+	        IDENTIFIER as identifier,
+	        REF_ID as referenceId,
+            USERNAME as username,
+            YYYY as yyyy,
+            MM as mm,
+            DD as dd
+        FROM FL_USER_EVENTS
+        WHERE 1=1 AND USERNAME = #{value} AND IS_SEE IS FALSE
+        ORDER BY ID DESC
+    </select>
+
+	<select id="totalCount" parameterType="map">
+		SELECT count(*)
+		FROM FL_USER_EVENTS
+		WHERE 1=1
+		<if test="conditionKey != null and conditionKey != ''">
+			AND ${conditionKey} like concat('%', #{conditionValue}, '%')
+		</if>
+	</select>
+
+</mapper>

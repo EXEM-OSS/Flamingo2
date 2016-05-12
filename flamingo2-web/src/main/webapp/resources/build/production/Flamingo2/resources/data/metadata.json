@@ -1,0 +1,103 @@
+/*{
+  "list": */[
+    {
+      "id": "MT001",
+      "text": "샘플1",
+      "value": "MT001",
+      "remark": "",
+      "sort_order": "",
+      "use_yn": "Y",
+      "children": [
+        {
+          "parentId": "MT001",
+          "id": "MT001001",
+          "text": "샘플1-1",
+          "value": "MT001001",
+          "remark": "",
+          "sort_order": "",
+          "use_yn": "Y",
+          "children": [
+            {
+              "parentId": "MT001001",
+              "id": "MT001001001",
+              "text": "샘플1-1-1",
+              "value": "MT001001001",
+              "remark": "",
+              "sort_order": "",
+              "use_yn": "Y",
+              "leaf": true
+            },
+            {
+              "parentId": "MT001001",
+              "id": "MT001001002",
+              "text": "샘플1-1-2",
+              "value": "MT001001002",
+              "remark": "",
+              "sort_order": "",
+              "use_yn": "Y",
+              "leaf": true
+            }
+          ]
+        },
+        {
+          "parentId": "MT001",
+          "id": "MT001002",
+          "text": "샘플1-2",
+          "value": "MT001002",
+          "remark": "",
+          "sort_order": "",
+          "use_yn": "Y",
+          "leaf": true
+        },
+        {
+          "parentId": "MT001",
+          "id": "MT001003",
+          "text": "샘플1-3",
+          "value": "MT001003",
+          "remark": "",
+          "sort_order": "",
+          "use_yn": "Y",
+          "leaf": true
+        },
+        {
+          "parentId": "MT001",
+          "id": "MT001004",
+          "text": "샘플1-4",
+          "value": "MT001004",
+          "remark": "",
+          "sort_order": "",
+          "use_yn": "Y",
+          "leaf": true
+        }
+      ]
+    },
+    {
+      "id": "MT002",
+      "text": "샘플2",
+      "value": "MT002",
+      "remark": "",
+      "sort_order": "",
+      "use_yn": "Y",
+      "leaf": true
+    },
+    {
+      "id": "MT003",
+      "text": "샘플3",
+      "value": "MT003",
+      "remark": "",
+      "sort_order": "",
+      "use_yn": "Y",
+      "leaf": true
+    },
+    {
+      "id": "MT004",
+      "text": "샘플4",
+      "value": "MT004",
+      "remark": "",
+      "sort_order": "",
+      "use_yn": "Y",
+      "leaf": true
+    }
+  ]
+/*
+}*/

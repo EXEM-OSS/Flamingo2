@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+            http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- ========================= PROPERTY PLACE HOLDER DEFINITION ========================= -->
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>/WEB-INF/config.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- ========================= PROPERTIES DEFINITION ========================= -->
+
+    <util:properties id="config" location="/WEB-INF/config.properties"/>
+
+    <!-- ========================= COMPONENT SCAN DEFINITION ========================= -->
+
+    <context:annotation-config/>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <ref bean="stringHttpMessageConverter"/>
+            <ref bean="jsonConverter"/>
+            <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <context:component-scan base-package="org.opencloudengine.flamingo2.collector"/>
+
+    <!-- ========================= VIEW RESOLVER ========================= -->
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- ========================= REST DEFINITION ========================= -->
+
+    <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <property name="defaultContentType" value="application/json"/>
+        <property name="favorPathExtension" value="true"/>
+        <property name="favorParameter" value="false"/>
+        <property name="parameterName" value="type"/>
+        <property name="ignoreAcceptHeader" value="false"/>
+        <property name="useJaf" value="false"/>
+        <property name="mediaTypes">
+            <map>
+                <entry key="json" value="application/json"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- ========================= EXCEPTION RESOLVER DEFINITION ========================= -->
+
+    <bean id="exceptionResolverComposite"
+          class="org.springframework.web.servlet.handler.HandlerExceptionResolverComposite">
+        <property name="exceptionResolvers">
+            <list>
+                <bean id="exceptionResolver"
+                      class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver">
+                    <property name="contentNegotiationManager" ref="contentNegotiationManager"/>
+                </bean>
+            </list>
+        </property>
+        <property name="order" value="0"/>
+    </bean>
+
+    <!-- ========================= MESSAGE CONVERTER DEFINITION ========================= -->
+
+    <bean id="jsonMediaType" class="org.springframework.http.MediaType">
+        <constructor-arg value="application"/>
+        <constructor-arg value="json"/>
+    </bean>
+
+    <bean id="xmlMediaType" class="org.springframework.http.MediaType">
+        <constructor-arg value="application"/>
+        <constructor-arg value="xml"/>
+    </bean>
+
+    <bean id="stringMediaType" class="org.springframework.http.MediaType">
+        <constructor-arg value="text"/>
+        <constructor-arg value="plain"/>
+    </bean>
+
+    <bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <util:list>
+                <ref bean="jsonMediaType"/>
+            </util:list>
+        </property>
+        <property name="prettyPrint" value="true"/>
+        <property name="objectMapper" ref="jacksonObjectMapper"/>
+    </bean>
+
+    <bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+        <constructor-arg type="java.nio.charset.Charset">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="staticMethod" value="java.nio.charset.Charset.forName"/>
+                <property name="arguments">
+                    <list>
+                        <!-- Set Default Charset -->
+                        <bean class="java.lang.String">
+                            <constructor-arg value="UTF-8"/>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </constructor-arg>
+
+        <property name="supportedMediaTypes">
+            <util:list>
+                <ref bean="jsonMediaType"/>
+                <ref bean="stringMediaType"/>
+            </util:list>
+        </property>
+    </bean>
+
+    <!-- ========================= APPLICATION CONTEXT SERVICE DEFINITION ========================= -->
+
+    <bean id="applicationContextService" class="org.opencloudengine.flamingo2.util.ApplicationContextRegistry"/>
+
+    <bean id="jacksonObjectMapper" class="org.opencloudengine.flamingo2.util.ObjectMapperFactoryBean">
+        <property name="indentOutput" value="false"/>
+    </bean>
+
+</beans>

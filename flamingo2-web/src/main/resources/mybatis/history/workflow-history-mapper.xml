@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.history.WorkflowHistoryRepository">
+
+    <!-- =======================================-->
+    <!-- 1. Insert                              -->
+    <!-- =======================================-->
+
+    <insert id="insert" parameterType="org.opencloudengine.flamingo2.model.rest.WorkflowHistory" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO FL_WORKFLOW_HISTORY (
+            WORKFLOW_NAME,
+            WORKFLOW_ID,
+            JOB_ID,
+            JOB_ID_STRING,
+            JOB_NAME,
+            WORKFLOW_XML,
+            VARIABLE,
+            START_DATE,
+            END_DATE,
+            USERNAME,
+            ELAPSED,
+            CURRENT_STEP,
+            TOTAL_STEP,
+            STATUS,
+            JOB_TYPE,
+            SF_PARENT_IDENTIFIER,
+            SF_ROOT_IDENTIFIER,
+            SF_DEPTH,
+            SF_TASK_ID
+        )
+        VALUES (
+            #{workflowName},
+            #{workflowId},
+            #{jobId},
+            #{jobStringId},
+            #{jobName},
+            #{workflowXml},
+            #{variable},
+            #{startDate},
+            #{endDate},
+            #{username},
+            #{elapsed},
+            #{currentStep},
+            #{totalStep},
+            #{status},
+            #{jobType},
+            #{sf_parentIdentifier},
+            #{sf_rootIdentifier},
+            #{sf_depth},
+            #{sf_taskId}
+        )
+    </insert>
+
+    <select id="selectByJobId" resultType="org.opencloudengine.flamingo2.model.rest.WorkflowHistory">
+        SELECT
+            ID as id,
+            WORKFLOW_ID as workflowId,
+            JOB_ID as jobId,
+            JOB_ID_STRING as jobStringId,
+            WORKFLOW_NAME as workflowName,
+            CURRENT_ACTION as currentAction,
+            JOB_NAME as jobName,
+            WORKFLOW_XML as workflowXml,
+            VARIABLE as variable,
+            START_DATE as startDate,
+            END_DATE as endDate,
+            CAUSE as cause,
+            CURRENT_STEP as currentStep,
+            TOTAL_STEP as totalStep,
+            ELAPSED as elapsed,
+            EXCEPTION as exception,
+            STATUS as status,
+            USERNAME as username,
+            SF_PARENT_IDENTIFIER as sf_parentIdentifier,
+            SF_ROOT_IDENTIFIER as sf_rootIdentifier,
+            SF_DEPTH as sf_depth,
+            SF_TASK_ID as sf_taskId
+        FROM FL_WORKFLOW_HISTORY
+        WHERE IDENTIFIER = #{value}
+    </select>
+
+    <select id="selectByIdentifier" resultType="org.opencloudengine.flamingo2.model.rest.WorkflowHistory">
+        SELECT
+            ID as id,
+            WORKFLOW_ID as workflowId,
+            JOB_ID as jobId,
+            JOB_ID_STRING as jobStringId,
+            WORKFLOW_NAME as workflowName,
+            CURRENT_ACTION as currentAction,
+            JOB_NAME as jobName,
+            WORKFLOW_XML as workflowXml,
+            VARIABLE as variable,
+            START_DATE as startDate,
+            END_DATE as endDate,
+            CAUSE as cause,
+            CURRENT_STEP as currentStep,
+            TOTAL_STEP as totalStep,
+            ELAPSED as elapsed,
+            EXCEPTION as exception,
+            STATUS as status,
+            USERNAME as username,
+            SF_PARENT_IDENTIFIER as sf_parentIdentifier,
+            SF_ROOT_IDENTIFIER as sf_rootIdentifier,
+            SF_DEPTH as sf_depth,
+            SF_TASK_ID as sf_taskId
+        FROM FL_WORKFLOW_HISTORY
+        WHERE JOB_ID_STRING = #{value}
+    </select>
+
+    <select id="selectByCondition" parameterType="map" resultType="org.opencloudengine.flamingo2.model.rest.WorkflowHistory">
+        SELECT
+            ID as id,
+            WORKFLOW_ID as workflowId,
+            JOB_ID as jobId,
+            JOB_ID_STRING as jobStringId,
+            WORKFLOW_NAME as workflowName,
+            CURRENT_ACTION as currentAction,
+            JOB_NAME as jobName,
+            WORKFLOW_XML as workflowXml,
+            VARIABLE as variable,
+            START_DATE as startDate,
+            END_DATE as endDate,
+            CAUSE as cause,
+            CURRENT_STEP as currentStep,
+            TOTAL_STEP as totalStep,
+            ELAPSED as elapsed,
+            EXCEPTION as exception,
+            STATUS as status,
+            USERNAME as username,
+            SF_PARENT_IDENTIFIER as sf_parentIdentifier,
+            SF_ROOT_IDENTIFIER as sf_rootIdentifier,
+            SF_DEPTH as sf_depth,
+            SF_TASK_ID as sf_taskId
+        FROM FL_WORKFLOW_HISTORY
+        WHERE 1=1
+        <if test="sf_parentIdentifier == null or sf_parentIdentifier == ''">
+            AND SF_PARENT_IDENTIFIER is NULL
+        </if>
+        <if test="sf_parentIdentifier != null and sf_parentIdentifier != ''">
+            AND SF_PARENT_IDENTIFIER = #{sf_parentIdentifier}
+        </if>
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+        <if test="workflowName != null and workflowName != ''">
+            AND WORKFLOW_NAME like concat('%', #{workflowName}, '%')
+        </if>
+        <if test="status != null and status != '' and status != 'ALL'">
+            AND STATUS = #{status}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            <![CDATA[ AND START_DATE >= #{startDate} ]]>
+        </if>
+        <if test="endDate != null and endDate != ''">
+            <![CDATA[ AND END_DATE <= #{endDate}]]>
+        </if>
+        ORDER BY START_DATE DESC
+        LIMIT ${start}, ${limit}
+    </select>
+
+    <select id="totalCount" resultType="int"  parameterType="map">
+        SELECT count(*)
+        FROM FL_WORKFLOW_HISTORY
+        WHERE 1=1
+        <if test="sf_parentIdentifier == null or sf_parentIdentifier == ''">
+            AND SF_PARENT_IDENTIFIER is NULL
+        </if>
+        <if test="sf_parentIdentifier != null and sf_parentIdentifier != ''">
+            AND SF_PARENT_IDENTIFIER = #{sf_parentIdentifier}
+        </if>
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+        <if test="workflowName != null and workflowName != ''">
+            AND WORKFLOW_NAME like concat('%', #{workflowName}, '%')
+        </if>
+        <if test="status != null and status != '' and status != 'ALL'">
+            AND STATUS = #{status}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            <![CDATA[ AND START_DATE >= #{startDate} ]]>
+        </if>
+        <if test="endDate != null and endDate != ''">
+            <![CDATA[ AND END_DATE <= #{endDate}]]>
+        </if>
+    </select>
+
+    <select id="selectTimeSeries" resultType="int"  parameterType="string">
+        SELECT
+        (@row:=@row+1) as num,
+        count(*) as sum,
+        DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time,
+        <if test="status != 'SUCCESS">
+            STATUS as type
+        </if>
+        <if test="status != 'FAILED">
+            STATUS as type
+        </if>
+        START_DATE
+        FROM FL_WORKFLOW_HISTORY, (SELECT @row := 0) r
+        WHERE START_DATE > DATE_ADD(now(), INTERVAL -7 DAY)
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+        <if test="status != 'SUCCESS">
+            STATUS = 'SUCCESS'
+        </if>
+        <if test="status != 'FAILED">
+            STATUS = 'FAILED'
+        </if>
+        GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H')
+        ORDER BY START_DATE asc
+    </select>
+
+    <update id="update" parameterType="org.opencloudengine.flamingo2.model.rest.WorkflowHistory">
+        UPDATE FL_WORKFLOW_HISTORY
+        SET
+            END_DATE = #{endDate},
+            ELAPSED = #{elapsed},
+            STATUS = #{status}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateStatus" parameterType="org.opencloudengine.flamingo2.model.rest.WorkflowHistory">
+        UPDATE FL_WORKFLOW_HISTORY
+        SET
+            STATUS = #{status}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateCurrentStep" parameterType="org.opencloudengine.flamingo2.model.rest.WorkflowHistory">
+        UPDATE FL_WORKFLOW_HISTORY
+        SET
+            CURRENT_ACTION = #{currentAction},
+            CURRENT_STEP = CURRENT_STEP + 1
+        WHERE ID = #{id}
+    </update>
+
+</mapper>

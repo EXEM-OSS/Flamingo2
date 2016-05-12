@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+                                 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- REST 기반 인증 처리를 위한 Authentication Entry Point -->
+	<http realm="Flamingo Protected Area"
+	      use-expressions="true"
+	      auto-config="false"
+	      create-session="never"
+	      entry-point-ref="restAuthenticationEntryPoint">
+
+		<form-login login-page="/index"
+		            login-processing-url="/j_spring_security_check"
+		            default-target-url="/main"
+		            authentication-failure-url="/login"
+					always-use-default-target="true"
+		            username-parameter="username"
+		            password-parameter="password"/>
+
+		<access-denied-handler error-page="/index"/>
+
+		<logout logout-url="/auth/logout" invalidate-session="true" logout-success-url="/index"/>
+
+		<intercept-url pattern="/j_spring_security_check" access="permitAll"/>
+		<intercept-url pattern="/*.ico" access="permitAll"/>
+		<intercept-url pattern="/auth/**/*" access="permitAll"/>
+		<intercept-url pattern="/redirect" access="permitAll"/>
+		<intercept-url pattern="/forward" access="permitAll"/>
+		<intercept-url pattern="/" access="permitAll"/>
+		<intercept-url pattern="/index" access="permitAll"/>
+        <intercept-url pattern="/license" access="permitAll"/>
+		<intercept-url pattern="/index.jsp" access="permitAll"/>
+		<intercept-url pattern="/rstudio.jsp" access="permitAll"/>
+		<intercept-url pattern="/config/**/*" access="permitAll"/>
+		<intercept-url pattern="/websocket" access="permitAll"/>
+		<intercept-url pattern="/login" access="permitAll"/>
+		<intercept-url pattern="/expired" access="permitAll"/>
+		<intercept-url pattern="/remote/**/*" access="permitAll"/>
+		<intercept-url pattern="/resources/**/*" access="permitAll"/>
+		<intercept-url pattern="/ggplot2/**/*" access="permitAll"/>
+		<intercept-url pattern="/hawq/auth/**/*" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/system/license/regist" access="permitAll"/>
+
+		<intercept-url pattern="/**" access="hasRole('ROLE_USER')"/>
+
+		<custom-filter ref="sessionManagementFilter" before="SESSION_MANAGEMENT_FILTER"/>
+	</http>
+
+	<beans:bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		<beans:property name="authenticationManager" ref="authenticationManager"/>
+		<beans:property name="postOnly" value="false"/>
+		<beans:property name="authenticationSuccessHandler">
+			<beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<beans:property name="useReferer" value="false"/>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+
+	<!-- Spring Security의 Authentication Manager -->
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider>
+			<jdbc-user-service data-source-ref="dataSource"
+			                   users-by-username-query="SELECT USER_NM as username, PASSWD as password, ENABLED as enabled FROM FL_USER WHERE USER_NM = ?"
+			                   authorities-by-username-query="SELECT J.USER_NM as username, AU.AUTHORITY as authority FROM ( SELECT U.USER_NM, A.AUTH_ID FROM FL_USER U, FL_USER_AUTH A WHERE U.ID = A.USER_ID AND U.USER_NM = ? ) J, FL_AUTHORITIES AU WHERE J.AUTH_ID = AU.ID"/>
+			<password-encoder ref="passwordEncoder"/>
+		</authentication-provider>
+	</authentication-manager>
+
+	<!-- Secure Role annotation을 활성화 -->
+	<global-method-security secured-annotations="enabled"/>
+
+	<!-- 패스워드 암호화를 위한 Encoder -->
+	<beans:bean id="passwordEncoder" class="org.opencloudengine.flamingo2.web.security.AESPasswordEncoder">
+        <beans:property name="secretKey1" value="${security.password.encoder.secret1}"/>
+        <beans:property name="secretKey2" value="${security.password.encoder.secret2}"/>
+	</beans:bean>
+
+	<!-- AjaxInvalidStrategy -->
+	<beans:bean id="sessionManagementFilter" class="org.springframework.security.web.session.SessionManagementFilter">
+		<beans:constructor-arg name="securityContextRepository" ref="httpSessionSecurityContextRepository" />
+		<beans:property name="invalidSessionStrategy" ref="jsfRedirectStrategy" />
+	</beans:bean>
+
+	<beans:bean id="jsfRedirectStrategy" class="org.opencloudengine.flamingo2.core.security.AjaxInvalidStrategy">
+		<beans:property name="invalidSessionUrl" value="/index" />
+	</beans:bean>
+
+	<beans:bean id="httpSessionSecurityContextRepository" class="org.springframework.security.web.context.HttpSessionSecurityContextRepository"/>
+
+
+</beans:beans>

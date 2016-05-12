@@ -1,0 +1,1091 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<queries xmlns="http://www.flamingo2.com"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.flamingo2.com ">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <query id="SHOW_PID_QUERY">
+        <![CDATA[
+
+SELECT pg_backend_pid();
+
+        ]]>
+    </query>
+
+    <query id="SHOW_DEFAULT_DATABASES_QUERY">
+        <![CDATA[
+
+SELECT
+    datname
+   ,pg_encoding_to_char(encoding) encoding
+FROM
+    pg_database
+WHERE
+    datname = #{userName}
+ORDER BY
+    datname;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_HAWQ_AUTO_COMMIT_QUERY">
+        <![CDATA[
+
+show autocommit;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_HAWQ_VERSION_QUERY">
+        <![CDATA[
+
+SELECT
+    productversion
+FROM
+    pg_catalog.gp_version_at_initdb;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_ALL_DATABASES_QUERY">
+        <![CDATA[
+
+SELECT
+    datname "databaseName"
+FROM
+    pg_database
+ORDER BY
+    datname;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_EXIST_DATABASE_QUERY">
+        <![CDATA[
+
+SELECT
+    CASE count(*)
+        WHEN 0 THEN false
+        ELSE true
+    END exist
+FROM
+    pg_database
+WHERE
+    datname = #{newDatabaseName};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_SCHEMAS_QUERY">
+        <![CDATA[
+
+SELECT
+    schema_name "schemaName"
+FROM
+    information_schema.schemata
+WHERE
+    schema_name NOT IN (
+        'pg_aoseg'
+       --,'information_schema'
+       ,'pg_bitmapindex'
+       --,'pg_catalog'
+       ,'pg_toast')
+ORDER BY
+    schema_name;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_DEFAULT_SCHEMA_QUERY">
+        <![CDATA[
+
+SHOW search_path;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_TABLES_QUERY">
+        <![CDATA[
+
+SELECT
+    t.table_catalog
+   ,t.table_schema
+   ,t.table_name
+   ,t.table_type
+   ,t.is_insertable_into
+   ,t.is_typed
+   ,c.relstorage
+   ,c.oid::int
+   ,'TABLE' object_type
+   ,'('||pg_size_pretty(pg_relation_size(c.oid))||')' table_size
+   ,'('||pg_size_pretty(
+        (
+            SELECT
+                sum(pg_relation_size(ns.nspname||'.'||pp.partitiontablename))
+            FROM
+                pg_class cl
+                    INNER JOIN pg_namespace ns ON cl.relnamespace = ns.oid
+                    INNER JOIN pg_partitions pp ON cl.relname = pp.tablename
+            WHERE pp.tablename = c.relname
+        )::bigint
+   )||')' size
+FROM
+    information_schema.tables t
+    INNER JOIN pg_namespace s ON t.table_schema = s.nspname
+    INNER JOIN pg_class c ON t.table_name = c.relname AND s.oid = c.relnamespace
+    LEFT JOIN pg_partitions p ON t.table_name = p.partitiontablename
+WHERE
+    p.tablename IS NULL
+GROUP BY
+    t.table_catalog
+   ,t.table_schema
+   ,t.table_name
+   ,t.table_type
+   ,t.is_insertable_into
+   ,t.is_typed
+   ,c.relstorage
+   ,p.partitiontablename
+   ,c.oid
+   ,c.relname
+HAVING
+    t.table_catalog = #{databaseName} AND
+    t.table_schema = #{schemaName} AND
+    c.relstorage NOT IN ('v', 'x')
+ORDER BY
+    t.table_name;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_VIEWS_QUERY">
+        <![CDATA[
+
+SELECT
+    c.oid::int
+   ,t.table_catalog
+   ,t.table_schema
+   ,t.table_name
+   ,t.table_type
+   ,t.is_insertable_into
+   ,t.is_typed
+   ,'VIEW' object_type
+FROM
+    information_schema.tables t
+    INNER JOIN pg_namespace s ON t.table_schema = s.nspname
+    INNER JOIN pg_class c ON t.table_name = c.relname AND s.oid = c.relnamespace
+    LEFT JOIN pg_partitions p ON t.table_name = p.partitiontablename
+WHERE
+    t.table_catalog = #{databaseName} AND
+    t.table_schema = #{schemaName} AND
+    t.table_type = 'VIEW'
+ORDER BY
+    t.table_name;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_EXTERNAL_TABLES_QUERY">
+        <![CDATA[
+
+SELECT
+    t.table_catalog
+   ,t.table_schema
+   ,t.table_name
+   ,t.table_type
+   ,t.is_insertable_into
+   ,t.is_typed
+   ,c.relstorage
+   ,c.oid::int
+   ,'EXTTABLE' object_type
+FROM
+    information_schema.tables t
+    INNER JOIN pg_namespace s ON t.table_schema = s.nspname
+    INNER JOIN pg_class c ON t.table_name = c.relname AND s.oid = c.relnamespace
+GROUP BY
+    t.table_catalog
+   ,t.table_schema
+   ,t.table_name
+   ,t.table_type
+   ,t.is_insertable_into
+   ,t.is_typed
+   ,c.relstorage
+   ,c.oid
+HAVING
+    t.table_catalog = #{databaseName} AND
+    t.table_schema = #{schemaName} AND
+    c.relstorage = 'x'
+ORDER BY
+    t.table_name;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_FUNCTIONS_QUERY">
+        <![CDATA[
+
+SELECT
+    p.oid
+   ,a.rolname
+   ,n.nspname
+   ,p.proname
+   ,l.lanname
+   ,p.pronargs
+   ,p.prorettype::regtype
+   ,oidvectortypes(p.proargtypes) proargtypes
+   ,p.prosrc
+   ,p.proname||'('||oidvectortypes(p.proargtypes)||')' procdesc
+   ,'FUNCTION' object_type
+FROM pg_proc p
+    INNER JOIN pg_namespace n ON n.oid = p.pronamespace
+    INNER JOIN pg_authid a ON a.oid = p.proowner
+    INNER JOIN pg_language l ON l.oid = p.prolang
+WHERE
+    n.nspname = #{schemaName} AND
+    p.prorettype != 'trigger'::regtype
+ORDER BY
+    p.proname;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_COLUMNS_QUERY">
+        <![CDATA[
+
+SELECT
+    table_catalog
+   ,table_schema
+   ,table_name
+   ,column_name
+   ,ordinal_position
+   ,column_default
+   ,is_nullable
+   ,data_type
+   ,character_maximum_length
+   ,col_description(#{dbSchemaTable}::regclass, ordinal_position) column_comment
+FROM
+    information_schema.columns
+WHERE
+    table_catalog = #{databaseName} AND
+    table_schema = #{schemaName} AND
+    table_name = #{tableName}
+ORDER BY
+    ordinal_position;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_EXTERNAL_TABLE_INFORMATION_QUERY">
+        <![CDATA[
+
+SELECT
+    e.reloid::int
+   ,array_to_string(e.location, '\uF8FF') locations
+   ,e.fmttype
+   ,e.fmtopts
+   ,e.command
+   ,e.rejectlimit
+   ,c.relname errrelname
+   ,pg_encoding_to_char(e.encoding) encoding
+   ,e.writable
+   ,CASE
+        WHEN (command != '') OR (substring(array_to_string(location, ',') FROM 1 FOR 4) = 'http') THEN true
+        ELSE false
+    END "web"
+FROM
+    pg_exttable e
+        LEFT JOIN pg_class c ON e.fmterrtbl = c.oid
+WHERE
+    e.reloid = #{oid};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_TABLE_INFORMATION_QUERY">
+        <![CDATA[
+
+SELECT
+    DISTINCT
+    cl.oid "OID"
+   ,c.table_catalog "Database"
+   ,c.table_schema "Schema"
+   ,cl.relname "Table Name"
+   ,a.rolname "Owner"
+   ,CASE cl.relkind
+        WHEN 'r' THEN 'heap or append-only table'::text
+        WHEN 'i' THEN 'index'::text
+        WHEN 'S' THEN 'sequence'::text
+        WHEN 'v' THEN 'view'::text
+        WHEN 'c' THEN 'composite type'::text
+        WHEN 's' THEN 'special'::text
+        WHEN 't' THEN 'TOAST value'::text
+        WHEN 'o' THEN 'internal append-only segment files and EOFs'::text
+        WHEN 'u' THEN 'uncataloged temporary heap table'::text
+        ELSE cl.relkind
+    END
+        "Kind"
+   ,CASE cl.relstorage
+        WHEN 'a' THEN 'append-only'::text
+        WHEN 'c' THEN 'column oriented'::text
+        WHEN 'h' THEN 'heap'::text
+        WHEN 'p' THEN 'parquet'::text
+        WHEN 'v' THEN 'virtual'::text
+        WHEN 'x' THEN 'external'::text
+        ELSE cl.relstorage
+    END "Storage"
+   ,cl.relnatts "Column Count"
+   ,t.is_insertable_into "Insertable"
+   ,cl.reloptions
+   ,obj_description(#{dbSchemaTable}::regclass, 'pg_class') "Comment"
+   ,pg_get_viewdef(#{dbSchemaTable}::regclass) "View Definition"
+FROM
+    information_schema.columns c
+    INNER JOIN information_schema.tables t ON c.table_name = t.table_name
+    INNER JOIN pg_class cl ON c.table_name = cl.relname
+    INNER JOIN pg_authid a ON cl.relowner = a.oid
+WHERE
+    c.table_catalog = #{databaseName} AND
+    c.table_schema = #{schemaName} AND
+    c.table_name = #{tableName};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_INHERITS_QUERY">
+        <![CDATA[
+
+SELECT
+	pns.nspname||'.'||pc.relname parent
+FROM
+	pg_inherits i
+	INNER JOIN pg_class ic ON i.inhrelid = ic.oid
+	INNER JOIN pg_namespace ins ON ic.relnamespace = ins.oid
+	INNER JOIN pg_class pc ON i.inhparent = pc.oid
+	INNER JOIN pg_namespace pns ON pc.relnamespace = pns.oid
+WHERE
+	i.inhrelid = #{oid}
+ORDER BY
+	i.inhseqno;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_TABLE_ROW_COUNT_QUERY">
+        <![CDATA[
+
+SELECT
+    count(*) "Row Count"
+FROM
+    ${dbSchemaTable};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_TABLESPACES_QUERY">
+        <![CDATA[
+
+SELECT
+    spcname
+FROM
+    pg_tablespace
+ORDER BY
+    spcname;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_USERS_QUERY">
+        <![CDATA[
+
+SELECT
+    usename _username
+FROM
+    pg_user
+ORDER BY
+    usename;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_CUSTOM_FORMATTER_QUERY">
+        <![CDATA[
+
+SELECT
+    p.proname
+FROM
+    pg_proc p
+    INNER JOIN pg_namespace n ON n.oid = p.pronamespace
+    INNER JOIN pg_authid a ON a.oid = p.proowner
+    INNER JOIN pg_language l ON l.oid = p.prolang
+WHERE
+    (p.prorettype = 'record'::regtype OR oidvectortypes(p.proargtypes) = 'record') AND
+    l.lanname != 'internal' AND
+    n.nspname = 'pg_catalog'
+ORDER BY p.proname;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_TABLE_DETAIL_QUERY">
+        <![CDATA[
+
+SELECT
+    DISTINCT
+    a.rolname "owner"
+   ,c.table_catalog "databaseName"
+   ,c.table_schema "schemaName"
+   ,cl.relname "tableName"
+   ,array_to_string(cl.reloptions, ',') reloptions
+   ,obj_description(#{dbSchemaTable}::text::regclass, 'pg_class') table_comment
+   ,pg_get_viewdef(#{dbSchemaTable}::text::regclass) viewdef
+   ,e.location
+   ,CASE e.fmttype
+        WHEN 't' THEN 'TEXT'::text
+        WHEN 'c' THEN 'CSV'::text
+        WHEN 'b' THEN 'CUSTOM'::text
+        ELSE e.fmttype
+    END fmttype
+   ,e.fmtopts
+   ,e.command
+   ,e.rejectlimit
+   ,er.relname errrelname
+   ,pg_encoding_to_char(e.encoding) encoding
+   ,e.writable
+   ,CASE
+        WHEN (command != '') OR (substring(array_to_string(location, ',') FROM 1 FOR 4) = 'http') THEN true
+        ELSE false
+    END "web"
+FROM
+    information_schema.columns c
+    INNER JOIN information_schema.tables t ON c.table_name = t.table_name
+    INNER JOIN pg_class cl ON c.table_name = cl.relname
+    INNER JOIN pg_authid a ON cl.relowner = a.oid
+    LEFT JOIN pg_exttable e ON cl.oid = e.reloid
+    LEFT JOIN pg_class er ON e.fmterrtbl = er.oid
+WHERE
+    c.table_catalog = #{databaseName} AND
+    c.table_schema = #{schemaName} AND
+    c.table_name = #{tableName};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_CONSTRAINTS_QUERY">
+        <![CDATA[
+
+SELECT
+    conname
+   ,contype
+   ,array_to_string(conkey, ',') conkeys
+   ,array_upper(conkey, 1) length
+   ,substring(consrc from 2 for char_length(consrc) - 2) consrc
+FROM
+    pg_constraint
+WHERE
+    #{dbSchemaTable}::regclass = conrelid
+ORDER BY
+    length
+   ,conname;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_PARTITION_DEF_QUERY">
+        <![CDATA[
+
+SELECT pg_get_partition_def(#{dbSchemaTable}::regclass) partitiondef;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_PARTITION_QUERY">
+        <![CDATA[
+
+SELECT
+    c.oid id
+   ,c.oid
+   ,ns.nspname
+   ,c.relname
+   ,c.relname table_name
+   ,c.relname text
+   ,c.relhassubclass
+   ,not(c.relhassubclass) leaf
+   ,pr.parname
+   ,t.table_type
+   ,'TABLE' object_type
+   ,c.relstorage
+FROM pg_class c
+    INNER JOIN pg_partition_rule pr ON c.oid = pr.parchildrelid
+    INNER JOIN pg_inherits i ON c.oid = i.inhrelid
+    INNER JOIN pg_namespace ns ON c.relnamespace = ns.oid
+    INNER JOIN information_schema.tables t ON (t.table_name = c.relname AND ns.oid = c.relnamespace)
+WHERE
+    c.relkind = 'r' AND
+    i.inhparent = #{oid}::oid
+ORDER BY
+    c.relname;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_PARTITION_DETAIL_QUERY">
+        <![CDATA[
+
+SELECT
+    schemaname
+   ,tablename
+   ,partitiontablename
+   ,partitionname
+   ,parentpartitiontablename
+   ,parentpartitionname
+   ,partitiontype
+   ,partitionlevel
+   ,partitionrank
+   ,partitionposition
+   ,partitionlistvalues
+   ,partitionrangestart
+   ,partitionstartinclusive
+   ,partitionrangeend
+   ,partitionendinclusive
+   ,partitioneveryclause
+   ,partitionisdefault
+   ,partitionboundary
+   ,parenttablespace
+   ,partitiontablespace
+FROM
+    pg_partitions
+WHERE
+    schemaname = #{schemaName} AND
+    partitiontablename = #{tableName};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_DISTRIBUTED_QUERY">
+        <![CDATA[
+
+SELECT
+    cl.relname
+   ,array_to_string(dp.attrnums, ',') attrnums
+FROM
+    gp_distribution_policy dp
+	INNER JOIN pg_class cl ON dp.localoid = cl.oid
+	LEFT JOIN pg_namespace ns ON cl.relnamespace = ns.oid
+WHERE
+    ns.nspname = #{schemaName} AND
+	cl.relname = #{tableName};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_FUNCTION_DETAIL_QUERY">
+        <![CDATA[
+
+SELECT
+    p.oid
+   ,a.rolname
+   ,n.nspname
+   ,p.proname
+   ,l.lanname
+   ,p.proisagg
+   ,p.prosecdef
+   ,p.proisstrict
+   ,p.proretset
+   ,CASE p.provolatile
+        WHEN 'i' THEN 'IMMUTABLE'::text
+        WHEN 's' THEN 'STABLE'::text
+        WHEN 'v' THEN 'VOLATILE'::text
+        ELSE p.provolatile
+    END provolatile
+   ,p.pronargs
+   ,p.prorettype::regtype
+   ,p.proiswin
+   ,oidvectortypes(p.proargtypes) proargtypes
+   ,array_to_string(p.proallargtypes::regtype[], ',') proallargtypes
+   ,replace(replace(replace(array_to_string(p.proargmodes, ','), 'i', 'IN'), 'o', 'OUT'), 'b', 'INOUT') proargmodes
+   ,array_to_string(p.proargnames, ',') proargnames
+   ,p.prosrc
+   ,CASE encode(p.probin, 'escape')
+        WHEN '-' THEN ''
+        ELSE encode(p.probin, 'escape')
+    END probin
+   ,array_to_string(p.proacl, ',') proacl
+   ,p.prodataaccess
+   ,p.proname||'('||oidvectortypes(p.proargtypes)||')' procdesc
+   ,d.description comment
+FROM pg_proc p
+    INNER JOIN pg_namespace n ON n.oid = p.pronamespace
+    INNER JOIN pg_authid a ON a.oid = p.proowner
+    INNER JOIN pg_language l ON l.oid = p.prolang
+    LEFT JOIN pg_description d ON d.objoid = p.oid
+WHERE
+    p.oid = #{oid}::oid AND
+    prorettype != 'trigger'::regtype;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_FUNCTION_INFORMATION_QUERY">
+        <![CDATA[
+
+SELECT
+    p.oid "OID"
+   ,a.rolname "Owner"
+   ,n.nspname "Schema"
+   ,p.proname "Function Name"
+   ,l.lanname "Language"
+   ,p.proisagg "Aggregate"
+   ,p.prosecdef "Secure"
+   ,p.proisstrict "Strict"
+   ,p.proretset "Return Set"
+   ,CASE p.provolatile
+        WHEN 'i' THEN 'IMMUTABLE'::text
+        WHEN 's' THEN 'STABLE'::text
+        WHEN 'v' THEN 'VOLATILE'::text
+        ELSE p.provolatile
+    END "Volatile"
+   ,p.pronargs "Arguments Count"
+   ,p.prorettype::regtype "Return Type"
+   ,p.proiswin "Window Function"
+   ,oidvectortypes(p.proargtypes) "Argument Types"
+   ,array_to_string(p.proallargtypes::regtype[], ',') "All Argument Types"
+   ,replace(replace(replace(array_to_string(p.proargmodes, ','), 'i', 'IN'), 'o', 'OUT'), 'b', 'INOUT') "Argument Modes"
+   ,array_to_string(p.proargnames, ',') "Argument Names"
+   ,p.prosrc "Source"
+   ,CASE encode(p.probin, 'escape')
+        WHEN '-' THEN ''
+        ELSE encode(p.probin, 'escape')
+    END "Binary"
+   ,array_to_string(p.proacl, ',') "Acl"
+   ,p.prodataaccess "Data Access"
+   ,p.proname||'('||oidvectortypes(p.proargtypes)||')' "Usage"
+   ,d.description "Comment"
+FROM pg_proc p
+    INNER JOIN pg_namespace n ON n.oid = p.pronamespace
+    INNER JOIN pg_authid a ON a.oid = p.proowner
+    INNER JOIN pg_language l ON l.oid = p.prolang
+    LEFT JOIN pg_description d ON d.objoid = p.oid
+WHERE
+    p.oid = #{oid}::oid AND
+    prorettype != 'trigger'::regtype;
+
+        ]]>
+    </query>
+
+    <query id="KILL_SESSION_QUERY">
+        <![CDATA[
+
+SELECT pg_terminate_backend(#{pid});
+
+        ]]>
+    </query>
+
+    <query id="SHOW_RESOURCE_QUEUES_QUERY">
+        <![CDATA[
+
+SELECT
+    q.oid::int as queueid,
+    q.rsqname as rsqname,
+	t1.value::int as rsqcountlimit,
+	t2.value::int as rsqcountvalue,
+	t3.value::real as rsqcostlimit,
+	t4.value::real as rsqcostvalue,
+	t5.value::real as rsqmemorylimit,
+	t6.value::real as rsqmemoryvalue,
+	t7.value::int as rsqwaiters,
+	t8.value::int as rsqholders
+FROM pg_resqueue q,
+	pg_resqueue_status_kv() t1 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t2 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t3 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t4 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t5 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t6 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t7 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t8 (queueid oid, key text, value text)
+WHERE
+	q.oid = t1.queueid
+	AND t1.queueid = t2.queueid
+	AND t2.queueid = t3.queueid
+	AND t3.queueid = t4.queueid
+	AND t4.queueid = t5.queueid
+	AND t5.queueid = t6.queueid
+	AND t6.queueid = t7.queueid
+	AND t7.queueid = t8.queueid
+	AND t1.key = 'rsqcountlimit'
+	AND t2.key = 'rsqcountvalue'
+	AND t3.key = 'rsqcostlimit'
+	AND t4.key = 'rsqcostvalue'
+	AND t5.key = 'rsqmemorylimit'
+	AND t6.key = 'rsqmemoryvalue'
+	AND t7.key = 'rsqwaiters'
+	AND t8.key = 'rsqholders'
+ORDER BY
+    q.rsqname
+   ,t1.value;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_EXIST_RESOURCE_QUEUE_QUERY">
+        <![CDATA[
+
+SELECT
+    CASE count(*)
+        WHEN 0 THEN false
+        ELSE true
+    END exist
+FROM
+    pg_resqueue
+WHERE
+    rsqname = #{queueName};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_RESOURCE_QUEUE_QUERY">
+        <![CDATA[
+
+SELECT
+    q.oid::int as queueid,
+    q.rsqname as rsqname,
+	t1.value::int as rsqcountlimit,
+	t2.value::int as rsqcountvalue,
+	t3.value::real as rsqcostlimit,
+	t4.value::real as rsqcostvalue,
+	t5.value::real as rsqmemorylimit,
+	t6.value::real as rsqmemoryvalue,
+	t7.value::int as rsqwaiters,
+	t8.value::int as rsqholders
+FROM pg_resqueue q,
+	pg_resqueue_status_kv() t1 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t2 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t3 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t4 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t5 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t6 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t7 (queueid oid, key text, value text),
+	pg_resqueue_status_kv() t8 (queueid oid, key text, value text)
+WHERE
+	q.oid = t1.queueid
+	AND t1.queueid = t2.queueid
+	AND t2.queueid = t3.queueid
+	AND t3.queueid = t4.queueid
+	AND t4.queueid = t5.queueid
+	AND t5.queueid = t6.queueid
+	AND t6.queueid = t7.queueid
+	AND t7.queueid = t8.queueid
+	AND t1.key = 'rsqcountlimit'
+	AND t2.key = 'rsqcountvalue'
+	AND t3.key = 'rsqcostlimit'
+	AND t4.key = 'rsqcostvalue'
+	AND t5.key = 'rsqmemorylimit'
+	AND t6.key = 'rsqmemoryvalue'
+	AND t7.key = 'rsqwaiters'
+	AND t8.key = 'rsqholders'
+	AND q.oid = #{oid};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_GROUP_ROLES_QUERY">
+        <![CDATA[
+SELECT
+    oid::int
+   ,rolname
+   ,rolsuper
+   ,rolinherit
+   ,rolcreaterole
+   ,rolcreatedb
+   ,rolcatupdate
+   ,rolcanlogin
+   ,rolconnlimit
+   ,rolvaliduntil
+   ,rolconfig
+   ,rolresqueue
+   ,rolcreaterextgpfd
+   ,rolcreaterexthttp
+   ,rolcreatewextgpfd
+   ,rolcreaterexthdfs
+   ,rolcreatewexthdfs
+FROM
+	pg_roles
+WHERE
+    not(rolcanlogin)
+ORDER BY
+    rolname;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_LOGIN_ROLES_QUERY">
+        <![CDATA[
+SELECT
+    oid::int
+   ,rolname
+   ,rolsuper
+   ,rolinherit
+   ,rolcreaterole
+   ,rolcreatedb
+   ,rolcatupdate
+   ,rolcanlogin
+   ,rolconnlimit
+   ,rolvaliduntil
+   ,rolconfig
+   ,rolresqueue
+   ,rolcreaterextgpfd
+   ,rolcreaterexthttp
+   ,rolcreatewextgpfd
+   ,rolcreaterexthdfs
+   ,rolcreatewexthdfs
+FROM
+	pg_roles
+WHERE
+    rolcanlogin
+ORDER BY
+    rolname;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_ROLE_QUERY">
+        <![CDATA[
+
+SELECT
+    ro.oid::int
+   ,ro.rolname
+   ,ro.rolsuper
+   ,ro.rolinherit
+   ,ro.rolcreaterole
+   ,ro.rolcreatedb
+   ,ro.rolcatupdate
+   ,ro.rolcanlogin
+   ,ro.rolconnlimit
+   ,to_char(ro.rolvaliduntil, 'YYYY-MM-DD') rolvaliduntil
+   ,ro.rolconfig
+   ,ro.rolresqueue
+   ,rq.rsqname
+   ,ro.rolcreaterextgpfd
+   ,ro.rolcreaterexthttp
+   ,ro.rolcreatewextgpfd
+   ,ro.rolcreaterexthdfs
+   ,ro.rolcreatewexthdfs
+FROM
+	pg_roles ro
+	INNER JOIN pg_resqueue rq ON ro.rolresqueue = rq.oid
+WHERE
+    ro.oid = #{oid};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_SESSIONS_QUERY">
+        <![CDATA[
+
+SELECT
+    datid
+   ,datname
+   ,procpid
+   ,sess_id
+   ,usesysid
+   ,usename _username
+   ,CASE WHEN length(current_query) > 1022 THEN current_query||'(...)'
+         ELSE current_query
+    END current_query
+   ,waiting
+   ,to_char(query_start, 'YYYY-MM-DD HH24:MI:SS:MS') query_start
+   ,to_char(backend_start, 'YYYY-MM-DD HH24:MI:SS:MS') backend_start
+   ,client_addr
+   ,client_port
+   ,application_name
+   ,to_char(xact_start, 'YYYY-MM-DD HH24:MI:SS:MS') xact_start
+FROM
+    pg_stat_activity
+WHERE
+    current_query not like '%<IDLE>%'
+ORDER BY
+    query_start
+LIMIT
+    ${limit}
+OFFSET
+    ${start};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_SESSIONS_TOTAL_QUERY">
+        <![CDATA[
+
+SELECT
+    count(*)
+FROM
+    pg_stat_activity
+WHERE
+    current_query not like '%<IDLE>%';
+
+        ]]>
+    </query>
+
+    <query id="SHOW_LOCK_TABLES_QUERY">
+        <![CDATA[
+
+SELECT
+    DISTINCT
+        w.locktype
+       ,w.relation::regclass AS relation
+       ,w.mode
+       ,w.pid AS waiting_pid
+       ,w_stm.current_query waiting_query
+       ,other.pid AS other_pid
+       ,other_stm.current_query other_query
+FROM
+    pg_catalog.pg_locks AS w
+        JOIN pg_catalog.pg_stat_activity AS w_stm ON w_stm.procpid = w.pid
+        JOIN pg_catalog.pg_locks AS other ON
+            (w.DATABASE = other.DATABASE AND
+                w.relation = other.relation) OR
+            w.transactionid = other.transactionid
+        JOIN pg_catalog.pg_stat_activity AS other_stm ON other_stm.procpid = other.pid
+WHERE
+    NOT w.granted AND
+    w.pid <> other.pid;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_LOCK_TABLES_TOTAL_QUERY">
+        <![CDATA[
+
+SELECT
+    count(*)
+FROM
+    pg_catalog.pg_locks AS w
+        JOIN pg_catalog.pg_stat_activity AS w_stm ON w_stm.procpid = w.pid
+        JOIN pg_catalog.pg_locks AS other ON
+            (w.DATABASE = other.DATABASE AND
+                w.relation = other.relation) OR
+            w.transactionid = other.transactionid
+        JOIN pg_catalog.pg_stat_activity AS other_stm ON other_stm.procpid = other.pid
+WHERE
+    NOT w.granted AND
+    w.pid <> other.pid;
+
+        ]]>
+    </query>
+
+    <!-- TODO show size -->
+    <query id="SHOW_DB_SIZE_QUERY">
+        <![CDATA[
+
+SELECT
+    pg_size_pretty(pg_database_size(#{databaseName}))||
+        CASE WHEN pg_database_size(#{databaseName}) > 1023 THEN
+            ' ('||
+            pg_database_size(#{databaseName})||
+            ' bytes)'
+            ELSE '' END size;
+
+        ]]>
+    </query>
+
+    <query id="SHOW_SCHEMA_SIZE_QUERY">
+        <![CDATA[
+
+SELECT
+    pg_size_pretty(sum(pg_relation_size(schemaname||'.'||tablename))::bigint)||
+            CASE WHEN sum(pg_relation_size(schemaname||'.'||tablename))::bigint > 1023 THEN
+                ' ('||
+                sum(pg_relation_size(schemaname||'.'||tablename))::bigint||
+                ' bytes)'
+                ELSE '' END size
+FROM
+    pg_tables
+WHERE
+    schemaname = #{schemaName};
+
+        ]]>
+    </query>
+
+    <query id="SHOW_TABLE_SIZE_QUERY">
+        <![CDATA[
+
+SELECT
+    pg_size_pretty(pg_relation_size(#{dbSchemaTable}))||
+        CASE WHEN pg_relation_size(#{dbSchemaTable}) > 1023 THEN
+            ' ('||
+            pg_relation_size(#{dbSchemaTable})||
+            ' bytes)'
+            ELSE '' END size;
+
+        ]]>
+    </query>
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Set -->
+    <!-- ==================================================================================== -->
+
+    <query id="SET_APP_NAME_QUERY">
+        <![CDATA[
+
+set application_name=#{appName};
+
+        ]]>
+    </query>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Drop DDL -->
+    <!-- ==================================================================================== -->
+
+    <query id="DROP_DATABASE_QUERY">
+        <![CDATA[
+END;
+DROP DATABASE IF EXISTS ${dropDatabaseName};
+BEGIN;
+        ]]>
+    </query>
+
+    <query id="DROP_SCHEMA_QUERY">
+        <![CDATA[
+DROP SCHEMA IF EXISTS ${schemaName} RESTRICT;
+        ]]>
+    </query>
+
+    <query id="DROP_TABLE_QUERY">
+        <![CDATA[
+DROP TABLE IF EXISTS ${dbSchemaTable} RESTRICT;
+        ]]>
+    </query>
+
+    <query id="DROP_EXTERNAL_TABLE_QUERY">
+        <![CDATA[
+DROP EXTERNAL TABLE IF EXISTS ${dbSchemaTable} RESTRICT;
+        ]]>
+    </query>
+
+    <query id="DROP_VIEW_QUERY">
+        <![CDATA[
+DROP VIEW IF EXISTS ${dbSchemaView} RESTRICT;
+        ]]>
+    </query>
+
+    <query id="DROP_FUNCTION_QUERY">
+        <![CDATA[
+DROP FUNCTION IF EXISTS ${dbSchemaFunction} (${proargtypes}) RESTRICT;
+        ]]>
+    </query>
+
+    <query id="DROP_RESOURCE_QUEUE_QUERY">
+        <![CDATA[
+DROP RESOURCE QUEUE ${queueName};
+        ]]>
+    </query>
+
+    <query id="DROP_ROLE_QUERY">
+        <![CDATA[
+DROP ROLE ${rolname};
+        ]]>
+    </query>
+
+</queries>

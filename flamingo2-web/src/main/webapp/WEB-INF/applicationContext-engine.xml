@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- ========================= SCHEDULER DEFINITION ========================= -->
+
+    <bean id="quartzJobScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="autoStartup" value="true"/>
+        <property name="beanName" value="scheduler"/>
+        <property name="applicationContextSchedulerContextKey" value="CTX"/>
+        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
+        <property name="configLocation" value="/WEB-INF/quartz.properties"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="jobDetails">
+            <list>
+                <ref bean="engineJobDetail"/>
+                <ref bean="alarmJobDetail"/>
+            </list>
+        </property>
+
+        <property name="triggers">
+            <list>
+                <ref bean="engineJobTrigger"/>
+                <ref bean="alarmJobTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="jobScheduler" class="org.opencloudengine.flamingo2.engine.scheduler.QuartzJobScheduler">
+        <property name="scheduler" ref="quartzJobScheduler"/>
+    </bean>
+
+    <!-- ========================= JOB DEFINITION ========================= -->
+
+    <bean name="engineJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="durability" value="true"/>
+        <property name="jobClass" value="org.opencloudengine.flamingo2.engine.scheduler.jobs.EngineJob"/>
+        <!--<property name="applicationContextJobDataKey" value="spring"/>-->
+    </bean>
+
+    <bean id="engineJobTrigger" class="org.opencloudengine.flamingo2.engine.scheduler.QuartzCronTriggerFactoryBean">
+        <property name="jobDetail" ref="engineJobDetail"/>
+        <property name="cronExpression" value="0 * * * * ?"/>
+    </bean>
+
+    <bean name="alarmJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="durability" value="true"/>
+        <property name="jobClass" value="org.opencloudengine.flamingo2.web.monitoring.AlarmJob"/>
+        <!--<property name="applicationContextJobDataKey" value="spring"/>-->
+    </bean>
+
+    <bean id="alarmJobTrigger" class="org.opencloudengine.flamingo2.engine.scheduler.QuartzCronTriggerFactoryBean">
+        <property name="jobDetail" ref="alarmJobDetail"/>
+        <property name="cronExpression" value="0 * * * * ?"/>
+    </bean>
+
+    <!-- ========================= ENGINE REMOTE SERVICE DEFINITION ========================= -->
+
+    <bean id="requestExecutor"
+          class="org.opencloudengine.flamingo2.engine.remote.HttpInvokerRequestExecutorFactoryBean">
+        <property name="maxTotalConnections" value="100"/>
+        <property name="maxConnectionsPerRoute" value="5"/>
+        <property name="readTimeout" value="60"/>
+        <property name="connectionTimeout" value="3"/>
+    </bean>
+
+    <bean id="hiveQueryRemoteService" class="org.opencloudengine.flamingo2.engine.hive.HiveQueryRemoteServiceImpl"/>
+
+    <bean name="/remote/hive" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="hiveQueryRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.hive.HiveQueryRemoteService"/>
+    </bean>
+
+    <bean id="historyServerRemoteService" class="org.opencloudengine.flamingo2.engine.hadoop.HistoryServerRemoteServiceImpl"/>
+
+    <bean name="/remote/history" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="historyServerRemoteService"/>
+        <property name="serviceInterface"
+                  value="org.opencloudengine.flamingo2.engine.hadoop.HistoryServerRemoteService"/>
+    </bean>
+
+    <bean id="resourceManagerRemoteService" class="org.opencloudengine.flamingo2.engine.hadoop.ResourceManagerRemoteServiceImpl"/>
+
+    <bean name="/remote/resourcemanager" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="resourceManagerRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.hadoop.ResourceManagerRemoteService"/>
+    </bean>
+
+    <bean id="systemMetricsRemoteService" class="org.opencloudengine.flamingo2.engine.remote.SystemMetricsRemoteServiceImpl"/>
+
+    <bean name="/remote/system" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="systemMetricsRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.remote.SystemMetricsRemoteService"/>
+    </bean>
+
+    <bean id="namenodeRemoteService" class="org.opencloudengine.flamingo2.engine.hadoop.NamenodeRemoteServiceImpl"/>
+
+    <bean name="/remote/namenode" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="namenodeRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.hadoop.NamenodeRemoteService"/>
+    </bean>
+
+    <bean id="cldbRemoteService" class="org.opencloudengine.flamingo2.engine.monitoring.CLDBRemoteServiceImpl"/>
+
+    <bean name="/remote/cldb" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="cldbRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.monitoring.CLDBRemoteService"/>
+    </bean>
+
+    <bean id="fileSystemAuditRemoteService" class="org.opencloudengine.flamingo2.engine.fs.audit.FileSystemAuditRemoteServiceImpl"/>
+
+    <bean name="/remote/audit" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="fileSystemAuditRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.fs.audit.FileSystemAuditRemoteService"/>
+    </bean>
+
+    <!-- Job Scheduler Remote Service -->
+    <bean id="schedulerRemoteService" class="org.opencloudengine.flamingo2.engine.scheduler.SchedulerRemoteServiceImpl">
+        <property name="jobScheduler" ref="jobScheduler"/>
+    </bean>
+
+    <bean name="/remote/scheduler" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="schedulerRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.scheduler.SchedulerRemoteService"/>
+    </bean>
+
+    <!-- Workflow Designer Remote Service -->
+    <bean id="designerRemoteService" class="org.opencloudengine.flamingo2.engine.designer.DesignerServiceImpl"/>
+
+    <bean name="/remote/designer" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="designerRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.designer.DesignerService"/>
+    </bean>
+
+    <!-- Workflow History Remote Service -->
+    <bean id="workflowHistoryRemoteService" class="org.opencloudengine.flamingo2.engine.history.WorkflowHistoryRemoteServiceImpl"/>
+
+    <bean name="/remote/workflowHistory" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="workflowHistoryRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.history.WorkflowHistoryRemoteService"/>
+    </bean>
+
+    <!-- Task History Remote Service -->
+    <bean id="taskHistoryRemoteService" class="org.opencloudengine.flamingo2.engine.history.TaskHistoryRemoteServiceImpl"/>
+
+    <bean name="/remote/taskHistory" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="taskHistoryRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.history.TaskHistoryRemoteService"/>
+    </bean>
+
+    <!-- Job Scheduler Remote Service -->
+    <bean id="hdfsFileSystemRemoteService" class="org.opencloudengine.flamingo2.engine.fs.hdfs.HdfsFileSystemRemoteServiceImpl">
+        <property name="fileSystemAuditRemoteService" ref="fileSystemAuditRemoteService"/>
+    </bean>
+
+    <bean name="/remote/hdfs" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="hdfsFileSystemRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.fs.FileSystemRemoteService"/>
+    </bean>
+
+    <!-- Batch Remote Service -->
+    <bean id="batchRemoteService" class="org.opencloudengine.flamingo2.engine.batch.BatchServiceImpl">
+        <property name="jobScheduler" ref="jobScheduler"/>
+    </bean>
+
+    <bean name="/remote/batch" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="batchRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.batch.BatchService"/>
+    </bean>
+
+    <!-- Alarm Remote Service -->
+    <bean id="alarmRemoteService" class="org.opencloudengine.flamingo2.engine.monitoring.AlarmRemoteServiceImpl"/>
+
+    <bean name="/remote/alarm" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="alarmRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.monitoring.AlarmRemoteService"/>
+    </bean>
+
+    <!-- Tree Remote Service -->
+    <bean id="treeRemoteService" class="org.opencloudengine.flamingo2.engine.tree.TreeServiceImpl"/>
+
+    <bean name="/remote/tree" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="treeRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.tree.TreeService"/>
+    </bean>
+
+    <bean id="systemUserServiceDelegator"
+          class="org.opencloudengine.flamingo2.engine.remote.SystemUserServiceDelegator">
+        <property name="urls" value="${user.system.agent.urls}"/>
+    </bean>
+
+    <bean name="/remote/systemuser" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="systemUserServiceDelegator"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.agent.system.SystemUserService"/>
+    </bean>
+
+    <!-- ========================= EL SERVICE DEFINITION ========================= -->
+
+    <bean id="elService" class="org.opencloudengine.flamingo2.util.el.ELServiceImpl" destroy-method="destroy">
+        <property name="definitions">
+            <bean class="org.springframework.beans.factory.config.MapFactoryBean">
+                <property name="sourceMap">
+                    <map>
+                        <entry key="EL.constants">
+                            <value>
+                                KB=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#KB,
+                                MB=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#MB,
+                                GB=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#GB,
+                                TB=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#TB,
+                                PB=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#PB,
+                                MINUTES=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#MINUTES,
+                                HOURS=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#HOURS,
+                                DAYS=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#DAYS
+                            </value>
+                        </entry>
+                        <entry key="EL.functions">
+                            <value>
+                                firstNotNull=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#firstNotNull,
+                                concat=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#concat,
+                                trim=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#trim,
+                                dateFormat=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#dateFormat,
+                                hostname=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#hostname,
+                                escapeString=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#escapeString,
+                                yesterday=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#yesterday,
+                                tommorow=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#tommorow,
+                                month=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#month,
+                                day=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#day,
+                                hour=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#hour,
+                                minute=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#minute,
+                                second=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#second,
+                                urlEncode=org.opencloudengine.flamingo2.util.el.ELConstantsFunctions#urlEncode
+                            </value>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/beans             http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- ================ System Agent API ================ -->
+
+	<bean id="systemAgentApi" class="org.opencloudengine.flamingo2.agent.system.SystemUserServiceImpl">
+		<property name="changeCli" value="${system.user.change.cli}"/>
+		<property name="createCli" value="${system.user.create.cli}"/>
+		<property name="deleteCli" value="${system.user.delete.cli}"/>
+		<property name="existCli" value="${system.user.exist.cli}"/>
+	</bean>
+
+	<bean name="/remote/agent/system" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+		<property name="service" ref="systemAgentApi"/>
+		<property name="serviceInterface" value="org.opencloudengine.flamingo2.agent.system.SystemUserService"/>
+	</bean>
+
+	<!-- ================ Application Context Helper ================ -->
+
+	<bean id="applicationContextRegistry" class="org.opencloudengine.flamingo2.agent.system.ApplicationContextRegistry"/>
+
+	<!-- ================ SIGAR ================ -->
+
+	<bean id="sigar" class="org.opencloudengine.flamingo2.agent.system.SigarFactory"/>
+	<bean id="sigarProxy" class="org.opencloudengine.flamingo2.agent.system.SigarProxyFactory">
+		<property name="sigar" ref="sigar"/>
+	</bean>
+</beans>

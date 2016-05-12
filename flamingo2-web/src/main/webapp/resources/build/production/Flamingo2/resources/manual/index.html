@@ -1,0 +1,5440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.0">
+<title>Flamingo 2 사용자 가이드</title>
+<style>
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
+audio,canvas,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+[hidden],template{display:none}
+script{display:none!important}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{margin:0}
+a{background:transparent}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+#map_canvas img,#map_canvas embed,#map_canvas object,.map_canvas img,.map_canvas embed,.map_canvas object{max-width:none!important}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+.antialiased,body{-webkit-font-smoothing:antialiased}
+img{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+p.lead,.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{font-size:1.21875em;line-height:1.6}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:none}
+p{font-size:13px;font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans";font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans","Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:24px}
+h2{font-size:22px}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:20px}
+h4,h5{font-size:18px}
+h6{font-size:18px}
+hr{border:solid #ddddd8;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-size:12px;font-family:"Monaco","Gulimche","NanumGothicCoding","Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans"}
+ul,ol,ul.no-bullet,ol.no-bullet{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.no-bullet{list-style:none}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite:before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media only screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:21px}
+h2{font-size:19px}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:17px}
+h4{font-size:15px}}table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7;font-weight:bold}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt,table tr:nth-of-type(even){background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
+.clearfix:after,.float-group:after{clear:both}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-size:12px;font-family:"Monaco","Gulimche","NanumGothicCoding","Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{display:inline-block;color:rgba(0,0,0,.8);font-size:.75em;line-height:1.4;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:-.15em .15em 0 .15em;padding:.2em .6em .2em .5em;vertical-align:middle;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menu{color:rgba(0,0,0,.8)}
+b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
+b.button:before{content:"[";padding:0 3px 0 2px}
+b.button:after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header:before,#header:after,#content:before,#content:after,#footnotes:before,#footnotes:after,#footer:before,#footer:after{content:" ";display:table}
+#header:after,#content:after,#footnotes:after,#footer:after{clear:both}
+#content{margin-top:1.25em}
+#content:before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #ddddd8}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #ddddd8;padding-bottom:8px}
+#header .details{font-family: "Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans";border-bottom:1px solid #ddddd8;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span:before{content:"\00a0\2013\00a0"}
+#header .details br+span.author:before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark:before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber:after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #ddddd8;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #efefed;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-size: 13px;font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans","Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media only screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background-color:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #efefed;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #efefed;left:auto;right:0}}@media only screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background-color:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{font-size: 13px;font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans","Open Sans","DejaVu Sans",sans-serif;color:rgba(255,255,255,.8);line-height:1.44}
+.sect1{padding-bottom:.625em}
+@media only screen and (min-width:768px){.sect1{padding-bottom:1.25em}}.sect1+.sect1{border-top:1px solid #efefed}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor:before,h2>a.anchor:before,h3>a.anchor:before,#toctitle>a.anchor:before,.sidebarblock>.content>.title>a.anchor:before,h4>a.anchor:before,h5>a.anchor:before,h6>a.anchor:before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans","Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
+.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans","Open Sans","DejaVu Sans",sans-serif;font-size: 13px;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans","Open Sans","DejaVu Sans",sans-serif;font-size: 13px;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#f7f7f8}
+.sidebarblock .literalblock pre,.sidebarblock .listingblock pre:not(.highlight),.sidebarblock .listingblock pre[class="highlight"],.sidebarblock .listingblock pre[class^="highlight "],.sidebarblock .listingblock pre.CodeRay,.sidebarblock .listingblock pre.prettyprint{background:#f2f1f1}
+.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;padding:1em;font-size:.8125em}
+.literalblock pre.nowrap,.literalblock pre[class].nowrap,.listingblock pre.nowrap,.listingblock pre[class].nowrap{overflow-x:auto;white-space:pre;word-wrap:normal}
+@media only screen and (min-width:768px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:13px;}}@media only screen and (min-width:1280px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:1em}}.literalblock.output pre{color:#f7f7f8;background-color:rgba(0,0,0,.9)}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]:before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:#999}
+.listingblock:hover code[data-lang]:before{display:block}
+.listingblock.terminal pre .command:before{content:attr(data-prompt);padding-right:.5em;color:#999}
+.listingblock.terminal pre .command:not([data-prompt]):before{content:"$"}
+table.pyhltable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.pyhltable td{vertical-align:top;padding-top:0;padding-bottom:0}
+table.pyhltable td.code{padding-left:.75em;padding-right:0}
+pre.pygments .lineno,table.pyhltable td:not(.code){color:#999;padding-left:0;padding-right:.5em;border-right:1px solid #ddddd8}
+pre.pygments .lineno{display:inline-block;margin-right:.25em}
+table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock blockquote p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote:before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.5em;margin-right:.5ex;text-align:right}
+.quoteblock .quoteblock{margin-left:0;margin-right:0;padding:.5em 0;border-left:3px solid rgba(0,0,0,.6)}
+.quoteblock .quoteblock blockquote{padding:0 0 0 .75em}
+.quoteblock .quoteblock blockquote:before{display:none}
+.verseblock{margin:0 1em 1.25em 1em}
+.verseblock pre{font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans","Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.05em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract{margin:0 0 1.25em 0;display:block}
+.quoteblock.abstract blockquote,.quoteblock.abstract blockquote p{text-align:left;word-spacing:0}
+.quoteblock.abstract blockquote:before,.quoteblock.abstract blockquote p:first-of-type:before{display:none}
+table.tableblock{max-width:100%;border-collapse:separate}
+table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
+table.spread{width:100%}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all th.tableblock,table.grid-all td.tableblock{font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans","Open Sans","DejaVu Sans",sans;font-size:13px;border-width:0 1px 1px 0}
+table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
+table.grid-cols th.tableblock,table.grid-cols td.tableblock{border-width:0 1px 0 0}
+table.grid-all *>tr>.tableblock:last-child,table.grid-cols *>tr>.tableblock:last-child{border-right-width:0}
+table.grid-rows th.tableblock,table.grid-rows td.tableblock{border-width:0 0 1px 0}
+table.grid-all tbody>tr:last-child>th.tableblock,table.grid-all tbody>tr:last-child>td.tableblock,table.grid-all thead:last-child>tr>th.tableblock,table.grid-rows tbody>tr:last-child>th.tableblock,table.grid-rows tbody>tr:last-child>td.tableblock,table.grid-rows thead:last-child>tr>th.tableblock{border-bottom-width:0}
+table.grid-rows tfoot>tr>th.tableblock,table.grid-rows tfoot>tr>td.tableblock{border-width:1px 0 0 0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot{border-width:1px 0}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+td>div.verse{white-space:pre}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.unstyled,ol.unnumbered,ul.checklist,ul.none{list-style-type:none}
+ul.unstyled,ol.unnumbered,ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-check-square-o:first-child,ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{position:relative;top:1px}
+ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
+ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
+ul.inline>li>*{display:block}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1{padding-right:.75em;font-weight:bold}
+td.hdlist1,td.hdlist2{vertical-align:top}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
+.colist>table tr>td:last-of-type{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
+.imageblock.right,.imageblock[style*="float: right"]{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none}
+span.footnote,span.footnoteref{vertical-align:super;font-size:.875em}
+span.footnote a,span.footnoteref a{text-decoration:none}
+span.footnote a:active,span.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em 0;border-width:1px 0 0 0}
+#footnotes .footnote{padding:0 .375em;line-height:1.3;font-size:.875em;margin-left:1.2em;text-indent:-1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background-color:#00fafa}
+.black{color:#000}
+.black-background{background-color:#000}
+.blue{color:#0000bf}
+.blue-background{background-color:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background-color:#fa00fa}
+.gray{color:#606060}
+.gray-background{background-color:#7d7d7d}
+.green{color:#006000}
+.green-background{background-color:#007d00}
+.lime{color:#00bf00}
+.lime-background{background-color:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background-color:#7d0000}
+.navy{color:#000060}
+.navy-background{background-color:#00007d}
+.olive{color:#606000}
+.olive-background{background-color:#7d7d00}
+.purple{color:#600060}
+.purple-background{background-color:#7d007d}
+.red{color:#bf0000}
+.red-background{background-color:#fa0000}
+.silver{color:#909090}
+.silver-background{background-color:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background-color:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background-color:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background-color:#fafa00}
+span.icon>.fa{cursor:default}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning:before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution:before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important:before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background-color:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Apple SD Gothic Neo","NanumGothic","Malgun Gothic","Noto Sans","Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]:after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+h1,h2{letter-spacing:-.01em}
+dt,th.tableblock,td.content{text-rendering:optimizeLegibility}
+p,td.content{letter-spacing:-.01em}
+p strong,td.content strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content{font-size:1.0625rem;}
+p{margin-bottom:1.25rem;font-size:13px;}
+.sidebarblock p,.sidebarblockdt,.sidebarblock td.content,p.tableblock{font-size:13px;}
+.exampleblock>.content{background-color:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@media print{@page{margin:1.25cm .75cm}
+*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare):after,a[href^="https:"]:not(.bare):after,a[href^="mailto:"]:not(.bare):after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]:after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img{page-break-inside:avoid}
+thead{display:table-header-group}
+img{max-width:100%!important}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #ddddd8!important;padding-bottom:0!important}
+.sect1{padding-bottom:0!important}
+.sect1+.sect1{border:0!important}
+#header>h1:first-child{margin-top:1.25rem}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em 0}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span:before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]:before{display:block}
+#footer{background:none!important;padding:0 .9375em}
+#footer-text{color:rgba(0,0,0,.6)!important;font-size:.9em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}
+</style>
+<style>
+/* Stylesheet for CodeRay to match GitHub theme | MIT License | http://foundation.zurb.com */
+/*pre.CodeRay {background-color:#f7f7f8;}*/
+.CodeRay .line-numbers{border-right:1px solid #d8d8d8;padding:0 0.5em 0 .25em}
+.CodeRay span.line-numbers{display:inline-block;margin-right:.5em;color:rgba(0,0,0,.3)}
+.CodeRay .line-numbers strong{font-weight: normal}
+table.CodeRay{border-collapse:separate;border-spacing:0;margin-bottom:0;border:0;background:none}
+table.CodeRay td{vertical-align: top}
+table.CodeRay td.line-numbers{text-align:right}
+table.CodeRay td.line-numbers>pre{padding:0;color:rgba(0,0,0,.3)}
+table.CodeRay td.code{padding:0 0 0 .5em}
+table.CodeRay td.code>pre{padding:0}
+.CodeRay .debug{color:#fff !important;background:#000080 !important}
+.CodeRay .annotation{color:#007}
+.CodeRay .attribute-name{color:#000080}
+.CodeRay .attribute-value{color:#700}
+.CodeRay .binary{color:#509}
+.CodeRay .comment{color:#998;font-style:italic}
+.CodeRay .char{color:#04d}
+.CodeRay .char .content{color:#04d}
+.CodeRay .char .delimiter{color:#039}
+.CodeRay .class{color:#458;font-weight:bold}
+.CodeRay .complex{color:#a08}
+.CodeRay .constant,.CodeRay .predefined-constant{color:#008080}
+.CodeRay .color{color:#099}
+.CodeRay .class-variable{color:#369}
+.CodeRay .decorator{color:#b0b}
+.CodeRay .definition{color:#099}
+.CodeRay .delimiter{color:#000}
+.CodeRay .doc{color:#970}
+.CodeRay .doctype{color:#34b}
+.CodeRay .doc-string{color:#d42}
+.CodeRay .escape{color:#666}
+.CodeRay .entity{color:#800}
+.CodeRay .error{color:#808}
+.CodeRay .exception{color:inherit}
+.CodeRay .filename{color:#099}
+.CodeRay .function{color:#900;font-weight:bold}
+.CodeRay .global-variable{color:#008080}
+.CodeRay .hex{color:#058}
+.CodeRay .integer,.CodeRay .float{color:#099}
+.CodeRay .include{color:#555}
+.CodeRay .inline{color:#00}
+.CodeRay .inline .inline{background:#ccc}
+.CodeRay .inline .inline .inline{background:#bbb}
+.CodeRay .inline .inline-delimiter{color:#d14}
+.CodeRay .inline-delimiter{color:#d14}
+.CodeRay .important{color:#555;font-weight:bold}
+.CodeRay .interpreted{color:#b2b}
+.CodeRay .instance-variable{color:#008080}
+.CodeRay .label{color:#970}
+.CodeRay .local-variable{color:#963}
+.CodeRay .octal{color:#40e}
+.CodeRay .predefined{color:#369}
+.CodeRay .preprocessor{color:#579}
+.CodeRay .pseudo-class{color:#555}
+.CodeRay .directive{font-weight:bold}
+.CodeRay .type{font-weight:bold}
+.CodeRay .predefined-type{color:inherit}
+.CodeRay .reserved,.CodeRay .keyword {color:#000;font-weight:bold}
+.CodeRay .key{color:#808}
+.CodeRay .key .delimiter{color:#606}
+.CodeRay .key .char{color:#80f}
+.CodeRay .value{color:#088}
+.CodeRay .regexp .delimiter{color:#808}
+.CodeRay .regexp .content{color:#808}
+.CodeRay .regexp .modifier{color:#808}
+.CodeRay .regexp .char{color:#d14}
+.CodeRay .regexp .function{color:#404;font-weight:bold}
+.CodeRay .string{color:#d20}
+.CodeRay .string .string .string{background:#ffd0d0}
+.CodeRay .string .content{color:#d14}
+.CodeRay .string .char{color:#d14}
+.CodeRay .string .delimiter{color:#d14}
+.CodeRay .shell{color:#d14}
+.CodeRay .shell .delimiter{color:#d14}
+.CodeRay .symbol{color:#990073}
+.CodeRay .symbol .content{color:#a60}
+.CodeRay .symbol .delimiter{color:#630}
+.CodeRay .tag{color:#008080}
+.CodeRay .tag-special{color:#d70}
+.CodeRay .variable{color:#036}
+.CodeRay .insert{background:#afa}
+.CodeRay .delete{background:#faa}
+.CodeRay .change{color:#aaf;background:#007}
+.CodeRay .head{color:#f8f;background:#505}
+.CodeRay .insert .insert{color:#080}
+.CodeRay .delete .delete{color:#800}
+.CodeRay .change .change{color:#66f}
+.CodeRay .head .head{color:#f4f}
+</style>
+</head>
+<body class="book">
+<div id="header">
+<h1>Flamingo 2 사용자 가이드</h1>
+<div id="toc" class="toc">
+<div id="toctitle">목차</div>
+<ul class="sectlevel1">
+<li><a href="#_작성자">작성자</a></li>
+<li><a href="#install">설치</a>
+<ul class="sectlevel2">
+<li><a href="#_flamingo_2">Flamingo 2</a>
+<ul class="sectlevel3">
+<li><a href="#_jdk_설치">JDK 설치</a></li>
+<li><a href="#_mysql_server_5_설치">MySQL Server 5 설치</a></li>
+<li><a href="#_flamingo_실행_권한">Flamingo 실행 권한</a></li>
+</ul>
+</li>
+<li><a href="#_apache_hive">Apache Hive</a>
+<ul class="sectlevel3">
+<li><a href="#_mysql_데이터베이스_생성하기">MySQL 데이터베이스 생성하기</a></li>
+<li><a href="#_hive_metastore_구성을_위한_mysql_jdbc_driver_다운로드">Hive Metastore 구성을 위한 MySQL JDBC Driver 다운로드</a></li>
+<li><a href="#_hive_metastore_설정">Hive Metastore 설정</a></li>
+<li><a href="#_hive_커맨드_테스트">Hive 커맨드 테스트</a></li>
+<li><a href="#_hive_server_2_프로세스_시작">Hive Server 2 프로세스 시작</a></li>
+<li><a href="#_hive_metastore_프로세스_시작">Hive Metastore 프로세스 시작</a></li>
+<li><a href="#_설치시_에러_발생_사례">설치시 에러 발생 사례</a></li>
+<li><a href="#_flamingo_agent">Flamingo Agent</a></li>
+</ul>
+</li>
+<li><a href="#_pivotal_hawq_jdbc_driver">Pivotal HAWQ JDBC Driver</a></li>
+<li><a href="#_웹_터미널_설치">웹 터미널 설치</a>
+<ul class="sectlevel3">
+<li><a href="#_nodejs_설치하기">nodejs 설치하기</a></li>
+<li><a href="#_npm_패키지_설치">npm 패키지 설치</a></li>
+<li><a href="#_웹_터미널_설치하기">웹 터미널 설치하기</a></li>
+</ul>
+</li>
+<li><a href="#_r_연동">R 연동</a>
+<ul class="sectlevel3">
+<li><a href="#_r_설치">R 설치</a></li>
+<li><a href="#_rstudio_server_설치">RStudio Server 설치</a></li>
+<li><a href="#_rstudio_server_환경설정">RStudio Server 환경설정</a></li>
+<li><a href="#_flamingo의_rstudio_server_연동_설정">Flamingo의 RStudio Server 연동 설정</a></li>
+<li><a href="#_flamingo_기타_구성_관련_정보">Flamingo 기타 구성 관련 정보</a></li>
+<li><a href="#_시각화_설치하기">시각화 설치하기</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#monitoring">모니터링</a>
+<ul class="sectlevel2">
+<li><a href="#_mapreduce_job">MapReduce Job</a></li>
+<li><a href="#_apache_hive_2">Apache Hive</a></li>
+</ul>
+</li>
+<li><a href="#designer">워크플로우 디자이너</a>
+<ul class="sectlevel2">
+<li><a href="#_워크플로우_개요">워크플로우 개요</a></li>
+<li><a href="#_워크플로우_저장_및_실행">워크플로우 저장 및 실행</a></li>
+<li><a href="#_워크플로우_변수">워크플로우 변수</a></li>
+<li><a href="#_표현식_및_함수">표현식 및 함수</a></li>
+<li><a href="#_mapreduce">MapReduce</a></li>
+<li><a href="#_apache_pig">Apache Pig</a></li>
+<li><a href="#_apache_hive_3">Apache Hive</a></li>
+<li><a href="#_r">R</a></li>
+<li><a href="#_java">Java</a></li>
+<li><a href="#_python">Python</a></li>
+<li><a href="#_spark">Spark</a></li>
+</ul>
+</li>
+<li><a href="#hdfs">Apache Hadoop HDFS 브라우저</a>
+<ul class="sectlevel2">
+<li><a href="#_hdfs_file_system_summary">HDFS File System Summary</a>
+<ul class="sectlevel3">
+<li><a href="#_hdfs_information">HDFS Information</a></li>
+<li><a href="#_hdfs_usage">HDFS Usage</a></li>
+<li><a href="#_hdfs_top_5">HDFS Top 5</a></li>
+</ul>
+</li>
+<li><a href="#_디렉토리">디렉토리</a>
+<ul class="sectlevel3">
+<li><a href="#_디렉토리_생성">디렉토리 생성</a></li>
+<li><a href="#_디렉토리_복사">디렉토리 복사</a></li>
+<li><a href="#_디렉토리_이동">디렉토리 이동</a></li>
+<li><a href="#_디렉토리_이름변경">디렉토리 이름변경</a></li>
+<li><a href="#_디렉토리_삭제">디렉토리 삭제</a></li>
+<li><a href="#_디렉토리_업로드">디렉토리 업로드</a></li>
+<li><a href="#_디렉토리_병합">디렉토리 병합</a></li>
+<li><a href="#_디렉토리_속성">디렉토리 속성</a></li>
+<li><a href="#_디렉토리_갱신">디렉토리 갱신</a></li>
+<li><a href="#_디렉토리_권한_설정">디렉토리 권한 설정</a></li>
+<li><a href="#_디렉토리_hive_db_생성">디렉토리 Hive DB 생성</a></li>
+<li><a href="#_디렉토리_hive_table_생성">디렉토리 Hive Table 생성</a></li>
+</ul>
+</li>
+<li><a href="#_파일">파일</a>
+<ul class="sectlevel3">
+<li><a href="#_파일_복사">파일 복사</a></li>
+<li><a href="#_파일_이동">파일 이동</a></li>
+<li><a href="#_파일_이름변경">파일 이름변경</a></li>
+<li><a href="#_파일_삭제">파일 삭제</a></li>
+<li><a href="#_파일_업로드">파일 업로드</a></li>
+<li><a href="#_파일_다운로드">파일 다운로드</a></li>
+<li><a href="#_파일_내용보기">파일 내용보기</a></li>
+<li><a href="#_파일_속성">파일 속성</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#history">워크플로우 실행 이력</a>
+<ul class="sectlevel2">
+<li><a href="#_워크플로우_개요_2">워크플로우 개요</a></li>
+</ul>
+</li>
+<li><a href="#batch">배치작업 관리</a>
+<ul class="sectlevel2">
+<li><a href="#_cron_expression">Cron Expression</a></li>
+<li><a href="#_배치작업_등록">배치작업 등록</a></li>
+</ul>
+</li>
+<li><a href="#hive">Apache Hive</a>
+<ul class="sectlevel2">
+<li><a href="#_큰_기능">큰 기능</a></li>
+<li><a href="#_알려진_문제점">알려진 문제점</a></li>
+<li><a href="#_큰_기능_2">큰 기능</a></li>
+</ul>
+</li>
+<li><a href="#hawq">Pivotal HAWQ 관리</a>
+<ul class="sectlevel2">
+<li><a href="#_hawq_설정">HAWQ 설정</a></li>
+<li><a href="#_flamingo2_설정">Flamingo2 설정</a></li>
+<li><a href="#_커넥션_관리자">커넥션 관리자</a>
+<ul class="sectlevel3">
+<li><a href="#_데이터베이스">데이터베이스</a></li>
+<li><a href="#_스키마">스키마</a></li>
+</ul>
+</li>
+<li><a href="#_오브젝트_익스플로러">오브젝트 익스플로러</a>
+<ul class="sectlevel3">
+<li><a href="#_테이블">테이블</a></li>
+</ul>
+</li>
+<li><a href="#_에디터">에디터</a></li>
+<li><a href="#_뷰">뷰</a></li>
+<li><a href="#_external_테이블">External 테이블</a></li>
+<li><a href="#_함수">함수</a></li>
+<li><a href="#_테이블_정보">테이블 정보</a></li>
+</ul>
+</li>
+<li><a href="#_pivotal_hawq_권한_관리">Pivotal HAWQ 권한 관리</a>
+<ul class="sectlevel2">
+<li><a href="#_롤">롤</a></li>
+<li><a href="#_리소스큐">리소스큐</a></li>
+<li><a href="#_세션">세션</a></li>
+<li><a href="#_lock_테이블">Lock 테이블</a></li>
+<li><a href="#_알려진_문제점_2">알려진 문제점</a></li>
+</ul>
+</li>
+<li><a href="#user">사용자 관리</a>
+<ul class="sectlevel2">
+<li><a href="#_소속">소속</a>
+<ul class="sectlevel3">
+<li><a href="#_소속_추가">소속 추가</a></li>
+<li><a href="#_소속_삭제">소속 삭제</a></li>
+<li><a href="#_소속_정보_변경">소속 정보 변경</a></li>
+</ul>
+</li>
+<li><a href="#_사용자">사용자</a>
+<ul class="sectlevel3">
+<li><a href="#_사용자_추가">사용자 추가</a></li>
+<li><a href="#_사용자_승인">사용자 승인</a></li>
+<li><a href="#_사용자_삭제">사용자 삭제</a></li>
+<li><a href="#_사용자_정보_변경">사용자 정보 변경</a></li>
+<li><a href="#_사용자목록_갱신">사용자목록 갱신</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#hdfs-auth">HDFS 브라우저 권한 관리</a>
+<ul class="sectlevel2">
+<li><a href="#_권한">권한</a>
+<ul class="sectlevel3">
+<li><a href="#_권한_추가">권한 추가</a></li>
+<li><a href="#_권한_삭제">권한 삭제</a></li>
+<li><a href="#_권한_수정">권한 수정</a></li>
+<li><a href="#_hdfs_브라우저_갱신">HDFS 브라우저 갱신</a></li>
+<li><a href="#_권한_목록_갱신">권한 목록 갱신</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#etc">기타</a>
+<ul class="sectlevel2">
+<li><a href="#_flamingo_커스터마이징">Flamingo 커스터마이징</a>
+<ul class="sectlevel3">
+<li><a href="#_타이틀_변경하기">타이틀 변경하기</a></li>
+</ul>
+</li>
+<li><a href="#_asciidoc_pdf">AsciiDoc PDF</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_작성자">작성자</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all" style="width: 40%;">
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">성명</th>
+<th class="tableblock halign-left valign-top">역할</th>
+<th class="tableblock halign-left valign-top">전자우편</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">김병곤</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product Manager</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mailto:ceo@cloudine.co.kr">ceo@cloudine.co.kr</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">박효근</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Committer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mailto:hyokun.park@cloudine.co.kr">hyokun.park@cloudine.co.kr</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이재희</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Committer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mailto:jaehee.lee@cloudine.co.kr">jaehee.lee@cloudine.co.kr</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">김명하</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Committer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mailto:myeongha.kim@cloudine.co.kr">myeongha.kim@cloudine.co.kr</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">김하늘</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Committer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mailto:haneul.kim@cloudine.co.kr">haneul.kim@cloudine.co.kr</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">박승필</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Committer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mailto:seungpil.park@cloudine.co.kr">seungpil.park@cloudine.co.kr</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">오재용</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QA Manager</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mailto:obsecure@cloudine.co.kr">obsecure@cloudine.co.kr</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">송치덕</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Committer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mailto:chiduk.song@cloudine.co.kr">chiduk.song@cloudine.co.kr</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">최경민</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Committer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mailto:kyeongmin.choi@cloudine.co.kr">kyeongmin.choi@cloudine.co.kr</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="install">설치</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>설치에서는 Cloudera CDH, Pivotal HD, Hortonworks HDP를 제외하고 순수 Apache Hadoop 배포판에 대해서 설치를 설명합니다.
+Cloudera CDH, Pivotal HD, Hortonworks HDP의 경우 프로비저닝을 담당하는 Cloudera Manager, Ambari, Command Center가 제공되므로 본 문서에서는 별도로 논하지 않습니다.</p>
+</div>
+<div class="sect2">
+<h3 id="_flamingo_2">Flamingo 2</h3>
+<div class="paragraph">
+<p>Flamingo 2가 동작하기 위해서는 아래의 컴포넌트가 설치되어야 합니다. Apache Hadoop의 경우 Cloudera CDH, Pivotal HD, Hortonworks HDP에서 자동으로
+구성되므로 여기에서는 순수 Apache Hadoop 배포판을 제외하고는 논하지 않습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Chrome (테스트중: Internet Explorer 9 이상, Firefox, Safari)</p>
+</li>
+<li>
+<p>Apache Hadoop 2.3 이상 (Apache Hive 1.0 권장함. 로그 표시가 1.0 이상 부터 지원)</p>
+</li>
+<li>
+<p>JDK 1.7 이상</p>
+</li>
+<li>
+<p>MySQL Server 5.x 이상 (MySQL 5.1 권장)</p>
+</li>
+<li>
+<p>Flamingo 2 Web Application</p>
+</li>
+<li>
+<p>Flamingo 2 MapReduce Job Agent</p>
+</li>
+<li>
+<p>Flamingo 2 Namenode Agent</p>
+</li>
+<li>
+<p>Flamingo 2 Resource Manager Agent</p>
+</li>
+<li>
+<p>Flamingo 2 Collector</p>
+</li>
+<li>
+<p>Flamingo 2 System Agent</p>
+</li>
+<li>
+<p>node.js</p>
+</li>
+<li>
+<p>R &amp; RStudio Server (선택사항)</p>
+</li>
+<li>
+<p>Pivotal HAWQ (선택사항)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+상기 버전 이외에 환경에서 Flamingo를 동작시키거나 사용해야 하는 경우 기술지원(<a href="mailto:sales@cloudine.co.kr">sales@cloudine.co.kr</a>)을 요청하십시오.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_jdk_설치">JDK 설치</h4>
+<div class="paragraph">
+<p>Flamingo 2는 JDK 1.7을 기반으로 개발되어 있으므로 Linux 에서 JDK 1.7 설치는 필수 사항입니다. 우분투에서는 다음의 커맨드로 JDK 1.7을 설치할 수 있습니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># add-apt-repository ppa:webupd8team/java
+# apt-get update
+# apt-get install oracle-java7-installer
+# export JAVA_HOME=/usr/lib/jvm/java-7-oracle</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>CentOS, Ubuntu의 패키지 관리자를 이용하지 않고 직접 설치하고자 하는 경우 <a href="http://java.oracle.com" class="bare">http://java.oracle.com</a> 에서 JDK 1.7을 다운로드하여 다음과 같이 설치할 수 있습니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># cd /usr/local
+# tar zxvf jdk-7u51-linux-x64.gz</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>JDK 1.7을 다운로드 및 압축 출기를 한 후 다음과 같이 사용자 환경에서 JDK를 사용할 수 있도록 설정합니다. 전체 사용자에 적용하지 않고 해당 사용자에게만 적용하고자 하는 경우 <code>~/.profile</code> 또는 <code>~/.bashrc</code> 파일에 다음을 설정하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># vi /etc/profile
+export JAVA_HOME=/usr/local/jdk1.7
+export PATH=$JAVA_HOME/bin:$PATH
+
+# source /etc/profile</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect3">
+<h4 id="_mysql_server_5_설치">MySQL Server 5 설치</h4>
+<div class="paragraph">
+<p>Flamingo가 동작하기 위해서 필요한 데이터베이스는 MySQL이며 MySQL 5.x 이상 버전을 충족해야 합니다. 다음은 CentOS에서 MySQL을 설치하는 커맨드입니다. 이 커맨드는 반드시 root 권한으로 실행해야 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># yum -y install mysql-server</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>또한 Flamingo는 multi-bytes로 구성된 언어(예; CJK)를 저장하므로 MySQL은 기본으로 UTF-8을 지원해야 합니다. 하지만 CentOS에서 기본으로 설치되는 MySQL은 Latin 1으로 설정이 됩니다. 이를 변경하기 위해서는 <a href="http://ra2kstar.tistory.com/97">MySQL 인코딩 변경</a> 페이지를 참고해서 변경해야 합니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+CentOS와 Ubuntu에서 사용하는 MySQL 버전이 서로 상이하기 때문에 UTF-8 설정이 모두 동일하게 적용되는 것은 아닙니다. 설정이 정상적으로 반영되지 않으면 MySQL Server가 시작할 수 없습니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Flamingo에서 사용하는 Quartz Job Scheduler는 primary key로 두개 이상의 컬럼을 조합해서 사용합니다. 따라서 이 길이가 MySQL에서 정하는 primary key의 길이를 초과하면 <code>Specified key was too long</code> 에러가 발생합니다. 이 경우 Quartz Job Scheduler용 MySQL 데이터베이스를 Latin 1으로 분리해서 사용하거나 또는 Quartz Job Scheduler의 MySQL 스키마에서 primary key의 길이를 최대 길이 이내로 수동 조정하도록 합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_flamingo_실행_권한">Flamingo 실행 권한</h4>
+<div class="paragraph">
+<p>Flamingo는 모든 작업에 대해서 Workflow Designer가 권한을 얻기 위해서는 proxy user 또는 mapred 계정으로 Flamingo를 실행시키도록 합니다.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_apache_hive">Apache Hive</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Flmaingo의 Apache Hive 관련 기능이 동작하려면 Apache Hive 1.0을 권장합니다. Apache Hive 1.0에 대한 자세한 변경 정보는 <a href="https://issues.apache.org/jira/secure/ReleaseNote.jspa?version=12329278&amp;styleName=Text&amp;projectId=12310843">Apache Hive 1.0 Release Note</a>을 참고하십시오.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Apache Hive를 구성하는 구성요소는 다음과 같습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Hive Server 2 (기본 10000 포트 사용)</p>
+</li>
+<li>
+<p>Hive Metastore (기본 9083 포트 사용)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Hive Server 2, Hive Metastore가 제대로 동작하기 위해서는 Apache Hive의 설정 파일은 <code>&lt;HIVE_HOME&gt;/conf/hive-site.xml</code> 파일에 Hive Metastore 정보가 정상적으로 설정되어 있어야 합니다.
+또한 Metastore를 구성하기 위해서 MySQL 또는 PostgreSQL 등을 설정해야 합니다. 본 문서에서는 MySQL에 대해서만 설명합니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Cloudera CDH, Pivotal HD, Hortonworks HDP 배포판의 경우 자동으로 Apache Hive를 설치하므로 Cloudera CDH, Pivotal HD, Hortonworks HDP 배포판을 사용하는 사용자의 경우 본 내용을 넘어가도록 합니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_mysql_데이터베이스_생성하기">MySQL 데이터베이스 생성하기</h4>
+<div class="paragraph">
+<p>Flamingo의 Apache Hive 편집기를 포함하여 Apache Hive를 사용하기 위해서는 Metastore Server와 Hive Server 2가 설치되어 있어야 합니다.
+이를 위해서 가장 먼저 Hive Metastore를 위한 MySQL 계정을 생성합니다.
+mysql 커맨드를 이용하여 로그인한 후 다음의 커맨드를 순서대로 입력합니다. 이렇게 하면 hive/hive인 새로운 MySQL 사용자가 생성되며 모든 권한을 부여하게 됩니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="sql">mysql&gt; <span class="class">CREATE</span> <span class="type">DATABASE</span> hive;
+mysql&gt; <span class="class">CREATE</span> USER <span class="string"><span class="delimiter">'</span><span class="content">hive</span><span class="delimiter">'</span></span><span class="error">@</span><span class="string"><span class="delimiter">'</span><span class="content">localhost</span><span class="delimiter">'</span></span> IDENTIFIED <span class="keyword">BY</span> <span class="string"><span class="delimiter">'</span><span class="content">hive</span><span class="delimiter">'</span></span>;
+mysql&gt; <span class="class">GRANT</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> * . * <span class="keyword">TO</span> <span class="string"><span class="delimiter">'</span><span class="content">hive</span><span class="delimiter">'</span></span><span class="error">@</span><span class="string"><span class="delimiter">'</span><span class="content">localhost</span><span class="delimiter">'</span></span>;
+mysql&gt; FLUSH PRIVILEGES;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_hive_metastore_구성을_위한_mysql_jdbc_driver_다운로드">Hive Metastore 구성을 위한 MySQL JDBC Driver 다운로드</h4>
+<div class="paragraph">
+<p>이제 Apache Hive를 설치하기 위해서 Apache Hive를 다운로드한 후 MySQL JDBC Driver를 다운로드합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># wget http://mirror.apache-kr.org/hive/hive-1.0.0/apache-hive-1.0.0-bin.tar.gz
+--2015-02-17 19:37:18--  http://mirror.apache-kr.org/hive/hive-1.0.0/apache-hive-1.0.0-bin.tar.gz
+Resolving mirror.apache-kr.org (mirror.apache-kr.org)... 182.161.117.136
+접속 mirror.apache-kr.org (mirror.apache-kr.org)|182.161.117.136|:80... 접속됨.
+HTTP request sent, awaiting response... 200 OK
+Length: 80008779 (76M) [application/x-gzip]
+Saving to: ‘apache-hive-1.0.0-bin.tar.gz’
+
+100%[=======================================================&gt;] 80,008,779  10.3MB/s   in 7.6s
+
+2015-02-17 19:37:25 (10.0 MB/s) - ‘apache-hive-1.0.0-bin.tar.gz’ saved [80008779/80008779]
+
+# tar xvfz apache-hive-1.0.0-bin.tar.gz
+...
+
+# cd &lt;HIVE_HOME&gt;/lib
+# wget http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.28/mysql-connector-java-5.1.28.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_hive_metastore_설정">Hive Metastore 설정</h4>
+<div class="paragraph">
+<p>이제 마지막으로 <code>&lt;HIVE_HOME&gt;/conf/hive-site.xml</code> 파일을 다음과 같이 수정합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="preprocessor">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
+<span class="tag">&lt;configuration&gt;</span>
+  <span class="tag">&lt;property&gt;</span>
+    <span class="tag">&lt;name&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;value&gt;</span>hive<span class="tag">&lt;/value&gt;</span>
+  <span class="tag">&lt;/property&gt;</span>
+
+  <span class="tag">&lt;property&gt;</span>
+    <span class="tag">&lt;name&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;value&gt;</span>hive<span class="tag">&lt;/value&gt;</span>
+  <span class="tag">&lt;/property&gt;</span>
+
+  <span class="tag">&lt;property&gt;</span>
+    <span class="tag">&lt;name&gt;</span>hive.server2.thrift.port<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;value&gt;</span>10000<span class="tag">&lt;/value&gt;</span>
+  <span class="tag">&lt;/property&gt;</span>
+
+  <span class="tag">&lt;property&gt;</span>
+    <span class="tag">&lt;name&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;value&gt;</span>jdbc:mysql://localhost:3306/hive<span class="tag">&lt;/value&gt;</span>
+  <span class="tag">&lt;/property&gt;</span>
+<span class="tag">&lt;/configuration&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_hive_커맨드_테스트">Hive 커맨드 테스트</h4>
+<div class="paragraph">
+<p>이제 Hive가 제대로 동작하는지 다음의 커맨드를 실행해봅니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># cd &lt;HIVE_HOME&gt;/bin
+# hive
+Logging initialized using configuration in file:/Volumes/Data/Java/hive-0.11.0/conf/hive-log4j.properties
+Hive history file=/tmp/fharenheit/hive_job_log_fharenheit_2527@home-imac.local_201401100023_1813859866.txt
+2014-01-10 00:23:21.068 java[2527:1903] Unable to load realm info from SCDynamicStore
+hive&gt; show tables; <b class="conum">(1)</b>
+OK
+Time taken: 2.09 seconds</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>데이터베이스 테이블 목록 표시</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+최근에는 <code>hive</code> 커맨드 대신 <code>beeline</code> 커맨드를 사용합니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_hive_server_2_프로세스_시작">Hive Server 2 프로세스 시작</h4>
+<div class="paragraph">
+<p>이제 정상 동작하므로 Hive Server 2를 다음의 커맨드로 백그라운드 실행합니다. 이렇게 실행하면 10000 포트로 Hive Server 2가 동작하게 되며 Thrift API 또는 JDBC를 이용하여 Hive Server 2에 Hive Query 실행을 요청할 수 있게 됩니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># cd &lt;HIVE_HOME&gt;/bin
+# nohup hiveserver2 &amp;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_hive_metastore_프로세스_시작">Hive Metastore 프로세스 시작</h4>
+<div class="paragraph">
+<p>Hive Server 2 뿐만 아니라 Hive 편집기에서 테이블 및 데이터베이스를 관리하려면 Hive Metastore Server가 동작해야 합니다. 이를 위해서 다음의 커맨드를 사용하여 Metastore Server를 실행할 수 있습니다. 이렇게 하면 9083 포트로 Hive Metastore Server가 동작하게 됩니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># cd &lt;HIVE_HOME&gt;/bin
+# hive --service metastore &amp;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_설치시_에러_발생_사례">설치시 에러 발생 사례</h4>
+<div class="paragraph">
+<div class="title">Specified key was too long 에러</div>
+<p>MySQL이 UTF-8로 설정되어 있는 경우 Hive의 Metastore를 MySQL로 설정하게 되면 <code>com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Specified key was too long; max key length is 767 bytes</code> 에러가 발생할 수 있습니다. 이 경우 Latin 1으로 변경해야 합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>mysql&gt; alter database hive character set latin1;</code></pre>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect3">
+<h4 id="_flamingo_agent">Flamingo Agent</h4>
+<div class="paragraph">
+<p>Flamingo 2에는 Hadoop EcoSystem을 구성하는 각종 컴포넌트를 모니터링하고 고급 기능을 제공하기 위해서 JVM 상에서 동작하는 Agent를 각 컴포넌트에 설치합니다.
+Flamingo Engine은 각각의 Agent와 통신하며 관련 기능을 처리하고, Collector는 각각의 Agent와 통신하여 모니터링 메트릭스를 수집합니다.
+본 내용에서는 Flamingo 2에서 제공하는 각종 Agent의 설치 방법을 알아봅니다.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+Flamingo 2의 분산 파일 시스템 브라우저, 모니터링 부분은 기능은 특허가 적용되어 있습니다. 따라서 Flamingo의 소스코드 레파지토리에 제공하는 소스코드에서 Flamingo Agent는 소스코드를 제공하지 않으며 바이너만 제공하고 있습니다. 또한 제공한 Flamingo Agent의 decompile, modification 등은 특허에 위반될 수 있음을 알립니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_resource_manager_agent">Resource Manager Agent</h5>
+<div class="paragraph">
+<p>Hadoop 2에서 추가된 Resource Manager 정보를 모니터링하고 YARN Application을 관리하기 위해서는 YARN Resource Manager용
+Flamingo Agent를 설치해야 합니다. Cloudera CDH 배포판이 아닌 경우 <code>YARN_OPTS</code> 환경변수에 아래의 옵션을 추가해야 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>-javaagent:flamingo2-hadoop2-rm-agent-2.0.0.jar=resourcescript:resourcemanager.bm</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Cloudera CDH 배포판인 경우 Cloudera Manager에 로그안하여 Resource Manager 설정에서 <code>ResourceManager의 Java 구성 옵션</code> 에 아래와 같이 정보를 추가합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/install/cdh-rm-agent.png" alt="Cloudera CDH 5의 Resource Manager Agent 설정"></span></p>
+</div>
+<div class="paragraph">
+<p>JAR 파일의 경로는 반드시 절대 경로로 입력하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>-javaagent:/root/build/flamingo2/trunk/flamingo2-hadoop2-rm-agent/target/flamingo2-hadoop2-rm-agent-2.0.jar=resourcescript:resourcemanager.bm
+-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:-CMSConcurrentMTEnabled
+-XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+종종 JAR 파일에 접근할 수 있는 권한이 없는 경우 JVM이 정상적으로 동작하지 못하므로 만약 Resource Manager가 정상적으로 시작하지 않는다면 JAR 파일의 경로가 Resource Manager가 접근할 수 있는 권한을 가지고 있는지 확인하도록 합니다. Cloudera CDH, Pivotal HD, Hortonworks HDP 배포판은 Resource Manager의 시스템 계정은 <code>yarn</code> 이므로 Flamingo Resource Manager Agent JAR 파일이 <code>yarn</code> 계정으로 접근이 가능한 디렉토리에 있는지 확인하도록 합니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_cloudera_cdh_문제_해결하기">Cloudera CDH 문제 해결하기</h6>
+<div class="paragraph">
+<p>Cloudera CDH의 경우 <code>ResourceManager의 Java 구성 옵션</code> 의 경로가 잘못된 경우 Resource Manager가 정상적으로 동작하지 않습니다. Flamingo Reesource Manager Agent를 <code>ResourceManager의 Java 구성 옵션</code> 에 설정한 후 다음과 같이 "yarn &gt; 인스턴스"를 선택합니다. 그러면 다음과 같이 ResourceManager 항목을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/install/cdh-rm-restart-1.png" alt="Resource Manager 관리 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>ResourceManager 항목을 선택하면 Resource Manager에 대한 상세한 정보가 표시가 됩니다. 그러면 우측 메뉴에서 재시작을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/install/cdh-rm-restart-2.png" alt="Resource Manager 재시작 메뉴"></span></p>
+</div>
+<div class="paragraph">
+<p>그러면 Resource Manager 프로세스만 재시작이 진행되며 약간의 시간이 소요됩니다. 만약 재시작중 실패하면 다음과 같이 실패 상태로 변경됩니다. 여기에서 원인을 찾기 위해서 Stdout을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/install/cdh-rm-restart-3.png" alt="Resource Manager 재시작"></span></p>
+</div>
+<div class="paragraph">
+<p>Resource Manager 구동 스크립트의 표준 출력이 로그 파일에 기록되어 나타나며 하단에 JVM을 초기화할 수 없다는 에러 문구를 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/install/cdh-rm-restart-4.png" alt="Stdout 로그 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>이제 Stderr 로그를 확인해봅니다. 그러면 JAR, Zip 파일을 열 수 없다는 문구가 나타납니다. 보통 이 경우는 파일명 오류, 권한 오류, 파일 깨짐 등으로 인하여 파일을 열 수 없는 경우에 해당합니다. 따라서 이것을 점검하려면 <code>yarn</code> 계정으로 로그인하여 해당 파일이 정상적으로 접근이 되는지, 파일이 제대로 압축이 풀리는지 <code>jar tvf &lt;JAR 파일&gt;</code> 커맨드로 확인을 해야 합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/install/cdh-rm-restart-5.png" alt="Stderr 로그 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>설정이 정상적으로 되었다면 Resource Manager를 재시작하면 다음의 화면을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/install/cdh-rm-restart-6.png" alt="정상 동작"></span></p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_namenode_agent">Namenode Agent</h5>
+<div class="paragraph">
+<p>Flamingo Namenode Agent는 Namenode를 모니터링하여 HDFS 정보 수집 및 HDFS 관리 등을 수행하기 위한 JVM Agent입니다.</p>
+</div>
+<div class="paragraph">
+<p>TODO MapR, Hortonworks, Pivotal, Cloudera를 추가함.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+종종 JAR 파일에 접근할 수 있는 권한이 없는 경우 JVM이 정상적으로 동작하지 못하므로 만약 Namenode가 정상적으로 시작하지 않는다면 JAR 파일의 경로가 Namenode가 접근할 수 있는 권한을 가지고 있는지 확인하도록 합니다. Cloudera CDH, Pivotal HD, Hortonworks HDP 배포판은 Namenode의 시스템 계정은 <code>hdfs</code> 이므로 Flamingo Agent JAR 파일이 <code>hdfs</code> 계정으로 접근이 가능한 디렉토리에 있는지 확인하도록 합니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_mapreduce_agent">MapReduce Agent</h5>
+<div class="paragraph">
+<p>MapReduce Agent는 MapReduce, Hive, Pig Job 실행시 동작하는 MapReduce Job ID 및 YARN Application ID를 추출하고 ID를 저장하는 기능을 수행하는 Agent입니다.</p>
+</div>
+<div class="paragraph">
+<p>설정은 Flamingo의 <code>/WEB-INF/config.properties</code> 파일의 다음 위치에서 지정할 수 있습니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># Flamingo의 워크플로우 실행시 로그를 생성하는 로깅 디렉토리
+flamingo.workflow.logging.dir=/data1/cloudine/web/logs
+
+# Flamingo MapReduce Job Agent의 절대경로
+# 이 Flamingo의 MapReduce Job Agent는 MapReduce Job ID, YARN Application ID를 추출하는데 사용한다.
+# 따라서 이 경로를 제대로 설정하지 않으면 실행중인 워크플로우를 강제 종료할 수 없다.
+# 생성된 MapReduce Job ID와 YARN Application ID는 flamingo.workflow.logging.dir 으로 설정한 디렉토리에 생성된다.
+# 예) MapReduce의 경우
+# 예) YARN Application의 경우
+flamingo.mr.agent.jar.path=/data1/cloudine/web/flLib/flamingo2-hadoop2-mr-agent-2.0.0-SNAPSHOT.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>MapReduce Agent는 워크플로우 디자이너에서 MapReduce, Hive, Pig를 실행하는 경우 ID를 추출하여 향후 모니터링 기능과 연계시 동작합니다.
+MapReduce Agent를 통해 제공하는 기능은 다음과 같습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>MapReduce Job의 관련 정보 수집 및 저장</p>
+</li>
+<li>
+<p>워크플로우와 YARN Application, MapReduce와 연결 고리 파악</p>
+</li>
+<li>
+<p>워크플로우 강제 종료시 YARN Application, MapReduce 강제 종료</p>
+</li>
+<li>
+<p>기타 관련 정보 수집</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pivotal_hawq_jdbc_driver">Pivotal HAWQ JDBC Driver</h3>
+<div class="paragraph">
+<p><a href="https://network.pivotal.io/products/pivotal-hawq">Pivotal HAWQ</a>는 PHD(Pivotal Hadoop Distribution)과 HDP(Hortonworks Hadoop Distribution)과 함께 동작하는 SQL on Hadoop을 구현하는 Query Engine입니다.</p>
+</div>
+<div class="paragraph">
+<p>Pivotal HAWQ는 강력한 고성능 SQL on Hadoop으로써 ANSI SQL을 100% 지원하고 MADlib, PL/Java, Pivotal R과 함께 연동하여 다양한 분석 작업을 할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p>Flamingo 2는 Pivotal HAWQ 1.2.1.0을 기준으로 개발이 되었으며 본 문서를 작성하는 시점에서는 HAWQ 1.3.0.1 버전이 릴리즈되었습니다.</p>
+</div>
+<div class="paragraph">
+<p>Pivotal HAWQ 1.3은 다음의 하둡 배포판에서 동작할 수 있습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pivotal - PHD 3.0</p>
+</li>
+<li>
+<p>Hortonworks - HDP 2.2.4</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Pivotal HAWQ는 JDBC 기반으로만 외부 연동을 지원하며 현재 Flamingo 2 또한 JDBC를 통해서 HAWQ를 지원합니다. 이런 이유로 JDBC에서 구현할 수 있는 기능들만 제공하게 되며, 또한 기술적 제약사항도 발생하게 됩니다.</p>
+</div>
+<div class="paragraph">
+<p>Flamingo 2에서 지원하는 Pivotal HAWQ Editor를 사용하기 위해서는 Pivotal HAWQ JDBC Driver가 필요합니다. Pivotal HAWQ JDBC Driver는 Commercial License가 필요하므로 Flamingo 사용자가 직접 다운로드하여 설치하도록 합니다. 다운로드를 하기 위해서는 Pivotal Network에 접속하여 회원가입후 가능합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pivotal HAWQ JDBC Driver : <a href="https://network.pivotal.io/products/pivotal-hawq">다운로드</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>상기 사이트에서 Pivotal HAWQ JDBC Driver를 다운로드한 후에는 <code>greenplum.jar</code> 파일을 <code>WEB-INF/lib</code> 디렉토리에 복사하도록 합니다.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_웹_터미널_설치">웹 터미널 설치</h3>
+<div class="paragraph">
+<p>Flamingo 2에서 부터 제공하는 웹 터미널은 nodejs를 기반으로 동작하며 웹 터미널로 접속하고자 하는 서버에 nodejs를 포함한 관련 모듈을 설치해야 합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_nodejs_설치하기">nodejs 설치하기</h4>
+<div class="paragraph">
+<p>웹 터미널을 설치하기 위해서 OS에 따라서 다음을 참고하여 nodejs를 설치하도록 합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>CentOS : <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-run-a-node-js-app-on-centos-6-4-64bit">How To Install And Run A Node.js App On Centos 6.4 64bit</a></p>
+</li>
+<li>
+<p>Ubuntu : <a href="https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-an-ubuntu-14-04-server">How To Install Node.js on an Ubuntu 14.04 server</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Ubuntu의 경우 다음의 커맨드로 설치할 수 있습니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># apt-get install nodejs npm</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Ubuntu의 경우 <code>/usr/bin/nodejs</code> 로 설치가 되지만 <code>/usr/bin/node</code> 로 링크를 생성해야 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># ln -s /usr/bin/nodejs /usr/bin/node</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Ubuntu 계열은 다음의 패키지를 추가설치합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># apt-get install nodejs-legacy
+# apt-get install npm
+# apt-get install g++</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_npm_패키지_설치">npm 패키지 설치</h4>
+<div class="paragraph">
+<p>의존하는 패키지를 설치하기 위해서 <code>node_modules</code> 디렉토리를 찾습니다.
+이때 node_modules 디렉토리는 {prefix}/lib/node_modules 입니다.
+{prefix} 는 보통 /usr/local/ 또는 사용자 환경에 따라 결정됩니다.
+그리고 다음의 순서대로 설치를 진행합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># npm install async -g
+async@0.9.0 /usr/local/lib/node_modules/async
+
+# npm install term.js -g
+term.js@0.0.4 /usr/local/lib/node_modules/term.js
+
+# npm install express@3.X.X -g
+express@3.20.2 /usr/local/lib/node_modules/express
+├── basic-auth@1.0.0
+├── merge-descriptors@1.0.0
+├── utils-merge@1.0.0
+├── cookie-signature@1.0.6
+├── methods@1.1.1
+├── cookie@0.1.2
+├── fresh@0.2.4
+├── escape-html@1.0.1
+├── range-parser@1.0.2
+├── content-type@1.0.1
+├── vary@1.0.0
+├── parseurl@1.3.0
+├── content-disposition@0.5.0
+├── commander@2.6.0
+├── depd@1.0.1
+├── etag@1.5.1 (crc@3.2.1)
+├── mkdirp@0.5.0 (minimist@0.0.8)
+├── proxy-addr@1.0.7 (forwarded@0.1.0, ipaddr.js@0.1.9)
+├── debug@2.1.3 (ms@0.7.0)
+├── connect@2.29.1 (pause@0.0.1, response-time@2.3.0, vhost@3.0.0, on-headers@1.0.0, basic-auth-connect@1.0.0, bytes@1.0.0, cookie-parser@1.3.4, method-override@2.3.2, serve-static@1.9.2, connect-timeout@1.6.1, qs@2.4.1, serve-favicon@2.2.0, http-errors@1.3.1, finalhandler@0.3.4, morgan@1.5.2, type-is@1.6.1, errorhandler@1.3.5, body-parser@1.12.3, compression@1.4.3, serve-index@1.6.3, express-session@1.10.4, csurf@1.7.0, multiparty@3.3.2)
+└── send@0.12.2 (destroy@1.0.3, ms@0.7.0, mime@1.3.4, on-finished@2.2.1)
+
+# npm install socket.io -g
+socket.io@1.3.5 /usr/local/lib/node_modules/socket.io
+├── has-binary-data@0.1.3 (isarray@0.0.1)
+├── debug@2.1.0 (ms@0.6.2)
+├── socket.io-parser@2.2.4 (isarray@0.0.1, debug@0.7.4, component-emitter@1.1.2, benchmark@1.0.0, json3@3.2.6)
+├── socket.io-adapter@0.3.1 (object-keys@1.0.1, debug@1.0.2, socket.io-parser@2.2.2)
+├── socket.io-client@1.3.5 (to-array@0.1.3, indexof@0.0.1, component-bind@1.0.0, debug@0.7.4, backo2@1.0.2, object-component@0.0.3, component-emitter@1.1.2, has-binary@0.1.6, parseuri@0.0.2, engine.io-client@1.5.1)
+└── engine.io@1.5.1 (base64id@0.1.0, debug@1.0.3, engine.io-parser@1.2.1, ws@0.5.0)
+
+# npm install pty.js -g
+pty.js@0.2.7-1 /usr/local/lib/node_modules/pty.js
+├── extend@1.2.1
+└── nan@1.7.0
+
+# npm install forever -g
+forever@0.14.1 /usr/local/lib/node_modules/forever
+├── colors@0.6.2
+├── timespan@2.3.0
+├── optimist@0.6.1 (wordwrap@0.0.2, minimist@0.0.10)
+├── nssocket@0.5.3 (eventemitter2@0.4.14, lazy@1.0.11)
+├── winston@0.8.3 (cycle@1.0.3, stack-trace@0.0.9, eyes@0.1.8, isstream@0.1.2, async@0.2.10, pkginfo@0.3.0)
+├── cliff@0.1.10 (eyes@0.1.8, colors@1.0.3)
+├── nconf@0.6.9 (ini@1.3.3, async@0.2.9, optimist@0.6.0)
+├── forever-monitor@1.5.2 (watch@0.13.0, minimatch@1.0.0, ps-tree@0.0.3, broadway@0.3.6)
+├── flatiron@0.4.3 (optimist@0.6.0, director@1.2.7, broadway@0.3.6, prompt@0.2.14)
+└── utile@0.2.1 (deep-equal@1.0.0, ncp@0.4.2, async@0.2.10, i@0.3.3, mkdirp@0.5.0, rimraf@2.3.3)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_웹_터미널_설치하기">웹 터미널 설치하기</h4>
+<div class="paragraph">
+<p><code>/usr/local/lib/node_modules/webterminal</code> 디렉토리를 생성하고 Flamingo 2의 <code>flamingo2-terminal-nodejs/terminal-server</code> 의 <code>.js</code> 파일을 모두 복사합니다.</p>
+</div>
+<div class="paragraph">
+<p>그리고 터미널 서버가 root 권한으로 실행할 수 있도록 터미널 서버를 동작시키기 위해서 root로 로그인후 터미널 서버를 실행시킬 계정에 sudo 권한을 부여합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># vi /etc/sudoers
+cloudine        ALL=(ALL)       NOPASSWD: ALL</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>만약 특정 프로세스만 sudo 권한을 부여하겠다면 다음과 같이 추가하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># vi /etc/sudoers
+cloudine        ALL=(ALL)       NOPASSWD:/usr/bin/nodejs, /usr/local/bin/forever</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>이제 다음의 커맨드를 실행하여 서버를 시작합니다. 실행시 리눅스 시스템의 멀티 유저에 대해서 터미널을 제공하려면 <code>root</code> 로 실행하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># sudo forever start server.js
+# ps -ef | grep forever
+root      7207     1  2 09:34 ?        00:00:00 /usr/bin/nodejs /usr/local/lib/node_modules/forever/bin/monitor server.js
+# netstat -an | grep 9191</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>로그 파일을 남기고자 할 경우 다음의 명령어를 사용합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># sudo forever start -o out.log -e err.log server.js</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>종료하고자 할 경우 다음의 명령어를 사용합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># sudo forever stop server.js</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_r_연동">R 연동</h3>
+<div class="paragraph">
+<p>Flamingo는 Flamingo 2 부터 R과 함께 연동하여 사용할 수 있습니다. 연동을 위해서 R, RStudio, RHadop, RHive와 같은 오픈소스가 필요하게 됩니다.
+Flamingo는 RStudio Server와 연동하여 Flamingo를 로그인한 상태에서 RStudio Server와 연계하여 사용할 수 있습니다.
+이렇게 되면 Flamingo에 로그인한 사용자가 Flamingo 내에서 R로 작업을 할 수 있게 됩니다.
+R은 대용량 분석은 아니지만 분석 알고리즘이 많고, 시각화 기능이 Hadoop에 비해서 상대적으로 매우 강력하기 때문에 R을 빅데이터 분석에서 같이 활용하는 것은
+편의성과 생산성 등을 확보해주고 특히 분석 방법을 다양화시킬 수 있다는 장점을 얻게 됩니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_r_설치">R 설치</h4>
+<div class="paragraph">
+<p>R을 Flamingo와 통합하기 위해서 우선 R을 사용할 수 있도록 제공하려는 서버에 R 패키지를 설치하는 과정이 우선적으로 필요합니다. 여기에서 Flamingo와 R을 같은 서버에서 제공하는 방법이 있겠지만
+R을 이용하여 분석하는 경우 CPU, Memory, HDD를 소비하므로 원칙적으로 분리할 것을 권고합니다. 따라서 R을 설치한 서버, Flamingo를 설치한 서버 이렇게 두 대의 서버가 필요하게 됩니다.
+R은 Flamingo를 설치한 서버가 아닌 R을 이용하여 분석하는 서버에 설치를 해야 합니다.</p>
+</div>
+<div class="paragraph">
+<p>R을 서버에 설치하기 위해서 <code>root</code> 로 로그인한 후 다음의 커맨드를 실행하여 R을 설치합니다(CentOS의 경우).</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># yum install R</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Ubuntu에서는 다음의 커맨드로 R을 설치할 수 있습니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># apt-get install r-base gdebi-core libapparmor1</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+R은 R 패키지를 인터넷을 통해서 다운로드하여 설치하도록 되어 있습니다. 따라서 별도 R 패키지 레파지토리를 구성하거나, R이 설치되어 있는 서버에 패키지를 설치 또는 구성해두지 않으면 인터넷 접속이 허용되지 않는 경우 R 패키지를 다운로드할 수 없습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rstudio_server_설치">RStudio Server 설치</h4>
+<div class="paragraph">
+<p>Flamingo는 RStudio Server와 연동하여 동작하도록 구현되어 있습니다. RStudio가 아닌 RStudio Server는 웹 브라우저를 통해서 R을 접근하여 사용할 수 있도록 해줍니다.
+특히 Flamingo는 Flamingo의 사용자 계정과 RStudio Server의 사용자 계정을 통합할 수 있도록 해주어 하나의 사용자 체계를 가질 수 있도록 해줍니다.
+다만 RStudio Server의 사용자 계정은 Linux 서버의 계정이며, Flamingo의 계정은 서비스 계정의 개념이므로 이를 통합하기 위해서는 조직내에서 몇 가지 고려해야할 점이 있습니다.
+RStudio Server를 통해서 접근하는 서버의 Linux 계정에 대한 생성의 권한을 부여할 것이냐 입니다. 여하튼 이 부분은 Flamingo와 RStudio Server를 통합하는 조직의 보안 정책이므로
+이 문서에서는 다루지 않겠습니다.</p>
+</div>
+<div class="paragraph">
+<p>우선 RStudio Server는 R을 설치한 서버에 설치해야 합니다. 이를 위해서 <a href="http://www.rstudio.com/products/rstudio/download-server">RStudio Server 다운로드</a>를 합니다.
+다운로드시 OS에 맞는 버전을 다운로드해야 합니다. 아래 설치 내용은 CentOS의 경우로 <code>root</code> 로 로그인하여 순서대로 진행합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># yum install openssl098e # Required only for RedHat/CentOS 6 and 7
+# wget http://download2.rstudio.org/rstudio-server-0.98.1103-x86_64.rpm
+# yum install --nogpgcheck rstudio-server-0.98.1103-x86_64.rpm</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Ubuntu에서는 <code>apt-get</code> 대신 <code>gdebi</code> 커맨드로 설치를 합니다. 아래 커맨드는 64비트 Ubuntu의 경우에 해당합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># wget http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
+# gdebi rstudio-server-0.98.1103-amd64.deb</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rstudio_server_환경설정">RStudio Server 환경설정</h4>
+<div class="paragraph">
+<p>RStudio Server는 기본으로 8787 포트를 사용합니다. 하지만 웹 브라우저에서 접근시 <code>connection refused</code> 가 발생하면 RStudio Server가 설치되어 있는 다음의 설정 파일을 확인하도록 합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/etc/rstudio/rserver.conf</code> 파일</p>
+</li>
+<li>
+<p><code>/etc/rstudio/rsession.conf</code> 파일</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>특히 RStudio Server의 포트 및 IP 주소는 <code>/etc/rstudio/rserver.conf</code> 파일에서 관리합니다. 네트워크 설정을 하기 위해서 이 파일에 다음을 추가합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>www-port=8787
+www-address=192.168.0.1</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>이제 <code>root</code> 로 다음의 커맨드를 실행하여 RStudio Server를 재시작합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># rstudio-server restart</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>정상적으로 포트가 열려있는지 확인하려면 다음의 커맨드를 실행하여 확인하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># netstat -an | grep 8787
+tcp        0      0 0.0.0.0:8787                0.0.0.0:*                   LISTEN</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>또한 <code>/etc/rstudio/rserver.conf</code> 파일에 다음을 추가하여 세션 만료 시간을 지정할 수 있습니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>session-timeout-minutes=30</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+정책상 RStudio Server를 직접 외부로 포트를 개방할 수 없는 상황이지만 포워딩을 할 수 있는 상황이라면 <code>rinetd</code> 를 이용하여 포트를 포워딩하도록 시스템을 구축할 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_flamingo의_rstudio_server_연동_설정">Flamingo의 RStudio Server 연동 설정</h4>
+<div class="paragraph">
+<p>R과 RStudio Server를 설치하면 Flamingo와 RStudio Server를 연결하기 위해서 몇 가지 설정이 필요합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Flamingo에서 RStudio Server에 접속할 정보 설정</p>
+</li>
+<li>
+<p>RStudio Server에 Flamingo System Agent 설치 (<code>root</code> 권한 설치 필요)</p>
+</li>
+</ul>
+</div>
+<div class="sect4">
+<h5 id="_rstudio_server_접속_정보_설정">RStudio Server 접속 정보 설정</h5>
+<div class="paragraph">
+<p>Flamingo와 RStudio Server를 연결하기 위한 정보는 <code>/WEB-INF/config.properties</code> 파일에 있습니다. 이 파일에서 다음의 정보를 찾아서 IP 주소와 포트를 입력하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>rserver.auth.url=http://192.168.1.1:8787/auth-public-key
+rserver.signin.url=http://192.168.1.1:8787/auth-do-sign-in</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_flamingo_system_agent_설치">Flamingo System Agent 설치</h5>
+<div class="paragraph">
+<p>RStudio Server가 Linux 사용자 계정을 사용하므로 Flamingo의 사용자와 RStudio Server의 사용자는 근본적으로 차이가 있습니다.
+이 문제를 해결하기 위해서 Flamingo는 <code>root</code> 권한으로 RStudio Server에 System Agent를 설치하도록 합니다.
+Flamingo에 포함되어 있는 System Agent는 <code>.war</code> 파일 형식으로 배포되며 파일명은 <code>flamingo2-system-agent-2.0.war</code> 입니다. 따라서 사용자는 Apache Tomcat에 배포하여 동작시키면 됩니다.
+다만 배포시 <code>ROOT.war</code> 로 파일명을 변경하고 기존의 <code>&lt;TOMCAT_HOME&gt;/webapps/ROOT</code> 디렉토리를 삭제한 후 배포하시기 바랍니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>user.system.agent.urls=http://192.168.1.1:7070/remote/agent/system</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_설치_완료후_r과_통합한_화면">설치 완료후 R과 통합한 화면</h5>
+<div class="paragraph">
+<p>이제 설치후 RStudio Server와 통합이 완료되면 Flamingo 내에서 다음과 같이 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/install/rstudio.png" alt="RStudio Server 통합"></span></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Flamingo와 System Agent간 통신을 REST가 아닌 바이너리 통신을 하므로 중간에 가로채서 호출하기 어렵습니다. 필요하다면 기술지원을 통해서 두 프로세스간에 SSL 등의 처리를 지원할 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_rhive와_rhadoop_설치_참고사항">RHive와 RHadoop 설치 참고사항</h5>
+<div class="paragraph">
+<p>Hadoop의 HDFS에 저장되어 있는 파일을 R에서 로딩하여 분석하려면 HDFS와 연동하는 연동모듈 등이 필요합니다. RHive와 RHadoop은 연동을 위한 모듈로써 별도로 R, RStudio Server에 설치해야 합니다.
+RHive는 R에서 Hive QL을 실행하여 데이터를 R에서 사용할 수 있도록 하며, RHadoop의 rhdfs는 HDFS의 파일을 R에서 로딩할 수 있게 해줍니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/nexr/RHive">RHive</a></p>
+</li>
+<li>
+<p><a href="https://github.com/RevolutionAnalytics/rhdfs">RHadoop rhdfs</a></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+종종 많은 사용자들이 RHive, RHadoop(rhdfs)을 빅데이터 분석이 가능한 것으로 이해하고 있습니다. RHive, RHadoop(rhdfs)은 R 사용자를 위해서 Hadoop의 HDFS의 파일을 로딩할 수 있도록 하는 것이지 R을 고속 병렬 처리하는 개념이 아님을 알려드립니다.
+또한 본 문서에서는 관련 내용만 전달하며 RHive, RHadoop을 Flamingo와 같이 사용하자고 하는 경우 별도 설치를 하거나 또는 기술지원(<a href="mailto:sales@cloudine.co.kr">sales@cloudine.co.kr</a>)을 요청하시기 바랍니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_단일_계정으로_rstudio_server에_접근하고자_하는_경우">단일 계정으로 RStudio Server에 접근하고자 하는 경우</h5>
+<div class="paragraph">
+<p>경우에 따라서 RStudio Server에 별도 프로세스가 사용자를 생성하거나 삭제하는 등의 작업을 보안상 허용하지 않을 수 있습니다.
+이러한 이유로 하나의 단일 계정에서 R을 사용하고자 할 수도 있습니다.
+Flamingo는 기본으로 Flamingo 사용자과 RStudio Server가 연동되도록 구현되어 있기 때문에 이렇게 모든 사용자를 단일 사용자가 사용할 수 있도록 하기 위해서는
+소스코드를 수정해서 적용해야 합니다. 따라서 이 부분에 대한 별도 지원이 필요한 경우 기술지원(<a href="mailto:sales@cloudine.co.kr">sales@cloudine.co.kr</a>)을 요청하거나 직접 수정후 GPL v3로 공개하시기 바랍니다.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_flamingo_기타_구성_관련_정보">Flamingo 기타 구성 관련 정보</h4>
+<div class="sect4">
+<h5 id="_web_application_server_선택하기">Web Application Server 선택하기</h5>
+<div class="paragraph">
+<p>Flamingo 2 부터는 WebSocket을 사용하므로 다음의 버전에 충족하도록 Web Application Server를 사용해야 합니다. 특히 Flamingo 2는 Apache Tomcat을 기반으로 개발이 되어 있으므로 Apache Tomcat을 사용하면 쉽게 구성할 수 있습니다. 다음은 Flamingo 2를 사용하기 위한 최소 요구조건에 충족하는 Web Application Server입니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Tomcat 7.0.47+</p>
+</li>
+<li>
+<p>Jetty 9.1+</p>
+</li>
+<li>
+<p>GlassFish 4.1+</p>
+</li>
+<li>
+<p>WebLogic 12.1.3+</p>
+</li>
+<li>
+<p>Undertow 1.0+ (WildFly 8.0+)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_웹_다운로드_성능_향상_시키기">웹 다운로드 성능 향상 시키기</h5>
+<div class="paragraph">
+<p>Flamingo를 사용하는 사용자의 웹 브라우저에서 다운로드하는 Tomcat의 <code>&lt;TOMCAT_HOME&gt;/conf/server.xml</code> 파일을 수정하여 사용자의 웹 브라우저에서 다운로드하는 스크립트의 용량을 줄일 수 있습니다. Tomcat의 Connector 부분을 찾아서 다음과 같이 압축 관련 옵션을 추가합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;Connector</span> <span class="attribute-name">port</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">8080</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">protocol</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HTTP/1.1</span><span class="delimiter">&quot;</span></span>
+           <span class="attribute-name">connectionTimeout</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">20000</span><span class="delimiter">&quot;</span></span>
+           <span class="attribute-name">compression</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">on</span><span class="delimiter">&quot;</span></span>
+           <span class="attribute-name">compressionMinSize</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">2048</span><span class="delimiter">&quot;</span></span>
+           <span class="attribute-name">noCompressionUserAgents</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">gozilla, traviata</span><span class="delimiter">&quot;</span></span>
+           <span class="attribute-name">compressableMimeType</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text/css,text/html,text/xml,application/json,application/javascript,application/x-javascript,text/javascript,text/x-javascript,text/x-json</span><span class="delimiter">&quot;</span></span>
+           <span class="attribute-name">redirectPort</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">8443</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+이 설정은 Apache Tomcat과 관련된 설정으로 다른 Web Application Server를 사용하는 경우 해당 벤더에 문의 하십시오.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_utf_8_설정하기">UTF-8 설정하기</h5>
+<div class="paragraph">
+<p>Flamingo는 UTF-8을 지원해야만 multi-bytes character를 정상적으로 처리할 수 있습니다.
+이를 위해서 Tomcat의 커넥터에서 URI Encoding을 UTF-8을 사용하도록 설정해야 합니다.
+Tomcat의 <code>&lt;TOMCAT_HOME&gt;/conf/server.xml</code> 파일에서 다음과 같이 <code>URIEncoding</code> 옵션을 추가하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;Connector</span> <span class="attribute-name">port</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">8080</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">protocol</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HTTP/1.1</span><span class="delimiter">&quot;</span></span>
+           <span class="attribute-name">connectionTimeout</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">20000</span><span class="delimiter">&quot;</span></span>
+           <span class="attribute-name">redirectPort</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">8443</span><span class="delimiter">&quot;</span></span>
+           <span class="attribute-name">URIEncoding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">UTF-8</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_jvm_heap_조정하기">JVM Heap 조정하기</h5>
+<div class="paragraph">
+<p>Flamingo를 사용하는 서버는 MapReduce Job, Hive QL, Pig Latin 등을 실행하기 위해서 충분히 메모리를 확보해야 합니다.
+하지만 Flamingo를 실행하는 Tomcat의 JVM Heap이 부족하게 설정이 되어 있다면 큰 의미가 없습니다.
+Tomcat의 JVM Heap을 설정하기 위해서 <code>&lt;TOMCAT_HOME&gt;/bin/catalina.sh</code> 파일의 앞쪽에 <code>CATALINA_OPTS</code> 변수 설정을 추가하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>#   LOGGING_MANAGER (Optional) Override Tomcat's logging manager
+#                   Example (all one line)
+#                   LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+# -----------------------------------------------------------------------------
+
+CATALINA_OPTS="-Dflamingo -Xms4G -Xmx4G"
+
+# OS specific support.  $var _must_ be set to either true or false.
+cygwin=false
+darwin=false
+os400=false
+case "`uname`" in
+CYGWIN*) cygwin=true;;
+Darwin*) darwin=true;;
+OS400*) os400=true;;
+esac</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_시각화_설치하기">시각화 설치하기</h4>
+<div class="paragraph">
+<p>Flamingo 2에서 새로 추가된 시각화 기능은 R의 ggplot2를 이용합니다. 따라서 R의 ggplot 동작에 필요한 설정이 필요합니다.</p>
+</div>
+<div class="sect4">
+<h5 id="_임시_디렉토리_설정하기">임시 디렉토리 설정하기</h5>
+<div class="paragraph">
+<p>가장 먼저 ggplot 동작시 필요한 디렉토리를 <code>config.properties</code> 파일에 다음을 찾아서 경로를 설정하십시오.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>###########################################
+## Visualization Configuration
+###########################################
+
+# rdata 파일이 생성되는 임시 폴더
+visual.rdata.tmp=/appl/tmp
+
+# 최종 결과 이미지 파일이 생성되는 폴더
+visual.output=/appl/output</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_r_패키지_설치">R 패키지 설치</h5>
+<div class="paragraph">
+<p>이제 R을 실행하여 다음과 같이 R 패키지를 설치합니다. 리눅스 배포판에 따라서 다를 수 있으며 일부 패키지의 경우 의존하는 패키지를 먼저 설치해야 하는 경우가 있으므로 설치 로그 메시지를 잘 확인하고 진행하십시오.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>install.packages('rJava');
+install.packages('rjson');
+install.packages('ggplot2');
+install.packages('Rhipe');</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_rjava_설치하기">rJava 설치하기</h5>
+<div class="paragraph">
+<p>R에서 패키지가 제대로 설치되지 않는 경우 rJava를 다음가 같이 별도로 설치를 진행할 수 있습니다.
+단 R에서 Java를 사용하기 위해서 JDK를 먼저 설치해야 합니다. 이미 JDK가 설치되어 있는 경우 JDK 설치를 건너뛸 수 있습니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre># apt-get install openjdk-7-jdk
+# R CMD javareconf
+# ln -s $JAVA_HOME/jre/lib/amd64/server/libjvm.so /usr/lib</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_rhipe_설치하기">RHipe 설치하기</h5>
+<div class="paragraph">
+<p>RHipe를 설치하기 위해서 우선 Protocol Buffer를 다음과 같이 다운로드 하여 컴파일합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre># wget http://protobuf.googlecode.com/files/protobuf-2.5.0.tar.gz
+# tar -xzf protobuf-2.4.1.tar.gz
+# cd protobuf-2.4.1
+# ./configure
+# make
+# make install</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Protocol Buffer를 설치한 후 다음가 같이 RHipe를 다운로드하여 설치를 진행합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre># wget http://ml.stat.purdue.edu/rhipebin/Rhipe_0.74.0.tar.gz
+# R CMD INSTALL Rhipe_0.74.0.tar.gz</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>상기 방법으로도 RHipe가 설치가 되지 않으면 이제 수동으로 소스코드를 컴파일 하도록 합니다.
+우선 Github에서 다음과 같이 소스코드를 가져옵니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre># mkdir RHipe
+# git clone https://github.com/tesseradata/RHIPE.git RHipe/</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>이제 Maven <code>pom.xml</code> 파일의 125번째 라인에 있는 profile에서 연동하려는 Hadoop 버전과 <code>hadoop.version</code> 을 변경합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>cd RHipe
+vi pom.xml</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>그리고 난 후 다음과 같이 Apache Ant로 해당 버전에 맞도록 빌드하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>ant build-distro -Dhadoop.version=[hadoop-2]</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>이제 다음의 커맨드로 다시 RHipe를 설치합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>R CMD INSTALL Rhipe_0.74.0-hadoop2.tar.gz</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="monitoring">모니터링</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Flamingo 2는 Apache Hadoop EcoSystem을 구성하는 각종 컴포넌트 및 리소스를 모니터링하는 기능을 제공합니다. 다음은 Flamingo 2에서 수집하는 모니터링 정보입니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Hive Server 2</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Hive Server의 CPU</p>
+</li>
+<li>
+<p>시스템의 CPU</p>
+</li>
+<li>
+<p>JVM Heap</p>
+</li>
+<li>
+<p>Hive QL 실행</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Namenode</p>
+</li>
+<li>
+<p>YARN Resource Manager (Hadoop 2)</p>
+</li>
+<li>
+<p>Application Master (Hadoop 2)</p>
+</li>
+<li>
+<p>History Server (Hadoop 2; Timeline Server로 명칭이 변경됨)</p>
+</li>
+<li>
+<p>Node (System Resource)</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_mapreduce_job">MapReduce Job</h3>
+<div class="paragraph">
+<p>MapReduce Job의 경우 모니터링 에이전트를 통해서 수집할 수 있는 것은 Job ID입니다. Job ID를 클라이언트측에서 수집함으로써
+MapReduce Job을 추적할 수 있게 되며 Flamingo 2에서는 이 정보를 활용하여 워크플로우와 MapReduce Job의 연관 정보를 찾아냅니다.
+MapReduce Job의 Job ID를 추출하는 모니터링 에이전트는 다음을 대상으로 동작합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>MapReduce Job</p>
+</li>
+<li>
+<p>Pig Latin</p>
+</li>
+<li>
+<p>Hive QL</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>사용자가 커맨드 라인에서 MapReduce를 실행하거나, Pig Latin 스크립트를 실행하거나, Hive QL을 실행한다면 Job Tracker를 통해서 Job ID를 배정받습니다.
+모니터링 에이전트는 이 Job ID를 별도로 기록하여 어떤 Job이 어떤 워크플로우에 해당하는지를 알아냅니다.</p>
+</div>
+<div class="paragraph">
+<p>MapReduce Job의 Job ID 및 YARN Application의 ID를 추출하기 위해서 다음와 같이 <code>HADOOP_CLIENT_OPTS</code> 환경변수에 Flamingo 2 MapReduce Agent를 설정합니다.
+이렇게 설정하면 MapReduce Job을 클라이언트에서 실행하는 경우 Job ID가 현재 디렉토리에 파일로 저장됩니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>export HADOOP_CLIENT_OPTS=-javaagent:flamingo2-hadoop2-mr-agent-2.0.jar=resourcescript:mr2.bm</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>영구적으로 적용하고자 하는 경우 <code>~/.profile</code> 또는  <code>~/.bashrc</code> 파일에 설정할 수 있으며, <code>&lt;HADOOP_HOME&gt;/bin/hadoop</code> 커맨드에 환경변수를 설정할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p>Cloudera CDH를 사용하는 사용자의 경우도 동일하게 적용되며 다음의 커맨드를 통해서 동작 여부를 확인할 수 있습니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># hadoop jar hadoop-mapreduce-examples-2.5.0.jar wordcount /input.txt /output
+15/02/15 13:18:02 INFO client.RMProxy: Connecting to ResourceManager at exo1.cdh.local/192.168.100.71:8032
+15/02/15 13:18:09 INFO input.FileInputFormat: Total input paths to process : 1
+15/02/15 13:18:09 INFO mapreduce.JobSubmitter: number of splits:1
+15/02/15 13:18:09 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1423442407955_0150
+************************************************************************************
+** Yarn App instrumented By Flamingo 2 &gt;&gt; Path : /root
+** Yarn App instrumented By Flamingo 2 &gt;&gt; Application ID : application_1423442407955_0150
+************************************************************************************
+15/02/15 13:18:10 INFO impl.YarnClientImpl: Submitted application application_1423442407955_0150
+15/02/15 13:18:10 INFO mapreduce.Job: The url to track the job: http://exo1.cdh.local:8088/proxy/application_1423442407955_0150/
+************************************************************************************
+** MR instrumented By Flamingo 2 &gt;&gt; Path : /root
+** MR instrumented By Flamingo 2 &gt;&gt; Job ID : job_1423442407955_0150
+************************************************************************************
+15/02/15 13:18:10 INFO mapreduce.Job: Running job: job_1423442407955_0150
+15/02/15 13:19:09 INFO mapreduce.Job: Job job_1423442407955_0150 running in uber mode : false
+15/02/15 13:19:09 INFO mapreduce.Job:  map 0% reduce 0%
+15/02/15 13:20:30 INFO mapreduce.Job:  map 100% reduce 0%
+15/02/15 13:20:42 INFO mapreduce.Job:  map 100% reduce 2%
+15/02/15 13:20:43 INFO mapreduce.Job:  map 100% reduce 4%
+15/02/15 13:20:44 INFO mapreduce.Job:  map 100% reduce 8%
+15/02/15 13:20:45 INFO mapreduce.Job:  map 100% reduce 10%
+15/02/15 13:20:48 INFO mapreduce.Job:  map 100% reduce 23%
+15/02/15 13:20:49 INFO mapreduce.Job:  map 100% reduce 29%
+15/02/15 13:20:50 INFO mapreduce.Job:  map 100% reduce 31%
+15/02/15 13:20:51 INFO mapreduce.Job:  map 100% reduce 40%
+15/02/15 13:20:52 INFO mapreduce.Job:  map 100% reduce 46%
+15/02/15 13:20:53 INFO mapreduce.Job:  map 100% reduce 50%
+15/02/15 13:20:54 INFO mapreduce.Job:  map 100% reduce 52%
+15/02/15 13:20:58 INFO mapreduce.Job:  map 100% reduce 58%
+15/02/15 13:20:59 INFO mapreduce.Job:  map 100% reduce 60%
+15/02/15 13:21:00 INFO mapreduce.Job:  map 100% reduce 67%
+15/02/15 13:21:01 INFO mapreduce.Job:  map 100% reduce 69%
+15/02/15 13:21:02 INFO mapreduce.Job:  map 100% reduce 73%
+15/02/15 13:21:03 INFO mapreduce.Job:  map 100% reduce 77%
+15/02/15 13:21:04 INFO mapreduce.Job:  map 100% reduce 83%
+15/02/15 13:21:05 INFO mapreduce.Job:  map 100% reduce 88%
+15/02/15 13:21:06 INFO mapreduce.Job:  map 100% reduce 96%
+15/02/15 13:21:14 INFO mapreduce.Job:  map 100% reduce 98%
+15/02/15 13:21:17 INFO mapreduce.Job:  map 100% reduce 100%
+15/02/15 13:21:18 INFO mapreduce.Job: Job job_1423442407955_0150 completed successfully
+15/02/15 13:21:18 INFO mapreduce.Job: Counters: 49
+        File System Counters
+                FILE: Number of bytes read=3179874
+                FILE: Number of bytes written=11566880
+                FILE: Number of read operations=0
+                FILE: Number of large read operations=0
+                FILE: Number of write operations=0
+                HDFS: Number of bytes read=4067777
+                HDFS: Number of bytes written=4422649
+                HDFS: Number of read operations=147
+                HDFS: Number of large read operations=0
+                HDFS: Number of write operations=96
+        Job Counters
+                Launched map tasks=1
+                Launched reduce tasks=48
+                Data-local map tasks=1
+                Total time spent by all maps in occupied slots (ms)=77777
+                Total time spent by all reduces in occupied slots (ms)=620248
+                Total time spent by all map tasks (ms)=77777
+                Total time spent by all reduce tasks (ms)=620248
+                Total vcore-seconds taken by all map tasks=77777
+                Total vcore-seconds taken by all reduce tasks=620248
+                Total megabyte-seconds taken by all map tasks=79643648
+                Total megabyte-seconds taken by all reduce tasks=635133952
+        Map-Reduce Framework
+                Map input records=354984
+                Map output records=354984
+                Map output bytes=5132627
+                Map output materialized bytes=3179682
+                Input split bytes=102
+                Combine input records=354984
+                Combine output records=354983
+                Reduce input groups=354983
+                Reduce shuffle bytes=3179682
+                Reduce input records=354983
+                Reduce output records=354983
+                Spilled Records=709966
+                Shuffled Maps =48
+                Failed Shuffles=0
+                Merged Map outputs=48
+                GC time elapsed (ms)=40837
+                CPU time spent (ms)=334420
+                Physical memory (bytes) snapshot=14881824768
+                Virtual memory (bytes) snapshot=69589762048
+                Total committed heap usage (bytes)=38817759232
+        Shuffle Errors
+                BAD_ID=0
+                CONNECTION=0
+                IO_ERROR=0
+                WRONG_LENGTH=0
+                WRONG_MAP=0
+                WRONG_REDUCE=0
+        File Input Format Counters
+                Bytes Read=4067675
+        File Output Format Counters
+                Bytes Written=4422649</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>이렇게 Flamingo 2 MapReduce Agent를 등록하면 아래와 같이 실행후 관련 정보를 파일로 기록합니다.
+Flamingo 2의 모니터링 화면에서 Job Kill을 수행할때 사용하는 정보입니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># cat app.application_1423442407955_0150
+&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
+&lt;properties&gt;
+&lt;comment/&gt;
+&lt;entry key="queue"&gt;default&lt;/entry&gt;
+&lt;entry key="applicationName"&gt;word count&lt;/entry&gt;
+&lt;entry key="applicationId"&gt;application_1423442407955_0150&lt;/entry&gt;
+&lt;/properties&gt;
+
+# cat hadoop.job_1423442407955_0150
+&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
+&lt;properties&gt;
+&lt;comment/&gt;
+&lt;entry key="jobId"&gt;job_1423442407955_0150&lt;/entry&gt;
+&lt;entry key="queue"&gt;default&lt;/entry&gt;
+&lt;entry key="trackingUrl"&gt;http://exo1.cdh.local:8088/proxy/application_1423442407955_0150/&lt;/entry&gt;
+&lt;entry key="user"&gt;root&lt;/entry&gt;
+&lt;entry key="jobName"&gt;word count&lt;/entry&gt;
+&lt;/properties&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_apache_hive_2">Apache Hive</h3>
+<div class="paragraph">
+<p>TBD</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="designer">워크플로우 디자이너</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>워크플로우 디자이너는 각종 빅데이터 분석 기술을 UI 모듈로 제공하며, 이 모듈만으로도 분석 기술을 자유롭게 활용할 수 있습니다. 또한, 마우스만으로 모듈 간의 실행순서를 설계할 수 있으며 설계한 실행순서를 워크플로우로 등록하여 자산화할 수 있습니다.</p>
+</div>
+<div class="sect2">
+<h3 id="_워크플로우_개요">워크플로우 개요</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>다양한 분석 모듈 탑재 (예: MapReduce, Pig, Hive, Bash Shell, Python, Spark, R, Mahout, Ankus &#8230;&#8203;)</p>
+</li>
+<li>
+<p>분석 및 처리 모듈을 Drag-and-drop과 파라메터 입력으로 손쉽게 처리</p>
+</li>
+<li>
+<p>복잡한 데이터 추출, 가공 및 적재 과정을 처리하는 순서를 신속하게 설계</p>
+</li>
+<li>
+<p>다양한 알고리즘을 통합하여 적절한 데이터 분석 활동의 편의를 제공</p>
+<div class="ulist">
+<ul>
+<li>
+<p>워크플로우 디자이너를 활용한 알고리즘 제공 및 플랫폼 통합</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/introduction-00.png " alt="워크플로우 디자이너 개요 화면1"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/introduction-01.png " alt="워크플로우 디자이너 개요 화면2"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_워크플로우_저장_및_실행">워크플로우 저장 및 실행</h3>
+<div class="paragraph">
+<p>선택한 모듈을 Drag-and-drop으로 캔버스에 옮깁니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-00.png " alt="모듈 Drag-and-drop"></span></p>
+</div>
+<div class="paragraph">
+<p>워크플로우 명을 입력하고 시작되는 시작 중심점에서 모듈까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-01.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>그리고 모듈부터 종료 중심점까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-02.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>모듈을 더블 클릭하면 다음과 같은 창이 나타나고 탭을 선택 후 script를 작성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-03.png " alt="스크립트탭"></span></p>
+</div>
+<div class="paragraph">
+<p>저장버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-04.png " alt="워크플로우 저장 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>팝업창이 뜨면 예 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-05.png " alt="워크플로우 저장 팝업창"></span></p>
+</div>
+<div class="paragraph">
+<p>저장폴더를 선택 후 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-06.png " alt="워크플로우 저장 폴더 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>트리에서 생성된 잡을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-07.png " alt="워크플로우 생성 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>생성된 잡이 선택된 상태에서 실행 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-08.png " alt="워크플로우 실행 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>예 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-09.png " alt="워크플로우 실행 팝업창"></span></p>
+</div>
+<div class="paragraph">
+<p>작업 결과는 워크플로우 실행 이력 화면과 워크플로우 모니터링 메뉴에서 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/save_exec/save_exec-10.png " alt="워크플로우 결과 화면"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_워크플로우_변수">워크플로우 변수</h3>
+<div class="paragraph">
+<p>제외</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_표현식_및_함수">표현식 및 함수</h3>
+<div class="paragraph">
+<p>제외</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mapreduce">MapReduce</h3>
+<div class="paragraph">
+<p>모듈을 선택 후 drag &amp; drop 으로 캔버스화면에 옮겨 놓습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-00.png " alt="모듈 drag &amp; drop"></span></p>
+</div>
+<div class="paragraph">
+<p>워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-01.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>그리고 모듈부터 종료 중심점까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-02.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>모듈을 더블 클릭하면 다음과 같은 창이 나타나고 맵리듀스 탭을 선택 후 MapReduce JAR 와 드라이버 클래스명을 지정할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-03.png " alt="맵리듀스 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>찾기 버튼을 클릭 후 HDFS 브라우저 창이 뜨면 Jar파일을 선택하고 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-04.png " alt="HDFS브라우저 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>패키지를 포함하는 드라이버 클래스를 지정해줍니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-05.png " alt="맵리듀스 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-06.png " alt="입출력 경로 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-07.png " alt="하둡 환경설정 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>커맨드라인 파라미터 탭은 command line에서 지정해 주는 변수를 설정할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-08.png " alt="커맨드라인 파라미터 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>저장버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-09.png " alt="저장 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>팝업창이 뜨면 예 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-10.png " alt="워크플로우 저장 팝업창"></span></p>
+</div>
+<div class="paragraph">
+<p>저장폴더를 선택 후 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-11.png " alt="워크플로우 저장 폴더 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>트리에서 생성된 잡을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/mapreduce/mapreduce-12.png " alt="워크플로우 생성 확인"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_apache_pig">Apache Pig</h3>
+<div class="paragraph">
+<p>모듈을 선택 후 drag &amp; drop 으로 캔버스화면에 옮겨 놓습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-00.png " alt="모듈 drag &amp; drop"></span></p>
+</div>
+<div class="paragraph">
+<p>워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-01.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>그리고 모듈부터 종료 중심점까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-02.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>모듈을 더블 클릭하면 다음과 같은 창이 나타나고 Pig Latin 스크립트 탭을 선택 후 script를 작성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-03.png " alt="Pig Latin 스크립트 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>스크립트 변수 탭에서는 자주 사용하는 파라미터를 변수 처리할 수 있습니다. 스크립트를 실행하면 실행시 변수를 해석하여 값으로 치환합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-04.png " alt="스크립트 변수 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>하둡 환경설정 탭에서는 Hadoop Configuration에 적용할 키와 값을 입력합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-05.png " alt="하둡 환경설정 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>저장버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-06.png " alt="워크플로우 저장 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>팝업창이 뜨면 예 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-07.png " alt="워크플로우 저장 팝업창"></span></p>
+</div>
+<div class="paragraph">
+<p>저장폴더를 선택 후 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-08.png " alt="워크플로우 저장 폴더 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>트리에서 생성된 잡을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/pig/pig-09.png " alt="워크플로우 생성 확인"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_apache_hive_3">Apache Hive</h3>
+<div class="paragraph">
+<p>모듈을 선택 후 drag &amp; drop 으로 캔버스화면에 옮겨 놓습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-00.png " alt="모듈 drag &amp; drop"></span></p>
+</div>
+<div class="paragraph">
+<p>워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-01.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>그리고 모듈부터 종료 중심점까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-02.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>모듈을 더블 클릭하면 다음과 같은 창이 나타나고 탭을 선택 후 script를 작성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-03.png " alt="스크립트 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>스크립트 변수 탭에서는 자주 사용하는 파라미터를 변수 처리할 수 있습니다. 스크립트를 실행하면 실행시 변수를 해석하여 값으로 치환합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-04.png " alt="스크립트 변수 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>하둡 환경설정 탭에서는 Hadoop Configuration에 적용할 키와 값을 입력합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-05.png " alt="하둡 환경설정 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>저장버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-06.png " alt="워크플로우 저장 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>팝업창이 뜨면 예 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-07.png " alt="워크플로우 저장 팝업창"></span></p>
+</div>
+<div class="paragraph">
+<p>저장폴더를 선택 후 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-08.png " alt="워크플로우 저장 폴더 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>트리에서 생성된 잡을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/hive/hive-09.png " alt="워크플로우 생성"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_r">R</h3>
+<div class="paragraph">
+<p>모듈을 선택 후 drag &amp; drop 으로 캔버스화면에 옮겨 놓습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-00.png " alt="모듈 drag &amp; drop"></span></p>
+</div>
+<div class="paragraph">
+<p>워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-01.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>그리고 모듈부터 종료 중심점까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-02.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>모듈을 더블 클릭하면 다음과 같은 창이 나타나고 탭을 선택 후 script를 작성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-03.png " alt="R스크립트 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>스크립트 변수 탭에서는 자주 사용하는 파라미터를 변수 처리할 수 있습니다. 스크립트를 실행하면 실행시 변수를 해석하여 값으로 치환합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-04.png " alt="스크립트 변수 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>커맨드라인 파라미터 탭은 command line에서 지정해 주는 변수를 설정할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-05.png " alt="커맨드라인 파라미터 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>R옵션 탭에서는 회복과 저장에 관한 선택 옵션 설정이 가능합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-06.png " alt="R옵션 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>저장버튼을 클릭합니다</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-07.png " alt="워크플로우 저장 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>팝업창이 뜨면 예 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-08.png " alt="워크플로우 저장 팝업창"></span></p>
+</div>
+<div class="paragraph">
+<p>저장폴더를 선택 후 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-09.png " alt="워크플로우 저장 폴더 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>트리에서 생성된 잡을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/r/r-10.png " alt="워크플로우 생성"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_java">Java</h3>
+<div class="paragraph">
+<p>모듈을 선택 후 drag &amp; drop 으로 캔버스화면에 옮겨 놓습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-00.png " alt="모듈 drag &amp; drop"></span></p>
+</div>
+<div class="paragraph">
+<p>워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-01.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>그리고 모듈부터 종료 중심점까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-02.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>모듈을 더블 클릭하면 다음과 같은 창이 나타나고 자바 탭을 선택 후 Jar경로 선택과 드라이버, JVM옵션 설정을 합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-03.png " alt="자바 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>클래스패스 탭에서는 의존 JAR파일을 설정합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-04.png " alt="클래스패스 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>커맨드라인 파라미터 탭은 command line에서 지정해 주는 변수를 설정할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-05.png " alt="커맨드라인 파라미터 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>저장버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-06.png " alt="워크플로우 저장 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>팝업창이 뜨면 예 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-07.png " alt="워크플로우 저장 팝업창"></span></p>
+</div>
+<div class="paragraph">
+<p>저장폴더를 선택 후 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-08.png " alt="워크플로우 저장 폴더 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>트리에서 생성된 잡을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/java/java-09.png " alt="워크플로우 생성"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_python">Python</h3>
+<div class="paragraph">
+<p>모듈을 선택 후 drag &amp; drop 으로 캔버스화면에 옮겨 놓습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-00.png " alt="모듈 drag &amp; drop"></span></p>
+</div>
+<div class="paragraph">
+<p>워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-01.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>그리고 모듈부터 종료 중심점까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-02.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>모듈을 더블 클릭하면 다음과 같은 창이 나타나고 파이썬 스크립트 탭을 선택 후 script를 작성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-03.png " alt="파이썬 스크립트 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>스크립트 변수 탭에서는 Python Script 의 ${goodbye} 변수를 Good Bye!!로 대체할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-04.png " alt="스크립트 변수 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>커맨드라인 파라미터 탭은 command line에서 지정해 주는 변수를 설정할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-05.png " alt="커맨드라인 파라미터 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>저장버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-06.png " alt="워크플로우 저장 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>팝업창이 뜨면 예 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-07.png " alt="워크플로우 저장 팝업창"></span></p>
+</div>
+<div class="paragraph">
+<p>저장폴더를 선택 후 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-08.png " alt="워크플로우 저장 폴더 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>트리에서 생성된 잡을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/python/python-09.png " alt="워크플로우 생성"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_spark">Spark</h3>
+<div class="paragraph">
+<p>모듈을 선택 후 drag &amp; drop 으로 캔버스화면에 옮겨 놓습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-00.png " alt="모듈 drag &amp; drop"></span></p>
+</div>
+<div class="paragraph">
+<p>워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-01.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>그리고 모듈부터 종료 중심점까지 연결합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-02.png " alt="모듈링크"></span></p>
+</div>
+<div class="paragraph">
+<p>모듈을 더블 클릭하면 다음과 같은 창이 나타나고 스파크 탭을 선택 후 JAR 선택, 드라이버와 YARN등 각종 옵션 설정을 합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-03.png " alt="스파크 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>의존 JAR파일 탭에서는 Spark Job동작시 필요한 JAR파일을 추가합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-04.png " alt="의존 JAR파일 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>하둡 환경설정 탭에서 key, value값을 설정합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-05.png " alt="하둡 환경설정 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>커맨드라인 파라미터 탭에서는 Job동작시 필요한 각종 파라미터를 추가합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-06.png " alt="커맨드라인 파라미터 탭"></span></p>
+</div>
+<div class="paragraph">
+<p>저장버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-07.png " alt="워크플로우 저장 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>팝업창이 뜨면 예 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-08.png " alt="워크플로우 저장 팝업창"></span></p>
+</div>
+<div class="paragraph">
+<p>저장폴더를 선택 후 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-09.png " alt="워크플로우 저장 폴더 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>트리에서 생성된 잡을 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/designer/spark/spark-10.png " alt="워크플로우 생성"></span></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="hdfs">Apache Hadoop HDFS 브라우저</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-browser.png" alt="Apache Hadoop HDFS 브라우저 메인 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>Flamingo2는 Apache Hadoop HDFS의 파일 및 디렉토리를 관리하기 위해 다음의 기능 들을 제공합니다.</p>
+</div>
+<div class="sect2">
+<h3 id="_hdfs_file_system_summary">HDFS File System Summary</h3>
+<div class="sect3">
+<h4 id="_hdfs_information">HDFS Information</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-info.png" alt="HDFS 요약 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>HDFS 파일 시스템의 요약 정보를 제공합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_hdfs_usage">HDFS Usage</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-usage.png" alt="HDFS 사용량 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>HDFS 파일 시스템 내에 할 당된 용량 중 DFS로 사용 중인 것과 Non DFS로 사용 중인 정보를 제공합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_hdfs_top_5">HDFS Top 5</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-top5.png" alt="HDFS 상위 5 디렉토리 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>HDFS 파일 시스템에 존재하는 디렉토리의 용량을 루트(/) 기준으로 5개의 목록을 제공합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_디렉토리">디렉토리</h3>
+<div class="sect3">
+<h4 id="_디렉토리_생성">디렉토리 생성</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-create0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 생성을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-create1.png" alt="Apache Hadoop HDFS 브라우저 메인 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>생성할 디렉토리 명을 입력한 후 확인 버튼을 누르면 선택한 경로에 디렉토리가 생성됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_복사">디렉토리 복사</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-copy0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 복사를 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-copy1.png" alt="디렉토리 복사 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>디렉토리를 복사할 경로를 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-copy2.png" alt="디렉토리 복사 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>복사할 디렉토리와 복사될 경로를 확인 후 확인 버튼을 누르면 선택한 경로에 디렉토리가 복사됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_이동">디렉토리 이동</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-move0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 이동을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-move1.png" alt="디렉토리 이동 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>디렉토리를 이동할 경로를 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-move2.png" alt="디렉토리 이동 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>이동할 디렉토리와 이동될 경로를 확인 후 확인 버튼을 누르면 선택한 경로에 디렉토리가 이동됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_이름변경">디렉토리 이름변경</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-rename0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 이름변경을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-rename1.png" alt="디렉토리 이름변경 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>변경할 디렉토리 명을 입력한 후 확인 버튼을 누르면 선택한 디렉토리의 이름이 변경됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_삭제">디렉토리 삭제</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-delete0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 삭제를 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-delete1.png" alt="디렉토리 삭제 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>삭제할 디렉토리를 확인 후 확인 버튼을 누르면 디렉토리가 삭제됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_업로드">디렉토리 업로드</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-upload0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 업로드를 선택합니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+단일 파일 기준 업로드 가능한 최대 용량은 기본값으로 100MB 이내로 정해져 있습니다.
+이 값을 변경하기 위해서는 config.properties 파일의 file.upload.max.size 값을 변경해야 합니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>업로드 방법은 두 가지 방식을 제공합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-upload1.png" alt="디렉토리 업로드 화면"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>찾기 버튼을 선택 후 업로드 할 파일을 선택하거나 드래그 앤 드롭해서 업로드 창에 추가합니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-upload2.png" alt="디렉토리 업로드 화면"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OS에서 제공되는 파일 브라우저에서 직접 파일을 드래그 앤 드롭해서 업로드 창에 추가합니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-upload3.png" alt="디렉토리 업로드 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>업로드 할 파일 목록을 확인 후 업로드 버튼을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-upload4.png" alt="디렉토리 업로드 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>업로드가 완료되면 상태 메시지가 완료로 변경됩니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-upload5.png" alt="디렉토리 업로드 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>업로드 창을 닫으면 선택한 경로가 갱신되고 업로드한 파일 목록이 보여집니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_병합">디렉토리 병합</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-merge0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 병합을 선택합니다.
+파일 병합은 선택한 경로에 존재하는 모든 파일을 하나의 파일로 병합하게 됩니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-merge1.png" alt="디렉토리 병합 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>병합할 기본 파일명은 트리에서 선택한 디렉토리명으로 지정되어 있기 때문에 반드시 파일명을 변경해야 합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-merge2.png" alt="디렉토리 병합 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>병합할 새로운 파일명을 입력합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-merge3.png" alt="디렉토리 병합 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>병합할 파일의 저장 위치는 선택한 디렉토리의 상위 경로에 저장됩니다.
+만약 루트 경로에 있는 파일 들을 병합할 경우 병합된 파일의 저장위치는 루트 경로에 저장됩니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-merge4.png" alt="디렉토리 병합 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>상위 경로로 이동 후 병합된 파일을 확인합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-merge5.png" alt="디렉토리 병합 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>병합된 파일을 더블클릭하면 파일 속성 정보 창을 통해 파일 정보를 확인할 수 있습니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_속성">디렉토리 속성</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-info0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 디렉토리 속성을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-info1.png" alt="디렉토리 속성 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>디렉토리 속성 정보 창에서 선택한 디렉토리 정보를 확인할 수 있습니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_갱신">디렉토리 갱신</h4>
+<div class="paragraph">
+<p>디렉토리를 갱신하는 방법을 두 가지 방식을 제공합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-refresh0.png" alt="디렉토리 갱신 화면"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>선택한 디렉토리의 하위 디렉토리 및 파일 목록이 갱신됩니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-refresh1.png" alt="디렉토리 갱신 화면"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>루트 경로를 기준으로 전체 디렉토리 및 파일 목록이 갱신됩니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_권한_설정">디렉토리 권한 설정</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-permission0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 권한을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-permission1.png" alt="디렉토리 권한 설정 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>접근 권한 설정은 선택한 디렉토리를 포함한 모든 하위 디렉토리 및 파일 들의 소유권 및 권한을 변경할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-permission2.png" alt="디렉토리 권한 설정 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>소유자 및 그룹과 권한 필드에서 변경할 정보를 선택 후 변경 버튼을 클릭하면 권한이 변경됩니다.
+각 필드에 있는 모두 적용 옵션은 소유권 및 권한 변경 시 하위 디렉토리 및 파일 들에 포함 유무의 옵션입니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+모두 적용 옵션 선택 시 하위 디렉토리 및 파일이 많을 경우 접근 권한 변경에 다소 시간이 소요될 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_hive_db_생성">디렉토리 Hive DB 생성</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-hiveDB0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 하이브 DB 생성을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-hiveDB1.png" alt="디렉토리 하이브 DB 생성 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>데이터베이스 생성 창에서 데이터베이스명은 선택한 디렉토리명으로 기본값이 정해지며, 다른 이름으로 변경이 가능합니다. 생성 버튼을 클릭하면 하이브 메타스토어에 HDFS 경로에 생성한 하이브 DB의 경로 정보가 저장되게 됩니다. 생성된 DB는 디렉토리 메뉴의 하이브 Table 생성 창에서 선택할 수 있습니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_디렉토리_hive_table_생성">디렉토리 Hive Table 생성</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-hiveTable0.png" alt="디렉토리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 하이브 Table 생성을 선택합니다.트리 경로를 선택한 후 마우스 우클릭 시 나타나는 메뉴에서 하이브 Table 생성을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-hiveTable1.png" alt="디렉토리 하이브 Table 생성 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>테이블 생성 창에서 테이블 생성에 필요한 정보를 입력할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-directory-hiveTable2.png" alt="디렉토리 하이브 Table 생성 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>하이브 테이블 생성에 필요한 각 필드 정보를 입력 후 생성 버튼을 클릭하면 하이브 메타스토어에 HDFS 경로에 생성된 하이브 Table 경로 정보가 저장됩니다. 생성된 Table은 하이브 메뉴에서 확인할 수 있습니다. 입/출력 파일 형식은 커스터마이징된 파일 형식을 사용하고자 할 경우 사용자가 직접 생성한 라이브러리의 클래스를 추가할 수 있습니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_파일">파일</h3>
+<div class="sect3">
+<h4 id="_파일_복사">파일 복사</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-copy0.png" alt="파일 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 파일 목록에서 복사할 파일을 선택 후 복사 버튼을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-copy1.png" alt="파일 복사 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>파일을 복사할 경로를 선택하고 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-copy2.png" alt="파일 복사 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>선택했던 파일이 지정한 경로에 복사된 것을 확인할 수 있습니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+복사할 파일이 많을 경우 파일 복사를 완료하는데 다소 시간이 소요될 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_파일_이동">파일 이동</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-move0.png" alt="파일 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 파일 목록에서 이동할 파일을 선택 후 이동 버튼을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-move1.png" alt="파일 이동 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>파일을 이동할 경로를 선택하고 확인 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-move2.png" alt="파일 이동 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>이동할 파일과 대상 경로를 확인합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-move3.png" alt="파일 이동 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>선택했던 파일이 지정한 경로에 이동된 것을 확인할 수 있습니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+이동할 파일이 많을 경우 파일 이동을 완료하는데 다소 시간이 소요될 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_파일_이름변경">파일 이름변경</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-rename0.png" alt="파일 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 파일 목록에서 이름 변경할 파일을 선택 후 이름변경 버튼을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-rename1.png" alt="파일 이름변경 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>변경할 파일 이름을 입력하고 확인 버튼을 클릭하면 파일명이 변경됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_파일_삭제">파일 삭제</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-delete0.png" alt="파일 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 파일 목록에서 삭제할 파일을 선택 후 삭제 버튼을 선택합니다.
+확인 버튼을 선택하면 선택한 파일이 삭제됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_파일_업로드">파일 업로드</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-upload0.png" alt="파일 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 업로드 버튼을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-upload1.png" alt="파일 업로드 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>디렉토리 메뉴의 업로드와 마찬가지 방식으로 업로드할 파일을 선택해서 추가합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-upload2.png" alt="파일 업로드 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>업로드 버튼을 선택 후 진행상태를 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-upload3.png" alt="파일 업로드 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>선택한 경로에 파일이 업로드된 것을 확인할 수 있습니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+업로드 가능한 용량을 초과한 파일은 상태 메시자가 초과로 변경되고 업로드 되지 않습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_파일_다운로드">파일 다운로드</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-download0.png" alt="파일 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 파일 목록에서 다운로드 할 파일을 선택하고 다운로드 버튼을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p>선택한 파일이 로컬 저장소로 다운됩니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+파일 다운로드는 한 번에 하나의 파일만 지원합니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_파일_내용보기">파일 내용보기</h4>
+<div class="paragraph">
+<p>파일 내용보기 기능은 두 가지 방식을 제공합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-view0.png" alt="파일 메뉴 화면"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>트리 경로를 선택한 후 파일 목록에서 파일을 선택하고 내용보기 버튼을 선택합니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-view1.png" alt="파일 내용보기 화면"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>트리 경로를 선택한 후 파일 목록에서 파일을 선택하고 마우스 우클릭 시 나타나는 메뉴에서 내용보기를 선택합니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-view2.png" alt="파일 내용보기 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>선택한 파일의 내용 일부가 팡리 내용 보기 창에 보여집니다.
+하단의 페이징 버튼 및 페이지 입력 필드를 통해 페이징 기능을 제공합니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+파일 내용 보기는 파일 형식이 압축, 이미지, 음악, 동영상 등의 포맷 형식은 지원하지 않습니다.
+파일 크기는 1GB 이상의 대용량 파일도 파일 내용 보기 기능을 사용할 수 있습니다.
+서버 및 네트워크 상태에 따라서 페이징 처리 시 지연이 발생할 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_파일_속성">파일 속성</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-info0.png" alt="파일 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>트리 경로를 선택한 후 파일 목록에서 마우스 우클릭 시 나타나는 메뉴에서 파일 속성 버튼을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/fs/hdfs/hdfs-file-info1.png" alt="파일 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>선택한 파일의 정보를 확인할 수 있습니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="history">워크플로우 실행 이력</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Flamingo 2는 SQL on Hadoop 중에 하나인 Pivotal HAWQ를 지원하여 다음의 기능을 제공합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>여기에 큰 기능</p>
+<div class="ulist">
+<ul>
+<li>
+<p>작은 기능</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_워크플로우_개요_2">워크플로우 개요</h3>
+<div class="paragraph">
+<p><span class="image"><img src="images/hive/hive-1.png" alt="Apache Hive 지원 기능의 메인 화면"></span></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="batch">배치작업 관리</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Flamingo 2는 SQL on Hadoop 중에 하나인 Pivotal HAWQ를 지원하여 다음의 기능을 제공합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>여기에 큰 기능</p>
+<div class="ulist">
+<ul>
+<li>
+<p>작은 기능</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hive/hive-1.png" alt="Apache Hive 지원 기능의 메인 화면"></span></p>
+</div>
+<div class="sect2">
+<h3 id="_cron_expression">Cron Expression</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_배치작업_등록">배치작업 등록</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="hive">Apache Hive</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Flamingo 2는 SQL on Hadoop 중에 하나인 Pivotal HAWQ를 지원하여 다음의 기능을 제공합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>여기에 큰 기능</p>
+<div class="ulist">
+<ul>
+<li>
+<p>작은 기능</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_큰_기능">큰 기능</h3>
+<div class="paragraph">
+<p>MapReduce Job의 Job ID를 추출하는 모니터링 에이전트는 다음을 대상으로 동작합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hive/hive-1.png" alt="Apache Hive 지원 기능의 메인 화면"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>MapReduce Job</p>
+</li>
+<li>
+<p>Pig Latin</p>
+</li>
+<li>
+<p>Hive QL</p>
+</li>
+</ul>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="sql">export HADOOP_CLIENT_OPTS=-javaagent:flamingo2-hadoop2-mr-agent<span class="float">-2.0</span>.jar=resourcescript:mr2.bm</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_알려진_문제점">알려진 문제점</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Hive의 Thrift 및 Hive Server가 현재까지 성숙도가 높지 않아서 커넥션 관리를 포함한 관리 기능이 전반적으로 부족하여 사용상에 이슈가 발생할 수 있습니다.
+== Apache Pig</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Flamingo 2는 SQL on Hadoop 중에 하나인 Pivotal HAWQ를 지원하여 다음의 기능을 제공합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>여기에 큰 기능</p>
+<div class="ulist">
+<ul>
+<li>
+<p>작은 기능</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_큰_기능_2">큰 기능</h3>
+<div class="paragraph">
+<p>MapReduce Job의 Job ID를 추출하는 모니터링 에이전트는 다음을 대상으로 동작합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hive/hive-1.png" alt="Apache Hive 지원 기능의 메인 화면"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>MapReduce Job</p>
+</li>
+<li>
+<p>Pig Latin</p>
+</li>
+<li>
+<p>Hive QL</p>
+</li>
+</ul>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="sql">export HADOOP_CLIENT_OPTS=-javaagent:flamingo2-hadoop2-mr-agent<span class="float">-2.0</span>.jar=resourcescript:mr2.bm</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="hawq">Pivotal HAWQ 관리</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Flamingo 2는 SQL on Hadoop 중에 하나인 Pivotal HAWQ(HAdoop With Query)를 지원하여 다음의 기능을 제공합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-00.png" alt="Pivotal HAWQ 지원 기능의 메인 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>HAWQ 에 대한 자세한 문서는 다음의 링크를 확인하시기 바랍니다.</p>
+</div>
+<div class="paragraph">
+<p><a href="http://hawq.docs.pivotal.io/index.html">Documentation</a></p>
+</div>
+<div class="sect2">
+<h3 id="_hawq_설정">HAWQ 설정</h3>
+<div class="paragraph">
+<p>HAWQ 접속을 위해서는 접속형태, Database, User, CIDR-주소, 인증방법을<br>
+$MASTER_DATA_DIRECTORY/pg_hba.conf 파일 하단부에 추가해줘야 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">$ cd $MASTER_DATA_DIRECTORY
+$ vi pg_hba.conf
+host  all  gpadmin  172.16.213.1/28  trust
+$ gpstop -u(시스템에 반영)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_flamingo2_설정">Flamingo2 설정</h3>
+<div class="paragraph">
+<p>Flamingo2 에서 HAWQ 접속을 위해<br>
+$TOMCAT_DIRECTORY/webapps/ROOT/WEB-INF/hadoop.properties 파일 설정을 해줍니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">###########################################
+## Pivotal HAWQ Configuration
+## hawq.jdbc.type={greenplum|postgresql}
+###########################################
+default.hawq.jdbc.type=greenplum
+default.hawq.greenplum.connectionUrl=jdbc:pivotal:greenplum://
+default.hawq.postgresql.connectionUrl=jdbc:postgresql://
+default.hawq.host=172.16.213.138
+default.hawq.port=5432
+default.hawq.databaseName=gpadmin
+default.hawq.user=gpadmin
+default.hawq.password=
+default.hawq.autoCommit=false
+default.hawq.driver=com.pivotal.jdbc.GreenplumDriver
+default.hawq.postgresql.driver=org.postgresql.Driver</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>여기서 설정해줘야 할 값들은</p>
+</div>
+<div class="paragraph">
+<p>default.hawq.jdbc.type<br>
+default.hawq.host<br>
+default.hawq.port<br>
+default.hawq.databaseName<br>
+default.hawq.user<br>
+default.hawq.password</p>
+</div>
+<div class="paragraph">
+<p>입니다.</p>
+</div>
+<div class="paragraph">
+<p>default.hawq.jdbc.type 은 greenplum 과 postgresql 둘 중에서 선택 가능합니다.<br>
+greenplum 으로 설정하면 JDBC driver 가 greenplum 으로 로딩되고<br>
+postgresql 로 설정하면 JDBC driver 가 postgres 로 로딩됩니다.<br>
+greenplum 으로 설정시 반드시 WEB-INF/lib/greenplum.jar 파일이 있어야 합니다.</p>
+</div>
+<div class="paragraph">
+<p>설정이 완료되면 tomcat 을 재시작 하고 HAWQ 에 접속합니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_커넥션_관리자">커넥션 관리자</h3>
+<div class="paragraph">
+<p>데이터베이스와 스키마에 관련된 커넥션을 관리합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_데이터베이스">데이터베이스</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>데이터베이스 선택</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-01.png" alt="데이터베이스 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>원하는 데이터베이스를 선택하면 기본 스키마가 선택되고 오브젝트 익스플로러가 갱신됩니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>데이터베이스 목록 갱신</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-02.png" alt="데이터베이스 갱신"></span></p>
+</div>
+<div class="paragraph">
+<p>메뉴를 클릭하면 데이터베이스 목록이 갱신됩니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>데이터베이스 생성</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-03.png" alt="데이터베이스 생성"></span></p>
+</div>
+<div class="paragraph">
+<p>메뉴를 클릭하여 데이터베이스 생성 폼을 띄웁니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>데이터베이스 정보 입력</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-04.png" alt="데이터베이스 생성 폼"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-05.png" alt="데이터베이스 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>적절한 데이터를 입력 후 생성 버튼을 클릭하여 데이터베이스를 생성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-06.png" alt="데이터베이스 생성 입력정보 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-07.png" alt="데이터베이스 생성 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-08.png" alt="생성된 데이터베이스 목록 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>입력한 데이터베이스가 추가됩니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>데이터베이스 삭제</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-09.png" alt="데이터베이스 삭제"></span></p>
+</div>
+<div class="paragraph">
+<p>데이터베이스 삭제 메뉴를 클릭하여 선택한 데이터베이스를 삭제합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-10.png" alt="데이터베이스 삭제 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-11.png" alt="데이터베이스 삭제 완료"></span></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_스키마">스키마</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-12.png" alt="스키마 선택"></span></p>
+</div>
+<div class="paragraph">
+<p>스키마를 선택하면 선택한 스키마에 맞게 오브젝트 익스플로러가 갱신됩니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>스키마 목록 갱신</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-13.png" alt="스키마 목록 갱신"></span></p>
+</div>
+<div class="paragraph">
+<p>스키마 목록 갱신 메뉴를 클릭하여 스키마 목록을 갱신합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>스키마 생성</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-14.png" alt="스키마 생성"></span></p>
+</div>
+<div class="paragraph">
+<p>스키마 생성 메뉴를 클릭하여 스키마 생성 폼을 띄웁니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-15.png" alt="스키마 생성"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>스키마 생성 정보 입력</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-16.png" alt="스키마 생성 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>적절한 데이터를 입력 후 생성 버튼을 클릭하여 스키마를 생성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-17.png" alt="스키마 생성 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-18.png" alt="스키마 생성 완료"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>스키마 삭제</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-19.png" alt="스키마 삭제"></span></p>
+</div>
+<div class="paragraph">
+<p>스키마 삭제 메뉴를 클릭하여 선택한 스키마를 삭제합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-20.png" alt="스키마 삭제 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-21.png" alt="스키마 삭제 완료"></span></p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_오브젝트_익스플로러">오브젝트 익스플로러</h3>
+<div class="paragraph">
+<p>데이터베이스와 스키마에 관련된 오브젝트들을 관리합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_테이블">테이블</h4>
+<div class="sect4">
+<h5 id="_테이블_생성">테이블 생성</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>테이블 생성</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-22.png" alt="테이블 생성"></span></p>
+</div>
+<div class="paragraph">
+<p>오른쪽 클릭을 하여 메뉴를 띄우고 테이블 생성 메뉴를 클릭하여 테이블 생성 폼을 띄웁니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-23.png" alt="테이블 생성 폼"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>컬럼 추가</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-24.png" alt="컬럼 추가"></span></p>
+</div>
+<div class="paragraph">
+<p>추가 버튼을 클릭하여 컬럼을 추가할 수 있습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>옵션</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-25.png" alt="옵션"></span></p>
+</div>
+<div class="paragraph">
+<p>테이블의 옵션을 설정합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>파티션</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-26.png" alt="파티션"></span></p>
+</div>
+<div class="paragraph">
+<p>테이블의 파티션을 설정합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>테이블 정보 입력</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-27.png" alt="테이블 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-28.png" alt="테이블" width="컬럼정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-29.png" alt="옵션 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>테이블에 적절한 정보를 입력 후 생성 버튼을 클릭하여 테이블을 생성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-30.png" alt="테이블 생성 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-31.png" alt="테이블 생성"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>테이블 목록 갱신</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-31-1.png" alt="테이블 목록 갱신"></span></p>
+</div>
+<div class="paragraph">
+<p>테이블이 생성되면 오브젝트 익스플로러 우측 상단에 있는 갱신 버튼을 클릭하여 테이블 목록을 갱신합니다.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_테이블_변경">테이블 변경</h5>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-38.png" alt="테이블 변경"></span></p>
+</div>
+<div class="paragraph">
+<p>테이블 위에서 오른쪽 클릭을 하여 메뉴를 띄우고 테이블 변경 메뉴를 클릭하여 테이블 변경 폼을 띄웁니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-39.png" alt="테이블 변경 폼"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>컬럼 추가</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-40.png" alt="컬럼 추가"></span></p>
+</div>
+<div class="paragraph">
+<p>추가 버튼을 클릭하여 컬럼을 추가할 수 있습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>컬럼 추가 정보 입력</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-41.png" alt="컬럼 추가 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>컬럼에 적절한 정보를 입력합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-42.png" alt="컬럼 변경내역 저장"></span></p>
+</div>
+<div class="paragraph">
+<p>입력 후 저장 버튼을 클릭하여 테이블 변경 내역을 저장합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-43.png" alt="컬럼 변경내역 저장 확인"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>컬럼 변경내역 조회</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-44.png" alt="컬럼 변경내역 조회"></span></p>
+</div>
+<div class="paragraph">
+<p>추가 한 컬럼이 목록에서 추가된 것을 확인 할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p>갱신버튼을 누르면 컬럼 목록을 갱신합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>분산키 확인</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-45.png" alt="분산키 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>분산키를 클릭하여 현재 테이블의 분산키 정보를 확인할 수 있습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>분산키 변경</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-46.png" alt="분산키 변경"></span></p>
+</div>
+<div class="paragraph">
+<p>분산키 정보를 변경하기 위해서는 분산키로 지정할 컬럼을 선택합니다.<br>
+필요에 따라 여러개 지정이 가능합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-47.png" alt="분산키 변경 버튼"></span></p>
+</div>
+<div class="paragraph">
+<p>변경 버튼을 클릭하여 테이블 정보를 변경합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-48.png" alt="분산키 변경 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>Yes 를 클릭하면 테이블 정보가 갱신되고 변경 된 분산키를 확인할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-49.png" alt="분산키 변경 확인1"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-50.png" alt="분산키 변경 확인2"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>테이블명 변경</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-51.png" alt="테이블명 변경"></span></p>
+</div>
+<div class="paragraph">
+<p>테이블명 변경 또한 입력 후 변경버튼을 클릭하여 가능합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>옵션과 파티션</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-53.png" alt="옵션"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-54.png" alt="파티션"></span></p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+옵션과 파티션은 변경 *불가*합니다.<br>
+변경이 필요하다면 직접 쿼리를 입력하여 변경합니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>제약사항 변경</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-55.png" alt="제약사항 추가"></span></p>
+</div>
+<div class="paragraph">
+<p>추가 버튼을 클릭하여 제약사항을 추가합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-56.png" alt="제약사항 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>추가 할 제약사항의 적절한 값을 입력 후 저장버튼을 클릭하여 제약사항을 변경합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-57.png" alt="제약사항 변경 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-58.png" alt="제약사항 목록 확인"></span></p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_테이블_삭제">테이블 삭제</h5>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-59.png" alt="테이블 삭제"></span></p>
+</div>
+<div class="paragraph">
+<p>테이블에서 오른쪽 클릭하여 메뉴를 띄운 후 테이블 삭제 메뉴를 클릭하여 테이블을 삭제합니다.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_에디터">에디터</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>쿼리 실행</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-83.png" alt="쿼리 실행"></span></p>
+</div>
+<div class="paragraph">
+<p>드래그 후에 쿼리 실행 버튼 클릭 시 드래그 된 부분만 실행합니다.</p>
+</div>
+<div class="paragraph">
+<p>드래그 없이 쿼리 실행 버튼 클릭 시 모든 쿼리를 실행합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SELECT INTO 와 SELECT 외 쿼리 실행</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-61.png" alt="NOT SELECT 쿼리 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>쿼리 입력 후 쿼리실행 버튼을 클릭하여 쿼리를 실행합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-62.png" alt="NOT SELECT 쿼리 로그"></span></p>
+</div>
+<div class="paragraph">
+<p>실행성공시 로그에 실행성공 메시지가 출력됩니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SELECT 쿼리 실행</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-63.png" alt="SELECT 쿼리 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>쿼리 입력 후 쿼리실행 버튼을 클릭하여 쿼리를 실행합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-64.png" alt="SELECT 쿼리 결과"></span></p>
+</div>
+<div class="paragraph">
+<p>실행성공시 결과가 출력됩니다.</p>
+</div>
+<div class="paragraph">
+<p>결과는 원하는 컬럼만 선택하여 복사도 가능합니다.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+*헤더*는 복사되지 않습니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>실행계획</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-65.png" alt="쿼리 실행 계획 보기"></span></p>
+</div>
+<div class="paragraph">
+<p>SELECT 쿼리 입력 후 상단의 실행 계획 보기 버튼을 클릭하면 쿼리 실행 계획을 볼 수 있습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>결과 다운로드</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-84.png" alt="결과 다운로드"></span></p>
+</div>
+<div class="paragraph">
+<p>다운로드 버튼을 클릭하여 조회된 결과를 csv 형식으로 다운로드 합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>메시지</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-85.png" alt="메시지"></span></p>
+</div>
+<div class="paragraph">
+<p>쿼리 실행시 메시지가 있을 경우 메시지 탭에 표시됩니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_뷰">뷰</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>뷰 생성</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-66.png" alt="뷰 생성"></span></p>
+</div>
+<div class="paragraph">
+<p>뷰에서 오른쪽 클릭하여 메뉴를 띄운 후 뷰 생성 메뉴를 클릭하여 뷰 생성 쿼리를 불러옵니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-67.png" alt="뷰 생성 쿼리"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-68.png" alt="뷰 생성 쿼리 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>에디터에 생성 된 뷰 생성 쿼리를 적절히 입력 후 쿼리를 실행하여 뷰를 생성합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>뷰 삭제</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-69.png" alt="뷰 삭제"></span></p>
+</div>
+<div class="paragraph">
+<p>뷰에서 오른쪽 클릭하여 메뉴를 띄운 후 뷰 삭제 메뉴를 클릭하여 뷰를 삭제합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-70.png" alt="뷰 삭제 확인"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_external_테이블">External 테이블</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>External 테이블 생성</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>External 테이블 생성 전 데이터를 입력합니다.<br>
+여기서는 gpfdist 만 다루고 그 외는 HAWQ Documentation CREATE EXTERNAL TABLE (
+<a href="http://pivotalhd-210.docs.pivotal.io/doc/2100/webhelp/index.html#hawq-topics/CREATE-EXTERNAL-TABLE.html">1.2.1.1</a>,
+<a href="http://hawq.docs.pivotal.io/docs-hawq/topics/CREATE-EXTERNAL-TABLE.html">1.3.0</a>
+)을 참고합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">[pivhdsne:~]$ mkdir exttest
+[pivhdsne:~]$ cd exttest
+[pivhdsne:exttest]$ vi test.txt
+[pivhdsne:exttest]$ cat test.txt
+1 a apache
+2 b boolean
+3 c click
+4 d data
+5 e etl
+6 f flamingo
+7 g gpadmin
+8 h hbase
+9 i intel
+10 j java
+[pivhdsne:exttest]$ gpfdist -d . -p 8081 &amp;
+[1] 7404
+[pivhdsne:exttest]$ Serving HTTP on port 8081, directory /home/gpadmin/exttest</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-71.png" alt="External 테이블 생성"></span></p>
+</div>
+<div class="paragraph">
+<p>External 테이블에서 오른쪽 클릭하여 메뉴를 띄운 후 External 테이블 생성 메뉴를 클릭하여 폼을 띄웁니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-72.png" alt="External 테이블 일반"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-73.png" alt="External 테이블 위치"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-74.png" alt="External 테이블 형식"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>External 테이블 생성정보 입력</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-75.png" alt="External 테이블 일반 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-76.png" alt="External 테이블 위치 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-77.png" alt="External 테이블 형식 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>적절한 값을 입력 후 생성 버튼을 클릭하여 External 테이블을 생성합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>External 테이블 정보 조회</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-78.png" alt="External 테이블 정보 조회"></span></p>
+</div>
+<div class="paragraph">
+<p>쿼리를 입력하여 External 테이블을 조회합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>External 테이블 변경</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-86.png" alt="External 테이블 변경"></span></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>External 테이블 삭제</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-87.png" alt="External 테이블 삭제"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_함수">함수</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>함수 생성</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-79.png" alt="함수 생성"></span></p>
+</div>
+<div class="paragraph">
+<p>함수에서 오른쪽 클릭하여 메뉴를 띄운 후 함수 생성 메뉴를 클릭하여 함수 생성 쿼리를 불러옵니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-80.png" alt="함수 생성 쿼리"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-81.png" alt="함수 생성 쿼리 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>적절한 쿼리를 입력하여 쿼리를 실행하여 함수를 생성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-82.png" alt="함수 사용"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_테이블_정보">테이블 정보</h3>
+<div class="paragraph">
+<p>오브젝트의 정보들을 관리합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-32.png" alt="컬럼 목록 조회"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-34.png" alt="메타데이터 목록 조회"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-35.png" alt="파티션 목록 조회"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-36.png" alt="생성문 조회"></span></p>
+</div>
+<div class="paragraph">
+<p>테이블을 클릭하면 컬럼, 메타데이터, 파티션, 생성문 정보가 갱신됩니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>컬럼 상세정보</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-33.png" alt="컬럼 상세정보"></span></p>
+</div>
+<div class="paragraph">
+<p>컬럼을 더블클릭하면 컬럼의 상세정보를 조회할 수 있습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>파티션 상세정보</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/editor/hawqeditor-37.png" alt="파티션 상세정보"></span></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_pivotal_hawq_권한_관리">Pivotal HAWQ 권한 관리</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_롤">롤</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>롤 추가</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-00.png" alt="롤 관리"></span></p>
+</div>
+<div class="paragraph">
+<p>상단의 추가 버튼을 클릭하여 롤 추가 폼을 띄웁니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-01.png" alt="롤 추가 폼"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-02.png" alt="룰 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>적절한 값을 입력 후 하단의 저장 버튼을 클릭하여 롤을 생성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-03.png" alt="롤 생성 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-04.png" alt="롤 생성"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-05.png" alt="생성된 롤 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>생성된 롤이 추가되었습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>롤 상세정보 확인</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-06.png" alt="롤 상세정보 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>목록에서 상세정보를 확인 할 롤을 선택하여 상세정보를 조회합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>롤 수정</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-07.png" alt="롤 수정 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>수정할 롤을 목록에서 선택 후 적절한 값을 입력한 후 저장 버튼을 클릭하여 롤을 수정합니다.</p>
+</div>
+<div class="paragraph">
+<p>여기서는 연결 제한을 -1 (제한 없음) 에서 5 로 수정합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-08.png" alt="롤 변경 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-09.png" alt="롤 변경"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-10.png" alt="변경된 롤 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>변경된 롤을 확인할 수 있습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>롤 삭제</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-11.png" alt="롤 삭제"></span></p>
+</div>
+<div class="paragraph">
+<p>롤에서 오른쪽 클릭하여 메뉴를 띄운 후 롤 삭제 메뉴를 클릭하여 롤을 삭제합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-12.png" alt="롤 삭제 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-13.png" alt="롤 삭제"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_리소스큐">리소스큐</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>리소스큐 추가</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-14.png" alt="리소스큐 목록 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>상단의 추가 버튼을 클릭하여 리소스큐 추가 폼을 띄웁니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-15.png" alt="리소스큐 추가 폼"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-16.png" alt="리소스큐 정보 입력"></span></p>
+</div>
+<div class="paragraph">
+<p>적절한 값을 입력 후 하단의 저장 버튼을 클릭하여 리소스큐를 생성합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-17.png" alt="리소스큐 생성 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-18.png" alt="리소스큐 생성"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-19.png" alt="추가된 리소스큐 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>생성된 리소스큐가 추가되었습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>리소스큐 상세정보 확인</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-20.png" alt="리소스큐 상세정보 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>목록에서 상세정보를 확인 할 리소스큐를 선택하여 상세정보를 조회합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>리소스큐 삭제</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-21.png" alt="리소스큐 삭제"></span></p>
+</div>
+<div class="paragraph">
+<p>리소스큐에서 오른쪽 클릭하여 메뉴를 띄운 후 리소스큐 삭제 메뉴를 클릭하여 리소스큐를 삭제합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-22.png" alt="리소스큐 삭제 확인"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-23.png" alt="리소스큐 삭제"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_세션">세션</h3>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-24.png" alt="세션 목록"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-25.png" alt="세션 중지"></span></p>
+</div>
+<div class="paragraph">
+<p>중지 버튼을 클릭하여 쿼리를 중지합니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_lock_테이블">Lock 테이블</h3>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-26.png" alt="Lock 테이블 목록"></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-27.png" alt="실행중 쿼리 확인"></span></p>
+</div>
+<div class="paragraph">
+<p>대기 pid, Other pid 에 마우스를 가져다대면 실행중인 쿼리를 확인 가능합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/hawq/auth/hawqauth-28.png" alt="쿼리 중지"></span></p>
+</div>
+<div class="paragraph">
+<p>쿼리 중지 버튼을 클릭하여 쿼리를 중지합니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_알려진_문제점_2">알려진 문제점</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Pivotal HAWQ의 연결 방식이 JDBC만 지원하는 문제로 인하여 커넥션 관리 이슈가 발생할 수 있습니다.
+== 리모트 터미널</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Flamingo 2는 SSH 없이 개발 서버 또는 분석 서버에 커맨드 라인 형태로 접근을 제공하기 위해서 리모트 터미널을 제공합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SSH 연결없이 터미널 지원</p>
+</li>
+<li>
+<p>동시 열 수 있는 터미널 개수 제한 가능</p>
+</li>
+<li>
+<p>터미널 접속시 사용자 패스워드 제공</p>
+</li>
+<li>
+<p>웹 기반 터미널 제공</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Flamingo 2의 리모트 터미널은 nodejs를 기반으로 동작하므로 관련 패키지가 설치되어 있지 않으면 사용할 수 없습니다.
+또한 nodejs는 로그인한 사용자의 권한으로 홈 디렉토리에 쉘을 사용할 수 있도록 하므로 관련 기능은 root로 동작해야 합니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="user">사용자 관리</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-management.png" alt="사용자 관리 메인 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>Flamingo2는 사용자를 관리하기 위해 다음의 기능 들을 제공합니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+사용자 관리를 포함한 시스템 관리 메뉴는 관리자 권한의 계정에서만 사용할 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_소속">소속</h3>
+<div class="paragraph">
+<p>사용자 관리에서 사용되는 소속 정보는 리눅스 및 HDFS의 그룹 정보와 동일하게 적용됩니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_소속_추가">소속 추가</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-org-add0.png" alt="사용자 관리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>관리 메뉴에서 소속 추가를 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-org-add1.png" alt="소속 추가 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>추가할 소속 정보를 입력합니다.
+소속 정보 중 소속명은 리눅스 시스템 및 HDFS 파일 시스템 그룹과 연동됩니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-org-add2.png" alt="소속 추가 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>소속 콤보 박스를 선택하면 추가한 소속 정보를 확인할 수 있습니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_소속_삭제">소속 삭제</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-org-delete0.png" alt="사용자 관리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>삭제할 소속을 선택 후 관리 메뉴에서 소속 삭제를 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-org-delete1.png" alt="소속 삭제 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>삭제할 소속 정보를 목록에서 선택 후 확인 버튼을 클릭하면 소속이 삭제됩니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+만약 등록된 사용자 중 삭제할 소속 정보를 사용하고 있을 경우 관련된 모든 사용자의 소속 정보를 기본값(OCE)으로 변경 후 소속 정보가 삭제됩니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_소속_정보_변경">소속 정보 변경</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-org-modify0.png" alt="사용자 관리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>변경할 소속을 선택 후 관리 메뉴에서 소속 정보 변경을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-org-modify1.png" alt="소속 정보 수정 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>소속 목록 콤보 박스에서 수정할 소속을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-org-modify2.png" alt="소속 정보 수정 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>저장 버튼을 클릭하면 소속 정보가 변경됩니다.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_사용자">사용자</h3>
+<div class="sect3">
+<h4 id="_사용자_추가">사용자 추가</h4>
+<div class="paragraph">
+<p>Flamingo2에서 사용자가 추가되는 방법은 두 가지가 제공됩니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>비회원이 가입신청한 경우</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-register0.png" alt="사용자 관리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>Flamingo2의 로그인 화면에서 Registration 탭을 선택 후 사용자 정보를 입력합니다.
+등록 버튼을 클릭하면 시스템 관리자 계정에서 가입 신청 정보를 확인할 수 있습니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+비회원 사용자가 가입 신청을 하더라도 시스템 관리자의 승인 전에는 Flamingo2 사이트에 접속할 수 없습니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>관리자가 사용자를 추가한 경우</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-add0.png" alt="사용자 관리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>관리 메뉴에서 사용자 추가를 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-add1.png" alt="사용자 추가 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>추가할 사용자 정보를 입력합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-add2.png" alt="사용자 추가 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>소속 콤보 박스에서 등록된 소속 정보를 선택합니다.
+권한 및 등급을 선택합니다. 만약 권한이 관리자일 경우 등급을 1등급으로 고정됩니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-add3.png" alt="사용자 추가 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>등록한 사용자가 사용자 목록에 추가된 것을 확인할 수 있습니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+비회원 사용자가 가입 신청한 경우와 관리자가 직접 사용자를 추가한 경우에도 사용자의 상태는 승인대기 상태가 되며 관리자 권한으로 직접 승인완료를 한 후에 해당 사용자 계정으로 로그인이 가능합니다.
+리눅스 홈 계정 및 HDFS 홈 계정 또한 관리자 승인 이후에 생성되게 됩니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_사용자_승인">사용자 승인</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-ack0.png" alt="사용자 관리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>승인대기 상태인 사용자 중 승인할 사용자를 선택 후 관리 메뉴에서 사용자 승인을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-ack1.png" alt="사용자 승인 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>승인할 사용자를 확인합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-ack2.png" alt="사용자 승인 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>승인한 사용자의 리눅스 홈 계정 및 HDFS 홈계정, 상태 정보가 업데이트 됩니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+System-Agent 사용 유무에 따라 리눅스 홈 계정 정보가 표시되지 않을 수도 있습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_사용자_삭제">사용자 삭제</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-delete0.png" alt="사용자 관리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>관리 메뉴에서 사용자 삭제를 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-delete1.png" alt="사용자 삭제 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>사용자 삭제 시 기본적으로 HDFS의 사용자 홈 디렉토리(default: /user) 밑에 생성된 사용자 디렉토리도 함계 삭제됩니다. 또한 Flamingo2가 설치된 서버에 System-Agent가 구동 중이라면 사용자 삭제 시 시스템 사용자 계정도 삭제됩니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+System-Agent 사용 유무 옵션은 config.properties 파일의 user.system.agent.apply 옵션 값을 통해서 설정할 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_사용자_정보_변경">사용자 정보 변경</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-modify0.png" alt="사용자 관리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>변경할 사용자를 선택 후 관리 메뉴에서 사용자 정보 변경을 선택합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-modify1.png" alt="사용자 정보 수정 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>수정할 정보를 입력 후 저장 버튼을 클릭하면 사용자 정보가 업데이트 됩니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-modify2.png" alt="사용자 정보 수정 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>만약 비밀번호를 변경할 경우 해당 필드에 비밀번호를 입력할 때 필드가 활성화됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_사용자목록_갱신">사용자목록 갱신</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/user/user-refresh0.png" alt="사용자 관리 메뉴 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>관리 메뉴에서 사용자목록 갱신을 선택하면 사용자 목록이 갱신됩니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="hdfs-auth">HDFS 브라우저 권한 관리</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-authority.png" alt="HDFS 브라우저 권한 관리 메인 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>Flamingo2는 HDFS 브라우저 권한을 관리하기 위해 다음의 기능 들을 제공합니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+HDFS 브라우저 권한 관리를 포함한 시스템 관리 메뉴는 관리자 권한의 계정에서만 사용할 수 있습니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_권한">권한</h3>
+<div class="paragraph">
+<p>HDFS 브라우저 권한 관리는 Flamingo2의 HDFS 브라우저에서 제공되는 기능 들(디렉토리 생성/삭제, 파일 삭제/다운로드 등)을 사용자 등급별로 사용 권한을 설정할 수 있습니다. 사용자 등급은 관리자(1등급), 사용자(2~5등급)에 따라 구분되며, 관리자(admin) 계정은 HDFS 브라우저의 모든 경로에서 브라우저 기능 사용 권한을 가집니다. 일반 사용자의 경우 사용자 관리 메뉴에서 관리자의 회원가입 승인 처리가 완료되는 시점에서 자동으로 지정된 HDFS 사용자 홈 디렉토리(default=/user) 하위 경로에 권한 정보가 추가됩니다. 따라서 관리자를 제외한 모든 일반 사용자는 HDFS 파일 시스템 상에서 자신의 홈 디렉토리(ex. /user/cloudine/**)로 시작되는 경로에서만 브라우저 기능을 사용할 수 있습니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+HDFS 파일 시스템의 사용자 홈 디렉토리 기본 경로를 변경하려면 config.properties의 user.home.hdfs.path 값을 변경해야 합니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_권한_추가">권한 추가</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-add0.png" alt="HDFS 브라우저 권한 관리 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>HDFS 파일시스템에서 권한 추가 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-add1.png" alt="권한 추가 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>선택한 경로는 HDFS 파일 시스템 경로와 동일하며, 전체 경로 혹은 세부 경로에 대한 권한을 설정할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-add2.png" alt="권한 추가 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>선택한 경로의 하위 모든 경로까지 권한 정보를 적용하려면 하위경로포함 옵션(/**)을 체크합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-add3.png" alt="권한 추가 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>선택한 경로에 대한 권한 정보가 추가되고, 추가한 권한 정보를 선택하면 상세 권한 정보를 확인할 수 있습니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_권한_삭제">권한 삭제</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-delete0.png" alt="HDFS 브라우저 권한 관리 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>삭제할 권한을 선택 후 삭제 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-delete1.png" alt="권한 삭제 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>삭제할 권한 정보를 확인 후 삭제합니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_권한_수정">권한 수정</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-modify0.png" alt="HDFS 브라우저 권한 관리 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>변경할 권한 정보를 선택 후 권한 수정 버튼을 클릭합니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-modify1.png" alt="권한 정보 수정 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>사용자 승인 후에 추가되는 권한은 각 사용자 홈 디렉토리 하위 모든 경로에 대해서 디렉토리 및 파일 사용 권한이 부여됩니다.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-modify2.png" alt="권한 정보 수정 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>경로, 권한, 등급의 경우 수정을 원하는 부부의 체크 박스를 선택해서 수정합니다. 디렉토리 및 파일의 경우 사용 금지을 원하는 기능을 체크 해제한 후 저장 버튼을 클릭하면 선택하 경로에 대한 권한이 업데이트 됩니다. 만약 하위 디렉토리를 포함하지 않고 특정 경로에서만 사용 권한을 부여하고 싶을 경우 경로 뒤의 "/**" 문자를 제거해야 합니다(ex. /user/cloudine).</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-modify3.png" alt="권한 정보 수정 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>수정된 권한 정보를 선택하면 HDFS 브라우저 사용 권한 정보 필드에 상세 정보가 보여집니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_hdfs_브라우저_갱신">HDFS 브라우저 갱신</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-refresh0.png" alt="HDFS 브라우저 권한 관리 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>HDFS 파일 시스템의 갱신 버튼을 클릭하면 HDFS 파일 시스템의 트리 목록이 갱신됩니다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_권한_목록_갱신">권한 목록 갱신</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/system/hdfs-auth/hdfs-auth-refresh1.png" alt="HDFS 브라우저 권한 관리 화면"></span></p>
+</div>
+<div class="paragraph">
+<p>HDFS 경로 설정 정보의 갱신 버튼을 클릭하면 권한 정보 목록이 갱신됩니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="etc">기타</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_flamingo_커스터마이징">Flamingo 커스터마이징</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Flamingo는 Community와 Commercial License가 있으며 Community License의 경우 GPL v3 라이센스를 준수하고 기술지원이 불가능하며 수정시 소스코드를 공개해야 합니다. Commercial License에 대한 문의는 <a href="mailto:sales@cloudine.co.kr로">sales@cloudine.co.kr로</a> 문의하십시오. 또한 "Flamingo 커스터마이징" 부분은 Commercial License에 해당함을 알려드립니다. 일단 Flamingo의 커스터마이징 항목을 적용하는 것은 커스터마이징을 간주하며 이 경우 Commercial License가 적용됩니다. 또한 Commercial License에서 Community License로 전환은 불가능합니다.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_타이틀_변경하기">타이틀 변경하기</h4>
+<div class="paragraph">
+<p>Flamingo의 타이틀을 변경하기 위해서는 설정 파일인 <code>config.properties</code> 파일의 다음 부분을 수정하도록 합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>application.top=Flamingo 2 Big Data Platform By Cloudine Inc
+application.title=Flamingo 2 Big Data Platform</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>종종 환경설정 파일을 수정하지 않고 변경하는 방법은 다음과 같이 System Property를 이용하는 것입니다. 이 방법을 이용하면 <code>config.properties</code> 파일의 수정없이 적용이 가능합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>#!/bin/sh
+
+JAVA_HOME=/usr/local/java/jdk7
+_RUNJAVA=$JAVA_HOME/bin/java
+CATALINA_OPTS="-Dflamingo -Dapplication.top=\"Pelican Big Data Platform\" -Dapplication.title=\"Pelican Big Data Platform by pikdata\" -Xms4G -Xmx4G"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_asciidoc_pdf">AsciiDoc PDF</h3>
+<div class="paragraph">
+<p>Flamingo는 사용자 가이드와 같은 문서 관리를 위해서 AsciiDoc을 사용합니다. Maven POM에는 AsciiDoc을 HTML로 생성하는 생성기가 설정되어 있습니다. 하지만 문서를 PDF로 변환하고자 하는 경우 다음의 절차에 따라 PDF로 된 문서를 생성할 수 있습니다.
+AsciiDoc PDF는 ttfunk가 필요하며 이는 Ruby &gt;= 1.9.3 을 만족해야 합니다. 다음의 커맨드를 이용하여 의존성을 설치합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># sudo gem install bundle asciidoctor prawn prawn-svg prawn-table prawn-templates treetop coderay pygments.rb
+Fetching: bundler-1.9.8.gem (100%)
+Successfully installed bundler-1.9.8
+Fetching: bundle-0.0.1.gem (100%)
+Successfully installed bundle-0.0.1
+Parsing documentation for bundler-1.9.8
+Installing ri documentation for bundler-1.9.8
+Parsing documentation for bundle-0.0.1
+Installing ri documentation for bundle-0.0.1
+Fetching: asciidoctor-1.5.2.gem (100%)
+Successfully installed asciidoctor-1.5.2
+Parsing documentation for asciidoctor-1.5.2
+Installing ri documentation for asciidoctor-1.5.2
+Fetching: ttfunk-1.4.0.gem (100%)
+Successfully installed ttfunk-1.4.0
+Fetching: pdf-core-0.5.1.gem (100%)
+Successfully installed pdf-core-0.5.1
+Fetching: prawn-2.0.1.gem (100%)
+Successfully installed prawn-2.0.1
+Parsing documentation for ttfunk-1.4.0
+Installing ri documentation for ttfunk-1.4.0
+Parsing documentation for pdf-core-0.5.1
+Installing ri documentation for pdf-core-0.5.1
+Parsing documentation for prawn-2.0.1
+Installing ri documentation for prawn-2.0.1
+Fetching: addressable-2.3.8.gem (100%)
+Successfully installed addressable-2.3.8
+Fetching: css_parser-1.3.6.gem (100%)
+Successfully installed css_parser-1.3.6
+Fetching: prawn-svg-0.18.0.gem (100%)
+Successfully installed prawn-svg-0.18.0
+Parsing documentation for addressable-2.3.8
+Installing ri documentation for addressable-2.3.8
+Parsing documentation for css_parser-1.3.6
+Installing ri documentation for css_parser-1.3.6
+Parsing documentation for prawn-svg-0.18.0
+Installing ri documentation for prawn-svg-0.18.0
+Fetching: prawn-table-0.2.1.gem (100%)
+Successfully installed prawn-table-0.2.1
+Parsing documentation for prawn-table-0.2.1
+Installing ri documentation for prawn-table-0.2.1
+Fetching: Ascii85-1.0.2.gem (100%)
+Successfully installed Ascii85-1.0.2
+Fetching: ruby-rc4-0.1.5.gem (100%)
+Successfully installed ruby-rc4-0.1.5
+Fetching: hashery-2.1.1.gem (100%)
+Successfully installed hashery-2.1.1
+Fetching: afm-0.2.2.gem (100%)
+Successfully installed afm-0.2.2
+Fetching: pdf-reader-1.3.3.gem (100%)
+
+  ********************************************
+
+  v1.0.0 of PDF::Reader introduced a new page-based API. There are extensive
+  examples showing how to use it in the README and examples directory.
+
+  For detailed documentation, check the rdocs for the PDF::Reader,
+  PDF::Reader::Page and PDF::Reader::ObjectHash classes.
+
+  The old API is marked as deprecated but will continue to work with no
+  visible warnings for now.
+
+  ********************************************
+
+Successfully installed pdf-reader-1.3.3
+Fetching: prawn-templates-0.0.3.gem (100%)
+Successfully installed prawn-templates-0.0.3
+Parsing documentation for Ascii85-1.0.2
+Installing ri documentation for Ascii85-1.0.2
+Parsing documentation for ruby-rc4-0.1.5
+Installing ri documentation for ruby-rc4-0.1.5
+Parsing documentation for hashery-2.1.1
+Installing ri documentation for hashery-2.1.1
+Parsing documentation for afm-0.2.2
+Installing ri documentation for afm-0.2.2
+Parsing documentation for pdf-reader-1.3.3
+Installing ri documentation for pdf-reader-1.3.3
+Parsing documentation for prawn-templates-0.0.3
+Installing ri documentation for prawn-templates-0.0.3
+Fetching: polyglot-0.3.5.gem (100%)
+Successfully installed polyglot-0.3.5
+Fetching: treetop-1.6.2.gem (100%)
+Successfully installed treetop-1.6.2
+Parsing documentation for polyglot-0.3.5
+Installing ri documentation for polyglot-0.3.5
+Parsing documentation for treetop-1.6.2
+Installing ri documentation for treetop-1.6.2
+Fetching: coderay-1.1.0.gem (100%)
+Successfully installed coderay-1.1.0
+invalid options: -SNw2
+(invalid options are ignored)
+Parsing documentation for coderay-1.1.0
+Installing ri documentation for coderay-1.1.0
+Fetching: yajl-ruby-1.2.1.gem (100%)
+Building native extensions.  This could take a while...
+Successfully installed yajl-ruby-1.2.1
+Fetching: posix-spawn-0.3.11.gem (100%)
+Building native extensions.  This could take a while...
+Successfully installed posix-spawn-0.3.11
+Fetching: pygments.rb-0.6.3.gem (100%)
+Successfully installed pygments.rb-0.6.3
+Parsing documentation for yajl-ruby-1.2.1
+unable to convert "\xCA" from ASCII-8BIT to UTF-8 for lib/yajl/yajl.bundle, skipping
+Installing ri documentation for yajl-ruby-1.2.1
+Parsing documentation for posix-spawn-0.3.11
+unable to convert "\xCA" from ASCII-8BIT to UTF-8 for lib/posix_spawn_ext.bundle, skipping
+Installing ri documentation for posix-spawn-0.3.11
+Parsing documentation for pygments.rb-0.6.3
+Installing ri documentation for pygments.rb-0.6.3
+22 gems installed</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>의존성 설치후에는 다음과 같이 PDF 문서를 생성합니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># cd tools/asciidoctor-pdf
+# ruby bin/asciidoctor-pdf ../../flamingo2-documentation/src/main/asciidoc/user-guide/korean/index.asciidoc</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>asciidoctor-pdf는 Ubuntu 환경에서 필요에 따라서 Ruby 2가 필요할 수 있습니다. Ubuntu의 경우 아래와 같이 Ruby 2를 설치하기 위해서 아래와 같이 진행할 수 있습니다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code># apt-add-repository ppa:brightbox/ruby-ng
+# add-apt-repository ppa:brightbox/ruby-ng-experimental
+
+# apt-get update
+# apt-get install ruby2.2 ruby2.2-dev
+
+# update-alternatives --remove ruby /usr/bin/ruby2.2
+# update-alternatives --remove irb /usr/bin/irb2.2
+# update-alternatives --remove gem /usr/bin/gem2.2
+
+# update-alternatives \
+    --install /usr/bin/ruby ruby /usr/bin/ruby2.2 50 \
+    --slave /usr/bin/irb irb /usr/bin/irb2.2 \
+    --slave /usr/bin/rake rake /usr/bin/rake2.2 \
+    --slave /usr/bin/gem gem /usr/bin/gem2.2 \
+    --slave /usr/bin/rdoc rdoc /usr/bin/rdoc2.2 \
+    --slave /usr/bin/testrb testrb /usr/bin/testrb2.2 \
+    --slave /usr/bin/erb erb /usr/bin/erb2.2 \
+    --slave /usr/bin/ri ri /usr/bin/ri2.2
+
+# update-alternatives --config ruby
+# update-alternatives --display ruby
+
+# irb
+irb(main):001:0&gt; RUBY_VERSION
+=&gt; "2.2.0"
+
+# ruby --version
+ruby 2.2.0p0 (2014-12-25 revision 49005) [x86_64-linux-gnu]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-06-23 14:42:14 KST
+</div>
+</div>
+</body>
+</html>

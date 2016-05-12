@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.flamingo2.com"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="queries" type="flam:queriesType" xmlns:flam="http://www.flamingo2.com"/>
+    <xs:complexType name="queriesType">
+        <xs:sequence>
+            <xs:element type="flam:queryType" name="query" xmlns:flam="http://www.flamingo2.com" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="queryType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="id"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

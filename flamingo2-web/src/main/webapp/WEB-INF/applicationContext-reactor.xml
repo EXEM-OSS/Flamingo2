@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/util                  http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- ========================= REACTOR DEFINITION ========================= -->
+
+    <!--
+        백그라운드로 비동기 처리를 위한 Reactor. Reactor는 JMS와 비슷하게 Publisher, Subscriber 모델로 동작함.
+        참고 : https://spring.io/guides/gs/messaging-reactor/
+    -->
+    <bean id="reactor" class="org.opencloudengine.flamingo2.backend.ReactorFactoryBean">
+        <constructor-arg index="0">
+            <bean class="reactor.core.Environment"/>
+        </constructor-arg>
+        <constructor-arg index="1">
+            <util:constant static-field="reactor.core.Environment.THREAD_POOL"/>
+        </constructor-arg>
+    </bean>
+
+</beans>

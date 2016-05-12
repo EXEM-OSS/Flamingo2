@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.history.TaskHistoryRepository">
+
+    <!-- =======================================-->
+    <!-- 1. Select                              -->
+    <!-- =======================================-->
+
+    <select id="select" resultType="org.opencloudengine.flamingo2.engine.history.TaskHistory">
+        SELECT
+        ID as id,
+        IDENTIFIER as identifier,
+        WID as processId,
+        TASK_ID as taskId,
+        NAME as name,
+        USERNAME as username,
+        START_DT as startDate,
+        END_DT as endDate,
+        DURATION as duration,
+        YYYY as year,
+        MM as month,
+        DD as day,
+        STATUS as status,
+        LOGDIR as logDirectory,
+        TREE_ID as treeId,
+        VARS as vars
+        FROM FL_TASK_HISTORY
+        WHERE ID = #{value}
+    </select>
+
+    <select id="selectByIdentifier" resultType="org.opencloudengine.flamingo2.engine.history.TaskHistory">
+        SELECT
+            ID as id,
+            IDENTIFIER as identifier,
+            WID as processId,
+            TASK_ID as taskId,
+            NAME as name,
+            USERNAME as username,
+            START_DT as startDate,
+            END_DT as endDate,
+            DURATION as duration,
+            YYYY as year,
+            MM as month,
+            DD as day,
+            STATUS as status,
+            LOGDIR as logDirectory,
+            TREE_ID as treeId,
+            VARS as vars
+        FROM FL_TASK_HISTORY
+        WHERE IDENTIFIER = #{value}
+        ORDER BY START_DT DESC
+    </select>
+
+    <select id="selectByTaskIdAndIdentifier" resultType="org.opencloudengine.flamingo2.engine.history.TaskHistory">
+        SELECT
+            ID as id,
+            IDENTIFIER as identifier,
+            WID as processId,
+            TASK_ID as taskId,
+            NAME as name,
+            USERNAME as username,
+            START_DT as startDate,
+            END_DT as endDate,
+            DURATION as duration,
+            YYYY as year,
+            MM as month,
+            DD as day,
+            STATUS as status,
+            LOGDIR as logDirectory,
+            TREE_ID as treeId,
+            VARS as vars
+        FROM FL_TASK_HISTORY
+        WHERE IDENTIFIER = #{identifier}
+        AND TASK_ID = #{taskId}
+    </select>
+
+    <!-- =======================================-->
+    <!-- 2. Insert                              -->
+    <!-- =======================================-->
+
+    <insert id="insert" parameterType="org.opencloudengine.flamingo2.engine.history.TaskHistory"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO FL_TASK_HISTORY (
+            IDENTIFIER,
+            WID,
+            TASK_ID,
+            NAME,
+            USERNAME,
+            START_DT,
+            DURATION,
+            YYYY,
+            MM,
+            DD,
+            STATUS,
+            LOGDIR,
+            TREE_ID,
+            VARS
+        )
+        VALUES (
+            #{identifier},
+            #{processId},
+            #{taskId},
+            #{name},
+            #{username},
+            #{startDate},
+            #{duration},
+            #{year},
+            #{month},
+            #{day},
+            #{status},
+            #{logDirectory},
+            #{treeId},
+            #{vars}
+        )
+    </insert>
+
+    <!-- =======================================-->
+    <!-- 3. Update                              -->
+    <!-- =======================================-->
+
+    <update id="updateByTaskIdAndIdentifier" parameterType="org.opencloudengine.flamingo2.engine.history.TaskHistory">
+        UPDATE FL_TASK_HISTORY
+        SET
+            IDENTIFIER = #{identifier},
+            WID = #{processId},
+            TASK_ID = #{taskId},
+            NAME = #{name},
+            USERNAME = #{username},
+            START_DT = #{startDate},
+            END_DT = #{endDate},
+            DURATION = #{duration},
+            YYYY = #{year},
+            MM = #{month},
+            DD = #{day},
+            STATUS = #{status},
+            LOGDIR = #{logDirectory},
+            TREE_ID = #{treeId}
+        WHERE IDENTIFIER = #{identifier} AND TASK_ID = #{taskId}
+    </update>
+
+    <update id="update" parameterType="org.opencloudengine.flamingo2.engine.history.TaskHistory">
+        UPDATE FL_TASK_HISTORY
+        SET
+        END_DT = #{endDate},
+        DURATION = #{duration},
+        STATUS = #{status}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="increment" parameterType="org.opencloudengine.flamingo2.engine.history.TaskHistory">
+        UPDATE FL_TASK_HISTORY
+        SET
+            CURRENT = CURRENT + 1
+        WHERE ID = #{id}
+    </update>
+
+</mapper>

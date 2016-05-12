@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.web.system.OrganizationRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <resultMap id="orgMap" type="org.opencloudengine.flamingo2.model.rest.Organization">
+        <result property="id"               column="ID"             jdbcType="BIGINT"/>
+        <result property="orgCD"            column="ORG_CD"         jdbcType="VARCHAR"/>
+        <result property="orgNM"            column="ORG_NM"         jdbcType="VARCHAR"/>
+        <result property="description"      column="DESCRIPTION"    jdbcType="VARCHAR"/>
+        <result property="registerDate"     column="REG_DT"         jdbcType="TIMESTAMP"/>
+        <result property="updateDate"       column="UPD_DT"         jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Sql Fragments -->
+    <!-- ==================================================================================== -->
+
+    <sql id="wherePK">WHERE ID = #{id}</sql>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="selectAll" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT
+            org.ID as org_id,
+            org.ORG_CD as org_code,
+            org.ORG_NM as org_name,
+            org.DESCRIPTION as org_description,
+            org.REG_DT as register_date,
+            org.UPD_DT as update_date
+        FROM FL_ORG org
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Exist Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="exist" parameterType="string" resultType="Integer">
+        SELECT COUNT(1)
+        FROM FL_ORG
+        <include refid="wherePK"/>
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 4. Insert Statements -->
+    <!-- ==================================================================================== -->
+
+    <select id="insert" parameterType="map">
+        INSERT INTO FL_ORG (ORG_CD, ORG_NM, DESCRIPTION, UPD_DT)
+        VALUES (
+            #{orgCode},
+            #{orgName},
+            #{orgDescription},
+            CURRENT_TIMESTAMP
+        )
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 5. Update Statements -->
+    <!-- ==================================================================================== -->
+
+    <update id="update" parameterType="map">
+        UPDATE FL_ORG
+        SET
+            ORG_CD = #{orgCode},
+            ORG_NM = #{orgName},
+            DESCRIPTION = #{orgDescription},
+            UPD_DT = CURRENT_TIMESTAMP
+        <include refid="wherePK"/>
+    </update>
+
+    <!-- ==================================================================================== -->
+    <!-- 6. Delete Statements -->
+    <!-- ==================================================================================== -->
+
+    <delete id="delete" parameterType="map">
+        DELETE FROM FL_ORG
+        <if test="id != 1">
+            <include refid="wherePK"/>
+        </if>
+    </delete>
+
+</mapper>

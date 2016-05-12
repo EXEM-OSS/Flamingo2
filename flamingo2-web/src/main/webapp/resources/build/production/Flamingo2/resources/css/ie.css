@@ -1,0 +1,28 @@
+.nav-list > li {
+    border-color: #e5e5e5;
+}
+
+.sidebar-toggle {
+    background-color: #f3f3f3;
+    border-color: #e0e0e0;
+}
+
+.nav-list > li > a {
+    background-color: #f8f8f8;
+    color: #585858;
+}
+
+.nav-list > li .submenu {
+    background-color: #ffffff;
+    border-color: #e5e5e5;
+}
+
+.nav-list > li .submenu > li > a {
+    border-top-color: #e4e4e4;
+    background-color: #ffffff;
+    color: #616161;
+}
+.nav-list > li .submenu > li > a:hover {
+    color: #4b88b7;
+    background-color: #f1f5f9;
+}

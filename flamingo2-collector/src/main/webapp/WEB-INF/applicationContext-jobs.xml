@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="yarnApplicationTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+                <property name="jobClass"
+                          value="org.opencloudengine.flamingo2.collector.jobs.YarnApplicationCollectionJob"/>
+            </bean>
+        </property>
+        <!-- 2m -->
+        <property name="repeatInterval" value="180000"/>
+        <property name="startDelay" value="5000"/>
+    </bean>
+
+    <bean id="mapReduceJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+                <property name="jobClass" value="org.opencloudengine.flamingo2.collector.jobs.MapReduceCollectionJob"/>
+            </bean>
+        </property>
+        <!-- 2m -->
+        <property name="repeatInterval" value="180000"/>
+        <property name="startDelay" value="5000"/>
+    </bean>
+
+    <bean id="hdfsJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+                <property name="jobClass" value="org.opencloudengine.flamingo2.collector.jobs.HdfsUsageJob"/>
+            </bean>
+        </property>
+        <!-- 1H -->
+        <property name="repeatInterval" value="3600000"/>
+        <property name="startDelay" value="5000"/>
+    </bean>
+
+    <!-- ================ MapR Monitoring ================ -->
+
+    <!--
+        <bean id="cldbJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+            <property name="jobDetail">
+                <bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+                    <property name="jobClass" value="org.opencloudengine.flamingo2.collector.jobs.CLDBUsageJob"/>
+                </bean>
+            </property>
+            <property name="repeatInterval" value="3600000"/>
+            <property name="startDelay" value="5000"/>
+        </bean>
+    -->
+
+</beans>

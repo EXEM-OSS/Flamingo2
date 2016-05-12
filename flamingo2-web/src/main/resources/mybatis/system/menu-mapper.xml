@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.web.system.MenuRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Sql Fragments -->
+    <!-- ==================================================================================== -->
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Select Statement -->
+    <!-- ==================================================================================== -->
+    <select id="select" parameterType="map" resultType="map">
+        SELECT A.MENU_ID AS id,
+               A.MENU_ID AS menu_id,
+               A.MENU_NM AS text,
+                <choose>
+                    <when test="locale != null and locale == 'ko_KR'">
+                        A.MENU_NM_ko_KR AS menu_nm,
+                    </when>
+                    <when test="locale != null and locale == 'en_US'">
+                        A.MENU_NM_en_US AS menu_nm,
+                    </when>
+                    <when test="locale != null and locale == 'ja_JP'">
+                        A.MENU_NM_ja_JP AS menu_nm,
+                    </when>
+                    <when test="locale != null and locale == 'zh_CN'">
+                        A.MENU_NM_zh_CN AS menu_nm,
+                    </when>
+                    <otherwise>
+                        null AS menu_nm,
+                    </otherwise>
+                </choose>
+               A.MENU_NS AS menu_ns,
+               A.PRNTS_MENU_ID AS prnts_menu_id,
+               A.SORT_ORDR AS sort,
+               0 AS lvl,
+               CASE (SELECT COUNT(*) FROM FL_COMM_MENU WHERE PRNTS_MENU_ID = A.MENU_ID) WHEN 0 THEN 'true' ELSE 'false' END AS leaf,
+               A.USE_YN AS use_yn,
+               A.ICON_CSS_NM AS icon_css_nm
+        FROM FL_COMM_MENU A
+        WHERE A.PRNTS_MENU_ID = 'TOP'
+          AND A.USE_YN = 'Y'
+        <if test="level != 1">
+            AND A.ICON_CSS_NM != 'menu-system'
+        </if>
+
+        UNION ALL
+
+        SELECT A.MENU_ID,
+               A.MENU_ID,
+               A.MENU_NM,
+                <choose>
+                    <when test="locale != null and locale == 'ko_KR'">
+                        A.MENU_NM_ko_KR AS menu_nm,
+                    </when>
+                    <when test="locale != null and locale == 'en_US'">
+                        A.MENU_NM_en_US AS menu_nm,
+                    </when>
+                    <when test="locale != null and locale == 'ja_JP'">
+                        A.MENU_NM_ja_JP AS menu_nm,
+                    </when>
+                    <when test="locale != null and locale == 'zh_CN'">
+                        A.MENU_NM_zh_CN AS menu_nm,
+                    </when>
+                    <otherwise>
+                        null AS menu_nm,
+                    </otherwise>
+                </choose>
+               A.MENU_NS,
+               A.PRNTS_MENU_ID,
+               A.SORT_ORDR,
+               1 AS LVL,
+               'true' AS LEAF,
+               A.USE_YN,
+               A.ICON_CSS_NM AS icon_css_nm
+          FROM FL_COMM_MENU A
+        WHERE A.PRNTS_MENU_ID <![CDATA[ <> ]]> 'TOP'
+          AND A.USE_YN = 'Y'
+        ORDER BY sort, menu_id
+    </select>
+
+    <select id="selectNode" parameterType="map" resultType="map">
+        SELECT A.MENU_ID AS menu_id,
+               A.MENU_NM AS menu_nm,
+               A.MENU_NS AS menu_ns,
+               A.PRNTS_MENU_ID AS prnts_menu_id,
+               A.SORT_ORDR AS sort_ordr,
+               A.USE_YN AS use_yn,
+               A.ICON_CSS_NM AS icon_css_nm,
+               A.MENU_NM_ko_KR AS menu_nm_ko_kr,
+               A.MENU_NM_en_US AS menu_nm_en_us,
+               A.MENU_NM_ja_JP AS menu_nm_ja_jp,
+               A.MENU_NM_zh_CN AS menu_nm_zh_cn
+        FROM FL_COMM_MENU A
+        WHERE A.PRNTS_MENU_ID = #{prnts_menu_id}
+    </select>
+    <!-- ==================================================================================== -->
+    <!-- 4. Insert Statements -->
+    <!-- ==================================================================================== -->
+    <insert id="insert" parameterType="map">
+        <selectKey resultType="string" keyProperty="menu_id" order="BEFORE">
+            SELECT CASE #{prnts_menu_id} WHEN 'TOP' THEN IFNULL(CONCAT(LEFT(MENU_ID, LENGTH(MENU_ID) - 3), LPAD(RIGHT(MAX(MENU_ID), 3) + 1, 3, '0')), 'MN001')
+                   ELSE  IFNULL(CONCAT(LEFT(MENU_ID, LENGTH(MENU_ID) - 3), LPAD(RIGHT(MAX(MENU_ID), 3) + 1, 3, '0')), CONCAT(#{prnts_menu_id}, '001')) END AS menu_id
+            FROM FL_COMM_MENU
+            WHERE PRNTS_MENU_ID = #{prnts_menu_id};
+        </selectKey>
+
+        INSERT INTO FL_COMM_MENU
+        (MENU_ID, MENU_NM, MENU_NS, PRNTS_MENU_ID, SORT_ORDR, USE_YN, ICON_CSS_NM, MENU_NM_ko_KR, MENU_NM_en_US, MENU_NM_ja_JP, MENU_NM_zh_CN)
+        VALUES
+        (#{menu_id},#{menu_nm},#{menu_ns},#{prnts_menu_id},#{sort_ordr},#{use_yn}, #{icon_css_nm}, #{menu_nm_ko_kr}, #{menu_nm_en_us}, #{menu_nm_ja_jp}, #{menu_nm_zh_cn})
+    </insert>
+    <!-- ==================================================================================== -->
+    <!-- 5. Update Statements -->
+    <!-- ==================================================================================== -->
+    <update id="update" parameterType="map">
+        UPDATE FL_COMM_MENU
+        SET MENU_NM = #{menu_nm},
+            MENU_NS = #{menu_ns},
+            PRNTS_MENU_ID = #{prnts_menu_id},
+            USE_YN = #{use_yn},
+            ICON_CSS_NM = #{icon_css_nm},
+            MENU_NM_ko_KR = #{menu_nm_ko_kr},
+            MENU_NM_en_US = #{menu_nm_en_us},
+            MENU_NM_ja_JP = #{menu_nm_ja_jp},
+            MENU_NM_zh_CN = #{menu_nm_zh_cn}
+        WHERE MENU_ID = #{menu_id}
+    </update>
+    <!-- ==================================================================================== -->
+    <!-- 6. Delete Statements -->
+    <!-- ==================================================================================== -->
+    <delete id="delete" parameterType="map">
+        DELETE FROM FL_COMM_MENU
+        WHERE MENU_ID = #{menu_id}
+    </delete>
+
+</mapper>

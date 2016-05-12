@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Edward KIM(fharenheit@gmail.com)</author>
+        <title>Apache Hadoop based Workflow Engine, MapReduce ETL, Workflow Designer</title>
+    </properties>
+    <meta name="keyword" content="hadoop,etl,workflow,engine,designer"/>
+    <body>
+        <section name="Clean ETL">
+            <p>
+                Clean ETL 모듈은 MapReduce를 기반으로 구현되어 있으며 지정한 컬럼을 삭제하는 ETL입니다.
+                이 ETL은 취합하는 과정이 존재하지 않으므로 Mapper로만 구성되어 있어서 상당히 빠른
+                성능으로 동작하게 됩니다.
+            </p>
+            <p>다음의 입력 파라미터가 필요합니다:</p>
+            <ul>
+                <li>
+                    <tt>-inputPath</tt>
+                    - 컬럼을 삭제할 파일 또는 디렉토리의 위치
+                </li>
+                <li>
+                    <tt>-outputPath</tt>
+                    - 처리 결과를 저장할 디렉토리의 위치
+                </li>
+                <li>
+                    <tt>-cleanToColumns</tt>
+                    - 삭제할 컬럼의 위치(0부터 시작)
+                </li>
+            </ul>
+        </section>
+        <section name="실행 방법">
+            <p>
+                <code>#java -cp flamingo-etl-0.1-SNAPSHOT.jar org.openflamingo.etl.CleanDriver -inputPath /INPUT -outputPath /OUTPUT -cleanToColumns 0,1,2</code>
+            </p>
+        </section>
+    </body>
+</document>

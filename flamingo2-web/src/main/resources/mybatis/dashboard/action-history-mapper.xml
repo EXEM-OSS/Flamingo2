@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.dashboard.ActionHistoryRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <resultMap id="actionHistoryMap" type="org.opencloudengine.flamingo2.model.rest.ActionHistory">
+        <result property="id"               column="ID"             jdbcType="BIGINT"/>
+        <result property="workflowId"       column="WORKFLOW_ID"    jdbcType="VARCHAR"/>
+        <result property="jobId"            column="JOB_ID"         jdbcType="BIGINT"/>
+        <result property="jobStringId"      column="JOB_ID_STRING"  jdbcType="VARCHAR"/>
+        <result property="actionName"       column="ACTION_NAME"    jdbcType="VARCHAR"/>
+        <result property="workflowName"     column="WORKFLOW_NAME"  jdbcType="VARCHAR"/>
+        <result property="jobName"          column="JOB_NAME"       jdbcType="VARCHAR"/>
+        <result property="startDate"        column="START_DATE"     jdbcType="TIMESTAMP"/>
+        <result property="endDate"          column="END_DATE"       jdbcType="TIMESTAMP"/>
+        <result property="cause"            column="CAUSE"          jdbcType="VARCHAR"/>
+        <result property="currentStep"      column="CURRENT_STEP"   jdbcType="INTEGER"/>
+        <result property="totalStep"        column="TOTAL_STEP"     jdbcType="INTEGER"/>
+        <result property="elapsed"          column="ELAPSED"        jdbcType="INTEGER"/>
+        <result property="exception"        column="EXCEPTION"      jdbcType="CLOB"/>
+        <result property="logPath"          column="LOG_PATH"       jdbcType="VARCHAR"/>
+        <result property="script"           column="SCRIPT"         jdbcType="CLOB"/>
+        <result property="command"          column="COMMAND"        jdbcType="CLOB"/>
+        <result property="status"           column="STATUS"         jdbcType="VARCHAR"/>
+        <result property="username"         column="USERNAME"       jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Sql Fragments -->
+    <!-- ==================================================================================== -->
+
+    <sql id="wherePK">WHERE ID = #{id}</sql>
+
+    <sql id="whereWFID">WHERE WORKFLOW_ID = #{workflowId}</sql>
+
+    <sql id="whereJobID">WHERE JOB_ID = #{jobId}</sql>
+
+    <sql id="whereUsername">WHERE USERNAME = #{username}</sql>
+
+    <sql id="whereStatus">WHERE USERNAME = #{username} AND STATUS = #{status}</sql>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="select" resultMap="actionHistoryMap">
+        SELECT * FROM FL_ACTION_HISTORY
+        <include refid="wherePK"/>
+    </select>
+
+    <select id="selectAll" resultMap="actionHistoryMap">
+        SELECT * FROM FL_ACTION_HISTORY
+    </select>
+
+    <select id="selectByStatus" parameterType="actionHistory" resultMap="actionHistoryMap">
+        SELECT * FROM FL_ACTION_HISTORY
+        <include refid="whereStatus"/>
+    </select>
+
+    <select id="selectByUsername" resultMap="actionHistoryMap">
+        SELECT * FROM FL_ACTION_HISTORY
+        <include refid="whereUsername"/>
+    </select>
+
+    <select id="getTotalCountByUsername" parameterType="map" resultType="Integer">
+        SELECT COUNT(*) FROM FL_ACTION_HISTORY
+        WHERE 1=1
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+        <if test="status != null and status != '' and status != 'ALL'">
+            AND STATUS = #{status}
+        </if>
+        <if test="actionName != null and actionName != ''">
+            AND ACTION_NAME = #{actionName}
+        </if>
+        <if test="jobId != null and jobId != ''">
+            AND JOB_ID = #{jobId}
+        </if>
+        <if test="workflowId != null and workflowId != ''">
+            AND WORKFLOW_ID = #{workflowId}
+        </if>
+        <if test="jobStringId != null and jobStringId != ''">
+            AND JOB_ID_STRING = #{jobStringId}
+        </if>
+        <if test="workflowName != null and workflowName != ''">
+            AND WORKFLOW_NAME LIKE '%${workflowName}%'
+        </if>
+    </select>
+
+    <select id="selectByCondition" parameterType="map" resultMap="actionHistoryMap">
+        SELECT
+            ID,
+            WORKFLOW_ID,
+            JOB_ID,
+            JOB_ID_STRING,
+            ACTION_NAME,
+            WORKFLOW_NAME,
+            JOB_NAME,
+            START_DATE,
+            IF(END_DATE IS NULL, CURRENT_TIMESTAMP, END_DATE) AS END_DATE,
+            CAUSE,
+            CURRENT_STEP,
+            TOTAL_STEP,
+            ELAPSED,
+            EXCEPTION,
+            LOG_PATH,
+            SCRIPT,
+            COMMAND,
+            STATUS,
+            USERNAME
+        FROM FL_ACTION_HISTORY
+        WHERE 1=1
+        <if test="username != null and username != ''">
+            AND USERNAME = #{username}
+        </if>
+        <if test="status != null and status != '' and status != 'ALL'">
+            AND STATUS = #{status}
+        </if>
+        <if test="actionName != null and actionName != ''">
+            AND ACTION_NAME = #{actionName}
+        </if>
+        <if test="jobId != null and jobId != ''">
+            AND JOB_ID = #{jobId}
+        </if>
+        <if test="workflowId != null and workflowId != ''">
+            AND WORKFLOW_ID = #{workflowId}
+        </if>
+        <if test="jobStringId != null and jobStringId != ''">
+            AND JOB_ID_STRING = #{jobStringId}
+        </if>
+        <if test="workflowName != null and workflowName != ''">
+            AND WORKFLOW_NAME LIKE '%${workflowName}%'
+        </if>
+        ORDER BY ${orderBy} ${desc}
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Exist Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="exist" parameterType="Integer" resultType="Integer">
+        SELECT COUNT(*) FROM FL_ACTION_HISTORY
+        <include refid="wherePK"/>
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 4. Insert Statements -->
+    <!-- ==================================================================================== -->
+
+    <insert id="insert" parameterType="actionHistory" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO FL_ACTION_HISTORY
+        (
+            ID,
+            WORKFLOW_ID,
+            JOB_ID,
+            JOB_ID_STRING,
+            ACTION_NAME,
+            WORKFLOW_NAME,
+            JOB_NAME,
+            START_DATE,
+            CAUSE,
+            CURRENT_STEP,
+            TOTAL_STEP,
+            ELAPSED,
+            LOG_PATH,
+            SCRIPT,
+            COMMAND,
+            EXCEPTION,
+            STATUS,
+            USERNAME
+        )
+        VALUES
+        (
+            #{id},
+            #{workflowId},
+            #{jobId},
+            #{jobStringId},
+            #{actionName},
+            #{workflowName},
+            #{jobName},
+            #{startDate},
+            #{cause},
+            #{currentStep},
+            #{totalStep},
+            #{elapsed},
+            #{logPath},
+            #{script},
+            #{command},
+            #{exception},
+            #{status},
+            #{username}
+        )
+
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <!-- ==================================================================================== -->
+    <!-- 5. Update Statements -->
+    <!-- ==================================================================================== -->
+
+    <update id="update" parameterType="actionHistory">
+        UPDATE FL_ACTION_HISTORY
+        SET
+             START_DATE = #{startDate},
+             END_DATE = #{endDate},
+             CAUSE = #{cause},
+             CURRENT_STEP = #{currentStep},
+             TOTAL_STEP = #{totalStep},
+             ELAPSED = #{elapsed},
+             LOG_PATH = #{logPath},
+             SCRIPT = #{script},
+             COMMAND = #{command},
+             EXCEPTION = #{exception},
+             STATUS = #{status},
+             USERNAME = #{username}
+        <include refid="wherePK"/>
+    </update>
+
+    <!-- ==================================================================================== -->
+    <!-- 6. Delete Statements -->
+    <!-- ==================================================================================== -->
+
+    <delete id="delete" parameterType="Integer">
+        DELETE FROM FL_ACTION_HISTORY
+        <include refid="wherePK"/>
+    </delete>
+</mapper>

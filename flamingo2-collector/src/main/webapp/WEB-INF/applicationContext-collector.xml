@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/aop               http://www.springframework.org/schema/aop/spring-aop.xsd
+                http://www.springframework.org/schema/tx                http://www.springframework.org/schema/tx/spring-tx.xsd
+                http://www.springframework.org/schema/beans             http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/util              http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- ================ Scheduler ================ -->
+
+    <bean id="quartzJobScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="autoStartup" value="true"/>
+        <property name="beanName" value="scheduler"/>
+        <property name="applicationContextSchedulerContextKey" value="CTX"/>
+        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
+        <property name="configLocation" value="/WEB-INF/quartz.properties"/>
+
+        <property name="triggers">
+            <list>
+				<ref bean="yarnApplicationTrigger"/>
+				<ref bean="mapReduceJobTrigger"/>
+				<ref bean="hdfsJobTrigger"/>
+                <!--<ref bean="cldbJobTrigger"/>-->
+            </list>
+        </property>
+    </bean>
+
+    <!-- ================ Application Context Helper ================ -->
+
+    <bean id="applicationContextRegistry" class="org.opencloudengine.flamingo2.collector.ApplicationContextRegistry"/>
+
+    <!-- ================ Sigar ================ -->
+
+    <bean id="sigar" class="org.opencloudengine.flamingo2.collector.SigarFactory"/>
+    <bean id="sigarProxy" class="org.opencloudengine.flamingo2.collector.SigarProxyFactory">
+        <property name="sigar" ref="sigar"/>
+    </bean>
+
+    <!-- ========================= TRANSACTION DEFINITION ========================= -->
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <constructor-arg type="org.springframework.transaction.PlatformTransactionManager" ref="transactionManager"/>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <aop:config>
+        <aop:advisor pointcut="execution(* *..*Service.*(..))" advice-ref="txAdvice"/>
+    </aop:config>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- ========================= DATASOURCE DEFINITION ========================= -->
+
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maximumPoolSize" value="${jdbc.max.pool}"/>
+        <property name="connectionTestQuery" value="select 1"/>
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="cachePrepStmts">true</prop>
+                <prop key="prepStmtCacheSize">250</prop>
+                <prop key="prepStmtCacheSqlLimit">2048</prop>
+                <prop key="useServerPrepStmts">true</prop>
+            </props>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.batch.BatchRepository">
+
+    <!-- =======================================-->
+    <!-- 1. Insert                              -->
+    <!-- =======================================-->
+    <insert id="insert" parameterType="map">
+        INSERT INTO FL_BATCH
+        (JOB_ID, JOB_STAT, WID, WORKFLOW_ID, WORKFLOW_NM, JOB_NM, JOB_VAR, CRON, REG_ID, REG_DT)
+        VALUES
+        (#{job_id}, 'RUNNING', #{wid}, #{workflowId}, #{workflow_nm}, #{jobName}, #{vars}, #{cron}, #{user_id}, NOW())
+    </insert>
+
+    <!-- =======================================-->
+    <!-- 2. Delete                              -->
+    <!-- =======================================-->
+    <delete id="delete" parameterType="map">
+        DELETE FROM FL_BATCH
+        WHERE JOB_ID = #{name}
+    </delete>
+
+    <!-- =======================================-->
+    <!-- 3. Select                              -->
+    <!-- =======================================-->
+    <select id="select" parameterType="map" resultType="map">
+        SELECT A.JOB_ID AS job_id,
+               A.JOB_STAT AS job_stat,
+               A.WID AS wid,
+               A.WORKFLOW_ID AS workflowId,
+               A.WORKFLOW_NM AS workflow_nm,
+               A.JOB_NM AS jobName,
+               A.JOB_VAR AS vars,
+               A.CRON AS cron,
+               (SELECT USER_NM FROM FL_USER WHERE ID = A.REG_ID) AS username
+        FROM FL_BATCH A
+        WHERE 1=1
+        <if test="job_id != null and job_id != ''">
+            AND JOB_ID = #{job_id}
+        </if>
+        <if test="job_stat != null and job_stat != ''">
+            AND JOB_STAT = #{job_stat}
+        </if>
+    </select>
+
+    <!-- =======================================-->
+    <!-- 4. Update                              -->
+    <!-- =======================================-->
+    <update id="update" parameterType="map">
+        UPDATE FL_BATCH
+        SET
+        <if test="job_stat != null and job_stat != ''">
+            JOB_STAT = #{job_stat},
+        </if>
+        <if test="job_nm != null and job_nm != ''">
+            JOB_NM = #{jobName},
+        </if>
+        <if test="cron != null and cron != ''">
+            CRON = #{cron},
+        </if>
+            UPD_DT = NOW()
+        WHERE JOB_ID = #{name}
+    </update>
+
+</mapper>
