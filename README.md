@@ -96,17 +96,5 @@ Flamingo는 Apache Hadoop EcoSystem을 기반으로한 빅데이터 인프라 �
   * 메뉴 관리
   * 사용자 관리
   * 권한 관리
-  * Pivotal HAWQ 사용자 관리
+  * Apache HAWQ 사용자 관리
 
-### Community License
-
-Flamingo를 별도 기술지원 없이 무상으로 사용하는 경우 커뮤니티 라이센스가 적용되며 GPL v3를 적용합니다. Flamingo를 사용하는 사용자가 별도 기술지원없이 사용하고자 한다면 커뮤니티 라이센스를 사용하면 되며 이 경우 Cloudine Inc는 기술지원의 의무가 없습니다. 소스코드를 수정하는 경우 GPL v3에 따라서 공개의 의무가 발생하므로 이를 잘 지켜주시기 바랍니다.
-
-### Cloudine Inc
-
-Cloudine Inc는 2011년부터 빅데이터 플랫폼 SW를 오픈소스로 개발하고 현장에 적용하는 빅데이터 기술기업입니다.
-플랫폼 개발, Hadoop 엔지니어링, 데이터 분석(R, 데이터마이닝), 데이터 처리(MR ETL) 등의 업무를 수행하고 있으며 오픈소스를 개발하고 있습니다.
-
-### 저작권 공지
-
-Flamingo의 Workflow Designer에 포함되어 있는 모듈중 Ankus는 ONYCOM에서 저작권을 가지며 오픈소스로 공개한 모듈입니다. 특히 Flamingo에 포함되어 있는 Ankus는 0.1 버전으로 Apache 2 라이센스를 따릅니다. Flamingo에서 상위 버전의 Ankus 지원을 위해서 제외하기로 결정하였고, 사용자가 Ankus를 다운로드하여 config.properties 파일에 위치를 지정하도록 변경할 예정입니다.
