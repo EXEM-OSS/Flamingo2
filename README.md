@@ -1,3 +1,5 @@
+## [Flamingo 2.0.x binaries download](http://gitlab.exem-oss.org/flamingo2/flamingo2/tree/2.0.x)
+
 ## Flamingo
 
 Flamingo is a Big Data platform based on Apache Hadoop Ecosystem. It provides a Big Data infrastructure environment that is easy to use and helps focus on analysis and development. Flamingo also provides an environment for diverse users to collaborate.
