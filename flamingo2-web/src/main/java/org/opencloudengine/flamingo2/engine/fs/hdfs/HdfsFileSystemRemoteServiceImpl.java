@@ -18,6 +18,7 @@ package org.opencloudengine.flamingo2.engine.fs.hdfs;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.hadoop.fs.ContentSummary;
 import org.opencloudengine.flamingo2.agent.namenode.Namenode2AgentService;
 import org.opencloudengine.flamingo2.core.exception.ServiceException;
 import org.opencloudengine.flamingo2.engine.fs.FileSystemRemoteService;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.AntPathMatcher;
 
+import java.io.IOException;
 import java.util.*;
 
 public class HdfsFileSystemRemoteServiceImpl extends RemoteInvocation implements FileSystemRemoteService {
@@ -60,6 +62,18 @@ public class HdfsFileSystemRemoteServiceImpl extends RemoteInvocation implements
     public List<FileInfo> getFiles(EngineConfig engineConfig, String path) {
         namenode2AgentService = getNamenode2AgentService(engineConfig);
         return namenode2AgentService.list(path, false);
+    }
+
+    @Override
+    public Map getFilesPage(EngineConfig engineConfig, String path, int page, int start, int limit) throws IOException {
+        namenode2AgentService = getNamenode2AgentService(engineConfig);
+        return namenode2AgentService.getFilesPage(path, page, start, limit);
+    }
+
+    @Override
+    public ContentSummary getContentSummary(EngineConfig engineConfig, String path) throws IOException {
+        namenode2AgentService = getNamenode2AgentService(engineConfig);
+        return namenode2AgentService.getContentSummary(path);
     }
 
     @Override
@@ -204,7 +218,7 @@ public class HdfsFileSystemRemoteServiceImpl extends RemoteInvocation implements
         boolean copied;
 
         // TODO > Bulk insert 시 executeBatch 쿼리 체크
-        if (srcFileList.size() > 2) {
+        if (srcFileList.size() > 1) {
             for (String srcFilePath : srcFileList) {
 
                 if (dstPath.equalsIgnoreCase("/")) {
@@ -255,9 +269,12 @@ public class HdfsFileSystemRemoteServiceImpl extends RemoteInvocation implements
         long length;
         boolean moved;
 
-        if (srcFileList.size() > 2) {
+        /**
+         * Case 1. 멀티 파일 복사
+         * Case 2. 단일 파일 복사
+         */
+        if (srcFileList.size() > 1) {
             for (String srcFilePath : srcFileList) {
-
                 if (dstPath.equalsIgnoreCase("/")) {
                     dstFilePath = dstPath + FileUtils.getFilename(srcFilePath);
                 } else {
@@ -265,7 +282,7 @@ public class HdfsFileSystemRemoteServiceImpl extends RemoteInvocation implements
                 }
 
                 length = getFileInfo(engineConfig, srcFilePath).getLength();
-                moved = namenode2AgentService.move(srcFilePath, dstPath);
+                moved = namenode2AgentService.move(srcFilePath, dstFilePath);
 
                 if (moved) {
                     movedFiles.add(srcFilePath);
@@ -296,7 +313,7 @@ public class HdfsFileSystemRemoteServiceImpl extends RemoteInvocation implements
     }
 
     @Override
-    public boolean renameFile(EngineConfig engineConfig, String srcPath, String filename, String username) {
+    public boolean renameFile(EngineConfig engineConfig, String fullyQualifiedPath, String srcPath, String filename, String username) {
         validateForbiddenPath(srcPath);
         namenode2AgentService = getNamenode2AgentService(engineConfig);
         String engineId = engineConfig.getId();
@@ -304,16 +321,15 @@ public class HdfsFileSystemRemoteServiceImpl extends RemoteInvocation implements
         long length = getFileInfo(engineConfig, srcPath).getLength();
 
         fileSystemAuditRemoteService.log(engineId, engineName, username, FileSystemType.HDFS, AuditType.RENAME, FileType.FILE, RequestType.UI, srcPath, "", length);
-        return namenode2AgentService.rename(srcPath, filename);
+        return namenode2AgentService.rename(fullyQualifiedPath, filename);
     }
 
     @Override
-    public List<String> deleteFiles(EngineConfig engineConfig, String srcPath, String files, String username, int userLevel) {
+    public List<String> deleteFiles(EngineConfig engineConfig, String srcPath, String files, String username) {
         validateForbiddenPath(srcPath);
         namenode2AgentService = getNamenode2AgentService(engineConfig);
         String engineId = engineConfig.getId();
         String engineName = engineConfig.getName();
-
         String[] fromItems = files.split(",");
         List<String> fileList = new java.util.ArrayList<>();
         List<String> deletedFiles = new ArrayList<>();
@@ -403,6 +419,24 @@ public class HdfsFileSystemRemoteServiceImpl extends RemoteInvocation implements
     }
 
     @Override
+    public boolean copyToLocal(EngineConfig engineConfig, String srcFullyQualifiedPath, String linuxUserHome, String username) {
+        namenode2AgentService = getNamenode2AgentService(engineConfig);
+        validateForbiddenPath(FileUtils.getPath(srcFullyQualifiedPath));
+
+        String engineId = engineConfig.getId();
+        String engineName = engineConfig.getName();
+        long length = getFileInfo(engineConfig, srcFullyQualifiedPath).getLength();
+
+        String dstFullyQualifiedPath = linuxUserHome + SystemUtils.FILE_SEPARATOR + FileUtils.getDirectoryName(srcFullyQualifiedPath);
+
+        System.out.println("dstFullyQualifiedPath : " + dstFullyQualifiedPath);
+        System.out.println(linuxUserHome);
+
+        fileSystemAuditRemoteService.log(engineId, engineName, username, FileSystemType.HDFS, AuditType.COPY_TO_LOCAL, FileType.FILE, RequestType.UI, srcFullyQualifiedPath, "", length);
+        return namenode2AgentService.copyToLocal(srcFullyQualifiedPath, dstFullyQualifiedPath, linuxUserHome, username);
+    }
+
+    @Override
     public void validatePath(String path) {
         validateForbiddenPath(path);
     }
@@ -415,6 +449,11 @@ public class HdfsFileSystemRemoteServiceImpl extends RemoteInvocation implements
 
         fileSystemAuditRemoteService.log(engineId, engineName, username, FileSystemType.HDFS, AuditType.DOWNLOAD, FileType.FILE, RequestType.UI, fullyQualifiedPath, "", length);
     }
+
+/*    @Override
+    public boolean getNamenodeStatus() {
+        return namenode2AgentService.getNamenodeStatus();
+    }*/
 
     /**
      * 선택한 경로가 쓰기 금지 목록에 포함되는지 검증한다.

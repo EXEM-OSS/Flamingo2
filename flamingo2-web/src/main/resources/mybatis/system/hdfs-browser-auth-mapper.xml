@@ -27,9 +27,11 @@
         <result property="downloadFile"     column="DOWNLOAD_FILE"      jdbcType="BOOLEAN"/>
         <result property="viewFile"         column="VIEW_FILE"          jdbcType="BOOLEAN"/>
         <result property="permissionFile"   column="PERMISSION_FILE"    jdbcType="BOOLEAN"/>
+        <result property="copyToLocalFile"  column="COPY_TO_LOCAL_FILE" jdbcType="BOOLEAN"/>
+        <result property="streamingFile"    column="STREAMING_FILE"     jdbcType="BOOLEAN"/>
         <result property="registerDate"     column="REG_DT"             jdbcType="TIMESTAMP"/>
         <result property="updateDate"       column="UPD_DT"             jdbcType="TIMESTAMP"/>
-        <result property="authId"           column="AUTH_ID"            jdbcType="BIGINT"/>
+        <result property="authId"           column="AUTH_ID"            jdbcType="SMALLINT"/>
         <result property="level"            column="LEVEL"              jdbcType="SMALLINT"/>
     </resultMap>
 
@@ -53,7 +55,7 @@
           ulvl.LEVEL_NM as level_name
         FROM FL_HDFS_PATH_AUTH hpa, FL_AUTHORITIES auth, FL_USER_LEVEL ulvl
         WHERE hpa.AUTH_ID = auth.ID
-          AND hpa.LEVEL = ulvl.LEVEL
+            AND hpa.LEVEL = ulvl.LEVEL
         LIMIT 12
     </select>
 
@@ -77,6 +79,9 @@
           hpa.UPLOAD_FILE as upload_file,
           hpa.DOWNLOAD_FILE as download_file,
           hpa.VIEW_FILE as view_file,
+          hpa.PERMISSION_FILE as permission_file,
+          hpa.COPY_TO_LOCAL_FILE as copy_to_local_file,
+--           hpa.STREAMING_FILE as streaming_file,
           hpa.REG_DT as register_date,
           hpa.UPD_DT as update_date,
           hpa.AUTH_ID as auth_id,
@@ -120,12 +125,12 @@
         SELECT COUNT(1)
         FROM FL_HDFS_PATH_AUTH hpa
         WHERE hpa.HDFS_PATH_PATTERN = #{hdfsPathPattern}
-        AND hpa.AUTH_ID = ( SELECT usr.AUTH_ID
-        FROM FL_USER usr
-        WHERE usr.USER_NM = #{username} )
-        AND hpa.LEVEL = ( SELECT usr.LEVEL
-        FROM FL_USER usr
-        WHERE usr.USER_NM = #{username} )
+            AND hpa.AUTH_ID = ( SELECT usr.AUTH_ID
+                              FROM FL_USER usr
+                              WHERE usr.USER_NM = #{username} )
+                              AND hpa.LEVEL = ( SELECT usr.LEVEL
+                                                FROM FL_USER usr
+                                                WHERE usr.USER_NM = #{username} )
         <if test="condition == 'createDir'">
             AND hpa.CREATE_DIR = TRUE
         </if>
@@ -159,12 +164,12 @@
         SELECT COUNT(1)
         FROM FL_HDFS_PATH_AUTH hpa
         WHERE hpa.HDFS_PATH_PATTERN = #{hdfsPathPattern}
-        AND hpa.AUTH_ID = ( SELECT usr.AUTH_ID
-        FROM FL_USER usr
-        WHERE usr.USER_NM = #{username} )
-        AND hpa.LEVEL = ( SELECT usr.LEVEL
-        FROM FL_USER usr
-        WHERE usr.USER_NM = #{username} )
+          AND hpa.AUTH_ID = ( SELECT usr.AUTH_ID
+                              FROM FL_USER usr
+                              WHERE usr.USER_NM = #{username} )
+                              AND hpa.LEVEL = ( SELECT usr.LEVEL
+                                                FROM FL_USER usr
+                                                WHERE usr.USER_NM = #{username} )
         <if test="condition == 'copyFile'">
             AND hpa.COPY_FILE = TRUE
         </if>
@@ -186,18 +191,35 @@
         <if test="condition == 'viewFile'">
             AND hpa.VIEW_FILE = TRUE
         </if>
+        <if test="condition == 'permissionFile'">
+            AND hpa.PERMISSION_FILE = TRUE
+        </if>
+        <if test="condition == 'copyToLocalFile'">
+            AND hpa.COPY_To_LOCAL_FILE = TRUE
+        </if>
+<!--        <if test="condition == 'streamingFile'">
+            AND hpa.STREAMING_FILE = TRUE
+        </if>-->
     </select>
 
     <!-- ==================================================================================== -->
     <!-- 3. Exist Statement -->
     <!-- ==================================================================================== -->
 
-    <select id="exist" parameterType="map" resultType="Integer">
-        SELECT COUNT(1)
+    <select id="exist" parameterType="map" resultMap="hdfsBrowserAuthMap">
+        SELECT *
         FROM FL_HDFS_PATH_AUTH
-        WHERE HDFS_PATH_PATTERN = #{hdfsPathPattern}
-            AND AUTH_ID = #{authId}
+        WHERE AUTH_ID = #{authId}
             AND LEVEL = #{level}
+        <if test="ackKey == 'approved' or ackKey == 'disapproved'">
+            AND HDFS_PATH_PATTERN = #{hdfsPathPattern}
+        </if>
+        <if test="deleteCondition == 'deletePattern'">
+            AND HDFS_PATH_PATTERN = #{hdfsPathPattern}
+        </if>
+        <if test="deleteCondition == 'deleteUser'">
+            AND HDFS_PATH_PATTERN LIKE CONCAT(#{hdfsPathPattern}, '%')
+        </if>
     </select>
 
     <!-- ==================================================================================== -->
@@ -205,32 +227,34 @@
     <!-- ==================================================================================== -->
 
     <select id="insertHdfsBrowserAuth" parameterType="map">
-        <if test="ackKey == null and ackKey == ''">
-            INSERT INTO FL_HDFS_PATH_AUTH (
-                HDFS_PATH_PATTERN, AUTH_ID, LEVEL, UPD_DT)
-            VALUES (
-                #{hdfsPathPattern},
-                #{authId},
-                #{level},
-                NOW())
-        </if>
-        <if test="ackKey == 'approved'">
-            INSERT INTO FL_HDFS_PATH_AUTH (
-                HDFS_PATH_PATTERN,
-                CREATE_DIR, COPY_DIR, MOVE_DIR, RENAME_DIR, DELETE_DIR, MERGE_DIR, PERMISSION_DIR,
-                CREATE_DB_DIR, CREATE_TABLE_DIR,
-                COPY_FILE, MOVE_FILE, RENAME_FILE, DELETE_FILE, UPLOAD_FILE, DOWNLOAD_FILE, VIEW_FILE,
-                UPD_DT, AUTH_ID, LEVEL
-                )
-            VALUES (
-                #{hdfsPathPattern},
-                TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
-                TRUE, TRUE,
-                TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,TRUE,
-                NOW(),
-                #{authId},
-                #{level})
-        </if>
+        INSERT INTO FL_HDFS_PATH_AUTH (
+            HDFS_PATH_PATTERN, AUTH_ID, LEVEL, UPD_DT)
+        VALUES (
+            #{hdfsPathPattern},
+            #{authId},
+            #{level},
+            NOW())
+    </select>
+
+    <select id="insertHdfsBrowserAuthAll" parameterType="map">
+        INSERT INTO FL_HDFS_PATH_AUTH (
+            HDFS_PATH_PATTERN,
+            CREATE_DIR, COPY_DIR, MOVE_DIR, RENAME_DIR, DELETE_DIR, MERGE_DIR, PERMISSION_DIR,
+            CREATE_DB_DIR, CREATE_TABLE_DIR,
+            COPY_FILE, MOVE_FILE, RENAME_FILE, DELETE_FILE, UPLOAD_FILE, DOWNLOAD_FILE, VIEW_FILE, PERMISSION_FILE,
+            COPY_TO_LOCAL_FILE,
+--             STREAMING_FILE,
+            UPD_DT, AUTH_ID, LEVEL)
+        VALUES (
+            #{hdfsPathPattern},
+            TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+            TRUE, TRUE,
+            TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+            TRUE,
+--             TRUE,
+            NOW(),
+            #{authId},
+            #{level})
     </select>
 
     <!-- ==================================================================================== -->
@@ -265,6 +289,8 @@
                 UPLOAD_FILE = #{upload_file},
                 DOWNLOAD_FILE = #{download_file},
                 VIEW_FILE = #{view_file},
+                PERMISSION_FILE = #{permission_file},
+                COPY_TO_LOCAL_FILE = #{copy_to_local_file},
                 UPD_DT = NOW()
         </set>
         <include refid="wherePK"/>
@@ -277,12 +303,12 @@
     <delete id="deleteHdfsBrowserAuth" parameterType="map">
         DELETE FROM FL_HDFS_PATH_AUTH
         WHERE AUTH_ID = #{authId}
-        AND LEVEL = #{level}
-        <if test="deleteCondition == null and deleteCondition == ''">
+            AND LEVEL = #{level}
+        <if test="deleteCondition == 'deletePattern'">
             AND HDFS_PATH_PATTERN = #{hdfsPathPattern}
         </if>
         <if test="deleteCondition == 'deleteUser'">
-            AND HDFS_PATH_PATTERN LIKE #{hdfsPathPattern}
+            AND HDFS_PATH_PATTERN LIKE CONCAT(#{hdfsPathPattern}, '%')
         </if>
     </delete>
 

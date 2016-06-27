@@ -81,9 +81,12 @@ public class EngineJob extends QuartzJobBean {
 
             // 7일치 데이터를 SELECT 한다.
             Date date = new Date();
-            jdbcTemplate.update("INSERT INTO FL_CL_ENGINE (system, name, running, total, jvmMaxMemory, jvmTotalMemory, jvmFreeMemory, jvmUsedMemory, yyyy, mm, dd) VALUES (?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
-                    system, name, executingJobs, allJobs, maxMemory, totalMemory, freeMemory, usedMemory, DateUtils.parseDate(date, "yyyy"), DateUtils.parseDate(date, "MM"), DateUtils.parseDate(date, "dd")
-            });
+            jdbcTemplate.update("INSERT INTO FL_CL_ENGINE (" +
+                    "system, name, running, total, jvmMaxMemory, jvmTotalMemory, jvmFreeMemory, jvmUsedMemory, " +
+                    "yyyy, mm, dd) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                    system, name, executingJobs, allJobs, maxMemory, totalMemory, freeMemory, usedMemory,
+                    DateUtils.parseDate(date, "yyyy"), DateUtils.parseDate(date, "MM"), DateUtils.parseDate(date, "dd"));
         } catch (Exception e) {
             throw new ServiceException("Unable to retreive scheduled jobs", e);
         }

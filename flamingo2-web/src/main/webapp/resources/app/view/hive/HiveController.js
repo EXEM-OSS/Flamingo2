@@ -224,7 +224,7 @@ Ext.define('Flamingo2.view.hive.HiveController', {
 
         if (body.isError) {
             if (tab.status == 'CANCEL') {
-                error(message.msg('hive.error'), '쿼리가 취소되었습니다.');
+                error(message.msg('hive.error'), message.msg('hive.msg.query_cancel'));
             } else {
                 error(message.msg('hive.error'), message.msg('hive.msg.abnormal_terminate'));
             }
@@ -301,7 +301,7 @@ Ext.define('Flamingo2.view.hive.HiveController', {
     },
 
     onHdfsBrowserClick: function () {
-        Ext.create('Flamingo2.view.hive.editor.HdfsBrowserWindow').center().show();
+        Ext.create('Flamingo2.view.fs.hdfs.simple.SimpleHdfsFileBrowser').center().show();
     },
 
     /**

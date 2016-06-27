@@ -127,4 +127,10 @@ public class TaskHistoryRemoteServiceImpl implements TaskHistoryRemoteService {
         }
         return "";
     }
+
+    @Override
+    public List<TaskHistory> selectRunning() {
+        TaskHistoryRepository taskHistoryRepository = ApplicationContextRegistry.getApplicationContext().getBean(TaskHistoryRepository.class);
+        return taskHistoryRepository.selectRunning();
+    }
 }

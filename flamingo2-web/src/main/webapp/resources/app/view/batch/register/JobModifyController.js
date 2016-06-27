@@ -77,12 +77,12 @@ Ext.define('Flamingo2.view.batch.register.JobModifyController', {
         var cron = refs.triggerCronExpression.getValue();
 
         if (Ext.isEmpty(jobName)) {
-            Ext.Msg.alert(message.msg('common.warn'), '작업명을 입력하시오.');
+            Ext.Msg.alert(message.msg('common.warn'), message.msg('batch.msg.input_workflow_name'));
             return;
         }
 
         if (!refs.triggerCronExpression.isValid()) {
-            Ext.Msg.alert(message.msg('common.warn'), 'Cron형식이 올바르지 않습니다.');
+            Ext.Msg.alert(message.msg('common.warn'), message.msg('batch.msg.quartz_cron_express'));
             return;
         }
 
@@ -94,8 +94,8 @@ Ext.define('Flamingo2.view.batch.register.JobModifyController', {
         });
 
         Ext.MessageBox.show({
-            title: '배치작업 변경',
-            message: '변경된 내용을 반영하시겠습니까?',
+            title: message.msg('batch.msg.job_modifier'),
+            message: message.msg('batch.msg.modify_job'),
             buttons: Ext.MessageBox.YESNO,
             icon: Ext.MessageBox.QUESTION,
             fn: function (btn) {
@@ -104,7 +104,7 @@ Ext.define('Flamingo2.view.batch.register.JobModifyController', {
                         function (response) {
                             var obj = Ext.decode(response.responseText);
                             if (obj.success) {
-                                info('배치 잡 변경', '배치 잡이 변경되었습니다.');
+                                info(message.msg('batch.msg.job_modifier'), message.msg('batch.msg.modify_job_success'));
 
                                 me.fireEvent('changeClose');
                                 me.getView().close();

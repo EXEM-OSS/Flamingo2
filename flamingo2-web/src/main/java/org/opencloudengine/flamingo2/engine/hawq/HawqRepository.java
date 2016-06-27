@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Pivotal HAWQ Repository.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 public interface HawqRepository {

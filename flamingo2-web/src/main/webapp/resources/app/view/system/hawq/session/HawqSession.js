@@ -17,7 +17,7 @@
 /**
  * System > HAWQ > Session
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  * @see Flamingo2.view.system.hawq.session.HawqSessionController
  * @see Flamingo2.view.system.hawq.HawqAuthModel

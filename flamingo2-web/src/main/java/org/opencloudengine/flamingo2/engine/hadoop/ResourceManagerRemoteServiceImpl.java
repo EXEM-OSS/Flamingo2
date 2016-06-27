@@ -297,6 +297,46 @@ public class ResourceManagerRemoteServiceImpl extends RemoteInvocation implement
         }
     }
 
+    @Override
+    public List<Map> getRunningMRJobs(EngineConfig engineConfig) {
+        ResourceManagerAgentService rmAgentService = getResourceManagerAgentService(engineConfig);
+        try {
+            return rmAgentService.getRunningMRJobs();
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to retrieve the running MAPREDUCE Jobs.", ex);
+        }
+    }
+
+    @Override
+    public String getJobStatus(String jobId, EngineConfig engineConfig) throws Exception {
+        ResourceManagerAgentService rmAgentService = getResourceManagerAgentService(engineConfig);
+        try {
+            return rmAgentService.getJobStatus(jobId);
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to retrieve the running Job Status.", ex);
+        }
+    }
+
+    @Override
+    public Map getRunningMRJobReport(String jobId, EngineConfig engineConfig) throws Exception {
+        ResourceManagerAgentService rmAgentService = getResourceManagerAgentService(engineConfig);
+        try {
+            return rmAgentService.getRunningMRJobReport(jobId);
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to retrieve the running Job Report.", ex);
+        }
+    }
+
+    @Override
+    public List<Map> getRunningMRTasks(String jobId, EngineConfig engineConfig) throws Exception {
+        ResourceManagerAgentService rmAgentService = getResourceManagerAgentService(engineConfig);
+        try {
+            return rmAgentService.getRunningMRTasks(jobId);
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to retrieve the running Job Tasks.", ex);
+        }
+    }
+
     /**
      * Resource Manager의 JVM에 배포되어 있는 Resource Manager Agent의 서비스를 획득한다.
      *

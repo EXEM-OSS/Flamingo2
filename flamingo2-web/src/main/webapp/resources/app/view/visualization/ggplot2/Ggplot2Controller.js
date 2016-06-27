@@ -579,14 +579,14 @@ Ext.define('Flamingo2.view.visualization.ggplot2.Ggplot2Controller', {
                         refs.workspace.update(img.imgurl);
                     } else if (obj.error.cause) {
                         Ext.MessageBox.show({
-                            title: "오류",
+                            title: message.msg('common.error'),
                             message: obj.error.cause,
                             buttons: Ext.MessageBox.OK,
                             icon: Ext.MessageBox.WARNING
                         });
                     } else {
                         Ext.MessageBox.show({
-                            title: "오류",
+                            title: message.msg('common.error'),
                             message: obj.error.message,
                             buttons: Ext.MessageBox.OK,
                             icon: Ext.MessageBox.WARNING
@@ -596,7 +596,7 @@ Ext.define('Flamingo2.view.visualization.ggplot2.Ggplot2Controller', {
                 },
                 function (response) {
                     Ext.MessageBox.show({
-                        title: '경고',
+                        title: message.msg('common.warn'),
                         message: format(message.msg('common.msg.server_error'), config['system.admin.email']),
                         buttons: Ext.MessageBox.OK,
                         icon: Ext.MessageBox.WARNING

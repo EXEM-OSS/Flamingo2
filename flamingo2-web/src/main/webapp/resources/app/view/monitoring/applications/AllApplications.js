@@ -23,17 +23,9 @@ Ext.define('Flamingo2.view.monitoring.applications.AllApplications', {
     ],
 
     title: message.msg('monitoring.msg.all_yarn_app'),
-
-    listeners: {
-        itemcontextmenu: 'onItemContextMenu',
-        itemclick: 'onItemClick',
-        afterrender: 'onAfterrender'
-    },
-
     bind: {
         store: '{allApplicationsStore}'
     },
-
     viewConfig: {
         emptyText: message.msg('monitoring.msg.do_not_have_yarn_complete'),
         deferEmptyText: false,
@@ -47,23 +39,13 @@ Ext.define('Flamingo2.view.monitoring.applications.AllApplications', {
             return 'cell-height-30';
         }
     },
-
     tools: [
         {
             type: 'refresh',
-            tooltip: message.msg('monitoring.msg.refresh_yarn_list'),
-            handler: function (event, toolEl, panel) {
-                var grid = query('allApplications');
-                grid.getStore().getProxy().extraParams.clusterName = ENGINE.id;
-                grid.getStore().load({
-                    callback: function (records, operation, success) {
-                        grid.setTitle(Ext.String.format(message.msg('monitoring.msg.all_yarn_app_total'), this.getCount()));
-                    }
-                });
-            }
+            tooltip: message.msg('common.refresh'),
+            handler: 'onAllApplicationRefreshClick'
         }
     ],
-
     columns: [
         {
             xtype: 'rownumberer',
@@ -101,54 +83,7 @@ Ext.define('Flamingo2.view.monitoring.applications.AllApplications', {
             text: message.msg('common.action'),
             align: 'center',
             width: 73,
-            renderer: function (value, metaData, record, row, col, store, gridView) {
-                if (record.data.yarnApplicationState == 'RUNNING') {
-                    var id = Ext.id();
-                    var applicationId = record.data.applicationId
-                    Ext.defer(function () {
-                        Ext.widget('button', {
-                            renderTo: id,
-                            text: message.msg('common.kill'),
-                            scale: 'small',
-                            handler: function () {
-                                var params = {
-                                    applicationId: applicationId,
-                                    clusterName: ENGINE.id
-                                };
-                                Ext.MessageBox.show({
-                                    title: message.msg('monitoring.application_kill'),
-                                    message: message.msg('monitoring.msg.application_kill'),
-                                    buttons: Ext.MessageBox.YESNO,
-                                    icon: Ext.MessageBox.WARNING,
-                                    fn: function handler(btn) {
-                                        if (btn == 'yes') {
-                                            invokeGet('/monitoring/resourcemanager/app/kill.json', params,
-                                                function (response) {
-                                                    var obj = Ext.decode(response.responseText);
-                                                    if (obj.success) {
-                                                        // 메시지 처리
-                                                    } else {
-                                                        // TODO 에러 처리
-                                                    }
-                                                },
-                                                function (response) {
-                                                    Ext.MessageBox.show({
-                                                        title: message.msg('common.warn'),
-                                                        message: format(message.msg('common.msg.server_error'), config['system.admin.email']),
-                                                        buttons: Ext.MessageBox.OK,
-                                                        icon: Ext.MessageBox.WARNING
-                                                    });
-                                                }
-                                            );
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }, 50);
-                    return Ext.String.format('<div id="{0}"></div>', id);
-                }
-            }
+            renderer: 'onYarnApplicationKillClick'
         },
         {
             text: message.msg('common.status'),
@@ -171,7 +106,7 @@ Ext.define('Flamingo2.view.monitoring.applications.AllApplications', {
             text: message.msg('common.elapsed_time'), dataIndex: 'elapsedTime', width: 80, align: 'center',
             renderer: function (value, metaData, record, row, col, store, gridView) {
                 if (record.data.yarnApplicationState == 'RUNNING') {
-                    var start = Ext.Date.parse(record.data.startTime, "Y-m-d H:i:s", true)
+                    var start = Ext.Date.parse(record.data.startTime, "Y-m-d H:i:s", true);
                     var end = new Date();
                     var diff = (end.getTime() - start.getTime()) / 1000;
                     return toHumanReadableTime(Math.floor(diff));
@@ -179,8 +114,8 @@ Ext.define('Flamingo2.view.monitoring.applications.AllApplications', {
                     record.data.yarnApplicationState == 'FINISHED' ||
                     record.data.yarnApplicationState == 'FAILED' ||
                     record.data.yarnApplicationState == 'KILLED') {
-                    var start = Ext.Date.parse(record.data.startTime, "Y-m-d H:i:s", true)
-                    var end = Ext.Date.parse(record.data.finishTime, "Y-m-d H:i:s", true)
+                    var start = Ext.Date.parse(record.data.startTime, "Y-m-d H:i:s", true);
+                    var end = Ext.Date.parse(record.data.finishTime, "Y-m-d H:i:s", true);
                     var diff = (end.getTime() - start.getTime()) / 1000;
                     return toHumanReadableTime(Math.floor(diff));
                 } else {
@@ -228,5 +163,10 @@ Ext.define('Flamingo2.view.monitoring.applications.AllApplications', {
                 }
             }
         }
-    ]
+    ],
+    listeners: {
+        itemcontextmenu: 'onItemContextMenu',
+        itemclick: 'onAllYarnAppGridItemClick',
+        afterrender: 'onAllApplicationsAfterRender'
+    }
 });

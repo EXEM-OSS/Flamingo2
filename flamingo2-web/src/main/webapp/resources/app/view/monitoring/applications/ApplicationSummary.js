@@ -27,18 +27,14 @@ Ext.define('Flamingo2.view.monitoring.applications.ApplicationSummary', {
             }
         }
     },
-
     defaults: {
         labelAlign: 'right',
         anchor: '100%',
         labelWidth: 150,
         margins: '10 10 10 10'
     },
-
     defaultType: 'textfield',
-
     bodyPadding: '10',
-
     items: [
         {
             colspan: 2,
@@ -168,6 +164,13 @@ Ext.define('Flamingo2.view.monitoring.applications.ApplicationSummary', {
                     return dateFormat2(value);
                 }
             }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onApplicationSummaryRefreshClick'
         }
     ]
 });

@@ -36,29 +36,37 @@ public interface UserRepository {
 
     Long selectUserIdByUsername(String username);
 
-    int insertByUser(Map params);
+    boolean insertByUser(Map params);
 
-    int insertByManager(Map params);
+    boolean insertByManager(Map params);
 
-    int insertByAuth(Long userId);
+    boolean insertByAuth(Long userId);
 
-    int updateByAck(Map userMap);
+    boolean insertWorkflowDesignerUser(String username);
+
+    boolean updateByAck(Map userMap);
 
     List<Map> selectAll(Map conditionMap);
 
     String selectPasswordByUsername(String username);
 
-    int exist(String username);
+    boolean exist(String username);
 
-    int updatePassword(Map params);
+    boolean updatePassword(Map params);
 
-    int deleteByUsername(String username);
+    boolean deleteByUsername(String username);
 
-    int updateUserInfo(Map userMap);
+    boolean deleteWorkflowDesignerUser(String username);
 
-    int updateById(Map orgMap);
+    boolean updateUserInfo(Map userMap);
 
-    int updateUserHomeInfo(Map userMap);
+    boolean updateById(Map orgMap);
 
-    int selectUserByOrgId(long orgId);
+    boolean updateUserHomeInfo(Map userMap);
+
+    boolean selectUserByOrgId(long orgId);
+
+    boolean insertUserAuth(Map userMap);
+
+    boolean deleteUserAuth(Map userMap);
 }

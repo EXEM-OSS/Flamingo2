@@ -42,10 +42,28 @@
         <prop key="ALG_ANKUS_NORMAL">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
         <prop key="ALG_ANKUS_NUMERIC_STATISTICS">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
 
-        <prop key="ETL_UIMA_APP">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
-        <prop key="ETL_UIMA_SEQ">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
-        <prop key="ETL_APACHE_ACCESS">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
-        <prop key="ETL_CHAR_REMOVER">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
+        <prop key="ETL_ACCOUNTING">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_AGGREGATE">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_APACHE_ACCESS">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_CLEAN">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_FILTER">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_GENERATE">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_CHAR_REMOVER">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_GREP">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_GROUPBY">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_RANK">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_REPLACE_COLUMN">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_REPLACE_DELIMITER">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_TEXT_TO_SEQ">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_UIMA_SEQ">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ETL_UIMA_APP">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+
+        <prop key="MVEL_EDITOR">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="MVEL_FILE">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="DROOLS_EDITOR">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="DROOLS_FILE">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ESPER_EDITOR">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ESPER_FILE">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
 
         <prop key="ALG_MAHOUT_CF_ITEM">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
         <prop key="ALG_MAHOUT_KMEANS">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
@@ -64,6 +82,9 @@
         <prop key="ALG_MAHOUT_QUALCLUSTER">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
         <prop key="ALG_MAHOUT_CLUSTER_DUMP">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
         <prop key="ALG_MAHOUT_SEQDIRECTORY">org.opencloudengine.flamingo2.engine.designer.activiti.task.MapreduceTask</prop>
+        
+        <prop key="DBF_TO_CSV">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
+        <prop key="ExtractLink">org.opencloudengine.flamingo2.engine.designer.activiti.task.CustomMapreduceTask</prop>
     </util:properties>
 
 </beans>

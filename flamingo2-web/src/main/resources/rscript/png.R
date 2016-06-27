@@ -129,7 +129,7 @@ drawPlot <- function(){
 	#cat("{success:true, charturl:\"",filename,"\"}",sep="");
 	sink();
 
-	imgurl <- paste("<img id=\"ggplot_img\" src=\"http://exo1.cdh.local:18080/ggplot2/", filename, "\">",sep="");
+	imgurl <- paste("<img id=\"ggplot_img\" src=\"http://exo2.cdh.local:18081/ggplot2/", filename, "\">",sep="");
 	cat("{success:true, imgurl: '", imgurl, "', filename: '", filename ,"'}",sep="");
 }
 

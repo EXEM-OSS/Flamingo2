@@ -35,4 +35,6 @@ public interface WorkflowHistoryRemoteService {
     List<WorkflowHistory> selectByCondition(String startDate, String endDate, int start, int limit, String username, String workflowName, String status, String sf_parentIdentifier);
 
     int selectTotalCountByUsername(String startDate, String endDate, int start, int limit, String username, String workflowName, String status, String sf_parentIdentifier);
+
+    List<WorkflowHistory> selectRunning();
 }

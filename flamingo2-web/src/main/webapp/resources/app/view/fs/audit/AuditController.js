@@ -16,16 +16,7 @@
  */
 Ext.define('Flamingo2.view.fs.audit.AuditController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.auditController',
-
-    /**
-     * 현재 날짜를 기준으로 해당되는 달의 첫번째 날짜 정보를 가져온다.
-     * @returns {Date}
-     */
-    onGetFirstDay: function () {
-        var today = new Date();
-        return new Date(today.getFullYear(), today.getMonth(), 1);
-    },
+    alias: 'controller.auditViewController',
 
     /**
      * Audit Top 10 목록을 화면에 출력한다.
@@ -33,14 +24,13 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
      */
     onAuditTop10AfterRender: function () {
         var me = this;
-        var firstDay = me.onGetFirstDay();
         var auditTop10Grid = query('auditTop10');
 
         setTimeout(function () {
             auditTop10Grid.getStore().load({
                 params: {
                     clusterName: ENGINE.id,
-                    startDate: firstDay,
+                    startDate: me.onGetFirstDay(),
                     endDate: new Date(),
                     auditType: 'ACT'
                 }
@@ -54,14 +44,13 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
      */
     onAuditNowStatusAfterRender: function () {
         var me = this;
-        var firstDay = me.onGetFirstDay();
         var auditNowStatusChart = query('auditNowStatus');
 
         setTimeout(function () {
             auditNowStatusChart.getStore().load({
                 params: {
                     clusterName: ENGINE.id,
-                    startDate: firstDay,
+                    startDate: me.onGetFirstDay(),
                     endDate: new Date(),
                     auditType: 'ACT'
                 }
@@ -73,15 +62,15 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
      * Audit Trend 정보를 화면에 출력한다.
      * 기본 페이지에 출력되는 범위는 매달 1일 ~ 현재 날짜를 기준으로 출력됨.
      */
-    onAuditTrendAfterRender: function (chart) {
+    onAuditTrendAfterRender: function () {
         var me = this;
-        var firstDay = me.onGetFirstDay();
+        var auditTrendChart = query('auditChart #auditTrendChart');
 
         setTimeout(function () {
-            chart.getStore().load({
+            auditTrendChart.getStore().load({
                 params: {
                     clusterName: ENGINE.id,
-                    startDate: firstDay,
+                    startDate: me.onGetFirstDay(),
                     endDate: new Date(),
                     searchType: 'ACT'
                 }
@@ -130,25 +119,8 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
             });
         }
 
-        chart.setSeries(series);
+        auditTrendChart.setSeries(series);
     },
-
-    /**
-     * Trend Chart's Series Dynamic Creation Event
-     */
-    /*    onAuditTrendLoad: function (store, records, successful, eOpts) {
-     var auditTrend = query('auditTrend series');
-     var obj = new Object(eOpts.getResultSet().message);
-     var keys = Object.keys(obj);
-
-     for (var i = 0; i < 10; i++) {
-     if (i < keys.length) {
-     auditTrend[i].setHidden(false);
-     } else {
-     auditTrend[i].setHidden(true);
-     }
-     }
-     },*/
 
     /**
      * Audit Log 목록을 화면에 출력한다.
@@ -165,60 +137,20 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
     },
 
     /**
-     * HDFS Audit Log의 통계 조건에서 조회조건 콤보 박스에서 선택한 조건의 결과값을 가져온다.
-     */
-    onAuditChartSelect: function (combo) {
-        var dateFields = query('auditChart');
-        var startDate = dateFields.down('#startDateAuditChart').getValue();
-        var endDate = dateFields.down('#endDateAuditChart').getValue();
-        var searchType = combo.value;
-        var auditTop10 = query('auditTop10');
-        var auditNowStatus = query('auditNowStatus');
-        var auditTrend = query('auditTrend');
-
-        auditTop10.getStore().load({
-            params: {
-                clusterName: ENGINE.id,
-                startDate: startDate,
-                endDate: endDate,
-                searchType: searchType
-            }
-        });
-
-        auditNowStatus.getStore().load({
-            params: {
-                clusterName: ENGINE.id,
-                startDate: startDate,
-                endDate: endDate,
-                searchType: searchType
-            }
-        });
-
-        auditTrend.getStore().load({
-            params: {
-                clusterName: ENGINE.id,
-                startDate: startDate,
-                endDate: endDate,
-                searchType: searchType
-            }
-        });
-    },
-
-    /**
      * HDFS Audit Log의 시작일 및 종료일 Date Fields에서 선택한 날짜의 결과값을 가져온다.
      */
     onAuditChartFindClick: function () {
-        var dateFields = query('auditChart');
-        var startDate = dateFields.down('#startDateAuditChart').getValue();
-        var endDate = dateFields.down('#endDateAuditChart').getValue();
-        var searchType = dateFields.down('#type').getValue();
+        var auditChart = query('auditChart');
+        var startDate = auditChart.down('#startDateAuditChart').getValue();
+        var endDate = auditChart.down('#endDateAuditChart').getValue();
+        var searchType = auditChart.down('#type').getValue();
         var convertedStartDate = '';
         var convertedEndDate = '';
 
         /**
          * 1. 시작일 미입력
          * 2. 종료일 미입력
-         * 3. 시작일 and 종료일 미입력 -> ex. 1970-01-01 09-00-00 ~ Current Time
+         * 3. 시작일 and 종료일 미입력 -> ex. 1970-01-01 09:00:00 ~ Current Time
          * 4. 시작일 종료일 입력
          */
         if (!startDate && endDate) {
@@ -293,7 +225,6 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
 
         var auditTrend = query('auditTrend');
         auditTrend.setTheme('yellow-gradients');
-
         auditTrend.getStore().reload({
             params: {
                 clusterName: ENGINE.id,
@@ -305,19 +236,25 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
     },
 
     /**
-     * Audit Chart's Reset Button Click Event
+     * Audit 차트에서 입력한 조회 정보를 초기화한다.
      */
     onAuditChartResetClick: function () {
-        var dateFields = query('auditChart #datefield');
-        for (var i = 0; i < dateFields.length; i++) {
-            dateFields[i].setValue(null);
-            dateFields[i].setMaxValue(new Date());
-            dateFields[i].setMinValue(null);
-        }
+        var me = this;
+        var startDateFields = query('auditChart #startDateAuditChart');
+        var endDateFields = query('auditChart #endDateAuditChart');
+        var type = query('auditChart #type');
+
+        startDateFields.setValue(me.onGetFirstDay());
+        endDateFields.setValue(new Date());
+        type.setValue('ACT');
+
+        me.onAuditTop10AfterRender();
+        me.onAuditNowStatusAfterRender();
+        me.onAuditTrendAfterRender();
     },
 
     /**
-     * Audit Chart's Find Button Click Event
+     * Audit 차트에서 입력한 조회 조건으로 정보를 가져온다.
      */
     onAuditFindClick: function () {
         var me = this;
@@ -334,7 +271,7 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
         /**
          * 1. 시작일 미입력
          * 2. 종료일 미입력
-         * 3. 시작일 and 종료일 미입력 -> ex. 1970-01-01 09-00-00 ~ Current Time
+         * 3. 시작일 and 종료일 미입력 -> ex. 1970-01-01 09:00:00 ~ Current Time
          * 4. 시작일 종료일 입력
          */
         if (!startDate && endDate) {
@@ -396,16 +333,16 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
                     endDate: convertedEndDate,
                     auditType: type,
                     path: path,
-                    nextPage: 0
+                    page: 0
                 }
             })
         }, 10);
     },
 
     /**
-     * Audit Chart's Reset Button Click Event
+     * Audit 차트에서 입력한 조회 정보를 초기화한다.
      */
-    onAuditResetClick: function () {
+    onAuditGridResetClick: function () {
         var startDateFields = query('auditGrid #gridStartDate');
         var endDateFields = query('auditGrid #gridEndDate');
         var auditGrid = query('auditGrid');
@@ -422,5 +359,74 @@ Ext.define('Flamingo2.view.fs.audit.AuditController', {
                 }
             })
         }, 10);
+    },
+
+    /**
+     * Audit 차트를 초기 조회 조건값을 기준으로 업데이트한다.
+     */
+    onAuditChartRefreshClick: function () {
+        var dateFields = query('auditChart');
+        var startDate = dateFields.down('#startDateAuditChart').getValue();
+        var endDate = dateFields.down('#endDateAuditChart').getValue();
+        var searchType = dateFields.down('#type').getValue();
+        var auditTop10 = query('auditTop10');
+        var auditNowStatus = query('auditNowStatus');
+        var auditTrend = query('auditTrend');
+
+        auditTop10.getStore().load({
+            params: {
+                clusterName: ENGINE.id,
+                startDate: startDate,
+                endDate: endDate,
+                searchType: searchType
+            }
+        });
+
+        auditNowStatus.getStore().load({
+            params: {
+                clusterName: ENGINE.id,
+                startDate: startDate,
+                endDate: endDate,
+                searchType: searchType
+            }
+        });
+
+        auditTrend.getStore().load({
+            params: {
+                clusterName: ENGINE.id,
+                startDate: startDate,
+                endDate: endDate,
+                searchType: searchType
+            }
+        });
+    },
+
+    /**
+     * Audit 그리드를 입력한 조회 조건값을 기준으로 업데이트한다.
+     */
+    onAuditGridRefreshClick: function () {
+        var auditGridToolbar = query('auditGrid #auditGridToolbar');
+        var auditGrid = query('auditGrid');
+        var startDateFields = query('auditGrid #gridStartDate');
+        var endDateFields = query('auditGrid #gridEndDate');
+        var auditType = query('auditGrid #type');
+        var path = query('auditGrid #path');
+
+        auditGridToolbar.moveFirst();
+        auditGrid.getStore().getProxy().extraParams.clusterName = ENGINE.id;
+        auditGrid.getStore().getProxy().extraParams.startDate = startDateFields.getValue();
+        auditGrid.getStore().getProxy().extraParams.endDate = endDateFields.getValue();
+        auditGrid.getStore().getProxy().extraParams.auditType = auditType.getValue();
+        auditGrid.getStore().getProxy().extraParams.path = path.getValue();
+    },
+
+    /**
+     * 현재 날짜를 기준으로 해당되는 달의 첫번째 날짜 정보를 가져온다.
+     *
+     * @returns {Date}
+     */
+    onGetFirstDay: function () {
+        var today = new Date();
+        return new Date(today.getFullYear(), today.getMonth(), 1);
     }
 });

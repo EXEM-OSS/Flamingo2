@@ -20,12 +20,12 @@ Ext.define('Flamingo2.view.designer.Designer', {
 
     requires: [
         'Flamingo2.view.designer.DesignerModel',
-        'Flamingo2.view.designer.nodeList.NodeTab',
-        'Flamingo2.view.designer.workflowTree.WorkflowTree',
         'Flamingo2.view.designer.canvas.Canvas',
+        'Flamingo2.view.designer.nodeList.NodeTab',
+        'Flamingo2.view.designer.ux.Toast',
         'Flamingo2.view.designer.variableGrid.VariableGrid',
-        'Flamingo2.view.designer.workflowFolderTree.FolderTree',
-        'Flamingo2.view.designer.ux.Toast'
+        'Flamingo2.view.designer.workflowTree.WorkflowTree',
+        'Flamingo2.view.designer.workflowFolderTree.FolderTree'
     ],
 
     viewModel: {
@@ -36,6 +36,7 @@ Ext.define('Flamingo2.view.designer.Designer', {
         type: 'vbox',
         align: 'stretch'
     },
+
     flex: 1,
     border: false,
     items: [

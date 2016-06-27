@@ -16,7 +16,6 @@
  */
 package org.opencloudengine.flamingo2.web.r;
 
-import org.opencloudengine.flamingo2.model.rest.User;
 import org.opencloudengine.flamingo2.web.security.AESPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +52,9 @@ public class RController {
         ModelAndView mav;
         try {
             mav = new ModelAndView("rstudio");
-            User user = (User) session.getAttribute("user");
-            mav.addObject("u", user.getUsername());
-            mav.addObject("p", user.getPassword());
+//            User user = (User) session.getAttribute("user");
+//            mav.addObject("u", user.getUsername());
+//            mav.addObject("p", user.getPassword());
         } catch (Exception ex) {
             mav = new ModelAndView("error-500");
         }

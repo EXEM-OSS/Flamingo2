@@ -85,6 +85,11 @@ public class WorkflowHistoryRepositoryImpl extends PersistentRepositoryImpl<Work
     }
 
     @Override
+    public List<WorkflowHistory> selectRunning() {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectRunning");
+    }
+
+    @Override
     public void updateStatus(WorkflowHistory workflowHistory) {
         this.getSqlSessionTemplate().update(this.getNamespace() + ".updateStatus", workflowHistory);
     }

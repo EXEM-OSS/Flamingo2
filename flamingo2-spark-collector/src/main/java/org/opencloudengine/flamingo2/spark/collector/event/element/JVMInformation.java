@@ -1,0 +1,55 @@
+/*
+ * Copyright (C) 2011 Flamingo Project (https://github.com/OpenCloudEngine/flamingo2).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.opencloudengine.flamingo2.spark.collector.event.element;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
+/**
+ * Created by Hyokun Park on 15. 8. 8..
+ */
+public class JVMInformation implements Serializable {
+
+    @SerializedName ("Java Home") private String javaHome;
+    @SerializedName ("Java Version") private String javaVersion;
+    @SerializedName ("Scala Version") private String scalaVersion;
+
+    public String getJavaHome() {
+        return javaHome;
+    }
+
+    public void setJavaHome(String javaHome) {
+        this.javaHome = javaHome;
+    }
+
+    public String getJavaVersion() {
+        return javaVersion;
+    }
+
+    public void setJavaVersion(String javaVersion) {
+        this.javaVersion = javaVersion;
+    }
+
+    public String getScalaVersion() {
+        return scalaVersion;
+    }
+
+    public void setScalaVersion(String scalaVersion) {
+        this.scalaVersion = scalaVersion;
+    }
+}

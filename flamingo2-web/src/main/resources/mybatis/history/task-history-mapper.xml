@@ -75,6 +75,28 @@
         AND TASK_ID = #{taskId}
     </select>
 
+    <select id="selectRunning" resultType="org.opencloudengine.flamingo2.engine.history.TaskHistory">
+        SELECT
+            ID as id,
+            IDENTIFIER as identifier,
+            WID as processId,
+            TASK_ID as taskId,
+            NAME as name,
+            USERNAME as username,
+            START_DT as startDate,
+            END_DT as endDate,
+            DURATION as duration,
+            YYYY as year,
+            MM as month,
+            DD as day,
+            STATUS as status,
+            LOGDIR as logDirectory,
+            TREE_ID as treeId,
+            VARS as vars
+        FROM FL_TASK_HISTORY
+        WHERE STATUS = 'RUNNING'
+    </select>
+
     <!-- =======================================-->
     <!-- 2. Insert                              -->
     <!-- =======================================-->

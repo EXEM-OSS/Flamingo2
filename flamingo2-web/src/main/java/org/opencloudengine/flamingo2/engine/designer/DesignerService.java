@@ -40,5 +40,5 @@ public interface DesignerService {
 
     void killProccess(String logDirectory);
 
-    boolean rename(long treeId, String workflowName);
+    void rename(long treeId, String workflowName);
 }

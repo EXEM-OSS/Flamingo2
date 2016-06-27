@@ -18,18 +18,18 @@ Ext.define('Flamingo2.view.dashboard.information.tab.ActionDetailForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.actionDetailForm',
 
+    title: message.msg('dashboard.jobdetail.action.title'),
+
     requires: [
         'Flamingo2.view.designer.editor.AceEditor'
     ],
-
-    title: message.msg('dashboard.jobdetail.action.title'),
-
-    reference: 'actionDetailForm',
 
     layout: {
         type: 'vbox',
         align: 'stretch'
     },
+
+    reference: 'actionDetailForm',
 
     bodyPadding: 5,
 
@@ -46,20 +46,19 @@ Ext.define('Flamingo2.view.dashboard.information.tab.ActionDetailForm', {
             columnLines: true,
             columns: [
                 {
-                    text: message.msg('dashboard.jobdetail.action.headerno'),
-                    flex: 0.6,
-                    dataIndex: 'id',
-                    align: 'center',
                     hidden: true,
+                    dataIndex: 'id',
                     sortable: false
                 },
                 {
-                    text: message.msg('dashboard.wh.column.jobstringid'),
-                    width: 200,
+                    hidden: true,
                     dataIndex: 'identifier',
                     itemId: 'identifier',
-                    align: 'center',
+                    sortable: false
+                },
+                {
                     hidden: true,
+                    dataIndex: 'taskId',
                     sortable: false
                 },
                 {
@@ -77,14 +76,6 @@ Ext.define('Flamingo2.view.dashboard.information.tab.ActionDetailForm', {
                     sortable: false
                 },
                 {
-                    text: message.msg('dashboard.jobdetail.action.headerjobid'),
-                    flex: 1.2,
-                    dataIndex: 'taskId',
-                    align: 'center',
-                    hidden: true,
-                    sortable: false
-                },
-                {
                     text: message.msg('dashboard.jobdetail.action.headerstart'),
                     width: 130,
                     dataIndex: 'startDate',
@@ -99,8 +90,8 @@ Ext.define('Flamingo2.view.dashboard.information.tab.ActionDetailForm', {
                     width: 130,
                     dataIndex: 'endDate',
                     align: 'center',
-                    renderer: function (value, item, record) {
-                        return (item.record.data.status == 'RUNNING') ? '' : App.Util.Date.format(new Date(value), 'yyyy-MM-dd HH:mm:ss');
+                    renderer: function (value, metaData, record) {
+                        return (record.get('status') == 'RUNNING') ? '' : App.Util.Date.format(new Date(value), 'yyyy-MM-dd HH:mm:ss');
                     }
                 },
                 {
@@ -108,18 +99,18 @@ Ext.define('Flamingo2.view.dashboard.information.tab.ActionDetailForm', {
                     width: 60,
                     dataIndex: 'duration',
                     align: 'center',
-                    renderer: function (value, item, record) {
+                    renderer: function (value, metaData, record) {
                         var diff;
 
-                        if (item.record.data.status == 'RUNNING') {
-                            var start = new Date(item.record.data.startDate);
-                            var end = new Date(item.record.data.endDate);
-                            diff = (end.getTime() - start.getTime()) / 1000;
-                            return App.Util.Date.toHumanReadableTime(Math.floor(diff));
+                        if (record.get('status') == 'RUNNING') {
+                            var start = new Date(record.get('startDate'));
+                            var now = new Date();
+                            diff = (now.getTime() - start.getTime()) / 1000;
                         } else {
                             diff = value / 1000;
-                            return App.Util.Date.toHumanReadableTime(Math.floor(diff));
                         }
+
+                        return App.Util.Date.toHumanReadableTime(Math.floor(diff));
                     }
                 },
                 {
@@ -150,11 +141,11 @@ Ext.define('Flamingo2.view.dashboard.information.tab.ActionDetailForm', {
             }
         },
         {
+            hidden: true,
             region: 'center',
             layout: 'fit',
             height: 140,
             border: 3,
-            hidden: true,
             bodyPadding: 10,
             title: message.msg('dashboard.jobdetail.action.actioninfo'),
             items: [
@@ -199,12 +190,10 @@ Ext.define('Flamingo2.view.dashboard.information.tab.ActionDetailForm', {
                                     name: 'processId'
                                 },
                                 {
+                                    hidden: true,
                                     itemId: 'logPath',
                                     xtype: 'displayfield',
-                                    labelAlign: 'right',
-                                    fieldLabel: message.msg('dashboard.jobdetail.action.logpath'),
-                                    name: 'logDirectory',
-                                    hidden: true
+                                    name: 'logDirectory'
                                 }
                             ]
                         },

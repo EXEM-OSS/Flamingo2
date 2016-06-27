@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2011 Flamingo Project (https://github.com/OpenCloudEngine/flamingo2).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.opencloudengine.flamingo2.spark.collector.event;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
+/**
+ * Created by Hyokun Park on 15. 8. 8..
+ */
+public class ApplicationStart implements Serializable {
+    @SerializedName ("App Name") private String appName;
+    @SerializedName ("App ID") private String appID;
+    @SerializedName ("Timestamp") private Long timestamp;
+    @SerializedName ("User") private String user;
+    @SerializedName ("App Attempt ID") private String appAttemptID;
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getAppID() {
+        return appID;
+    }
+
+    public void setAppID(String appID) {
+        this.appID = appID;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getAppAttemptID() {
+        return appAttemptID;
+    }
+
+    public void setAppAttemptID(String appAttemptID) {
+        this.appAttemptID = appAttemptID;
+    }
+}

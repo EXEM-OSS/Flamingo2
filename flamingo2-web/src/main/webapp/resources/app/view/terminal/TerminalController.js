@@ -27,6 +27,7 @@ Ext.define('Flamingo2.view.terminal.TerminalController', {
             this.onLoginSubmit();
         }
     },
+    
     onAddTerminalBtnClick: function () {
         var panel = query('terminals tabpanel');
 
@@ -79,6 +80,7 @@ Ext.define('Flamingo2.view.terminal.TerminalController', {
     onCenterTabchange: function (panel) {
 
     },
+    
     requestToServerReStyle: function (termid, cols, rows, terminalsocket) {
         terminalsocket.emit('restyle', {
             clientname: SESSION.USERNAME,
@@ -87,6 +89,7 @@ Ext.define('Flamingo2.view.terminal.TerminalController', {
             rows: rows
         });
     },
+    
     onIdentifyChange: function (radio) {
         var me = this;
         if (radio.getValue()) {
@@ -99,6 +102,7 @@ Ext.define('Flamingo2.view.terminal.TerminalController', {
             }
         }
     },
+    
     onKeyfileChange: function (field, value, eOpts) {
         var file = field.fileInputEl.dom.files[0];
         if (file && file.size > 100000) {
@@ -111,6 +115,7 @@ Ext.define('Flamingo2.view.terminal.TerminalController', {
             });
         }
     },
+    
     statusInterval: null,
     statusAnimation: function (command) {
         var me = this;
@@ -155,6 +160,7 @@ Ext.define('Flamingo2.view.terminal.TerminalController', {
             }, 300);
         }
     },
+    
     onLoginSubmit: function () {
         var me = this;
         var reset = me.lookupReference('reset');
@@ -212,6 +218,7 @@ Ext.define('Flamingo2.view.terminal.TerminalController', {
             });
         }
     },
+    
     destroyLoginSocket: function (terminalsocket) {
         var me = this;
         var reset = me.lookupReference('reset');
@@ -220,10 +227,9 @@ Ext.define('Flamingo2.view.terminal.TerminalController', {
         submit.enable();
         terminalsocket.destroy();
     },
+    
     startTerminal: function () {
-        var me = this;
         var panel = query('terminals tabpanel');
-
         var terminalsocket = io.connect('http://' + config['terminal.server.ip'] + ':' + config['terminal.server.port'],
             {
                 'force new connection': true,
@@ -238,7 +244,6 @@ Ext.define('Flamingo2.view.terminal.TerminalController', {
                 tabcount = (typeof tabcount == 'undefined' || tabcount == 'undefined') ? 1 : tabcount;
                 panel.value = tabcount + 1;
 
-                console.log('tabcount : ' + tabcount);
                 var newTab = {
                     title: message.msg('terminal.title.terminal') + ' ' + tabcount,
                     xtype: 'container',

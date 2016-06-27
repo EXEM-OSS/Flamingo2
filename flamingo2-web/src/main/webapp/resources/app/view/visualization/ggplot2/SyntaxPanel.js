@@ -17,7 +17,7 @@
 Ext.define('Flamingo2.view.visualization.ggplot2.SyntaxPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.ggplot2SyntaxPanel',
-    title: '문법',
+    title: message.msg('visual.syntax'),
     header: false,
     layout: {
         type: 'vbox',

@@ -24,8 +24,7 @@ Ext.define('Flamingo2.view.system.user.combo.OrganizationCombo', {
     displayField: 'org_name',
     valueField: 'org_id',
     queryMode: 'local',
-    editable: true,
-    selectOnFocus: true,
+    editable: false,
     width: 120,
     collapsible: false
 });

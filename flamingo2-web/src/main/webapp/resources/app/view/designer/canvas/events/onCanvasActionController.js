@@ -167,7 +167,7 @@ Ext.define('Flamingo2.view.designer.canvas.events.onCanvasActionController', {
                                                         error(message.msg('workflow.save_fail'), message.msg('workflow.msg.save_fail'));
                                                     }
                                                 },
-                                                function (response) {
+                                                function () {
                                                     error(message.msg('workflow.save_fail'), message.msg('workflow.msg.save_fail'));
                                                 }
                                             );
@@ -503,7 +503,7 @@ Ext.define('Flamingo2.view.designer.canvas.events.onCanvasActionController', {
             }
             else {
                 nodextype = nodeMeta.identifier;
-                nodetitle = nodeMeta.name;
+                nodetitle = graphElement.shape.label;
             }
 
             popWindow = Ext.create('Ext.Window', {

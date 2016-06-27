@@ -6,7 +6,7 @@
 
 	<!-- ================ System Agent API ================ -->
 
-	<bean id="systemAgentApi" class="org.opencloudengine.flamingo2.agent.system.SystemUserServiceImpl">
+	<bean id="systemAgentApi" class="org.opencloudengine.flamingo2.agent.system.SystemUserAgentServiceImpl">
 		<property name="changeCli" value="${system.user.change.cli}"/>
 		<property name="createCli" value="${system.user.create.cli}"/>
 		<property name="deleteCli" value="${system.user.delete.cli}"/>
@@ -15,7 +15,19 @@
 
 	<bean name="/remote/agent/system" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
 		<property name="service" ref="systemAgentApi"/>
-		<property name="serviceInterface" value="org.opencloudengine.flamingo2.agent.system.SystemUserService"/>
+		<property name="serviceInterface" value="org.opencloudengine.flamingo2.agent.system.SystemUserAgentService"/>
+	</bean>
+
+	<!-- ====================== Spark Streaming Agent API ====================== -->
+	<!-- Spark Streaming Controller 및 Spark Streaming Collector와 통신하기 위한 API -->
+
+	<bean id="sparkStreamingAgentApi" class="org.opencloudengine.flamingo2.agent.spark.streaming.SparkStreamingRemoteServiceImpl">
+		<property name="sigar" ref="sigar"/>
+	</bean>
+
+	<bean name="/remote/agent/sparkStreamingAgent" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+		<property name="service" ref="sparkStreamingAgentApi"/>
+		<property name="serviceInterface" value="org.opencloudengine.flamingo2.agent.spark.streaming.SparkStreamingRemoteService"/>
 	</bean>
 
 	<!-- ================ Application Context Helper ================ -->

@@ -18,10 +18,6 @@ Ext.define('Flamingo2.view.monitoring.historyserver.JobSummary', {
     extend: 'Ext.form.Panel',
     alias: 'widget.jobSummary',
 
-    listeners: {
-        afterrender: 'onJobSummaryAfterrender'
-    },
-
     layout: {
         type: 'table',
         columns: 2,
@@ -36,7 +32,7 @@ Ext.define('Flamingo2.view.monitoring.historyserver.JobSummary', {
         labelAlign: 'right',
         anchor: '100%',
         labelWidth: 150,
-        margins: '10 10 10 10'
+        margins: '10'
     },
 
     defaultType: 'textfield',
@@ -152,5 +148,8 @@ Ext.define('Flamingo2.view.monitoring.historyserver.JobSummary', {
             labelAlign: 'right',
             name: 'diagnostics'
         }
-    ]
+    ],
+    listeners: {
+        afterrender: 'onJobSummaryAfterRender'
+    }
 });

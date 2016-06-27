@@ -23,7 +23,7 @@ Ext.define('Flamingo2.view.monitoring.applications.Queue', {
         rootVisible: true,
         proxy: {
             type: 'ajax',
-            url: '/monitoring/resourcemanager/queues.json',
+            url: CONSTANTS.MONITORING.YA.QUEUES,
             extraParams: {
                 clusterName: ENGINE.id
             }

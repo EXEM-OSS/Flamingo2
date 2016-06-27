@@ -21,6 +21,7 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.opencloudengine.flamingo2.core.exception.ServiceException;
 import org.opencloudengine.flamingo2.engine.backend.UserEvent;
 import org.opencloudengine.flamingo2.engine.backend.UserEventRepository;
+import org.opencloudengine.flamingo2.engine.history.TaskHistory;
 import org.opencloudengine.flamingo2.engine.history.WorkflowHistoryRepository;
 import org.opencloudengine.flamingo2.model.rest.State;
 import org.opencloudengine.flamingo2.model.rest.User;
@@ -29,6 +30,8 @@ import org.opencloudengine.flamingo2.model.rest.WorkflowHistory;
 import org.opencloudengine.flamingo2.util.*;
 import org.opencloudengine.flamingo2.web.configuration.ConfigurationHelper;
 import org.opencloudengine.flamingo2.websocket.WebSocketUtil;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +43,7 @@ import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.opencloudengine.flamingo2.util.JsonUtils.unmarshal;
@@ -66,23 +66,66 @@ public class DefaultWorkflowJob extends DefaultQuartzJob {
         JobExecutionContext context = this.jobExecutionContext;
 
         // 워크플로우 실행시 필요한 정보를 가져온다.
-        final UserEvent userEvent = (UserEvent) context.getMergedJobDataMap().get("event");
-        final User user = (User) context.getMergedJobDataMap().get("user");
-        Workflow workflow = (Workflow) context.getMergedJobDataMap().get("workflow");
+        JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
 
+        JobDetail jobDetail = context.getJobDetail();
+
+        Map jobVariables = (Map) jobDetail.getJobDataMap().get(JobVariable.JOB_VARIABLES);
+        if (jobVariables != null) {
+            mergedJobDataMap.put(JobVariable.JOB_VARIABLES, jobVariables);
+        }
+
+        Object userEventObject = mergedJobDataMap.get("event");
+        Object workflowObject = mergedJobDataMap.get("workflow");
+        Object userObject = mergedJobDataMap.get("user");
+
+        UserEvent tempUserEvent = null;
+        Workflow tempWorkflow = null;
+        User tempUser = null;
+        String executeFrom = mergedJobDataMap.get("executeFrom").toString();
+        final boolean executeFromDesigner = "designer".equals(executeFrom);
+
+        switch (executeFrom) {
+            case "designer":
+                tempUserEvent = (UserEvent) userEventObject;
+                tempWorkflow = (Workflow) workflowObject;
+                tempUser = (User) userObject;
+                break;
+            default:// batch
+                tempWorkflow = (Workflow) mergedJobDataMap.get(JobVariable.WORKFLOW);
+                tempUser = userRepository.selectByUsername(tempWorkflow.getUsername());
+                String username = tempUser.getUsername();
+                String name = "워크플로우 '" + mergedJobDataMap.get(JobVariable.JOB_NAME) + "'을 실행중입니다.";
+                tempUserEvent = UserEvent.create(username, name, "RUNNING");
+
+                mergedJobDataMap.put("event", tempUserEvent);
+                mergedJobDataMap.put("workflow", tempWorkflow);
+                mergedJobDataMap.put("user", tempUser);
+
+                schedulerRemoteService.prepareRun(mergedJobDataMap);
+                break;
+        }
+
+        final UserEvent userEvent = tempUserEvent;
+        Workflow workflow = tempWorkflow;
+        User user = tempUser;
         // 워크플로우의 실행 ID를 이용하여 메타데이터를 꺼낸다.
         String identifier = userEvent.getIdentifier();
-        Map<String, Object> data = metadata(context.getMergedJobDataMap(), workflow, identifier, user);
+
+        Map<String, Object> data = metadata(mergedJobDataMap, workflow, identifier, user);
+        logger.debug("data = {}", data);
 
         final String name = workflow.getWorkflowName();
         String workflowXml = workflow.getWorkflowXml();
 
-        // 사용자에게 워크플로우를 실행하고 있음을 알린다.
-        eventRepository.insert(userEvent);
-        data.put("event", userEvent);
+        if (userEvent != null) {
+            // 사용자에게 워크플로우를 실행하고 있음을 알린다.
+            eventRepository.insert(userEvent);
+            data.put("event", userEvent);
+        }
 
         // 워크플로우의 실행 이력을 불러온다.
-        final WorkflowHistory workflowHistory = workflowHistoryRepository.selectByIdentifier(userEvent.getIdentifier());
+        final WorkflowHistory workflowHistory = workflowHistoryRepository.selectByIdentifier(identifier);
         data.put("workflowHistory", workflowHistory);
         data.put("currentStep", new AtomicInteger());
 
@@ -93,6 +136,7 @@ public class DefaultWorkflowJob extends DefaultQuartzJob {
             ProcessDefinition processDefinition = BPMNUtil.adapt(bis);
             processDefinition.afterDeserialization();
 
+            final User finalUser = user;
             processDefinition.setActivityFilters(new ActivityFilter[]{
                     new SensitiveActivityFilter() {
                         @Override
@@ -124,15 +168,18 @@ public class DefaultWorkflowJob extends DefaultQuartzJob {
                         public void onEvent(Activity activity, ProcessInstance processInstance, String s, Object o) throws Exception {
                             if (activity instanceof EndActivity && Activity.ACTIVITY_STOPPED.equals(s)) {
                                 ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
-                                UserEventRepository eventRepo = applicationContext.getBean(UserEventRepository.class);
-                                userEvent.setName("Workflow '" + name + "' is successful");
-                                userEvent.setStatus("FINISHED");
-                                eventRepo.updateByIdentifier(userEvent);
+                                if (userEvent != null) {
+                                    UserEventRepository eventRepo = applicationContext.getBean(UserEventRepository.class);
+                                    userEvent.setName("Workflow '" + name + "' is successful");
+                                    userEvent.setStatus("FINISHED");
+                                    eventRepo.updateByIdentifier(userEvent);
+                                }
 
                                 updateHistoryAsFinished(workflowHistory);
 
                                 // 웹소켓을 통해 워크플로우가 성공하였음을 알린다.
-                                updateSocketWorkflowStatus(userEvent.getIdentifier(), user);
+                                if (executeFromDesigner)
+                                    updateSocketWorkflowStatus(userEvent.getIdentifier(), finalUser);
                             }
                         }
                     }
@@ -155,29 +202,47 @@ public class DefaultWorkflowJob extends DefaultQuartzJob {
             instance.execute();
 
             // 웹소켓을 통해 워크플로우가 실행되었음을 알린다.
-            updateSocketWorkflowStatus(userEvent.getIdentifier(), user);
-
+            if (executeFromDesigner) updateSocketWorkflowStatus(userEvent.getIdentifier(), user);
         } catch (ServiceException ex) {
-            ex.printStackTrace();
-            userEvent.setName("Workflow '" + name + "' is failed.");
-            userEvent.setStatus("FAILED");
-            userEvent.setMessage(ex.getRecentLog());
-            eventRepository.updateByIdentifier(userEvent);
+            printHere("");
+            ex.printStackTrace(); // FIXME
+            if (userEvent != null) {
+                userEvent.setName("Workflow '" + name + "' is failed.");
+                userEvent.setStatus("FAILED");
+                userEvent.setMessage(ex.getRecentLog());
+                eventRepository.updateByIdentifier(userEvent);
+            }
             updateHistoryAsFailed(workflowHistory, ex);
 
             // 웹소켓을 통해 워크플로우가 실패하였음을 알린다.
-            updateSocketWorkflowStatus(userEvent.getIdentifier(), user);
+            if (executeFromDesigner) updateSocketWorkflowStatus(userEvent.getIdentifier(), user);
         } catch (Exception ex) {
-            ex.printStackTrace();
-            userEvent.setName("Workflow '" + name + "' is failed.");
-            userEvent.setStatus("FAILED");
-            userEvent.setMessage(ex.toString());
-            eventRepository.updateByIdentifier(userEvent);
+            printHere("");
+            ex.printStackTrace(); // FIXME
+            if (userEvent != null) {
+                userEvent.setName("Workflow '" + name + "' is failed.");
+                userEvent.setStatus("FAILED");
+                userEvent.setMessage(ex.toString());
+                eventRepository.updateByIdentifier(userEvent);
+            }
             updateHistoryAsFailed(workflowHistory, ex);
 
             // 웹소켓을 통해 워크플로우가 실패하였음을 알린다.
-            updateSocketWorkflowStatus(userEvent.getIdentifier(), user);
+            if (executeFromDesigner) updateSocketWorkflowStatus(userEvent.getIdentifier(), user);
         }
+    }
+
+    void printHere(Object object) {
+        String fullClassName = Thread.currentThread().getStackTrace()[2].getClassName();
+        String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
+
+        String print = "------------------ " + className + "." + methodName + ":" + lineNumber;
+        if (object != null && !StringUtils.isEmpty(object.toString())) {
+            print += " = " + object;
+        }
+        System.out.println(print);
     }
 
     public static String taskBasePath(String logDir, String processId, String jobId, Date current, User user) {
@@ -197,6 +262,19 @@ public class DefaultWorkflowJob extends DefaultQuartzJob {
         history.setElapsed(DateUtils.getDiff(history.getEndDate(), history.getStartDate()));
         history.setException(ExceptionUtils.getFullStackTrace(ex));
         workflowHistoryRepository.update(history);
+
+        List<TaskHistory> taskHistoryList = taskHistoryRepository.selectByIdentifier(history.getJobStringId());
+        for (TaskHistory taskHistory : taskHistoryList) {
+            if (State.RUNNING.value.equals(taskHistory.getStatus())) {
+                printHere(taskHistory);
+                taskHistory.setEndDate(new Timestamp(System.currentTimeMillis()));
+                taskHistory.setStatus(State.FAILED.value);
+                taskHistory.setDuration(DateUtils.getDiff(taskHistory.getEndDate(), taskHistory.getStartDate()));
+                taskHistoryRepository.updateByTaskIdAndIdentifier(taskHistory);
+                printHere(taskHistory);
+                break;
+            }
+        }
     }
 
     private void updateHistoryAsFinished(WorkflowHistory history) {
@@ -237,7 +315,7 @@ public class DefaultWorkflowJob extends DefaultQuartzJob {
         vars.put("username", user.getUsername());
         vars.put("YYYYMMDD", DateUtils.getCurrentYyyymmdd());
         vars.put("YYYY", DateUtils.parseDate(date, "yyyy"));
-        vars.put("MM", DateUtils.parseDate(date, "mm"));
+        vars.put("MM", DateUtils.parseDate(date, "MM"));
         vars.put("DD", DateUtils.parseDate(date, "dd"));
         vars.put("hh", DateUtils.parseDate(date, "HH"));
         vars.put("mm", DateUtils.parseDate(date, "mm"));

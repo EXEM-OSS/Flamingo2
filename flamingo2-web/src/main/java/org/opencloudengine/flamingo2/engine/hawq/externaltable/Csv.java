@@ -21,7 +21,7 @@ import org.opencloudengine.flamingo2.util.StringUtils;
 /**
  * HAWQ External Table Format : CSV.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 public class Csv extends Format {

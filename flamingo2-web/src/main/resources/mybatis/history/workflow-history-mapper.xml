@@ -213,6 +213,34 @@
         ORDER BY START_DATE asc
     </select>
 
+    <select id="selectRunning" resultType="org.opencloudengine.flamingo2.model.rest.WorkflowHistory">
+        SELECT
+            ID as id,
+            WORKFLOW_ID as workflowId,
+            JOB_ID as jobId,
+            JOB_ID_STRING as jobStringId,
+            WORKFLOW_NAME as workflowName,
+            CURRENT_ACTION as currentAction,
+            JOB_NAME as jobName,
+            WORKFLOW_XML as workflowXml,
+            VARIABLE as variable,
+            START_DATE as startDate,
+            END_DATE as endDate,
+            CAUSE as cause,
+            CURRENT_STEP as currentStep,
+            TOTAL_STEP as totalStep,
+            ELAPSED as elapsed,
+            EXCEPTION as exception,
+            STATUS as status,
+            USERNAME as username,
+            SF_PARENT_IDENTIFIER as sf_parentIdentifier,
+            SF_ROOT_IDENTIFIER as sf_rootIdentifier,
+            SF_DEPTH as sf_depth,
+            SF_TASK_ID as sf_taskId
+        FROM FL_WORKFLOW_HISTORY
+        WHERE STATUS = 'RUNNING'
+    </select>
+
     <update id="update" parameterType="org.opencloudengine.flamingo2.model.rest.WorkflowHistory">
         UPDATE FL_WORKFLOW_HISTORY
         SET

@@ -138,7 +138,7 @@ public class Response implements Serializable {
 
     public Map<String, Object> getMap() {
         if (map == null) {
-            map = new HashMap<String, Object>();
+            map = new HashMap<>();
         }
         return map;
     }
@@ -149,7 +149,7 @@ public class Response implements Serializable {
 
     public List<Object> getList() {
         if (list == null) {
-            list = new ArrayList<Object>();
+            list = new ArrayList<>();
         }
         return list;
     }

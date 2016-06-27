@@ -65,9 +65,19 @@ Ext.define('Flamingo2.view.designer.nodeList.NodeTab', {
             type: 'INT'
         },
         {
-            title: message.msg('workflow.common.etl'),
+            title: message.msg('workflow.common.rules'),
+            xtype: 'nodeList',
+            type: 'RULES'
+        },
+        {
+            title: message.msg('workflow.common.etc'),
             xtype: 'nodeList',
             type: 'OTHERS'
+        },
+        {
+            title: message.msg('workflow.common.gis'),
+            xtype: 'nodeList',
+            type: 'GIS'
         }
     ]
 });

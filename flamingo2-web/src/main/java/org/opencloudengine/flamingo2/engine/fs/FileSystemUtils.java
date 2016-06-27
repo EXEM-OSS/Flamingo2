@@ -370,7 +370,7 @@ public class FileSystemUtils {
             IOUtils.closeQuietly(fos);
             return fs.exists(new Path(targetFilePath));
         } catch (Exception ex) {
-            throw new ServiceException(ExceptionUtils.getMessage("Cannot save '{}'.", targetFilePath), ex);
+            throw new ServiceException(ExceptionUtils.getMessage("Unable to save '{}'.", targetFilePath), ex);
         }
     }
 

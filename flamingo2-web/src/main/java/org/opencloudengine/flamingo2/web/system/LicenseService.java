@@ -6,6 +6,8 @@ public interface LicenseService {
 
     void regist(String filename, String license);
 
+    public String getTrial();
+
     public Map getLicenseInfo();
 
     public boolean isValid(String filename);

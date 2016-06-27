@@ -1,0 +1,11 @@
+import java.util.HashMap;
+
+dialect "mvel"
+
+rule "rule-1-1"
+	no-loop
+	when
+		t : HashMap( id == "1" )
+	then
+		t.result = "rule-1-1" + t.id;
+end

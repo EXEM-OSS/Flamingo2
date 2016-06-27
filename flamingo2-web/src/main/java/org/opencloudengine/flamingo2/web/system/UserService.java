@@ -57,6 +57,14 @@ public interface UserService {
     boolean createUserByManager(Map userMap);
 
     /**
+     * Workfow Designer Tree의 사용자 정보를 추가한다.
+     *
+     * @param username 사용자명
+     * @return true or false
+     */
+    boolean createWorkflowDesignerUser(String username);
+
+    /**
      * 사용자의 비밀번호를 변경한다.
      *
      * @param userMap User Map
@@ -71,6 +79,14 @@ public interface UserService {
      * @return true or false
      */
     boolean deleteUser(String username);
+
+    /**
+     * Workflow Designer Tree의 사용자 정보를 삭제한다.
+     *
+     * @param username 사용자명
+     * @return true or false
+     */
+    boolean deleteWorkflowDesignerUser(String username);
 
     /**
      * 사용자 정보를 수정한다.
@@ -151,4 +167,6 @@ public interface UserService {
      * @return true or false
      */
     boolean updateUserHomeInfo(Map<String, String> userMap);
+
+    String selectPasswordByUsername(String username);
 }

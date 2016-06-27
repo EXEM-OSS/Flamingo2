@@ -44,6 +44,12 @@ Ext.define('Flamingo2.view.component.WebSocketProxyController', {
             case '/user/topic/workflow':
                 me.fireEvent('workflowMessage', message);
                 break;
+            case '/user/topic/workflowLog':
+                me.fireEvent('workflowLogMessage', message);
+                break;
+            case '/user/topic/tajo':
+                me.fireEvent('tajoMessage', message);
+                break;
             case '/topic/alarm':
                 me.fireEvent('alarmMessage', message);
                 break;

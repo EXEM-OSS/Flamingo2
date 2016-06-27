@@ -17,6 +17,9 @@
 Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.fileViewerForm',
+    requires: [
+        'Flamingo2.view.component.editor.AbstractEditor'
+    ],
 
     reference: 'fileViewerContentsForm',
 
@@ -33,7 +36,7 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerForm', {
                 layout: 'fit',
                 items: [
                     {
-                        xtype: 'queryEditor',
+                        xtype: 'abstractEditor',
                         height: 513,
                         layout: {
                             type: 'vbox',
@@ -81,7 +84,6 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerForm', {
                                 minValue: 1,
                                 maxValue: me.up().emptyPageData.total,
                                 hideTrigger: true,
-                                enableKeyEvents: true,
                                 keyNavEnabled: false,
                                 selectOnFocus: true,
                                 submitValue: false,
@@ -90,12 +92,11 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerForm', {
                                 grow: true,
                                 margins: '-1 2 3 2',
                                 listeners: {
-                                    specialkey: 'onInputCustomPage'
+                                    specialkey: 'onEnterCustomPage'
                                 }
                             },
                             {
                                 xtype: 'tbtext',
-                                reference: 'totalPage',
                                 itemId: 'afterTextItem',
                                 text: Ext.String.format(me.up().afterPageText, me.up().emptyPageData.total)
                             },
@@ -127,6 +128,15 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerForm', {
                             },
                             {
                                 xtype: 'textfield',
+                                reference: 'dfsBlockStartOffset',
+                                name: 'dfsBlockStartOffset',
+                                labelWidth: 70,
+                                tooltip: message.msg('fs.hdfs.viewer.window.dfsBlockStartOffset.tip'),
+                                labelAlign: 'right',
+                                hidden: true
+                            },
+                            {
+                                xtype: 'textfield',
                                 reference: 'chunkSizeToView',
                                 name: 'chunkSizeToView',
                                 labelWidth: 50,
@@ -145,10 +155,56 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerForm', {
                             },
                             {
                                 xtype: 'textfield',
+                                reference: 'fileSize',
+                                name: 'fileSize',
+                                labelWidth: 50,
+                                tooltip: message.msg('fs.hdfs.viewer.window.fileSize.tip'),
+                                labelAlign: 'right',
+                                hidden: true
+                            },
+                            {
+                                xtype: 'textfield',
+                                reference: 'dfsBlockSize',
+                                name: 'dfsBlockSize',
+                                labelWidth: 50,
+                                tooltip: message.msg('fs.hdfs.viewer.window.blockSize.tip'),
+                                labelAlign: 'right',
+                                hidden: true
+                            },
+                            {
+                                xtype: 'numberfield',
+                                reference: 'totalPage',
+                                name: 'totalPage',
+                                value: 'totalPage',
+                                labelWidth: 50,
+                                tooltip: message.msg('fs.hdfs.viewer.window.totalPage.tip'),
+                                labelAlign: 'right',
+                                hidden: true
+                            },
+                            {
+                                xtype: 'textfield',
                                 reference: 'bestNode',
                                 name: 'bestNode',
                                 labelWidth: 50,
                                 tooltip: message.msg('fs.hdfs.viewer.window.bestNode.tip'),
+                                labelAlign: 'right',
+                                hidden: true
+                            },
+                            {
+                                xtype: 'textfield',
+                                reference: 'currentContentsBlockSize',
+                                name: 'currentContentsBlockSize',
+                                labelWidth: 50,
+                                tooltip: message.msg('fs.hdfs.viewer.window.currentContentsBlockSize.tip'),
+                                labelAlign: 'right',
+                                hidden: true
+                            },
+                            {
+                                xtype: 'textfield',
+                                reference: 'lastDfsBlockSize',
+                                name: 'lastDfsBlockSize',
+                                labelWidth: 50,
+                                tooltip: message.msg('fs.hdfs.viewer.window.lastDfsBlockSize.tip'),
                                 labelAlign: 'right',
                                 hidden: true
                             }

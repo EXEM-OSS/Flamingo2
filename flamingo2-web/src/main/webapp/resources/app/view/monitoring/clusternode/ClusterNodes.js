@@ -20,18 +20,6 @@ Ext.define('Flamingo2.view.monitoring.clusternode.ClusterNodes', {
 
     title: message.msg('monitoring.clusternode.title'),
 
-    tools: [
-        {
-            type: 'refresh',
-            tooltip: message.msg('monitoring.clusternode.tooltip.update'),
-            handler: 'onClusterNodesRefreshClick'
-        }
-    ],
-
-    listeners: {
-        afterrender: 'onClusterNodesAfterrender'
-    },
-
     bind: {
         store: '{nodesStore}'
     },
@@ -136,5 +124,17 @@ Ext.define('Flamingo2.view.monitoring.clusternode.ClusterNodes', {
         getRowClass: function (b, e, d, c) {
             return 'cell-height-30';
         }
+    },
+
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onClusterNodesRefreshClick'
+        }
+    ],
+
+    listeners: {
+        afterrender: 'onClusterNodesAfterrender'
     }
 });

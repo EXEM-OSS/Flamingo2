@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 Ext.define('Flamingo2.view.batch.chart.JvmHeapUsage', {
     extend: 'Ext.chart.CartesianChart',
     alias: 'widget.engineJvmHeapUsage',
@@ -121,6 +120,13 @@ Ext.define('Flamingo2.view.batch.chart.JvmHeapUsage', {
                     this.setHtml(storeItem.get('time') + ' : <font color="#CC2900"><b>' + message.msg('batch.used_memory') + ' ' + megaByteConverter(storeItem.get('jvmUsedMemory')) + '</b></font>');
                 }
             }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onJVNHeapRefreshClick'
         }
     ]
 });

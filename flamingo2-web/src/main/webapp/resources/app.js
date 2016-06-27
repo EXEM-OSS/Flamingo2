@@ -15,8 +15,12 @@ Ext.application({
     name: 'Flamingo2',
 
     extend: 'Flamingo2.Application',
+
+    requires: [
+        'Flamingo2.*'
+    ],
     
-    autoCreateViewport: 'Flamingo2.view.main.Main'
+    mainView: CUSTOMVIEW == null ? 'Flamingo2.view.main.Main' : CUSTOMVIEW
 	
     //-------------------------------------------------------------------------
     // Most customizations should be made to Flamingo2.Application. If you need to

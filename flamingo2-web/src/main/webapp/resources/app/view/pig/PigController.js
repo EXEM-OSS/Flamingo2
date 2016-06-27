@@ -82,7 +82,7 @@ Ext.define('Flamingo2.view.pig.PigController', {
         var query = escape(tabRefs.queryEditor.editor.getSession().getValue());
 
         if (Ext.isEmpty(query)) {
-            error(message.msg('common.error'), 'Pig Script를 입력하시오.');
+            error(message.msg('common.error'), message.msg('pig.msg.input_script'));
             return;
         }
 
@@ -192,7 +192,7 @@ Ext.define('Flamingo2.view.pig.PigController', {
     },
 
     onHdfsBrowserClick: function () {
-        Ext.create('Flamingo2.view.hive.editor.HdfsBrowserWindow').center().show();
+        Ext.create('Flamingo2.view.fs.hdfs.simple.SimpleHdfsFileBrowser').center().show();
     },
 
     /**

@@ -17,6 +17,7 @@
 package org.opencloudengine.flamingo2.web.dashboard;
 
 import org.apache.commons.io.FileUtils;
+import org.opencloudengine.flamingo2.core.exception.ServiceException;
 import org.opencloudengine.flamingo2.core.rest.Response;
 import org.opencloudengine.flamingo2.core.security.SessionUtils;
 import org.opencloudengine.flamingo2.engine.hadoop.ResourceManagerRemoteService;
@@ -27,7 +28,6 @@ import org.opencloudengine.flamingo2.engine.remote.EngineService;
 import org.opencloudengine.flamingo2.model.rest.State;
 import org.opencloudengine.flamingo2.model.rest.WorkflowHistory;
 import org.opencloudengine.flamingo2.util.ApplicationContextRegistry;
-import org.opencloudengine.flamingo2.util.ExceptionUtils;
 import org.opencloudengine.flamingo2.util.StringUtils;
 import org.opencloudengine.flamingo2.web.configuration.DefaultController;
 import org.opencloudengine.flamingo2.web.configuration.EngineConfig;
@@ -67,8 +67,6 @@ public class DashboardController extends DefaultController {
      * @param endDate      마지막 날짜
      * @param status       워크플로우 작업 상태
      * @param workflowName 워크플로우명
-     * @param jobType      워크플로우 작업 타입
-     * @param page         페이지
      * @param start        시작 페이지
      * @param limit        조회 제한 개수
      * @param node         히스토리 목록이 속한 상위 노드 정보
@@ -76,55 +74,63 @@ public class DashboardController extends DefaultController {
      */
     @RequestMapping(value = "/workflows", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Response getWorkflows(@RequestParam(defaultValue = "") String clusterName,
-                                 @RequestParam(defaultValue = "") String startDate,
-                                 @RequestParam(defaultValue = "") String endDate,
-                                 @RequestParam(defaultValue = "") String status,
-                                 @RequestParam(defaultValue = "") String workflowName,
-                                 @RequestParam(defaultValue = "") String jobType,
-                                 @RequestParam(defaultValue = "0") int page,
-                                 @RequestParam(defaultValue = "0") int start,
-                                 @RequestParam(defaultValue = "16") int limit,
-                                 @RequestParam(defaultValue = "") String node) {
+    public Response workflows(@RequestParam(defaultValue = "") String clusterName,
+                              @RequestParam(defaultValue = "") String startDate,
+                              @RequestParam(defaultValue = "") String endDate,
+                              @RequestParam(defaultValue = "") String status,
+                              @RequestParam(defaultValue = "") String workflowName,
+                              @RequestParam(defaultValue = "0") int start,
+                              @RequestParam(defaultValue = "16") int limit,
+                              @RequestParam(defaultValue = "") String node) {
+        EngineService engineService = getEngineService(clusterName);
+
+        WorkflowHistoryRemoteService workflowHistoryRemoteService = engineService.getWorkflowHistoryRemoteService();
+
+        String username = SessionUtils.getLevel() == 1 ? "" : SessionUtils.getUsername();
+
+        List<Map> histories;
+        int total;
+
+        try {
+            histories = new ArrayList<>();
+            List<WorkflowHistory> workflowHistories = workflowHistoryRemoteService.selectByCondition(startDate, endDate, start, limit, username, workflowName, status, "");
+            for (WorkflowHistory workflowHistory : workflowHistories) {
+                Map map = getNodeForWorkflow(workflowHistory, node);
+                histories.add(map);
+            }
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to get workflows.", ex);
+        }
+
+        try {
+            total = workflowHistoryRemoteService.selectTotalCountByUsername(startDate, endDate, start, limit, username, workflowName, status, "");
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to get workflow count.", ex);
+        }
 
         Response response = new Response();
-        EngineService engineService = getEngineService(clusterName);
-        WorkflowHistoryRemoteService workflowHistoryRemoteService = engineService.getWorkflowHistoryRemoteService();
-        int level = SessionUtils.getLevel();
-        String username = level == 1 ? "" : SessionUtils.getUsername();
-
-        ArrayList<Map> arrayList = new ArrayList<>();
-
-        List<WorkflowHistory> workflowHistories = workflowHistoryRemoteService.selectByCondition(startDate, endDate, start, limit, username, workflowName, status, "");
-        for (WorkflowHistory workflowHistory : workflowHistories) {
-            Map map = getNodeForWorkflow(workflowHistory, node);
-            arrayList.add(map);
-        }
-        int total = workflowHistoryRemoteService.selectTotalCountByUsername(startDate, endDate, start, limit, username, workflowName, status, "");
         response.setTotal(total);
-
-        response.setLimit(arrayList.size());
-        response.getList().addAll(arrayList);
+        response.setLimit(histories.size());
+        response.getList().addAll(histories);
         response.setSuccess(true);
         return response;
     }
 
     @RequestMapping(value = "/task/list", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Response getTasksOfJob(@RequestParam(defaultValue = "") String clusterName,
-                                  @RequestParam(defaultValue = "") String sort,
-                                  @RequestParam(defaultValue = "DESC") String dir,
-                                  @RequestParam(defaultValue = "0") int page,
-                                  @RequestParam(defaultValue = "0") int start,
-                                  @RequestParam(defaultValue = "16") int limit,
-                                  @RequestParam(defaultValue = "") String orderby,
-                                  @RequestParam(defaultValue = "") String identifier) {
-
+    public Response tasks(@RequestParam(defaultValue = "") String clusterName,
+                          @RequestParam(defaultValue = "") String identifier) {
         EngineService engineService = getEngineService(clusterName);
 
-        Response response = new Response();
-        List<TaskHistory> taskHistories = engineService.getTaskHistoryRemoteService().selectByIdentifier(identifier);
+        List<TaskHistory> taskHistories;
 
+        try {
+            taskHistories = engineService.getTaskHistoryRemoteService().selectByIdentifier(identifier);
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to get workflow count.", ex);
+        }
+
+        Response response = new Response();
         response.setLimit(taskHistories.size());
         response.getList().addAll(taskHistories);
         response.setSuccess(true);
@@ -134,16 +140,25 @@ public class DashboardController extends DefaultController {
     @RequestMapping(value = "/task/get", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Response getTask(@RequestParam(defaultValue = "") String clusterName,
-                            @RequestParam(defaultValue = "") String identifier,
-                            @RequestParam(defaultValue = "") String taskId) {
-        Response response = new Response();
+    public Response task(@RequestParam(defaultValue = "") String clusterName,
+                         @RequestParam(defaultValue = "") String identifier,
+                         @RequestParam(defaultValue = "") String taskId) {
         EngineService engineService = getEngineService(clusterName);
-        TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
-        TaskHistory history = new TaskHistory();
-        history.setIdentifier(identifier);
-        history.setTaskId(taskId);
-        TaskHistory taskHistory = taskHistoryRemoteService.selectByTaskIdAndIdentifier(history);
+
+        TaskHistory taskHistory;
+
+        try {
+            TaskHistory history = new TaskHistory();
+            history.setIdentifier(identifier);
+            history.setTaskId(taskId);
+
+            TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
+            taskHistory = taskHistoryRemoteService.selectByTaskIdAndIdentifier(history);
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to get workflow count.", ex);
+        }
+
+        Response response = new Response();
         response.setObject(taskHistory);
         response.setSuccess(true);
         return response;
@@ -151,34 +166,31 @@ public class DashboardController extends DefaultController {
 
     @RequestMapping(value = "/task/log", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Response getTaskLog(@RequestParam(defaultValue = "") String clusterName, @RequestParam(defaultValue = "") Long id) {
+    public Response taskLog(@RequestParam(defaultValue = "") String clusterName,
+                            @RequestParam(defaultValue = "") Long id) {
         EngineService engineService = getEngineService(clusterName);
 
-        Response response = new Response();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         try {
-            TaskHistory taskHistories = engineService.getTaskHistoryRemoteService().select(id);
-            String filename = null;
-            String task = taskHistories.getLogDirectory() + "/task.log";
-            if (new File(task).exists() && new File(task).length() == 0) {
-                String err = taskHistories.getLogDirectory() + "/err.log";
-                if (new File(err).exists()) {
-                    filename = err;
-                }
-            } else {
-                filename = task;
+            TaskHistoryRemoteService taskHistoryService = engineService.getTaskHistoryRemoteService();
+            TaskHistory taskHistories = taskHistoryService.select(id);
+
+            File file = new File(taskHistories.getLogDirectory() + "/task.log");
+            File errFile = new File(taskHistories.getLogDirectory() + "/err.log");
+
+            if (file.exists() && file.length() == 0 && errFile.exists()) {
+                file = errFile;
             }
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            FileUtils.copyFile(new File(filename), baos);
-            response.getMap().put("text", new String(baos.toByteArray()));
-            response.setSuccess(true);
+            FileUtils.copyFile(new File(file.getPath()), baos);
         } catch (Exception ex) {
-            // FIXME 여기 WholeBodyException을 수정해야하지 않을까??
-            response.setSuccess(false);
-            response.getError().setMessage("Unable to load a log file.");
-            response.getError().setException(ExceptionUtils.getFullStackTrace(ex));
-            if (ex.getCause() != null) response.getError().setCause(ex.getCause().getMessage());
+            throw new ServiceException("Unable to read logs.", ex);
         }
+
+        Response response = new Response();
+        response.getMap().put("text", new String(baos.toByteArray()));
+        response.setSuccess(true);
         return response;
     }
 
@@ -248,27 +260,25 @@ public class DashboardController extends DefaultController {
     /**
      * 지정한 조건의 워크플로우 실행 이력을 조회한다.
      *
-     * @param status 상태코드
-     * @param sort   정렬할 컬럼명
-     * @param dir    정렬 방식(ASC, DESC)
-     * @param start  시작 페이지
-     * @param limit  페이지당 건수
      * @return 워크플로우 실행 이력 목록
      */
     @RequestMapping(value = "actions", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Response getActions(@RequestParam(defaultValue = "") String clusterName,
-                               @RequestParam(defaultValue = "") String identifier,
-                               @RequestParam(defaultValue = "ALL") String status,
-                               @RequestParam(defaultValue = "ID") String sort,
-                               @RequestParam(defaultValue = "DESC") String dir,
-                               @RequestParam(defaultValue = "0") int start,
-                               @RequestParam(defaultValue = "16") int limit) {
+    public Response actions(@RequestParam(defaultValue = "") String clusterName,
+                            @RequestParam(defaultValue = "") String identifier) {
+        EngineService engineService = getEngineService(clusterName);
+
+        List<TaskHistory> taskHistories;
+
+        try {
+            TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
+            taskHistories = taskHistoryRemoteService.selectByIdentifier(identifier);
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to load task history.", ex);
+        }
 
         Response response = new Response();
-        EngineService engineService = getEngineService(clusterName);
-        List<TaskHistory> taskHistories = engineService.getTaskHistoryRemoteService().selectByIdentifier(identifier);
         response.getList().addAll(taskHistories);
         response.setSuccess(true);
         return response;
@@ -277,101 +287,121 @@ public class DashboardController extends DefaultController {
     @RequestMapping(value = "logs", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Response getLogs(@RequestParam(defaultValue = "") String clusterName,
-                            @RequestParam(defaultValue = "") String identifier,
-                            @RequestParam(defaultValue = "") String taskId,
-                            @RequestParam(defaultValue = "") String tabConditionKey) {
-        Response response = new Response();
+    public Response logs(@RequestParam(defaultValue = "") String clusterName,
+                         @RequestParam(defaultValue = "") String identifier,
+                         @RequestParam(defaultValue = "") String taskId,
+                         @RequestParam(defaultValue = "") String tabConditionKey) {
         EngineService engineService = getEngineService(clusterName);
-        TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
 
-        String log;
-        String script;
-        String command;
-        String error;
         Map<String, Object> map = new HashMap<>();
 
-        switch (tabConditionKey) {
-            case "log":
-                log = taskHistoryRemoteService.getTaskLog(identifier, taskId);
-                map.put("log", log);
-                break;
-            case "script":
-                script = taskHistoryRemoteService.getScript(identifier, taskId);
-                map.put("script", script);
-                break;
-            case "command":
-                command = taskHistoryRemoteService.getCommand(identifier, taskId);
-                map.put("command", command);
-                break;
-            case "error":
-                error = taskHistoryRemoteService.getError(identifier, taskId);
-                map.put("error", error);
-                break;
+        try {
+            TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
+
+            switch (tabConditionKey) {
+                case "log":
+                    map.put("log", taskHistoryRemoteService.getTaskLog(identifier, taskId));
+                    break;
+                case "command":
+                    map.put("command", taskHistoryRemoteService.getCommand(identifier, taskId));
+                    break;
+                case "script":
+                    map.put("script", taskHistoryRemoteService.getScript(identifier, taskId));
+                    break;
+                case "error":
+                    map.put("error", taskHistoryRemoteService.getError(identifier, taskId));
+                    break;
+                default:
+                    throw new ServiceException("Unable to receive tab number.");
+            }
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to read log.", ex);
         }
 
+        Response response = new Response();
         response.getMap().putAll(map);
         response.setSuccess(true);
         return response;
     }
 
-    @RequestMapping(value = "log", method = RequestMethod.GET)
+    @RequestMapping(value = "kill", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Response getLog(@RequestParam(defaultValue = "") String clusterName, @RequestParam(defaultValue = "") String identifier, @RequestParam(defaultValue = "") String taskId) {
-        Response response = new Response();
-        EngineService engineService = getEngineService(clusterName);
-        TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
-        String log = taskHistoryRemoteService.getTaskLog(identifier, taskId);
-        response.setObject(log);
-        response.setSuccess(true);
-        return response;
-    }
-
-    @RequestMapping(value = "script", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public Response getScript(@RequestParam(defaultValue = "") String clusterName, @RequestParam(defaultValue = "") String identifier, @RequestParam(defaultValue = "") String taskId) {
-        Response response = new Response();
-        EngineService engineService = getEngineService(clusterName);
-        TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
-        String script = taskHistoryRemoteService.getScript(identifier, taskId);
-        response.setObject(script);
-        response.setSuccess(true);
-        return response;
-    }
-
-    @RequestMapping(value = "kill", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public Response jobKill(@RequestParam(defaultValue = "") String clusterName, @RequestParam(defaultValue = "") String identifier, @RequestParam(defaultValue = "") String type) {
-        Response response = new Response();
+    public Response kill(@RequestParam(defaultValue = "") String clusterName,
+                         @RequestParam(defaultValue = "") String identifier,
+                         @RequestParam(defaultValue = "") String taskId,
+                         @RequestParam(defaultValue = "") String type) {
         EngineConfig engineConfig = getEngineConfig(clusterName);
         EngineService engineService = getEngineService(clusterName);
 
-        // FIXME type이 workflow일 경우 처리
-        if ("task".equals(type)) {
-            TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
-            List<TaskHistory> taskHistory = taskHistoryRemoteService.selectByIdentifier(identifier);
-            String[] idList = engineService.getDesignerRemoteService().idList(taskHistory.get(0).getLogDirectory(), "app.");
+        TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
+        WorkflowHistoryRemoteService workflowHistoryRemoteService = engineService.getWorkflowHistoryRemoteService();
 
-            // applicationId가 없으면 워크플로우를 하둡에 던지기 전이고 또한 java, python, r 등의 모듈이라고 볼 수 있다. 따라서 RUNNIG 중인 프로세스를 킬할 수 있다.
-            if (idList != null && idList.length > 0) {
-                for (String file : idList) {
-                    if (file.startsWith("app.")) {
-                        ResourceManagerRemoteService service = engineService.getResourceManagerRemoteService();
-                        service.killApplication(StringUtils.removePrefix(file, "app.", true), engineConfig);
-                        taskHistory.get(0).setStatus(State.FAILED.toString());
-                        taskHistoryRemoteService.updateByTaskIdAndIdentifier(taskHistory.get(0));
+        if ("task".equals(type)) {
+            TaskHistory taskHistory = new TaskHistory();
+            taskHistory.setIdentifier(identifier);
+            taskHistory.setTaskId(taskId);
+
+            taskHistory = taskHistoryRemoteService.selectByTaskIdAndIdentifier(taskHistory);
+
+            if ("RUNNING".equals(taskHistory.getStatus())) {
+                String[] idList = engineService.getDesignerRemoteService().idList(taskHistory.getLogDirectory(), "app.");
+                if (idList != null && idList.length > 0) {
+                    for (String file : idList) {
+                        if (file.startsWith("app.")) {
+                            ResourceManagerRemoteService service = engineService.getResourceManagerRemoteService();
+                            service.killApplication(StringUtils.removePrefix(file, "app.", true), engineConfig);
+                            taskHistory.setStatus(State.KILLED.toString());
+                            taskHistoryRemoteService.updateByTaskIdAndIdentifier(taskHistory);
+                        }
                     }
                 }
-            } else if ("RUNNING".equals(taskHistory.get(0).getStatus())) {
-                engineService.getDesignerRemoteService().killProccess(taskHistory.get(0).getLogDirectory());
-                taskHistory.get(0).setStatus(State.FAILED.toString());
-                taskHistoryRemoteService.updateByTaskIdAndIdentifier(taskHistory.get(0));
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new ServiceException("Unable to wait for process kill.", e);
+                }
+
+                engineService.getDesignerRemoteService().killProccess(taskHistory.getLogDirectory());
+                taskHistory.setStatus(State.KILLED.toString());
+                taskHistoryRemoteService.updateByTaskIdAndIdentifier(taskHistory);
+            }
+
+        } else {
+            List<TaskHistory> taskHistoryList = taskHistoryRemoteService.selectByIdentifier(identifier);
+            for (TaskHistory history : taskHistoryList) {
+                if ("RUNNING".equals(history.getStatus())) {
+                    String[] idList = engineService.getDesignerRemoteService().idList(history.getLogDirectory(), "app.");
+                    if (idList != null && idList.length > 0) {
+                        for (String file : idList) {
+                            if (file.startsWith("app.")) {
+                                ResourceManagerRemoteService service = engineService.getResourceManagerRemoteService();
+                                service.killApplication(StringUtils.removePrefix(file, "app.", true), engineConfig);
+                                history.setStatus(State.KILLED.toString());
+                                taskHistoryRemoteService.updateByTaskIdAndIdentifier(history);
+                            }
+                        }
+                    }
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new ServiceException("Unable to wait for process kill.", e);
+                    }
+
+                    engineService.getDesignerRemoteService().killProccess(history.getLogDirectory());
+                    history.setStatus(State.KILLED.toString());
+                    taskHistoryRemoteService.updateByTaskIdAndIdentifier(history);
+
+                    WorkflowHistory workflowHistory = workflowHistoryRemoteService.selectByIdentifier(identifier);
+                    workflowHistory.setStatus(State.KILLED);
+                    workflowHistoryRemoteService.updateStatus(workflowHistory);
+                }
             }
         }
 
+        Response response = new Response();
         response.setSuccess(true);
         return response;
     }
@@ -379,27 +409,55 @@ public class DashboardController extends DefaultController {
     @RequestMapping(value = "yarnId", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Response yarnId(@RequestParam(defaultValue = "") String clusterName, @RequestParam(defaultValue = "") String identifier, @RequestParam(defaultValue = "") String type) {
-        Response response = new Response();
+    public Response yarnId(@RequestParam(defaultValue = "") String clusterName,
+                           @RequestParam(defaultValue = "") String identifier,
+                           @RequestParam(defaultValue = "") String taskId,
+                           @RequestParam(defaultValue = "") String type) {
         EngineService engineService = getEngineService(clusterName);
 
-        // FIXME type이 workflow일 경우 처리
-        if ("task".equals(type)) {
-            TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
-            List<TaskHistory> taskHistory = taskHistoryRemoteService.selectByIdentifier(identifier);
-            String[] idList = engineService.getDesignerRemoteService().idList(taskHistory.get(0).getLogDirectory(), "app.");
+        TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
 
-            if (idList != null && idList.length > 0) {
-                for (String file : idList) {
-                    if (file.startsWith("app.")) {
-                        Map<String, String> map = new HashMap<>();
-                        map.put("id", StringUtils.removePrefix(file, "app.", true));
-                        response.getList().add(map);
+        List<Map> idList = new ArrayList<>();
+
+        try {
+            if ("task".equals(type)) {
+                TaskHistory taskHistory = new TaskHistory();
+                taskHistory.setIdentifier(identifier);
+                taskHistory.setTaskId(taskId);
+
+                taskHistory = taskHistoryRemoteService.selectByTaskIdAndIdentifier(taskHistory);
+                String[] ids = engineService.getDesignerRemoteService().idList(taskHistory.getLogDirectory(), "app.");
+
+                if (ids != null && ids.length > 0) {
+                    for (String file : ids) {
+                        if (file.startsWith("app.")) {
+                            Map<String, String> map = new HashMap<>();
+                            map.put("id", StringUtils.removePrefix(file, "app.", true));
+                            idList.add(map);
+                        }
+                    }
+                }
+            } else {
+                List<TaskHistory> taskHistoryList = taskHistoryRemoteService.selectByIdentifier(identifier);
+                for (TaskHistory history : taskHistoryList) {
+                    String[] ids = engineService.getDesignerRemoteService().idList(history.getLogDirectory(), "app.");
+                    if (ids != null && ids.length > 0) {
+                        for (String file : ids) {
+                            if (file.startsWith("app.")) {
+                                Map<String, String> map = new HashMap<>();
+                                map.put("id", StringUtils.removePrefix(file, "app.", true));
+                                idList.add(map);
+                            }
+                        }
                     }
                 }
             }
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to get yarnId.", ex);
         }
 
+        Response response = new Response();
+        response.getList().addAll(idList);
         response.setSuccess(true);
         return response;
     }
@@ -407,56 +465,93 @@ public class DashboardController extends DefaultController {
     @RequestMapping(value = "mrId", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Response mrId(@RequestParam(defaultValue = "") String clusterName, @RequestParam(defaultValue = "") String identifier, @RequestParam(defaultValue = "") String type) {
-        Response response = new Response();
+    public Response mrId(@RequestParam(defaultValue = "") String clusterName,
+                         @RequestParam(defaultValue = "") String identifier,
+                         @RequestParam(defaultValue = "") String taskId,
+                         @RequestParam(defaultValue = "") String type) {
         EngineService engineService = getEngineService(clusterName);
 
-        // FIXME type이 workflow일 경우 처리
-        if ("task".equals(type)) {
-            TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
-            List<TaskHistory> taskHistory = taskHistoryRemoteService.selectByIdentifier(identifier);
-            String[] idList = engineService.getDesignerRemoteService().idList(taskHistory.get(0).getLogDirectory(), "hadoop.");
+        TaskHistoryRemoteService taskHistoryRemoteService = engineService.getTaskHistoryRemoteService();
 
-            if (idList != null && idList.length > 0) {
-                for (String file : idList) {
-                    if (file.startsWith("hadoop.")) {
-                        Map<String, String> map = new HashMap<>();
-                        map.put("id", StringUtils.removePrefix(file, "hadoop.", true));
-                        response.getList().add(map);
+        List<Map> idList = new ArrayList<>();
+
+        try {
+            if ("task".equals(type)) {
+                TaskHistory taskHistory = new TaskHistory();
+                taskHistory.setIdentifier(identifier);
+                taskHistory.setTaskId(taskId);
+
+                taskHistory = taskHistoryRemoteService.selectByTaskIdAndIdentifier(taskHistory);
+                String[] ids = engineService.getDesignerRemoteService().idList(taskHistory.getLogDirectory(), "hadoop.");
+
+                if (ids != null && ids.length > 0) {
+                    for (String file : ids) {
+                        if (file.startsWith("hadoop.")) {
+                            Map<String, String> map = new HashMap<>();
+                            map.put("id", StringUtils.removePrefix(file, "hadoop.", true));
+                            idList.add(map);
+                        }
+                    }
+                }
+            } else {
+                List<TaskHistory> taskHistoryList = taskHistoryRemoteService.selectByIdentifier(identifier);
+                for (TaskHistory history : taskHistoryList) {
+                    String[] ids = engineService.getDesignerRemoteService().idList(history.getLogDirectory(), "hadoop.");
+                    if (ids != null && ids.length > 0) {
+                        for (String file : ids) {
+                            if (file.startsWith("hadoop.")) {
+                                Map<String, String> map = new HashMap<>();
+                                map.put("id", StringUtils.removePrefix(file, "hadoop.", true));
+                                idList.add(map);
+                            }
+                        }
                     }
                 }
             }
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to get mrId.", ex);
         }
 
+        Response response = new Response();
+        response.getList().addAll(idList);
         response.setSuccess(true);
         return response;
     }
 
     @RequestMapping(value = "timeseries", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Response timeseries(@RequestParam String clusterName, @RequestParam String status) {
+    public Response timeseries(@RequestParam String clusterName,
+                               @RequestParam String status) {
         Response response = new Response();
         response.setSuccess(true);
         int level = SessionUtils.getLevel();
 
         ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
         JdbcTemplate jdbcTemplate = applicationContext.getBean(JdbcTemplate.class);
-        String query = null;
+        String query;
         if (level != 1) { // 일반 사용자의 경우 자기것만 보여줘야 함
-            if ("ALL".equals(status)) {
-                query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE USERNAME = '" + SessionUtils.getUsername() + "' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
-            } else if ("SUCCESS".equals(status)) {
-                query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, 'SUCCESS' as type, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE USERNAME = '" + SessionUtils.getUsername() + "' AND STATUS = 'SUCCESS' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
-            } else {
-                query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, 'FAILED' as type, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE USERNAME = '" + SessionUtils.getUsername() + "' AND STATUS <> 'SUCCESS' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
+            switch (status) {
+                case "ALL":
+                    query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE USERNAME = '" + SessionUtils.getUsername() + "' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
+                    break;
+                case "SUCCESS":
+                    query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, 'SUCCESS' as type, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE USERNAME = '" + SessionUtils.getUsername() + "' AND STATUS = 'SUCCESS' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
+                    break;
+                default:
+                    query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, 'FAILED' as type, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE USERNAME = '" + SessionUtils.getUsername() + "' AND STATUS <> 'SUCCESS' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
+                    break;
             }
         } else {
-            if ("ALL".equals(status)) {
-                query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
-            } else if ("SUCCESS".equals(status)) {
-                query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, 'SUCCESS' as type, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE STATUS = 'SUCCESS' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
-            } else {
-                query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, 'FAILED' as type, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE AND STATUS <> 'SUCCESS' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
+            switch (status) {
+                case "ALL":
+                    query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
+                    break;
+                case "SUCCESS":
+                    query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, 'SUCCESS' as type, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE STATUS = 'SUCCESS' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
+                    break;
+                default:
+                    query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(START_DATE),'%Y-%m-%d %H') as time, 'FAILED' as type, START_DATE from FL_WORKFLOW_HISTORY, (SELECT @row := 0) r WHERE AND STATUS <> 'SUCCESS' AND START_DATE > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_DATE,'%Y-%m-%d %H') ORDER BY START_DATE asc";
+                    break;
             }
         }
         List<Map<String, Object>> list = jdbcTemplate.queryForList(MessageFormatter.format(query, clusterName).getMessage());

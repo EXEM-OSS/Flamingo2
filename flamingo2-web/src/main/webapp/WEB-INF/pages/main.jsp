@@ -31,6 +31,8 @@
     <link type="text/css" rel="stylesheet" href="/resources/css/chosen.css"/>
     <link type="text/css" rel="stylesheet" href="/resources/css/ace.css"/>
     <link type="text/css" rel="stylesheet" href="/resources/css/node-list.css"/>
+    <link type="text/css" rel="stylesheet" href="/resources/lib/vis/vis.min.css"/>
+    <link type="text/css" rel="stylesheet" href="/resources/css/timeline-view.css"/>
     <!--[if IE 9]>
     <link type="text/css" rel="stylesheet" href="/resources/css/ie.css"/>
     <![endif]-->
@@ -47,6 +49,7 @@
     <script type="text/javascript" src="/resources/lib/ace/ace-extra.js"></script>
     <script type="text/javascript" src="/resources/lib/ace/ace.sidebar-scroll-1.js"></script>
     <script type="text/javascript" src="/resources/lib/ace/chosen.jquery.js"></script>
+    <script type="text/javascript" src="/resources/lib/vis/vis.min.js"></script>
 
     <!-- OpenGraph -->
     <!-- app.json으로 이동하지 마세요 오류납니다.-->
@@ -93,6 +96,7 @@
     <script type="text/javascript">
         SESSION = {};
         SESSION.USERNAME = '${username}';
+        SESSION.D2USERNAME = '${d2Username}';
         SESSION.USERGROUP = '${userGroup}';
         SESSION.NAME = '${name}';
         SESSION.EMAIL = '${email}';
@@ -128,12 +132,16 @@
         });
 
         var ENGINE = {};
+        var CUSTOMVIEW=null;
         var WEBSOCKET;
         var MAHOUT = {};
         MAHOUT.JAR = '<%=ConfigurationHelper.getHelper().get("mahout.mapreduce.jar.path")%>';
 
         var ANKUS = {};
         ANKUS.JAR = '<%=ConfigurationHelper.getHelper().get("flamingo.mapreduce.jar.path")%>';
+
+        var ETL = {};
+        ETL.JAR = '<%=ConfigurationHelper.getHelper().get("flamingo.mapreduce.jar.path")%>';
     </script>
 
 </head>

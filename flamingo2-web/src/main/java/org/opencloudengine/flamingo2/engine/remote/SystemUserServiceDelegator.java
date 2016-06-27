@@ -17,8 +17,10 @@
 package org.opencloudengine.flamingo2.engine.remote;
 
 import org.apache.commons.lang.StringUtils;
-import org.opencloudengine.flamingo2.agent.system.SystemUserService;
+import org.opencloudengine.flamingo2.agent.system.SystemUserAgentService;
 import org.opencloudengine.flamingo2.core.exception.ServiceException;
+import org.opencloudengine.flamingo2.engine.system.UserRemoteService;
+import org.opencloudengine.flamingo2.util.FileUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean;
 
@@ -26,7 +28,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SystemUserServiceDelegator implements SystemUserService, InitializingBean {
+import static org.slf4j.helpers.MessageFormatter.arrayFormat;
+
+public class SystemUserServiceDelegator implements UserRemoteService, InitializingBean {
 
     private String urls;
 
@@ -43,8 +47,8 @@ public class SystemUserServiceDelegator implements SystemUserService, Initializi
     public boolean existUser(String username) {
         for (String url : agentUrls) {
             try {
-                SystemUserService remoteService = getRemoteService(url);
-                if (!remoteService.existUser(username)) {
+                SystemUserAgentService agentService = getAgentService(url);
+                if (!agentService.existUser(username)) {
                     return false;
                 }
             } catch (Exception ex) {
@@ -55,11 +59,15 @@ public class SystemUserServiceDelegator implements SystemUserService, Initializi
     }
 
     @Override
-    public boolean createUser(String home, String name, String username) {
+    public boolean createUser(String linuxUserHome, String username, String name, String password) {
+        if (!FileUtils.pathValidator(linuxUserHome)) {
+            throw new ServiceException("Invalid path. Please check the path.");
+        }
+
         for (String url : agentUrls) {
             try {
-                SystemUserService remoteService = getRemoteService(url);
-                if (!remoteService.createUser(home, name, username)) {
+                SystemUserAgentService agentService = getAgentService(url);
+                if (agentService.existUser(username) || !agentService.createUser(username, name, password, linuxUserHome)) {
                     return false;
                 }
             } catch (Exception ex) {
@@ -70,11 +78,11 @@ public class SystemUserServiceDelegator implements SystemUserService, Initializi
     }
 
     @Override
-    public boolean changeUser(String username, String password) {
+    public boolean updatePassword(String username, String newPassword) {
         for (String url : agentUrls) {
             try {
-                SystemUserService remoteService = getRemoteService(url);
-                if (!remoteService.changeUser(username, password)) {
+                SystemUserAgentService agentService = getAgentService(url);
+                if (!agentService.changeUser(username, newPassword)) {
                     return false;
                 }
             } catch (Exception ex) {
@@ -88,8 +96,8 @@ public class SystemUserServiceDelegator implements SystemUserService, Initializi
     public boolean deleteUser(String username) {
         for (String url : agentUrls) {
             try {
-                SystemUserService remoteService = getRemoteService(url);
-                if (!remoteService.deleteUser(username)) {
+                SystemUserAgentService agentService = getAgentService(url);
+                if (!agentService.deleteUser(username)) {
                     return false;
                 }
             } catch (Exception ex) {
@@ -99,12 +107,18 @@ public class SystemUserServiceDelegator implements SystemUserService, Initializi
         return true;
     }
 
-    private SystemUserService getRemoteService(String url) {
+    /**
+     * System Agent와 통신하기 위한 정보를 가져온다.
+     *
+     * @param url System Agent Url
+     * @return System User Service
+     */
+    private SystemUserAgentService getAgentService(String url) {
         HttpInvokerProxyFactoryBean factoryBean = new HttpInvokerProxyFactoryBean();
-        factoryBean.setServiceUrl(url);
-        factoryBean.setServiceInterface(SystemUserService.class);
+        factoryBean.setServiceUrl(arrayFormat("http://{}/remote/agent/system", new Object[]{url}).getMessage());
+        factoryBean.setServiceInterface(SystemUserAgentService.class);
         factoryBean.afterPropertiesSet();
-        return (SystemUserService) factoryBean.getObject();
+        return (SystemUserAgentService) factoryBean.getObject();
     }
 
     public void setUrls(String urls) {

@@ -1,0 +1,97 @@
+[[archive-mapreduce]]
+
+== 아카이브 맵리듀스
+
+Flamingo는 사용자가 맵리듀스 작업을 수행한 로그 정보를 관리하기 위해 다음의 기능 들을 제공합니다.
+
+image::archive/mapreduce/archive-mapreduce.png[scaledwidth=100%,아카이브 맵리듀스 메인 화면]
+
+=== 통계 조건
+
+통계 조건은 조회유형, 시작일 및 종료일 조건을 통해 MapReduce Job을 실행한 로그 정보를 확인할 수 있습니다. 각 조회조건을 입력 후 조회 버튼을 클릭하면 해당 결과가 차트 정보로 표시됩니다. 입력한 조회조건을 모두 삭제하려면 초기화 버튼을 선택하십시오.
+
+image::archive/mapreduce/archive-mapreduce-statistics0.png[scaledwidth=100%,아카이브 맵리듀스 통계 조건 화면]
+
+조회조건은 다음의 두 가지 조건을 제공합니다.
+
+* 시작일/종료일
+* 조회유형
+
+==== 시작일/종료일
+
+시작일 및 종료일은 기본적으로 로컬 DB에 저장된 모든 정보를 가져옵니다. 또한 사용자가 직접 날짜를 지정해서 해당 기간의 로그 정보를 확인할 수 있습니다.
+
+image::archive/mapreduce/archive-mapreduce-statistics1.png[scaledwidth=100%,아카이브 맵리듀스 시작일/종료일 화면]
+
+==== 조회유형
+
+조회유형은 All, Finished, Failed, Killed 조건으로 로그 정보를 조회할 수 있습니다.
+
+image::archive/mapreduce/archive-mapreduce-statistics2.png[scaledwidth=100%,아카이브 맵리듀스 조회유형 화면]
+
+=== 완료한 MapReduce Job
+
+완료한 MapReduce Job은 로컬 DB에 저장된 모든 정보를 표시합니다. 기본값은 모든 기간에 해당되는 로그 정보를 가져오며, 조회조건을 통해 특정 기간 또는 조회유형, MapReduce Job명으로 로그 정보를 조회할 수 있습니다. 입력한 조회조건은 초기화 버튼을 선택 시 모두 삭제됩니다.
+
+조회조건은 다음과 같은 조건을 제공합니다.
+
+* 시작일/종료일
+* 조회유형
+* MapReduce Job명
+* 페이징
+
+시작일 및 종료일을 입력 후 조회 버튼을 클릭하면 가장 최근에 저장된 로그 정보부터 정렬되어 표시됩니다.
+
+image::archive/mapreduce/archive-mapreduce-list0.png[scaledwidth=100%,완료한 MapReduce Job 화면]
+
+==== 시작일/종료일
+
+특정 시작일 및 종료일로 로그 정보를 조회하기 위해서는 값을 모두 선택해야 하며, 선택한 날짜 기간에 해당되는 로그 정보가 최근 정보 순서대로 정렬되어 표시됩니다.
+
+image::archive/mapreduce/archive-mapreduce-list1.png[scaledwidth=100%,아카이브 맵리듀스 시작일/종료일 화면]
+
+==== 조회유형
+
+조회유형은 All, Finished, Failed, Killed 조건으로 로그 정보를 조회할 수 있습니다.
+
+image::archive/mapreduce/archive-mapreduce-list2.png[scaledwidth=100%,아카이브 맵리듀스 조회유형 화면]
+
+==== MapReduce Job명
+
+MapReduce Job명 입력할 경우 입력한 MapReduce Job명을 포함하는 로그 정보가 표시됩니다.
+
+image::archive/mapreduce/archive-mapreduce-list3.png[scaledwidth=100%,아카이브 맵리듀스 목록 화면]
+
+==== 페이징
+
+페이지 버튼 및 입력 필드에 특정 페이지 입력을 통해 전체 목록을 조회 할 수 있습니다. 
+
+image::archive/mapreduce/archive-mapreduce-list4.png[scaledwidth=100%,아카이브 맵리듀스 목록 화면]
+
+갱신 버튼을 선택할 경우 조회조건에서 입력한 조건에 해당하는 결과값으로 첫 페이지로 목록이 업데이트됩니다.
+
+image::archive/mapreduce/archive-mapreduce-list5.png[scaledwidth=100%,아카이브 맵리듀스 목록 화면]
+
+=== MapReduce Job 요약
+
+MapReduce Job 요약탭을 선택하면 선택한 MapReduce Job에 해당하는 요약 정보가 표시됩니다.
+
+image::archive/mapreduce/archive-mapreduce-summary.png[scaledwidth=100%,MapReduce Job 요약탭 화면]
+
+=== MapReduce Job 카운터
+
+MapReduce Job 카운터탭을 선택하면 선택한 MapReduce Job에 해당하는 카운터 정보가 표시됩니다.
+
+image::archive/mapreduce/archive-mapreduce-counter.png[scaledwidth=100%,MapReduce Job 카운터탭 화면]
+
+=== MapReduce Job 설정값
+
+MapReduce Job 설정값탭을 선택하면 선택한 MapReduce Job에 해당하는 설정값 정보가 표시됩니다.
+
+image::archive/mapreduce/archive-mapreduce-configuration.png[scaledwidth=100%,MapReduce Job 설정값탭 화면]
+
+=== MapReduce Job 태스크
+
+MapReduce Job 태스크탭을 선택하면 선택한 MapReduce Job에 해당하는 태스크 정보가 표시됩니다.
+
+image::archive/mapreduce/archive-mapreduce-task.png[scaledwidth=100%,MapReduce Job 태스크탭 화면]

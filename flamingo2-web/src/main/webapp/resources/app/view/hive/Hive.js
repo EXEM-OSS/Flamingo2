@@ -84,6 +84,7 @@ Ext.define('Flamingo2.view.hive.Hive', {
                     handler: 'onRedoClick'
                 },
                 '->',
+/*
                 {
                     text: message.msg('fs.hdfs.common.browser'),
                     iconCls: 'designer-filesystem',
@@ -91,6 +92,7 @@ Ext.define('Flamingo2.view.hive.Hive', {
                         click: 'onHdfsBrowserClick'
                     }
                 },
+*/
                 {
                     text: message.msg('common.example'),
                     iconCls: 'common-question',

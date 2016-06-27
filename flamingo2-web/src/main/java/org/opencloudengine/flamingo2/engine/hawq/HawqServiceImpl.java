@@ -43,7 +43,7 @@ import java.util.*;
 /**
  * Pivotal HAWQ Service Implements.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 @Service
@@ -61,7 +61,7 @@ public class HawqServiceImpl implements HawqService {
     public Map<String, Object> connect(Map<String, Object> params) throws SQLException {
         EngineConfig engineConfig = (EngineConfig) params.get("engineConfig");
         String userName = engineConfig.getHawqUser();
-        params.put("userName", userName);// for SHOW_DEFAULT_DATABASES_QUERY
+        params.put("databaseName", engineConfig.getHawqDefaultDatabaseName());// for SHOW_DEFAULT_DATABASES_QUERY
 
         Map<String, Object> hawqMetadata = (Map<String, Object>) repository.executeSelectOne("SHOW_DEFAULT_DATABASES_QUERY", params);
 

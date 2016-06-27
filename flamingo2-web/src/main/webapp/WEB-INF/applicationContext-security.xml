@@ -43,6 +43,8 @@
 		<intercept-url pattern="/ggplot2/**/*" access="permitAll"/>
 		<intercept-url pattern="/hawq/auth/**/*" access="hasRole('ROLE_ADMIN')"/>
         <intercept-url pattern="/system/license/regist" access="permitAll"/>
+        <intercept-url pattern="/system/license/registTrial" access="permitAll"/>
+        <intercept-url pattern="/public/**/*" access="permitAll"/>
 
 		<intercept-url pattern="/**" access="hasRole('ROLE_USER')"/>
 

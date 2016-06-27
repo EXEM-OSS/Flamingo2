@@ -1,0 +1,10 @@
+[[info]]
+
+== Flamingo
+
+The followings are the links to the Flamingo related websites. We also have a Facebook Flamingo page, all the news will updated on Facebook.
+
+* Community - https://www.facebook.com/groups/flamingo.workflow/[Flamingo Facebook (Korean Only)]
+* Company - http://www.cloudine.io[Cloudine, Inc.]
+* Project - http://www.opencloudengine.org[Open Cloud Engine]
+

@@ -43,38 +43,71 @@ public class HdfsBrowserAuth implements Serializable {
     private boolean deleteDir;
 
     private boolean mergeDir;
-    
+
     private boolean permissionDir;
-    
+
     private boolean createDbDir;
-    
+
     private boolean createTableDir;
-    
+
     private boolean copyFile;
-    
+
     private boolean moveFile;
-    
+
     private boolean renameFile;
-    
+
     private boolean deleteFile;
-    
+
     private boolean uploadFile;
-    
+
     private boolean downloadFile;
-    
+
     private boolean viewFile;
 
     private boolean permissionFile;
+
+    private boolean copyToLocalFile;
+
+    private boolean streamingFile;
 
     private Timestamp registerDate;
 
     private Timestamp updateDate;
 
-    private Long authId;
+    private short authId;
 
     private short level;
 
-    public HdfsBrowserAuth() {}
+    public HdfsBrowserAuth() {
+    }
+
+    public HdfsBrowserAuth(long id, String hdfsPathPattern, boolean createDir, boolean copyDir, boolean moveDir, boolean renameDir, boolean deleteDir, boolean mergeDir, boolean permissionDir, boolean createDbDir, boolean createTableDir, boolean copyFile, boolean moveFile, boolean renameFile, boolean deleteFile, boolean uploadFile, boolean downloadFile, boolean viewFile, boolean permissionFile, boolean copyToLocalFile, boolean streamingFile, Timestamp registerDate, Timestamp updateDate, short authId, short level) {
+        this.id = id;
+        this.hdfsPathPattern = hdfsPathPattern;
+        this.createDir = createDir;
+        this.copyDir = copyDir;
+        this.moveDir = moveDir;
+        this.renameDir = renameDir;
+        this.deleteDir = deleteDir;
+        this.mergeDir = mergeDir;
+        this.permissionDir = permissionDir;
+        this.createDbDir = createDbDir;
+        this.createTableDir = createTableDir;
+        this.copyFile = copyFile;
+        this.moveFile = moveFile;
+        this.renameFile = renameFile;
+        this.deleteFile = deleteFile;
+        this.uploadFile = uploadFile;
+        this.downloadFile = downloadFile;
+        this.viewFile = viewFile;
+        this.permissionFile = permissionFile;
+        this.copyToLocalFile = copyToLocalFile;
+        this.streamingFile = streamingFile;
+        this.registerDate = registerDate;
+        this.updateDate = updateDate;
+        this.authId = authId;
+        this.level = level;
+    }
 
     public long getId() {
         return id;
@@ -228,6 +261,22 @@ public class HdfsBrowserAuth implements Serializable {
         this.permissionFile = permissionFile;
     }
 
+    public boolean isCopyToLocalFile() {
+        return copyToLocalFile;
+    }
+
+    public void setCopyToLocalFile(boolean copyToLocalFile) {
+        this.copyToLocalFile = copyToLocalFile;
+    }
+
+    public boolean isStreamingFile() {
+        return streamingFile;
+    }
+
+    public void setStreamingFile(boolean streamingFile) {
+        this.streamingFile = streamingFile;
+    }
+
     public Timestamp getRegisterDate() {
         return registerDate;
     }
@@ -244,11 +293,11 @@ public class HdfsBrowserAuth implements Serializable {
         this.updateDate = updateDate;
     }
 
-    public Long getAuthId() {
+    public short getAuthId() {
         return authId;
     }
 
-    public void setAuthId(Long authId) {
+    public void setAuthId(short authId) {
         this.authId = authId;
     }
 
@@ -282,6 +331,8 @@ public class HdfsBrowserAuth implements Serializable {
                 ", downloadFile=" + downloadFile +
                 ", viewFile=" + viewFile +
                 ", permissionFile=" + permissionFile +
+                ", copyToLocalFile=" + copyToLocalFile +
+                ", streamingFile=" + streamingFile +
                 ", registerDate=" + registerDate +
                 ", updateDate=" + updateDate +
                 ", authId=" + authId +

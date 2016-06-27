@@ -1,0 +1,236 @@
+[[monitoring]]
+
+== 모니터링
+
+Flamingo 2는 Apache Hadoop EcoSystem을 구성하는 각종 컴포넌트 및 리소스를 모니터링하는 기능을 제공합니다. 다음은 Flamingo 2에서 수집하는 모니터링 정보입니다.
+
+* 리소스 관리자
+* YARN 애플리케이션
+* MapReduce
+* 네임 노드
+* 데이터 노드
+* 클러스터 노드
+* MapR CLDB
+
+=== 리소스 관리자
+
+리소스 관리자는 YARN에서 새로 추가된 Resource Manager의 현황정보를 모니터링하는 기능을 제공합니다.
+
+image::monitoring/resourcemanager/rm1.png[scaledwidth=100%,리소스 관리자 모니터링]
+
+Resource Manager의 기본 요약 정보에는 Queue, 컨테이너, 노드 상태, JVM Heap 등에 대한 현황 정보를 간단하게 확인할 때 사용할 수 있습니다.
+
+image::monitoring/resourcemanager/rm2.png[scaledwidth=100%,리소스 관리자 요약 정보]
+
+실행중인 YARN 애플리케이션 목록은 실행중인 YARN 애플리케이션 목록이 표시됩니다. 현재 실행중인 목록만 확인하고자 할 때 사용할 수 있습니다.
+
+image::monitoring/resourcemanager/rm6.png[scaledwidth=100%,실행중인 YARN 애플리케이션 목록]
+
+다음 화면은 리소스 관리자의 중요한 상황 정보를 차트로 표시하는 기능입니다.
+
+image::monitoring/resourcemanager/rm4.png[scaledwidth=100%,리소스 관리자 시각화 차트]
+
+리스소 관리자 설정정보는 리소스 관리자의 `yarn-site.xml` 파일 등에 정의되어 있는 Key Value 설정 값을 표시하는 기능입니다. 리소스 관리자의 환경설정 정보를 확인하는데 사용할 수 있습니다.
+
+image::monitoring/resourcemanager/rm5.png[scaledwidth=100%,리소스 관리자 설정정보]
+
+[NOTE]
+리소스 관리자에 대한 정보는 Flamingo Resource Manager Agent를 통해서 정보를 수집하므로 Flamingo Resource Manager Agent가 설치되어 있지 않으면 정보를 확인할 수 없습니다.
+
+=== YARN 애플리케이션
+
+Flamingo는 Flamingo Resource Manager Agent를 이용하여 YARN 애플리케이션 정보를 수집하여 표시합니다.
+
+image::monitoring/yarn/yarn.png[scaledwidth=100%,YARN 애플리케이션 목록]
+
+==== 애플리케이션 통계
+
+YARN 애플리케이션 모니터링 화면에서 상단에는 다음과 같이 추이 그래프가 표시됩니다. 추이 그래프는 최근 1주일간 1시간 단위로 집계를 하여 표시합니다.
+
+image::monitoring/yarn/yarn1.png[scaledwidth=100%,YARN 애플리케이션 통계추이 그래프]
+
+==== 애플리케이션 목록
+
+YARN 애플리케이션 모니터링 화면에서 중간에는 다음과 같이 YARN 애플리케이션 목록이 표시됩니다. 완료된 작업과 실행중인 YARN 애플리케이션 목록이 모두 표시됩니다.
+
+image::monitoring/yarn/yarn2.png[scaledwidth=100%,YARN 애플리케이션 목록]
+
+실행중인 애플리케이션이 있는 경우 다음과 같이 표시됩니다. 이때 애플리케이션을 강제종료하거나 큐를 이동할 수 있습니다.
+
+image::monitoring/yarn/yarn3.png[scaledwidth=100%,YARN 애플리케이션 목록]
+
+==== 애플리케이션 요약
+
+YARN 애플리케이션 목록에서 애플리케이션을 선택하면 다음과 같이 애플리케이션의 요약 정보를 확인할 수 있습니다. 애플리케이션이 종료된 상태와 실행중인 상태에 따라서 요약 정보가 다르게 표시됩니다.
+
+image::monitoring/yarn/yarn4.png[scaledwidth=100%,YARN 애플리케이션 요약]
+
+==== 애플리케이션 로그
+
+YARN 애플리케이션 목록에서 애플리케이션을 선택하면 다음과 같이 애플리케이션의 실행 로그를 확인할 수 있습니다. 단, 애플리케이션 로그는 실행중인 애플리케이션은 확인할 수 없습니다.
+
+image::monitoring/yarn/yarn5.png[scaledwidth=100%,YARN 애플리케이션 로그]
+
+[[appmaster]]
+==== 애플리케이션 마스터
+
+Hadoop 2에서는 Hadoop 1의 Job Tracker의 기능중 일부를 애플리케이션 마스터에서 하도록 구분하였습니다. 애플리케이션 마스터에 접근하려면 Hadoop Cluster의 각 노드와 동일 네트워크에 Flamingo 사용자가 연결되어 있어야 합니다.
+
+image::monitoring/yarn/yarn4.png[scaledwidth=100%,비활성화된 YARN 애플리케이션 마스터]
+
+이 기능을 활성화 하려면 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일에 `monitoring.yarn.appmaster.disabled` 설정값을 true로 설정해야 합니다.
+
+[source]
+----
+monitoring.yarn.appmaster.disabled=false
+----
+
+이때 다음과 같이 애플리케이션 마스터 탭이 활성화되고 애플리케이션 마스터를 확인할 수 있습니다.
+
+image::monitoring/yarn/yarn6.png[scaledwidth=100%,활성화된 YARN 애플리케이션 마스터]
+
+애플리케이션 마스터는 애플리케이션의 종류에 따라서 다르며, 애플리케이션 마스터를 제공하는 제공자가 접속 URL 정보를 제공해야만 애플리케이션 마스터에 접근할 수 있습니다.
+
+애플리케이션 마스터는 애플리케이션이 실패 또는 성공한 애플리케이션에 대해서는 확인할 수 없습니다. 즉, 실행중인 애플리케이션에 대해서만 애플리케이션 마스터에 접근할 수 있습니다.
+
+참고로, YARN 애플리케이션에 대한 정보는 Flamingo Resource Manager Agent 및 History Server (Timeline Server)를 통해서 정보를 수집하므로 Flamingo Resource Manager Agent와 History Server가 설치되어 있지 않으면 정보를 확인할 수 없습니다.
+
+==== 애플리케이션 강제종료 및 큐 이동
+
+실행중인 애플리케이션에 대해서 다음과 같이 목록에 표시가 되면 강제종료 버튼을 누르는 경우 애플리케이션이 강제종료됩니다. 또한 이동할 큐를 선택하면 해당 큐로 이동됩니다.
+
+image::monitoring/yarn/yarn3.png[scaledwidth=100%,강제종료 및 큐 이동]
+
+Flamingo 2.0.0에서는 관리자 및 작업의 소유자만 강제종료하는 것은 지원하지 않습니다. Flamingo 2.0.0 이후 버전에서 지원할 계획입니다.
+
+==== 추가 메뉴
+
+다음과 같이 메뉴를 통해서 팝업창으로 내용을 볼 수 있습니다.
+
+image::monitoring/yarn/yarn7.png[scaledwidth=30%,추가 메뉴]
+
+애플리케이션 로그를 팝업창으로 보고자 하는 경우 메뉴를 선택하면 다음과 같이 표시됩니다.
+
+image::monitoring/yarn/yarn8.png[scaledwidth=100%,추가 메뉴]
+
+애플리케이션 마스터를 팝업창으로 보고자 하는 경우 메뉴를 선택하면 다음과 같이 표시됩니다.
+
+image::monitoring/yarn/yarn9.png[scaledwidth=100%,추가 메뉴]
+
+=== MapReduce
+
+MapReduce Job 모니터링은 MapReduce Job의 실행 이력을 보관하고 있는 History Server와 연동하여 동작합니다. MapReduce Job 모니터링은 다음의 기능을 제공합니다.
+
+* 최근 1주일간 추이 그래프
+* 완료한 MapReduce Job 목록
+* MapReduce Job 요약정보
+* MapReduce Job 카운터
+* MapReduce Job 설정값
+* MapReduce Job 태스크
+
+다음은 MapReduce Job 모니터링 화면입니다.
+
+image::monitoring/mapreduce/mr1.png[scaledwidth=100%,MapReduce Job 모니터링]
+
+==== 최근 1주일간 추이 그래프
+
+최근 1주일간 실행한 MapReduce Job의 추이 그래프입니다. 1시간 단위로 통계를 산출하여 표시합니다.
+
+image::monitoring/mapreduce/mr2.png[scaledwidth=100%,최근 1주일간 추이 그래프]
+
+[NOTE]
+추이 그래프는 Flamingo Collector를 통해서 정보를 수집하므로 Flamingo Collector가 설치되어 있지 않으면 정보를 확인할 수 없습니다.
+
+==== 완료한 MapReduce Job 목록
+
+완료한 MapReduce Job 목록은 History Server를 통해서 수집하여 표시합니다. 시간 순서대로 표시하며 핵식 정보를 요약하여 표시합니다.
+
+image::monitoring/mapreduce/mr3.png[scaledwidth=100%,완료한 MapReduce Job 목록]
+
+[NOTE]
+실행중인 MapReduce Job은 표시되지 않으며 실행중인 MapReduce Job의 상태를 확인하려면 YARN 모니터링 및 Application Master를 통해서 확인해야 합니다.
+
+==== MapReduce Job 요약정보
+
+MapReduce Job 요약정보는 MapReduce Job 목록에서 해당 Job을 선택했을 때 하단에 다음과 같이 표시하게 됩니다. MapReduce Job의 실행 상태, 사용자, Job ID, 수행 시간 등을 표시합니다.
+
+image::monitoring/mapreduce/mr4.png[scaledwidth=100%,MapReduce Job 요약정보]
+
+==== MapReduce Job 카운터
+
+MapReduce Job 카운터는 MapReduce Job 목록에서 해당 Job을 선택했을 때 하단에 다음과 같이 표시하게 됩니다. MapReduce Job이 완료된 후에 각 Map, Reduce Task에서 취합한 카운터 정보를 확인할 수 있습니다.
+MapReduce 개발자 입장에서 이 정보는 파일의 크기, 개수, MapReduce가 동작하면서 남긴 각종 값들을 확인할 수 있는 중요한 정보입니다.
+
+image::monitoring/mapreduce/mr5.png[scaledwidth=100%,MapReduce Job 카운터]
+
+==== MapReduce Job 설정값
+
+MapReduce Job 설정값은 MapReduce Job 목록에서 해당 Job을 선택했을 때 하단에 다음과 같이 표시하게 됩니다. MapReduce Job이 실행하는데 입력으로 들어간 `Configuration.set()` 에 해당하는 값들이 나열됩니다.
+이 값들 통해서 Map, Reduce Task의 Heap Size를 포함하여 Map, Reduce Task의 개수 등이 실제로 어떻게 설정되었는지 확인할 수 있습니다.
+
+image::monitoring/mapreduce/mr6.png[scaledwidth=100%,MapReduce Job 설정값]
+
+==== MapReduce Job 태스크
+
+MapReduce Job 태스크는 MapReduce Job 목록에서 해당 Job을 선택했을 때 하단에 다음과 같이 표시하게 됩니다. MapReduce Job을 구성하는 Map Task와 Reduce Task의 실행 정보를 표시하게 됩니다.
+
+image::monitoring/mapreduce/mr7.png[scaledwidth=100%,MapReduce Job 태스크]
+
+=== 네임 노드
+
+네임 노드 모니터링은 네임 노드의 상태를 요약하여 핵심 정보만 표시합니다. 다음은 네임 노드의 요약 정보를 표시하는 화면입니다.
+
+image::monitoring/namenode/namenode1.png[scaledwidth=100%,Namenode 요약]
+
+HDFS 및 JVM의 사용량은 네임 노드를 모니터링하는 핵심 정보입니다. 파일의 증가하고 사용량이 증가하면 HDFS 사용량은 증가하게 됩니다.
+특히 네임 노드에서 JVM 사용량은 중요합니다. 파일 및 디렉토리의 메타 데이터를 메모리에서 관리하므로 JVM 사용량이 지속적으로 증가하는 경우 네임 노드의 JVM Heap을 증가시켜야 합니다.
+통상적으로 파일의 개수가 많은 경우 JVM Heap은 더 크게 설정해야 합니다.
+
+image::monitoring/namenode/namenode2.png[scaledwidth=100%,HDFS 및 JVM 사용량]
+
+네임 노드 관리하는 블록에 대한 상태 정보를 보여주는 화면입니다. 보통 다음의 그래프가 변동이 발생하면 네임 노드에서 어떤 변화가 발생한 것으로 판단할 수 있습니다.
+따라서 아래 그래프의 변화가 발생하는 경우 네임 노드의 상태를 확인할 필요가 있습니다.
+
+image::monitoring/namenode/namenode3.png[scaledwidth=100%,블록 상태]
+
+파일의 개수가 증가하게 되면 자연스럽게 블록의 개수도 증가하게 됩니다. 그 변화량을 표시하는 화면입니다.
+
+image::monitoring/namenode/namenode4.png[scaledwidth=100%,파일 개수 및 블록 개수]
+
+<<datanode, 데이터 노드>> 모니터링 기능에서는 각 데이터 노드의 상황을 표시하지만 네임 노드 모니터링에서는 데이터 노드의 개수에 대한 변화를 그래프로 표시합니다.
+특히 Dead Node에 대해서 관심을 가져야 합니다. 장애가 발생하면 Dead Node의 개수가 증가하므로 반대로 Live Node의 개수에 변화가 발생합니다.
+일반적으로 All = Dead Node + Live Node로 계산합니다.
+
+image::monitoring/namenode/namenode5.png[scaledwidth=100%,데이터 노드]
+
+[NOTE]
+네임 노드에 대한 정보는 Flamingo Namenode Agent를 통해서 정보를 수집하므로 Flamingo Namenode Agent가 설치되어 있지 않으면 정보를 확인할 수 없습니다.
+
+[[datanode]]
+=== 데이터 노드
+
+데이터 노드는 Flamingo에서는 중요한 핵심 부분만 표현하도록 기능을 제공합니다(각 노드에 대한 상세한 리소스 모니터링은 각 하둡의 배포판을 이용하시기 바랍니다).
+
+데이터 노드 모니터링에서는 현재 정상 데이터 노드에 대한 정보와 장애가 발생한 노드 그리고 데이터 노드에서 해제된 노드 목록이 표시됩니다.
+만약 장애가 발생하는 경우 다음과 같이 장애 발생 데이터 노드 목록에 장애 노드가 표시됩니다.
+
+image::monitoring/datanode/datanode1.png[scaledwidth=100%,데이터 노드 모니터링]
+
+[NOTE]
+MapR에서는 해당 정보가 표시되지 않으며 데이터 노드에 대한 정보는 Flamingo Namenode Agent를 통해서 정보를 수집하므로 Flamingo Namenode Agent가 설치되어 있지 않으면 정보를 확인할 수 없습니다.
+
+=== 클러스터 노드
+
+클러스터 노드는 YARN의 Resource Manager가 관리하는 노드로써 Flamingo에서는 중요한 핵심 부분만 표현하도록 기능을 제공합니다(각 노드에 대한 상세한 리소스 모니터링은 각 하둡의 배포판을 이용하시기 바랍니다).
+
+클러스터 노드 모니터링에서는 현재 모든 클러스터 노드와 장애가 발생한 클러스터 노드 등이 상태값으로 만약 장애가 발생하는 경우 다음과 같이 상태값으로 그룹핑하여 표시합니다.
+
+image::monitoring/clusternode/clusternode1.png[scaledwidth=100%,클러스터 노드 모니터링]
+
+[NOTE]
+클러스터 노드에 대한 정보는 Flamingo Resource Manager Agent를 통해서 정보를 수집하므로 Flamingo Resource Manager Agent가 설치되어 있지 않으면 정보를 확인할 수 없습니다.
+
+=== MapR CLDB
+
+Flamingo MapR Edition을 참고하십시오.
+

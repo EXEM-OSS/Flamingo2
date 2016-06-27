@@ -18,10 +18,6 @@ Ext.define('Flamingo2.view.monitoring.namenode.NamenodeSummary', {
     extend: 'Ext.form.Panel',
     alias: 'widget.namenodeSummary',
 
-    listeners: {
-        afterrender: 'onNamenodeSummaryAfterrender'
-    },
-
     layout: {
         type: 'table',
         columns: 2,
@@ -36,7 +32,7 @@ Ext.define('Flamingo2.view.monitoring.namenode.NamenodeSummary', {
         labelAlign: 'right',
         anchor: '100%',
         labelWidth: 150,
-        margins: '10 10 10 10'
+        margins: '10'
     },
 
     defaultType: 'textfield',
@@ -112,5 +108,15 @@ Ext.define('Flamingo2.view.monitoring.namenode.NamenodeSummary', {
                 return '';
             }
         }
-    ]
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onNamenodeSummaryRefreshClick'
+        }
+    ],
+    listeners: {
+        afterrender: 'onNamenodeSummaryAfterRender'
+    }
 });

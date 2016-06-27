@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.web.uima.UimaRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <resultMap id="uimaMap" type="org.opencloudengine.flamingo2.model.rest.Uima">
+        <result property="id"                   column="id"                 jdbcType="BIGINT"/>
+        <result property="processId"            column="processId"          jdbcType="VARCHAR"/>
+        <result property="processType"          column="processType"        jdbcType="VARCHAR"/>
+        <result property="loggingLevel"         column="loggingLevel"       jdbcType="VARCHAR"/>
+        <result property="collectionReader"     column="collectionReader"   jdbcType="VARCHAR"/>
+        <result property="ip"                   column="ip"                 jdbcType="VARCHAR"/>
+        <result property="annotatorType"        column="annotatorType"      jdbcType="VARCHAR"/>
+        <result property="data"                 column="data"               jdbcType="LONGVARCHAR"/>
+        <result property="logDate"              column="logDate"            jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+<!--    <resultMap id="uimaHistoryMap" type="org.opencloudengine.flamingo2.model.rest.Uima">
+        <result property="count"                column="count"              jdbcType="INTEGER"/>
+        <result property="sum"                  column="sum"                jdbcType="DOUBLE"/>
+    </resultMap>-->
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Sql Fragments -->
+    <!-- ==================================================================================== -->
+
+    <sql id="wherePK">WHERE ID = #{id}</sql>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="selectAllUimaLogs" parameterType="map" resultMap="uimaMap">
+        SELECT *
+        FROM EXO_LOGGING
+        ORDER BY logDate DESC
+    </select>
+
+    <select id="selectTotalCount" parameterType="map" resultType="Integer">
+        SELECT COUNT(*)
+        FROM EXO_LOGGING
+    </select>
+
+    <select id="selectUimaLogSummary" parameterType="map" resultType="map">
+        SELECT
+          (@row:=@row+1) AS num,
+          COUNT(*) AS sum,
+          DATE_FORMAT(MAX(logDate), '%Y-%m-%d %H') AS time
+        FROM EXO_LOGGING, (SELECT @row := 0) r
+        GROUP BY DATE_FORMAT(logDate, '%Y-%m-%d %H');
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 4. Exist Statement -->
+    <!-- ==================================================================================== -->
+
+    <!-- ==================================================================================== -->
+    <!-- 5. Insert Statements -->
+    <!-- ==================================================================================== -->
+
+
+    <!-- ==================================================================================== -->
+    <!-- 6. Update Statements -->
+    <!-- ==================================================================================== -->
+
+
+    <!-- ==================================================================================== -->
+    <!-- 7. Delete Statements -->
+    <!-- ==================================================================================== -->
+
+</mapper>

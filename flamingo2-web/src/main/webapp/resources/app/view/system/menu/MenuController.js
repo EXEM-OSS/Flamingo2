@@ -40,7 +40,6 @@ Ext.define('Flamingo2.view.system.menu.MenuController', {
     },
 
     onBtnAddClick: function () {
-        var me = this;
         var refs = this.getReferences();
         var selection = refs.trpMenu.getSelectionModel().getSelection();
         var id = selection[0].get('id');

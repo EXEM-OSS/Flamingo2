@@ -32,11 +32,7 @@ Ext.define('Flamingo2.view.monitoring.datanode.DatanodeModel', {
             ],
             proxy: {
                 type: 'ajax',
-                url: '/monitoring/datanode/deadnodes.json',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
+                url: CONSTANTS.MONITORING.DATANODE.DEAD_NODES,
                 extraParams: {
                     clusterName: ENGINE.id
                 },
@@ -48,7 +44,7 @@ Ext.define('Flamingo2.view.monitoring.datanode.DatanodeModel', {
             }
         },
 
-        decommisioningNodesStore: {
+        decommissionedNodesStore: {
             autoLoad: false,
             fields: [
                 'hostname',
@@ -61,11 +57,7 @@ Ext.define('Flamingo2.view.monitoring.datanode.DatanodeModel', {
             ],
             proxy: {
                 type: 'ajax',
-                url: '/monitoring/datanode/decommisioningnodes.json',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
+                url: CONSTANTS.MONITORING.DATANODE.DECOMMISSIONING_NODES,
                 extraParams: {
                     clusterName: ENGINE.id
                 },
@@ -79,7 +71,6 @@ Ext.define('Flamingo2.view.monitoring.datanode.DatanodeModel', {
 
         liveNodesStore: {
             autoLoad: false,
-
             fields: [
                 'nonDfsUsed',
                 'ipAddr',
@@ -98,14 +89,9 @@ Ext.define('Flamingo2.view.monitoring.datanode.DatanodeModel', {
                 'networkLocation',
                 'capacity'
             ],
-
             proxy: {
                 type: 'ajax',
-                url: '/monitoring/datanode/livenodes.json',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
+                url: CONSTANTS.MONITORING.DATANODE.LIVE_NODES,
                 extraParams: {
                     clusterName: ENGINE.id
                 },
@@ -115,7 +101,6 @@ Ext.define('Flamingo2.view.monitoring.datanode.DatanodeModel', {
                     totalProperty: 'total'
                 }
             },
-
             sorters: [
                 {
                     property: 'hostname',

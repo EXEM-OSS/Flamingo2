@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.archive.yarn.ArchiveYarnApplicationRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <resultMap id="yarnApplicationHistoryMap" type="org.opencloudengine.flamingo2.model.rest.YarnApplicationHistory">
+        <result property="id"                           column="ID"                             jdbcType="BIGINT"/>
+        <result property="system"                       column="SYSTEM"                         jdbcType="VARCHAR"/>
+        <result property="applicationId"                column="APPLICATION_ID"                 jdbcType="VARCHAR"/>
+        <result property="applicationType"              column="APPLICATION_TYPE"               jdbcType="VARCHAR"/>
+        <result property="progress"                     column="PROGRESS"                       jdbcType="VARCHAR"/>
+        <result property="queue"                        column="QUEUE"                          jdbcType="VARCHAR"/>
+        <result property="memorySeconds"                column="MEMORY_SECONDS"                 jdbcType="BIGINT"/>
+        <result property="rpcPort"                      column="RPC_PORT"                       jdbcType="BIGINT"/>
+        <result property="amHost"                       column="AM_HOST"                        jdbcType="VARCHAR"/>
+        <result property="usedResourcesMemory"          column="USED_RESOURCES_MEMORY"          jdbcType="BIGINT"/>
+        <result property="startTime"                    column="START_TIME"                     jdbcType="TIMESTAMP"/>
+        <result property="reservedResourcesVcores"      column="RESERVED_RESOURCES_VCORES"      jdbcType="BIGINT"/>
+        <result property="reservedResourcesMemory"      column="RESERVED_RESOURCES_MEMORY"      jdbcType="BIGINT"/>
+        <result property="trackingUrl"                  column="TRACKING_URL"                   jdbcType="LONGVARCHAR"/>
+        <result property="yarnApplicationState"         column="YARN_APPLICATION_STATE"         jdbcType="VARCHAR"/>
+        <result property="neededResourcesVcores"        column="NEEDED_RESOURCES_VCORES"        jdbcType="BIGINT"/>
+        <result property="name"                         column="NAME"                           jdbcType="LONGVARCHAR"/>
+        <result property="numReservedContainers"        column="NUM_RESERVED_CONTAINERS"        jdbcType="BIGINT"/>
+        <result property="usedResourcesVcores"          column="USED_RESOURCES_VCORES"          jdbcType="BIGINT"/>
+        <result property="finishTime"                   column="FINISH_TIME"                    jdbcType="TIMESTAMP"/>
+        <result property="numUsedContainers"            column="NUM_USED_CONTAINERS"            jdbcType="BIGINT"/>
+        <result property="finalApplicationStatus"       column="FINAL_APPLICATION_STATUS"       jdbcType="VARCHAR"/>
+        <result property="user"                         column="USER"                           jdbcType="VARCHAR"/>
+        <result property="neededResourcesMemory"        column="NEEDED_RESOURCES_MEMORY"        jdbcType="BIGINT"/>
+        <result property="vcoreSeconds"                 column="VCORE_SECONDS"                  jdbcType="BIGINT"/>
+        <result property="diagnostics"                  column="DIAGNOSTICS"                    jdbcType="LONGVARCHAR"/>
+        <result property="log"                          column="LOG"                            jdbcType="LONGVARCHAR"/>
+        <result property="registeredDate"               column="REGISTERED_DATE"                jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="selectYarnSummary" parameterType="map" resultType="map">
+        SELECT
+        (@row:=@row+1) AS num,
+        COUNT(*) AS sum,
+        DATE_FORMAT(MAX(START_TIME), '%Y-%m-%d %H') AS time,
+        START_TIME
+        FROM FL_CL_YARN_DUMP, (SELECT @row := 0) r
+        WHERE SYSTEM = #{clusterName}
+        <if test="userLevel != 1">
+            AND USER = #{username}
+        </if>
+        <if test="filter != null and filter != '' and filter != 'ALL'">
+            AND YARN_APPLICATION_STATE = #{filter}
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND DATE(START_TIME) BETWEEN #{startDate} AND #{endDate}
+        </if>
+        GROUP BY DATE_FORMAT(START_TIME, '%Y-%m-%d %H')
+        ORDER BY START_TIME ASC
+    </select>
+
+    <select id="selectAllApplications" parameterType="map" resultMap="yarnApplicationHistoryMap">
+        SELECT *
+        FROM FL_CL_YARN_DUMP, (SELECT @row := 0) r
+        WHERE SYSTEM = #{clusterName}
+        <if test="userLevel != 1">
+            AND USER = #{username}
+        </if>
+        <if test="filter != null and filter != '' and filter != 'ALL'">
+            AND YARN_APPLICATION_STATE = #{filter}
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND DATE(START_TIME) BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="appName != null and appName != ''">
+            AND APPLICATION_TYPE LIKE '%${appName}%' OR NAME LIKE '%${appName}%'
+        </if>
+        ORDER BY START_TIME DESC
+        LIMIT #{startRow}, #{limit}
+    </select>
+
+    <select id="selectTotalCountByUserLevel" parameterType="map" resultType="Integer">
+        SELECT COUNT(*)
+        FROM FL_CL_YARN_DUMP
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="userLevel != 1">
+                AND USER = #{username}
+            </if>
+            <if test="filter != null and filter != '' and filter != 'ALL'">
+                AND YARN_APPLICATION_STATE = #{filter}
+            </if>
+            <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                AND DATE(START_TIME) BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test="appName != null and appName != ''">
+                AND APPLICATION_TYPE LIKE '%${appName}%' OR NAME LIKE '%${appName}%'
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectApplicationReport" parameterType="map" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT *
+        FROM FL_CL_YARN_DUMP
+        WHERE APPLICATION_ID = #{applicationId}
+    </select>
+
+</mapper>

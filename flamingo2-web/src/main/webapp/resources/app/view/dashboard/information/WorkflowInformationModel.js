@@ -50,12 +50,13 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationModel', {
                 extraParams: {
                     clusterName: ENGINE.id,
                     identifier: '',
+                    taskId: '',
                     type: ''
                 }
             }
         },
         mapReducdeIdStore: {
-            autoLoad: true,
+            autoLoad: false,
             fields: [
                 {name: 'id', type: 'string'}
             ],
@@ -69,6 +70,7 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationModel', {
                 extraParams: {
                     clusterName: ENGINE.id,
                     identifier: '',
+                    taskId: '',
                     type: ''
                 }
             }

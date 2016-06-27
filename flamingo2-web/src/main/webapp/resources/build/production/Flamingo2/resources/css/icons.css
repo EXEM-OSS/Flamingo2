@@ -110,6 +110,8 @@
 .designer-explanation   { background-image: url(../images/designer/explanation.png) !important; }
 .designer-action        { background-image: url(../images/designer/action.png) !important; }
 .designer-workflow-xml  { background-image: url(../images/designer/xml.png) !important; }
+.designer-filesystem    { background-image: url(../images/designer/filesystembrowser.png) !important; }
+.designer-hive          { background-image: url(../images/designer/hive.png) !important; }
 
 /*ggplot icons*/
 .ggplot_dataload        { background-image: url(../images/ggplot/dataload.png) !important; width: 24px; height: 24px; background-size: 24px;}

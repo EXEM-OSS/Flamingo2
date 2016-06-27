@@ -52,7 +52,8 @@ public class MapReduceJobServiceImpl implements MapReduceJobService {
                 jobConf != null ? JsonUtils.format(jobConf) : "",
                 attempts != null ? JsonUtils.format(attempts) : "",
                 counters != null ? JsonUtils.format(counters) : "",
-                jobType, username
+                jobType,
+                username
         );
         repository.insertMapReduceJobConfirm(systemId, jobId);
     }

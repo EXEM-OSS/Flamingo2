@@ -24,7 +24,7 @@ SELECT
 FROM
     pg_database
 WHERE
-    datname = #{userName}
+    datname = #{databaseName}
 ORDER BY
     datname;
 
@@ -121,22 +121,25 @@ SELECT
    ,c.oid::int
    ,'TABLE' object_type
    ,'('||pg_size_pretty(pg_relation_size(c.oid))||')' table_size
-   ,'('||pg_size_pretty(
-        (
-            SELECT
-                sum(pg_relation_size(ns.nspname||'.'||pp.partitiontablename))
-            FROM
-                pg_class cl
-                    INNER JOIN pg_namespace ns ON cl.relnamespace = ns.oid
-                    INNER JOIN pg_partitions pp ON cl.relname = pp.tablename
-            WHERE pp.tablename = c.relname
-        )::bigint
-   )||')' size
+   ,'('||pg_size_pretty(size_table.size)||')' size
 FROM
     information_schema.tables t
     INNER JOIN pg_namespace s ON t.table_schema = s.nspname
     INNER JOIN pg_class c ON t.table_name = c.relname AND s.oid = c.relnamespace
     LEFT JOIN pg_partitions p ON t.table_name = p.partitiontablename
+    LEFT JOIN (
+    	SELECT
+    		cl.oid
+    	   ,pp.tablename
+           ,sum(pg_relation_size(ns.nspname||'.'||pp.partitiontablename))::bigint size
+        FROM
+            pg_class cl
+                INNER JOIN pg_namespace ns ON cl.relnamespace = ns.oid
+                INNER JOIN pg_partitions pp ON cl.relname = pp.tablename
+        GROUP BY
+        	cl.oid
+           ,pp.tablename
+    ) size_table ON c.oid = size_table.oid AND c.relname = size_table.tablename
 WHERE
     p.tablename IS NULL
 GROUP BY
@@ -150,6 +153,7 @@ GROUP BY
    ,p.partitiontablename
    ,c.oid
    ,c.relname
+   ,size_table.size
 HAVING
     t.table_catalog = #{databaseName} AND
     t.table_schema = #{schemaName} AND
@@ -975,7 +979,6 @@ WHERE
         ]]>
     </query>
 
-    <!-- TODO show size -->
     <query id="SHOW_DB_SIZE_QUERY">
         <![CDATA[
 

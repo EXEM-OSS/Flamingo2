@@ -68,48 +68,42 @@ public class SchedulerRemoteServiceImpl implements SchedulerRemoteService {
     }
 
     @Override
-    public boolean prepareRun(Map params) {
+    public void prepareRun(Map params) {
         UserEvent userEvent = (UserEvent) params.get("event");
         User user = (User) params.get("user");
         Workflow workflow = (Workflow) params.get("workflow");
 
-        ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
-        WorkflowHistoryRepository workflowHistoryRepository = applicationContext.getBean(WorkflowHistoryRepository.class);
-        WorkflowRepository workflowRepository = applicationContext.getBean(WorkflowRepository.class);
-        TaskHistoryRepository taskHistoryRepository = applicationContext.getBean(TaskHistoryRepository.class);
-        Transformer transformer = applicationContext.getBean(Transformer.class);
+        ApplicationContext context = ApplicationContextRegistry.getApplicationContext();
 
-        String workflowId = workflow.getWorkflowId();
-        String designerXml = workflow.getDesignerXml();
         List<WorkflowTask> taskList;
         try {
-            taskList = transformer.getTaskList(designerXml, workflowId);
+            Transformer transformer = context.getBean(Transformer.class);
+            taskList = transformer.getTaskList(workflow.getDesignerXml(), workflow.getWorkflowId());
         } catch (Exception e) {
             throw new ServiceException("Unable to retreive tasks of workflow.", e);
         }
 
-        workflowRepository.selectByTreeId(workflow.getWorkflowTreeId());
-
-        WorkflowHistory history = new WorkflowHistory();
-        history.setWorkflowName(workflow.getWorkflowName());
-        history.setWorkflowId(workflow.getWorkflowId());
-        history.setJobId(0); // FIXME jobId is uncertain
-        history.setJobStringId(userEvent.getIdentifier());
-        history.setJobName(workflow.getWorkflowName() + "_" + userEvent.getIdentifier());
-        history.setWorkflowXml(workflow.getWorkflowXml());
-        history.setVariable(workflow.getVariable());
-        history.setStartDate(new Timestamp(System.currentTimeMillis()));
-        history.setEndDate(new Timestamp(System.currentTimeMillis()));
-        history.setUsername(user.getUsername());
-        history.setElapsed(0);
-        history.setTotalStep(taskList.size());
-        history.setCurrentStep(0);
-        history.setStatus(State.PREPARING);
-        history.setJobType("WORKFLOW");
-        history.setLogPath("");
-
         try {
-            workflowHistoryRepository.insert(history);
+            WorkflowHistory history = new WorkflowHistory();
+            history.setWorkflowName(workflow.getWorkflowName());
+            history.setWorkflowId(workflow.getWorkflowId());
+            history.setJobId(0); // FIXME jobId is uncertain
+            history.setJobStringId(userEvent.getIdentifier());
+            history.setJobName(workflow.getWorkflowName() + "_" + userEvent.getIdentifier());
+            history.setWorkflowXml(workflow.getWorkflowXml());
+            history.setVariable(workflow.getVariable());
+            history.setStartDate(new Timestamp(System.currentTimeMillis()));
+            history.setEndDate(new Timestamp(System.currentTimeMillis()));
+            history.setUsername(user.getUsername());
+            history.setElapsed(0);
+            history.setTotalStep(taskList.size());
+            history.setCurrentStep(0);
+            history.setStatus(State.PREPARING);
+            history.setJobType("WORKFLOW");
+            history.setLogPath("");
+
+            WorkflowHistoryRepository historyRepository = context.getBean(WorkflowHistoryRepository.class);
+            historyRepository.insert(history);
         } catch (Exception e) {
             throw new ServiceException("Unable to create a workflow's history", e);
         }
@@ -124,13 +118,13 @@ public class SchedulerRemoteServiceImpl implements SchedulerRemoteService {
                 taskHistory.setName(workflowTask.getTaskName());
                 taskHistory.setStatus("STANDBY");
                 taskHistory.setVars((String) workflowTask.getProperties().get("script"));
+
+                TaskHistoryRepository taskHistoryRepository = context.getBean(TaskHistoryRepository.class);
                 taskHistoryRepository.insert(taskHistory);
             }
         } catch (Exception e) {
             throw new ServiceException("Unable to create a task's history", e);
         }
-
-        return true;
     }
 
     public void setJobScheduler(JobScheduler jobScheduler) {

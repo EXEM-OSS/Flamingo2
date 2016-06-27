@@ -1,0 +1,192 @@
+[[etc]]
+
+== 가이드 생성하기
+
+=== Asciidoc을 이용한 HTML 형식의 사용자 가이드 생성하기
+
+Flamingo는 사용자 가이드와 같은 문서 관리를 위해서 AsciiDoc을 사용합니다. Maven POM에는 AsciiDoc을 HTML로 생성하는 생성기가 설정되어 있습니다. 하지만 문서를 PDF로 변환하고자 하는 경우 다음의 절차에 따라 PDF로 된 문서를 생성할 수 있습니다. Flamingo의 소스코드에 포함되어 있는 사용자 가이드를 자동생성하기 위해서 다음의 커맨드를 이용하여 빌드합니다.
+
+[source]
+----
+# cd <FLAMINGO_SRC>
+# cd flamingo2-documentation
+# mvn package
+----
+
+빌드 후에는 `<FLAMINGO_SRC>/flamingo2-documentation/target/manual` 디렉토리에 사용자 가이드가 생성됩니다.
+
+=== Asciidoc을 이용한 PDF 형식의 사용자 가이드 생성하기
+
+사용자 가이드를 HTML이 아닌 PDF로 생성하기 위해서는 Asciidoc PDF가 필요합니다. Asciidoc PDF는 Ruby로 동작하므로 Ruby를 설치해야 합니다. 또한, AsciiDoc PDF는 ttfunk가 필요하며 이는 Ruby >= 1.9.3 을 만족해야 합니다. 다음의 커맨드를 이용하여 Ruby GEM을 통해 필요한 라이브러리를 설치할 수 있습니다.
+
+[source]
+----
+# sudo gem install bundle asciidoctor prawn prawn-svg prawn-table prawn-templates treetop coderay pygments.rb prawn-icon safe_yaml thread_safe
+Fetching: bundler-1.10.5.gem (100%)
+Successfully installed bundler-1.10.5
+Fetching: bundle-0.0.1.gem (100%)
+Successfully installed bundle-0.0.1
+Parsing documentation for bundler-1.10.5
+Installing ri documentation for bundler-1.10.5
+Parsing documentation for bundle-0.0.1
+Installing ri documentation for bundle-0.0.1
+Fetching: asciidoctor-1.5.2.gem (100%)
+Successfully installed asciidoctor-1.5.2
+Parsing documentation for asciidoctor-1.5.2
+Installing ri documentation for asciidoctor-1.5.2
+Fetching: ttfunk-1.4.0.gem (100%)
+Successfully installed ttfunk-1.4.0
+Fetching: pdf-core-0.5.1.gem (100%)
+Successfully installed pdf-core-0.5.1
+Fetching: prawn-2.0.1.gem (100%)
+Successfully installed prawn-2.0.1
+Parsing documentation for ttfunk-1.4.0
+Installing ri documentation for ttfunk-1.4.0
+Parsing documentation for pdf-core-0.5.1
+Installing ri documentation for pdf-core-0.5.1
+Parsing documentation for prawn-2.0.1
+Installing ri documentation for prawn-2.0.1
+Fetching: addressable-2.3.8.gem (100%)
+Successfully installed addressable-2.3.8
+Fetching: css_parser-1.3.6.gem (100%)
+Successfully installed css_parser-1.3.6
+Fetching: prawn-svg-0.21.0.gem (100%)
+Successfully installed prawn-svg-0.21.0
+Parsing documentation for addressable-2.3.8
+Installing ri documentation for addressable-2.3.8
+Parsing documentation for css_parser-1.3.6
+Installing ri documentation for css_parser-1.3.6
+Parsing documentation for prawn-svg-0.21.0
+Installing ri documentation for prawn-svg-0.21.0
+Fetching: prawn-table-0.2.1.gem (100%)
+Successfully installed prawn-table-0.2.1
+Parsing documentation for prawn-table-0.2.1
+Installing ri documentation for prawn-table-0.2.1
+Fetching: Ascii85-1.0.2.gem (100%)
+Successfully installed Ascii85-1.0.2
+Fetching: ruby-rc4-0.1.5.gem (100%)
+Successfully installed ruby-rc4-0.1.5
+Fetching: hashery-2.1.1.gem (100%)
+Successfully installed hashery-2.1.1
+Fetching: afm-0.2.2.gem (100%)
+Successfully installed afm-0.2.2
+Fetching: pdf-reader-1.3.3.gem (100%)
+
+  ********************************************
+
+  v1.0.0 of PDF::Reader introduced a new page-based API. There are extensive
+  examples showing how to use it in the README and examples directory.
+
+  For detailed documentation, check the rdocs for the PDF::Reader,
+  PDF::Reader::Page and PDF::Reader::ObjectHash classes.
+
+  The old API is marked as deprecated but will continue to work with no
+  visible warnings for now.
+
+  ********************************************
+
+Successfully installed pdf-reader-1.3.3
+Fetching: prawn-templates-0.0.3.gem (100%)
+Successfully installed prawn-templates-0.0.3
+Parsing documentation for Ascii85-1.0.2
+Installing ri documentation for Ascii85-1.0.2
+Parsing documentation for ruby-rc4-0.1.5
+Installing ri documentation for ruby-rc4-0.1.5
+Parsing documentation for hashery-2.1.1
+Installing ri documentation for hashery-2.1.1
+Parsing documentation for afm-0.2.2
+Installing ri documentation for afm-0.2.2
+Parsing documentation for pdf-reader-1.3.3
+Installing ri documentation for pdf-reader-1.3.3
+Parsing documentation for prawn-templates-0.0.3
+Installing ri documentation for prawn-templates-0.0.3
+Fetching: polyglot-0.3.5.gem (100%)
+Successfully installed polyglot-0.3.5
+Fetching: treetop-1.6.3.gem (100%)
+Successfully installed treetop-1.6.3
+Parsing documentation for polyglot-0.3.5
+Installing ri documentation for polyglot-0.3.5
+Parsing documentation for treetop-1.6.3
+Installing ri documentation for treetop-1.6.3
+Fetching: coderay-1.1.0.gem (100%)
+Successfully installed coderay-1.1.0
+invalid options: -SNw2
+(invalid options are ignored)
+Parsing documentation for coderay-1.1.0
+Installing ri documentation for coderay-1.1.0
+Fetching: yajl-ruby-1.2.1.gem (100%)
+Building native extensions.  This could take a while...
+Successfully installed yajl-ruby-1.2.1
+Fetching: posix-spawn-0.3.11.gem (100%)
+Building native extensions.  This could take a while...
+Successfully installed posix-spawn-0.3.11
+Fetching: pygments.rb-0.6.3.gem (100%)
+Successfully installed pygments.rb-0.6.3
+Parsing documentation for yajl-ruby-1.2.1
+unable to convert "\xCA" from ASCII-8BIT to UTF-8 for lib/yajl/yajl.bundle, skipping
+Installing ri documentation for yajl-ruby-1.2.1
+Parsing documentation for posix-spawn-0.3.11
+unable to convert "\xCA" from ASCII-8BIT to UTF-8 for lib/posix_spawn_ext.bundle, skipping
+Installing ri documentation for posix-spawn-0.3.11
+Parsing documentation for pygments.rb-0.6.3
+Installing ri documentation for pygments.rb-0.6.3
+Fetching: prawn-icon-0.6.4.gem (100%)
+Successfully installed prawn-icon-0.6.4
+Parsing documentation for prawn-icon-0.6.4
+Installing ri documentation for prawn-icon-0.6.4
+Fetching: safe_yaml-1.0.4.gem (100%)
+Successfully installed safe_yaml-1.0.4
+Parsing documentation for safe_yaml-1.0.4
+Installing ri documentation for safe_yaml-1.0.4
+Fetching: thread_safe-0.3.5.gem (100%)
+Successfully installed thread_safe-0.3.5
+Parsing documentation for thread_safe-0.3.5
+Installing ri documentation for thread_safe-0.3.5
+25 gems installed
+----
+
+필요한 라이브러리를 설치한 후에는 다음과 같이 PDF 문서를 생성합니다.
+
+[source]
+----
+# cd tools/asciidoctor-pdf-1.5.0.alpha.8
+# ruby bin/asciidoctor-pdf ../../flamingo2-documentation/src/main/asciidoc/user-guide/korean/index.asciidoc
+----
+
+asciidoctor-pdf는 Ubuntu 환경에서 필요에 따라서 Ruby 2가 필요할 수 있습니다. Ubuntu의 경우 아래와 같이 Ruby 2를 설치하기 위해서 아래와 같이 진행할 수 있습니다.
+
+[source]
+----
+# apt-add-repository ppa:brightbox/ruby-ng
+# add-apt-repository ppa:brightbox/ruby-ng-experimental
+
+# apt-get update
+# apt-get install ruby2.2 ruby2.2-dev
+
+# update-alternatives --remove ruby /usr/bin/ruby2.2
+# update-alternatives --remove irb /usr/bin/irb2.2
+# update-alternatives --remove gem /usr/bin/gem2.2
+
+# update-alternatives \
+    --install /usr/bin/ruby ruby /usr/bin/ruby2.2 50 \
+    --slave /usr/bin/irb irb /usr/bin/irb2.2 \
+    --slave /usr/bin/rake rake /usr/bin/rake2.2 \
+    --slave /usr/bin/gem gem /usr/bin/gem2.2 \
+    --slave /usr/bin/rdoc rdoc /usr/bin/rdoc2.2 \
+    --slave /usr/bin/testrb testrb /usr/bin/testrb2.2 \
+    --slave /usr/bin/erb erb /usr/bin/erb2.2 \
+    --slave /usr/bin/ri ri /usr/bin/ri2.2
+
+# update-alternatives --config ruby
+# update-alternatives --display ruby
+
+# irb
+irb(main):001:0> RUBY_VERSION
+=> "2.2.0"
+
+# ruby --version
+ruby 2.2.0p0 (2014-12-25 revision 49005) [x86_64-linux-gnu]
+----
+
+[NOTE]
+Flamingo에서는 Asciidoc PDF를 asciidoctor-pdf-1.5.0.alpha.8 버전을 사용하고 있으며 현재도 지속적으로 버전업이 되고 있습니다.

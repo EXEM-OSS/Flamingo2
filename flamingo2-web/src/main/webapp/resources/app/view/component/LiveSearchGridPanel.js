@@ -123,7 +123,7 @@ Ext.define('Flamingo2.view.component.LiveSearchGridPanel', {
         var me = this;
         me.callParent(arguments);
         me.textField = me.down('textfield[name=searchField]');
-        me.statusBar = me.down('statusBar[name=searchStatusBar]');
+//        me.statusBar = me.down('statusBar[name=searchStatusBar]');
     },
 
     // detects html tag
@@ -156,10 +156,10 @@ Ext.define('Flamingo2.view.component.LiveSearchGridPanel', {
             try {
                 new RegExp(value);
             } catch (error) {
-                me.statusBar.setStatus({
-                    text: error.message,
-                    iconCls: 'x-status-error'
-                });
+//                me.statusBar.setStatus({
+//                    text: error.message,
+//                    iconCls: 'x-status-error'
+//                });
                 return null;
             }
             // this is stupid
@@ -194,10 +194,10 @@ Ext.define('Flamingo2.view.component.LiveSearchGridPanel', {
         me.view.refresh();
 
         // reset the statusbar
-        me.statusBar.setStatus({
-            text: me.defaultStatusText,
-            iconCls: ''
-        });
+//        me.statusBar.setStatus({
+//            text: me.defaultStatusText,
+//            iconCls: ''
+//        });
 
         me.searchValue = me.getSearchValue();
         me.indexes = [];
@@ -239,10 +239,10 @@ Ext.define('Flamingo2.view.component.LiveSearchGridPanel', {
             // results found
             if (me.currentIndex !== null) {
                 me.getSelectionModel().select(me.currentIndex);
-                me.statusBar.setStatus({
-                    text: format(message.msg('component.msg.match'), count),
-                    iconCls: 'x-status-valid'
-                });
+//                me.statusBar.setStatus({
+//                    text: format(message.msg('component.msg.match'), count),
+//                    iconCls: 'x-status-valid'
+//                });
             }
         }
 

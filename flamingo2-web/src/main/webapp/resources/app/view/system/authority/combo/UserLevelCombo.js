@@ -24,8 +24,7 @@ Ext.define('Flamingo2.view.system.authority.combo.UserLevelCombo', {
     displayField: 'level_name',
     valueField: 'level',
     queryMode: 'local',
-    editable: true,
-    selectOnFocus: true,
+    editable: false,
     width: 120,
     collapsible: false,
     emptyText: message.msg('system.authority.level.emptyText')

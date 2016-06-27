@@ -1,0 +1,235 @@
+[[monitoring]]
+
+== Monitors
+
+Flamingo 2 monitors each component of Apache Hadoop EcoSystem. The followings are what Flamingo 2 monitors.
+
+* ResourceManager
+* YARN Application
+* MapReduce
+* Namenode
+* Datanode
+* Cluster
+* MapR CLDB
+
+=== ResourceManager
+
+The resource manager monitors the status of ResourceManager, the new feature in YARN.
+
+image::monitoring/resourcemanager/rm1.png[scaledwidth=100%,리소스 관리자 모니터링]
+
+The resource manager summarizes the queue, container, node status, JVM Heap, etc.
+
+image::monitoring/resourcemanager/rm2.png[scaledwidth=100%,리소스 관리자 요약 정보]
+
+Running YARN applications are shown in the YARN Application list. This is useful when you want to check YARN applications in progress.
+
+image::monitoring/resourcemanager/rm6.png[scaledwidth=100%,실행중인 YARN 애플리케이션 목록]
+
+Each resource summary is also drawn in charts as below.
+
+image::monitoring/resourcemanager/rm4.png[scaledwidth=100%,리소스 관리자 시각화 차트]
+
+The resource manager configuration shows the properties defined in `yarn-site.xml`.
+
+image::monitoring/resourcemanager/rm5.png[scaledwidth=100%,리소스 관리자 설정정보]
+
+[NOTE]
+The metrics are gathered by the Flamingo Resource Manager Agent. Without the Agent, the resource manager doesn't work.
+
+=== YARN Application
+
+Flamingo displays YARN applications through the Flamingo Resource Manager Agent.
+
+image::monitoring/yarn/yarn.png[scaledwidth=100%,YARN 애플리케이션 목록]
+
+==== Application Statistics
+
+The YARN application chart is located at the top of the screen. The statistical data are gathered every hour for a week.\
+
+image::monitoring/yarn/yarn1.png[scaledwidth=100%,YARN 애플리케이션 통계추이 그래프]
+
+==== Application List
+
+The YARN application list is at the middled of the screen. Completed and running YARN applications are displayed.
+
+image::monitoring/yarn/yarn2.png[scaledwidth=100%,YARN 애플리케이션 목록]
+
+This is an example of a running application. You can force kill the application or move it to another queue.
+
+image::monitoring/yarn/yarn3.png[scaledwidth=100%,YARN 애플리케이션 목록]
+
+==== Application Summary
+
+Click on an YARN application and its properties are displayed as below. Based on the status of an application, completed or running, the properties can differ.
+
+image::monitoring/yarn/yarn4.png[scaledwidth=100%,YARN 애플리케이션 요약]
+
+==== Application Log
+
+Click on an YARN application and you can its log as below. This does not work on running applications.
+
+image::monitoring/yarn/yarn5.png[scaledwidth=100%,YARN 애플리케이션 로그]
+
+[[appmaster]]
+==== Application Master
+
+In Hadoop 2, parts of the Hadoop 1's Job Tracker features migrated to the Application Master. In order to access the Application Master, the Flamingo users must be on the same network as the Hadoop cluster.
+
+image::monitoring/yarn/yarn4.png[scaledwidth=100%,비활성화된 YARN 애플리케이션 마스터]
+
+To enable this feature, set `monitoring.yarn.appmaster.disabled` to `false` in `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties`.
+
+[source]
+----
+monitoring.yarn.appmaster.disabled=false
+----
+
+The AppMaster tab will be enabled.
+
+image::monitoring/yarn/yarn6.png[scaledwidth=100%,활성화된 YARN 애플리케이션 마스터]
+
+The Application Master differs based on the application types. An entity that provides the Application Master must provide a URL to access the Application Master.
+
+The Application Master can't check whether an application job has succeeded or failed. Only running applications can be checked.
+
+The YARN application metrics are collected through the Flamingo Resource Manager Agent and the History Server (Timeline Server). So the Flamingo Resource Manager Agent and the History Server must be installed.
+
+==== Force Killing an Application and Moving It to Other Queue
+
+Running applications are displayed in the list as below. Click `Force Kill` to force kill the application and click `Move to Other Queue` to relocate it.
+
+image::monitoring/yarn/yarn3.png[scaledwidth=100%,강제종료 및 큐 이동]
+
+In Flamingo 2.0.0, any user can kill applications. In the next version of Flamingo, we will allow only the system administrator and owners to kill jobs.
+
+==== More Menus
+
+More menus are available as below.
+
+image::monitoring/yarn/yarn7.png[scaledwidth=30%,추가 메뉴]
+
+The application log pop-up window.
+
+image::monitoring/yarn/yarn8.png[scaledwidth=100%,추가 메뉴]
+
+THe application master pop-up window.
+
+image::monitoring/yarn/yarn9.png[scaledwidth=100%,추가 메뉴]
+
+=== MapReduce
+
+MapReduce Job Monitor keeps the MapReduce job history, and works with the History Server. The MapReduce Job Monitor provides the following features.
+
+* Weekly Chart
+* Completed MapReduce Job List
+* MapReduce Job Sumnnary
+* MapReduce Job Counter
+* MapReduce Job Configuration
+* MapReduce Job Task
+
+This is the screenshot of the MapReduce Job Monitor.
+
+image::monitoring/mapreduce/mr1.png[scaledwidth=100%,MapReduce Job 모니터링]
+
+==== Weekly Chart
+
+This shows the processed MapReduce jobs last one week. Data are gathered every hour.
+
+image::monitoring/mapreduce/mr2.png[scaledwidth=100%,최근 1주일간 추이 그래프]
+
+[NOTE]
+These data are gathered through the Flamingo Collector. Without the Flamingo Collector, it does not work.
+
+==== Completed MapReduce Job List
+
+The completed MapReduce job data are gathered through the History Server. It lists information in time order.
+
+image::monitoring/mapreduce/mr3.png[scaledwidth=100%,완료한 MapReduce Job 목록]
+
+[NOTE]
+Running MapReduce jobs are not displayed. In order to check the status of a running MapReduce job, open the YARN Monitor or Application Master Monitor.
+
+==== MapReduce Job Summary
+
+MapReduce Job summary is displayed when a MapReduce job is selected in the list. It shows the status of MapReudce job, user, job ID, and processing time.
+
+image::monitoring/mapreduce/mr4.png[scaledwidth=100%,MapReduce Job 요약정보]
+
+==== MapReduce Job Counter
+
+The MapReduce Job Counter is displayed as below when a MapReduce job is selected. After a MapReduce job is completed, data from Map/Reduce tasks are displayed.
+This information is important to MapReduce developers.
+
+image::monitoring/mapreduce/mr5.png[scaledwidth=100%,MapReduce Job 카운터]
+
+==== MapReduce Job Configuration
+
+The MapReduce Job Configurations are displayed as below when a MapReduce job is selected. The parameters of the method, `Configuration.set()` are used.
+These values tell you how the job is configured such a heap size, a number of mapper and reducer, etc.
+
+image::monitoring/mapreduce/mr6.png[scaledwidth=100%,MapReduce Job 설정값]
+
+==== MapReduce Job Task
+
+The MapReduce Job Task values are displayed when a MapReduce job is selected as below. It show the details of map tasks and reduce tasks.
+
+image::monitoring/mapreduce/mr7.png[scaledwidth=100%,MapReduce Job 태스크]
+
+=== Namenode
+
+The Namenode monitor summarizes key information.
+
+image::monitoring/namenode/namenode1.png[scaledwidth=100%,Namenode 요약]
+
+The HDFS and JVM usage are the key information in the Namenode monitor. The HDFS usage increases in proportion to the number of files written.
+Especially the JVM usage in very important in the Namenode. File and directory metadata are managed in memoreis, so the JVM heap must be increased as the JVM usage increases.
+Normally if there are a lot of files, you must set the JVM heap to a bigger size.
+
+image::monitoring/namenode/namenode2.png[scaledwidth=100%,HDFS 및 JVM 사용량]
+
+The following shows the status of blocks managed by the namenode. Changes in the graph indicate changes in the namenode.
+In that case, the namenode must be checked.
+
+image::monitoring/namenode/namenode3.png[scaledwidth=100%,블록 상태]
+
+If the number of file increases, the number of block also increases. The following graphs show such changes.
+
+image::monitoring/namenode/namenode4.png[scaledwidth=100%,파일 개수 및 블록 개수]
+
+<<datanode, 데이터 노드>> The namenode monitor keeps track of changes in number of the datanodes.
+You must pay attention to dead nodes. When a sytem error occurs, the number of dead nodes increases and the number of live nodes decreases.
+Typically All = Dead Nodes + Live Nodes.
+
+image::monitoring/namenode/namenode5.png[scaledwidth=100%,데이터 노드]
+
+[NOTE]
+The namenode metrics are collected by the Flamingo Namenode Agent. Therefore, it must be installed.
+
+[[datanode]]
+=== Datanode
+
+The datanode monitor a few key properties(For detailed resource monitoring on each node, use the private vendor distributions).
+
+The datanode monitor shows live nodes, dead nodes, and decommissioned nodes.
+Dead nodes will be listed in the dead node panel.
+
+image::monitoring/datanode/datanode1.png[scaledwidth=100%,데이터 노드 모니터링]
+
+[NOTE]
+In the MapR distribution, the datanode monitor is not available. The datanode metrics are collected through the Flamingo Namenode Agent, so the Flamingo Namenode Agent must be installed.
+
+=== Cluster Node
+
+The cluster node is managed by the YARN's ResourceManager. This shows a few key features클러스터 노드는 YARN의 Resource Manager. For detailed resource monitoring on each node, use the private vendor distributions.
+The cluster node monitor shows all live nodes and dead nodes. Nodes are grouped based on their status.
+
+image::monitoring/clusternode/clusternode1.png[scaledwidth=100%,클러스터 노드 모니터링]
+
+[NOTE]
+The cluster node metrics are collected by the Flamingo Resource Manager Agent, so it must be installed in prior.
+
+=== MapR CLDB
+
+Please refer to Flamingo MapR Edition.
+

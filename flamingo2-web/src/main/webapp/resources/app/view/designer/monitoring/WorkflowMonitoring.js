@@ -40,20 +40,17 @@ Ext.define('Flamingo2.view.designer.monitoring.WorkflowMonitoring', {
             },
             columns: [
                 {
+                    hidden: true,
+                    dataIndex: 'identifier',
+                    itemId: 'identifier',
+                    name: 'identifier'
+                },
+                {
                     text: message.msg('dashboard.wdetail.column.id'),
                     width: 60,
                     dataIndex: 'id',
                     name: 'id',
                     align: 'center'
-                },
-                {
-                    text: message.msg('common.identifier'),
-                    flex: 100,
-                    dataIndex: 'identifier',
-                    itemId: 'identifier',
-                    name: 'identifier',
-                    align: 'center',
-                    hidden: true
                 },
                 {
                     text: message.msg('dashboard.wdetail.column.taskid'),
@@ -84,14 +81,20 @@ Ext.define('Flamingo2.view.designer.monitoring.WorkflowMonitoring', {
                     width: 140,
                     dataIndex: 'startDate',
                     name: 'startDate',
-                    align: 'center'
+                    align: 'center',
+                    renderer: function (value) {
+                        return value ? App.Util.Date.format(new Date(eval(value)), 'yyyy-MM-dd HH:mm:ss') : '';
+                    }
                 },
                 {
                     text: message.msg('dashboard.wdetail.column.enddate'),
                     width: 140,
                     dataIndex: 'endDate',
                     name: 'endDate',
-                    align: 'center'
+                    align: 'center',
+                    renderer: function (value) {
+                        return value ? App.Util.Date.format(new Date(eval(value)), 'yyyy-MM-dd HH:mm:ss') : '';
+                    }
                 },
                 {
                     text: message.msg('dashboard.wdetail.column.status'),

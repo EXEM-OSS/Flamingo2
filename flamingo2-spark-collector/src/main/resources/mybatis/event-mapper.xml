@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.spark.collector.parser.EventParserRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <select id="selectApp" parameterType="map" resultType="map">
+        SELECT APPID,
+               APPNAME,
+               STARTED,
+               COMPLETED
+        FROM FL_SP_APPS
+        WHERE 1=1
+        <if test="appid != null and appid != ''">
+            AND APPID = #{appid}
+        </if>
+    </select>
+
+    <select id="countApp" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM FL_SP_APPS
+        WHERE LOCATION = #{location}
+    </select>
+
+    <insert id="insertApps" parameterType="org.opencloudengine.flamingo2.spark.collector.parser.value.Apps">
+        INSERT INTO FL_SP_APPS
+        (APPID, APPNAME, STARTED, COMPLETED, USER, LOCATION)
+        VALUES
+        (#{AppID}, #{AppName}, FROM_UNIXTIME(#{Started} / 1000), FROM_UNIXTIME(#{Completed} / 1000), #{User}, #{location})
+    </insert>
+
+    <insert id="insertJob" parameterType="org.opencloudengine.flamingo2.spark.collector.parser.value.Job">
+        INSERT INTO FL_SP_JOBS
+        (APPID, JOBID, JOBNAME, SUBMITTED, COMPLETED, STAGES, STAGE_SKIPPED, STAGE_COMPLETED, STAGE_FAILED, TASKS, TASK_COMPLETED, TASK_SKIPPED, TASK_FAILED, DESCRIPTION, STATUS)
+        VALUES
+        (#{appID}, #{jobID}, #{jobName}, FROM_UNIXTIME(#{submitted} / 1000), FROM_UNIXTIME(#{completed} / 1000), #{stages}, #{stageSkipped}, #{stageCompleted}, #{stageFailed}, #{tasks}, #{taskCompleted}, #{taskSkipped}, #{taskFailed}, #{description}, #{status})
+    </insert>
+
+    <insert id="insertStage" parameterType="org.opencloudengine.flamingo2.spark.collector.parser.value.Stage">
+        INSERT INTO FL_SP_STAGES
+        (APPID, JOBID, STAGEID, ATTEMPTID, SUBMITTED, COMPLETED, NAME, DETAILS, TASKS, TASK_COMPLETE, TASK_FAILED, INPUT_BYTES, INPUT_RECORDS, OUTPUT_BYTES, OUTPUT_RECORDS, SHUFFLE_READ_BYTES, SHUFFLE_READ_RECORDS, SHUFFLE_WRITE_BYTES, SHUFFLE_WRITE_RECRODS, STATUS)
+        VALUES
+        (#{appID}, #{jobID}, #{stageID}, #{attemptID},
+        CASE #{submitted} WHEN NULL THEN NULL ELSE FROM_UNIXTIME(#{submitted} / 1000) END,
+        CASE #{completed} WHEN NULL THEN NULL ELSE FROM_UNIXTIME(#{completed} / 1000) END,
+        #{name}, #{details}, #{tasks}, #{taskComplete}, #{taskFailed}, #{inputBytes}, #{inputRecords}, #{outputBytes}, #{outputRecords}, #{shuffleReadBytes}, #{shuffleReadRecords}, #{shuffleWriteBytes}, #{shuffleWriteRecords}, #{status})
+    </insert>
+
+    <insert id="insertStageDetail" parameterType="map">
+        INSERT INTO FL_SP_STAGE_DETAIL
+        (APPID, JOBID, STAGEID, ATTEMPTID, TYPE, JSON)
+        VALUES
+        (#{appid}, #{jobid}, #{stageid}, #{attemptid}, #{type}, #{json})
+    </insert>
+
+    <insert id="insertExecutor" parameterType="org.opencloudengine.flamingo2.spark.collector.parser.value.Executor">
+        INSERT INTO FL_SP_EXECUTORS
+        (APPID, EXECUTORID, ADDRESS, PORT, RDD_BLOCKS, MAX_MEMORY, MEMORY_USED, DISK_USED, ACTIVE_TASKS, FAILED_TASKS, COMPLETED_TASKS, TOTAL_TASKS, TOTAL_DURATION, TOTAL_INPUT_BYTES, TOTAL_SHUFFLE_READ, TOTAL_SHUFFLE_WRITE, TOTAL_CORES, STDOUT_URL, STDERR_URL)
+        VALUES
+        (#{appID}, #{executorID}, #{address}, #{port}, #{rdd_blocks}, #{max_memory}, #{memory_used}, #{disk_used}, #{active_tasks}, #{failed_tasks}, #{completed_tasks}, #{total_tasks}, #{total_duration}, #{total_input_bytes}, #{total_shuffle_read}, #{total_shuffle_write}, #{total_cores}, #{stdout_url}, #{stderr_url})
+    </insert>
+
+    <insert id="insertStorage" parameterType="org.opencloudengine.flamingo2.spark.collector.parser.value.Storage">
+        INSERT INTO FL_SP_STORAGE
+        (APPID, RDDID, RDD_NAME, CACHED_PARTITIONS, PARTITIONS, FRACTION_CACHED, MEMORY, EXTERNAL_BLOCK_STORE, DISK, USE_DISK, USE_MEMORY, USE_EXTERNAL_BLOCK_STORE, DESERIALIZAED, REPLICATION)
+        VALUES
+        (#{appID}, #{rddID}, #{rddName}, #{cachedPartitions}, #{partitions}, #{cachedPartitions} * 100 / #{partitions}, #{memory}, #{externalBlockStore}, #{disk}, #{useDisk}, #{useMemory}, #{useExternalBlockStore}, #{deserialized}, #{replication})
+    </insert>
+
+    <insert id="insertTimeline" parameterType="org.opencloudengine.flamingo2.spark.collector.parser.value.Timeline">
+        INSERT INTO FL_SP_TIMELINE
+        (APPID, JOBID, STAGEID, ATTEMPTID, TYPE, JSON)
+        VALUES
+        (#{appID}, #{jobID}, #{stageID}, #{attemptID}, #{type}, #{json})
+    </insert>
+</mapper>
+
+

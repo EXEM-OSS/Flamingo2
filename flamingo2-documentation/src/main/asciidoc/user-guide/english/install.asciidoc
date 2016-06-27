@@ -1,0 +1,1279 @@
+[[install]]
+
+== Installation
+
+This document explains how to install Flamingo on Aapache Hadooop.
+Cloudera CDH, Pivotal HD, and Hortonworks HDP have their own provisioning tools such as Cloudera Manager, Ambari, Command Center, so they will not be explained here.
+
+=== System Requirements
+
+[width="80%",cols="10,10,20",options="header"]
+|=======
+|Software  |Version    |Remark
+|OS | Linux Kernel 2.6 or above |
+|Database | MySQL Server 5.1 or above | must be set to UTF-8 Character Set
+|Java | JDK 1.7 or above |
+|Hadoop | Apache Hadoop 2.0 or above |
+|Apache Hive | Apache Hive 0.13 or above |
+|Apache Pig | Apache Pig 0.12 or above |
+|Pivotal HAWQ | Pivotal HAWQ 1.2 or above |
+|R | R 3.0 or above |
+|node.js | node.js 3.0 or above |
+|=======
+
+=== Flamingo의 배포판 디렉토리 구조
+
+
+
+=== Installation Procedure
+
+Follow below steps to install Flamingo
+
+1. Install JDK 1.7
+2. Install MySQL Server
+3. Configure MySQL Server (UTF-8) and restart
+4. Import Flamingo database schemas
+5. Modify the `/WEB-INF/config.properties` file in Flamingo Web
+6. Modify the `/WEB-INF/hadoop.properties` file in Flamingo Web
+7. Install Flamingo Collector
+8. Modify the `/WEB-INF/config.properties` file in Flamingo Collector
+9. Modify the `/WEB-INF/hadoop.properties` file in Flamingo Collector
+10. Install Flamingo Resource Manager Agent
+11. Install Flamingo Namenode Agent
+12. Restart Hadoop Resource Manager
+13. Restart Hadoop Namenode
+14. Install and start R/RStudio Server
+15. Install node.js
+16. Install Flamingo remote web-terminal server
+17. Start Flamingo remote web-terminal server
+18. Start Flamingo Collector
+19. Start Flamingo Web
+
+=== Flamingo Installation
+
+For Flamingo to work properly, the following components must be installed in prior. Only Apache Hadoop is used here. Other distributions come with their own installer, they will not be used here.
+
+* Chrome
+* Apache Hadoop 2.0 or above (Apache Hive 0.14/1.0 recommended. Log retrieving is supported since the 0.14/1.0 version)
+* JDK 1.7 or above
+* MySQL Server 5.x or above (MySQL 5.1 recommended)
+* Flamingo Web Application
+* Flamingo MapReduce Job Agent
+* Flamingo Namenode Agent
+* Flamingo Resource Manager Agent
+* Flamingo Collector
+* Flamingo System Agent
+* node.js
+* R & RStudio Server (optional)
+* Pivotal HAWQ (optional)
+
+[NOTE]
+If you install Flamingo in different settings from above, please contact us, support@cloudine.co.kr, for technical support.
+
+==== JDK Installation
+
+Flamingo works based on JDK 1.7, so JDK 1.7 must be installed in prior.
+If you're not using the package installer, download JDK 1.7 from http://java.oracle.com.
+
+[source,bash]
+----
+# cd /usr/local
+# tar zxvf jdk-7u51-linux-x64.gz
+----
+
+After installing JDK 1.7, set ${JAVA_HOME} in the PATH variables.
+To apply the PATH variable to a user, modify user's `~/.profile` or `~/.bashrc` file.
+
+[source,bash]
+----
+# vi /etc/profile
+export JAVA_HOME=/usr/local/jdk1.7
+export PATH=$JAVA_HOME/bin:$PATH
+
+# source /etc/profile
+----
+
+==== MySQL Server 5 Installation
+
+Flamingo requires MySQL 5.x or above verions.
+As root, run the following command to install MySQL.
+
+[source,bash]
+----
+# yum -y install mysql-server mysql-client
+----
+
+==== MySQL Server UTF-8 Configuration
+
+Flamingo supports multi-byte languages, e.g. CJK, so MySQL must be set to UTF-8 character set.
+MySQL is set to Latin 1 by default.
+Run the following command to check the character set.
+
+====
+[source]
+----
+# mysql -uroot -p  # <1>
+Enter password:  # <2>
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 33819
+Server version: 5.5.43
+
+Copyright (c) 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show variables like 'c%';  # <3>
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | utf8                       |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | utf8                       |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
+| collation_connection     | utf8_general_ci            |
+| collation_database       | utf8_unicode_ci            |
+| collation_server         | utf8_unicode_ci            |
+| completion_type          | NO_CHAIN                   |
+| concurrent_insert        | AUTO                       |
+| connect_timeout          | 10                         |
++--------------------------+----------------------------+
+14 rows in set (0.00 sec)
+----
+<1> Log in to MySQL
+<2> Enter password
+<3> Check character set
+====
+
+If the character set is set to latin1, add the following lines into the `/etc/my.cnf`.
+
+[source]
+----
+[client]
+default-character-set = utf8
+
+[mysqld]
+character-set-server = utf8
+init_connect="SET collation_connection = utf8_general_ci"
+init_connect="SET NAMES utf8"
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+[mysqldump]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+----
+
+[WARNING]
+In some versions of CentOS, Ubuntu and MySQL, MySQL might not work properly. In such cases, modify the configurations in `[mysqld]`, and restart.
+
+==== MySQL Server Restart
+
+After setting MySQL Server to UTF-8, log in as root, and run the following command to restart the MySQL server.
+Wrong configurations can prevent MySQL from restarting.
+
+[source,bash]
+----
+# service mysqld restart
+----
+
+==== Importing Flamingo Database Schemas
+
+Flamingo's database schemas consisted of three categories as below.
+
+* Flamingo Web
+* Flamingo Collector
+* Quartz Job Scheduler
+
+===== Flaming Web & Collector
+
+For Flamingo Web and Collector to work, they need MySQL, and a database must be created.
+
+[source,sql]
+----
+CREATE DATABASE flamingo2 CHARACTER SET UTF8 COLLATE UTF8_GENERAL_CI;
+----
+
+If you would like to add a user, flamingo, run the following queries.
+
+[source,sql]
+----
+CREATE USER 'flamingo'@'localhost' IDENTIFIED BY 'flamingo';
+GRANT ALL PRIVILEGES ON *.* TO 'flamingo'@'localhost';
+FLUSH PRIVILEGES;
+----
+
+In order for Flamingo to work, tables and sample data are needed, so run the following command.
+
+[source,sql]
+----
+mysql -uroot -p flamingo2 < <FLAMINGO_HOME>/webapps/ROOT/WEB-INF/classes/import.sql
+----
+
+===== Quartz Job Scheduler
+Quartz Job Scheduler needs to create a table to run scheduled jobs. The following command will create the required table.
+
+[source,sql]
+----
+mysql -uroot -p flamingo2 < <FLAMINGO_HOME>/webapps/ROOT/WEB-INF/classes/quartz/tables_mysql_innodb.sql
+----
+
+Quartz Job Scheduler utilizes more than one column as a primary key.
+Therefore, if the key exceeds the defined length, it will return a `Specified key was too long` error.
+In such a case, modify the Quartz Job Scheduler database to Latin 1, or change the key length limit in the Quartz Job Scheduler table.
+
+==== Flamingo Web Configuration
+
+Flamingo Web needs the following two configuration files.
+
+* `/WEB-INF/config.properties` - Configures Flamingo Web
+* `/WEB-INF/hadoop.properties` - Configures Hadoop Cluster
+
+===== How to configure a default language
+
+Modify the following property to change the default locale.
+
+[source,properties]
+----
+default.locale=ko_KR
+----
+
+===== How to configure a home directory
+
+Flamingo supports Apache Tomcat 7, and uses Tomcat's install location as a home directory.
+
+[source,properties]
+----
+flamingo.home=${catalina.home}
+----
+
+===== How to configure a default Hadoop cluster
+
+You can set a default Hadoop cluster in `/WEB-INF/hadoop.properties`.
+Set one or more Hadoop cluter prefixes to `cluster.engines` in `/WEB-INF/hadoop.properties` using a comma as a delimiter.
+
+[source,properties]
+----
+system.qualifier=default
+----
+
+===== How to configure the terminal server
+
+Refer to <<installterm, Installing a remote web-terminal>>.
+
+After the web-terminal server is installed, configure Flamingo to be able to enable the remote web-terminal. Modify the following properties in `/WEB-INF/config.properties`.
+
+====
+[source,properties]
+----
+terminal.server.ip=192.168.1.2 # <1>
+terminal.server.port=9191 # <2>
+terminal.max.session=4 # <3>
+----
+<1> IP address of the remote web-terminal server
+<2> Terminal port
+<3> Maximum number of sessions allowed per user
+====
+
+[NOTE]
+The remote web-terminal requires Node.js to be installed in prior. Also run the remote web-terminal server as root.
+
+===== How to configure YARN Application Master
+
+Refer to <<appmaster, Applicastion Master>>.
+
+===== How to configure external links
+
+After logging in to Flamingo, you will see an icon as in the figure. This icon allows you to enable external links, and it will appear as below.
+
+image::install/external.png[scaledwidth=45%,External]
+
+Modify the following properties.
+
+====
+[source,properties]
+----
+external.enabled=true # <1>
+external.name=Cloudera Manager # <2>
+external.url=http://192.168.1.3:7180 # <3>
+----
+<1> True if external link is enabled. False, otherwise.
+<2> External link alias
+<3> Link URL
+====
+
+===== How to configure the license file
+
+The following properties validate a Flamingo license. It is recommneded not to modify the following properties if you're not a system administrator.
+
+[source,properties]
+----
+license.file.path=${flamingo.home}/license
+licence.encoder.secret1=8ce2f043da98b4ae
+licence.encoder.secret2=1a632ae94d9748cc
+license.filename=license
+----
+
+===== How to configure password encryption
+
+Flamingo's user password is encrypted and safely stored in a database. The following prperties configure the password encryption.
+If the following properties are modified, all users' password must be reset.
+
+[source,properties]
+----
+security.password.encoder.secret1=Bar12345Bar12345
+security.password.encoder.secret2=ThisIsASecretKet
+----
+
+===== How to configure a user's Linux home directory
+
+If a new user is added in Flamingo and `user.system.agent.apply` is set to true, the Flamingo System Agent adds the user to Linux.
+The user's home directory will be created under the following folder.
+
+[source,properties]
+----
+user.home.linux.path=/data1
+----
+
+===== How to configure a user's HDFS home directory
+
+If a new user is added in Flamingo, the user's home directory will be created in the HDFS.
+The user's home directory will be created under the following folder.
+
+[source,properties]
+----
+user.home.hdfs.path=/user
+----
+
+===== How to configure a system administrator
+
+If an error occurs while using Flamingo, the following information will appear in an error message box.
+
+[source,properties]
+----
+system.admin.name=Administrator
+system.admin.email=admin@yourdomain.com
+----
+
+===== How to configure the MySQL JDBC Driver
+
+The following properties are used to connect Flamingo to a MySQL server.
+
+[source,properties]
+----
+jdbc.driver= com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/flamingo2?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true
+jdbc.username=root
+jdbc.password=
+jdbc.min.pool=3
+jdbc.max.pool=30
+----
+
+===== How to configure R/RStudio
+
+Refer to <<rstudio, R/RStudio>>.
+
+===== How to configure Flamingo System Agent
+
+Refer to <<userintegration, User Integration>>.
+
+===== How to configure uploading and downloading files
+
+You can configure the setting for <<upload, Upload>> and <<download, download>> in the Flamingo's <<hdfs, HDFS browser>> in the following properties.
+
+====
+[source,properties]
+----
+file.upload.max.size=100000000 # <1>
+file.upload.default.encoding=UTF-8
+file.download.max.size=100000000 # <2>
+----
+<1> Allowed maximum size of file to upload
+<2> Allowed maximum size of file to download
+====
+
+===== How to configure non-deletable paths in the HDFS
+
+If you'd like to prevent certain folders or files from being deleted in the Flamingo's <<hdfs, HDFS browser>>, modify the following properties.
+The path pattern follows the Apache Ant Path Pattern, and multilple directories are separated by a comma.
+
+[source,properties]
+----
+hdfs.delete.forbidden.paths=/tmp/**/*,/tmp,/hbase/**/*,/user/hive/**/*,/usr/hive,/lib/**/*,/lib,/samples/**/*,/samples,/user,/user/admin,/user/hdfs,/user/history,/user/hive,/user/hue,/user/impala/,/user/oozie,/user/spark,/user/sqoop2,/user/gpadmin,/yarn,/yarn/**/*,/apps,/apps/**/*,/hawq_data,/hawq_data/**/*,/mapred,/mapred/**/*,/hive,/hive/**/*
+----
+
+===== How to configure file preview in the HDFS browser
+
+The following property sets a size when you <<view, preview files>> in the Flamingo's HDFS browser.
+
+[source,properties]
+----
+hdfs.viewFile.default.chunkSize=10000
+----
+
+Also you can set a file type filter for preview as below.
+
+[source,properties]
+----
+hdfs.viewFile.limit.type=.gz|.tar|.jar|.zip|.rar|.alz|.lzo|.snappy|.gif|.jpg|.png|.mp3|.mp4|.xls|.doc|.ppt|.xlsx|.docx|.pptx
+----
+
+===== How to configure whether to use the MapR distribution.
+
+Using the MapR distribution is disabled by default. This property is to support the MapR distribution in the near future. Unfortunately, Flamingo 2.0.0 does not support MapR at the moment.
+
+[source,properties]
+----
+mapr.enabled=false
+----
+
+===== How to configure Maven Repository
+
+When you use the modules in the workflow designer, you can set dependencies for MapReduce, Java, and etc. If you follow a Maven format, GROUP:ARTIFACT:VERSION, the module would attempt to download the dependencies from a Maven repository.
+
+[source,properties]
+----
+maven.repository.url=http://maven.opencloudengine.org/content/groups/public
+----
+
+===== How to cache dependencies
+
+When you use the modules in the workflow designer, you can set dependencies for MapReduce, Java, and etc.
+If the dependency files--JAR file--already exist in the HDFS, Flamingo saves them in a predefined caching directory.
+If the dependency files are frequently used, and `artifact.caching` is set to `true`, Flamingo uses the cached dependency files.
+Consequently, if the dependency files are changed often, the cached files will not apply.
+
+[source,properties]
+----
+artifact.caching=true
+----
+
+The caching directory can be configured as follows. If a cached JAR file is removed, it will be downloaded again.
+
+[source,properties]
+----
+artifact.cache.path=${flamingo.home}/working/cache
+----
+
+===== How to configure home path variables
+
+The necessary software home path for the workflow designer can be set as below.
+
+====
+[source,properties]
+----
+java.home=/usr/local/java/jdk7
+
+hadoop.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/hadoop # <1>
+hive.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/hive
+pig.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/pig
+sqoop.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/sqoop
+spark.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/spark
+mahout.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/mahout
+
+hadoop.hdfs.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/hadoop-hdfs # <2>
+
+hadoop.mapred.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/hadoop-mapreduce # <3>
+
+r.home=/usr/bin # <4>
+----
+<1> hadoop.home is assigned to <PARENT> if the hadoop binary file is located in <PARENT>/bin.
+<2> `HADOOP_HDFS_HOME` path variable
+<3> `HADOOP_MAPRED_HOME` path variable
+<4> `R` binary location
+====
+
+===== How to set `HADOOP_USER_NAME`
+
+Hadoop explicitly utilizes the `HADOOP_USER_NAME` variable to gain user permission. If the following property value is empty, it doesn't get applied.
+This property might not work in some Hadoop distributions and settings.
+
+[source,properties]
+----
+hadoop.user.name=yarn
+----
+
+===== How to configure Spark Master in Standalone Mode
+
+This property is applied when a Spark module is used in the workflow designer. If Spark is set in standalone mode, the following property is used.
+
+[source,properties]
+----
+spark.master.url=spark://192.168.1.4:7077
+----
+
+===== How to configure the Flamingo's logging directory
+
+The Flamingo's modules keep a log in a logging directory set as below. The <<dashboard, Workflow Monitor>> uses the directory.
+
+[source,properties]
+----
+flamingo.workflow.logging.dir=${flamingo.home}/working/logs
+----
+
+Old log files are periodically deleted, and records of workflows cannot be retrieved.
+
+===== How to configure Flamingo MapReduce Job Agent
+
+Refer to <<mragent, MapReduce Job Agent>>.
+
+===== How to configure a Mahout JAR file path
+
+The following is the Mahout JAR file location in the HDFS.
+
+[source,properties]
+----
+mahout.mapreduce.jar.path=/sample/mrlib/mahout-examples-0.10.1-job.jar
+----
+
+===== How to configure a Flamingo MapReduce path
+
+The following the location of Flamingo MapReduce in the HDFS.
+
+[source,properties]
+----
+flamingo.mapreduce.jar.path=/sample/mrlib/flamingo-mapreduce-hadoop2-1.2-job.jar
+----
+
+==== How to configure a Hadoop cluster
+
+Modify `/WEB-INF/hadoop.properties` to configure a Hadoop cluster in Flamingo.
+The following properties are used by the workflow engine in Flamingo.
+
+====
+[source,properties]
+----
+###########################################
+## Hadoop Cluster Configuration
+###########################################
+
+cluster.names=Test Cluster    # <1>
+cluster.qualifiers=default   # <2>
+
+###########################################
+## MapReduce Configuration
+###########################################
+
+# History Server
+default.hs.address=exo2.cdh.local  # <3>
+default.hs.port=19888
+
+###########################################
+## File System Configuration
+###########################################
+
+# MapR File System
+# See : /opt/mapr/conf/mapr-clusters.conf
+defualt.mapr.fs=maprfs:///   # <4>
+
+###########################################
+## Namenode Configuration
+###########################################
+
+# Namenode
+default.nn.scheme=hdfs
+default.nn.address=exo2.cdh.local   # <5>
+default.nn.port=8020
+
+###########################################
+## Flamingo Agent Configuration
+###########################################
+
+# Resource Manager Agent
+default.rm.agent.address=exo2.cdh.local   # <6>
+default.rm.agent.port=18032
+
+# Namenode Agent
+default.nn.agent.address=exo2.cdh.local   # <7>
+default.nn.agent.port=10070
+
+###########################################
+## Hive Configuration
+###########################################
+
+default.hive.metastore.address=exo2.cdh.local   # <8>
+default.hive.metastore.port=9083
+
+default.hive.server2.url=jdbc:hive2://exo2.cdh.local:10000   # <9>
+default.hive.server2.username=hive
+
+default.hive.apply.flamingo.username=true   # <10>
+
+default.hive.username=yarn   # <11>
+
+default.hive.legacy=false   # <12>
+
+###########################################
+## Pivotal HAWQ Configuration
+## hawq.jdbc.type={greenplum|postgresql}
+###########################################
+
+default.hawq.jdbc.type=greenplum
+default.hawq.greenplum.connectionUrl=jdbc:pivotal:greenplum://
+default.hawq.postgresql.connectionUrl=jdbc:postgresql://
+default.hawq.host=27.1.244.223
+default.hawq.port=5432
+default.hawq.databaseName=gpadmin
+default.hawq.user=gpadmin
+default.hawq.password=
+default.hawq.autoCommit=false
+default.hawq.driver=com.pivotal.jdbc.GreenplumDriver
+default.hawq.postgresql.driver=org.postgresql.Driver
+----
+<1> Hadoop cluster name. It appears in Flamingo when logged in (e.g. Test Cluster)
+<2> Hadoop cluster qualifier. Use only lowercase alphabets.
+<3> History server information. It is needed to monitor MapReduce jobs.
+<4> A MapR's default file system URL when MapR is used.
+<5> Namenode's IP and port
+<6> Flamingo Resource Manager Agent's IP and port
+<7> Flamingo Namenode Agent's IP and port
+<8> Hive Metastore's IP and port. If improperly set, Hive will not work.
+<9> Hive Server 2's IP and port. If improperly set, Hive will not work.
+<10> Whether to use a Flamingo user name when a Hive module in the workflow designer is executed.
+<11> A user name to be used when a Hive module in the workflow designer is executed. It applies on when `hive.apply.flamingo.username` is set to`false`.
+<12> Set it to `true` if Hive version 0.13 is used.
+====
+
+==== How to install Flamingo Collector
+
+Flamingo Collector gathers and stores data from Resource Manager Agent, Namenode Agent and Flamingo Web. It is used for monitoring and is a `.war` file.
+There is no call from outside, so AJP, HTTP Connector can be disabled in Apache Tomcat의 `server.xml`.
+
+In order to install Flamingo Collector, uncompress the binary file.
+
+[source,bash]
+----
+# tar xvfz flamingo-collector-2.0.0.tar.gz
+----
+
+The following properties in `/WEB-INF/hadoop.properties` configure a connection to MySQL for Flamingo Collector to save collected data. Flamingo Collector and Web use a same database, so you can enter the same connection properties.
+
+[source,properties]
+----
+jdbc.driver= com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/flamingo2?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull
+jdbc.username=root
+jdbc.password=
+jdbc.min.pool=3
+jdbc.max.pool=10
+----
+
+The following properties in `/WEB-INF/hadoop.properties` configure targets for Flamingo Collector to collect data from.
+
+====
+[source,properties]
+----
+###########################################
+## Hadoop Cluster Configuration
+###########################################
+
+cluster.names=테스트 클러스터
+cluster.qualifiers=default
+
+default.web.address=192.168.221.155  # <1>
+default.web.port=18080
+
+###########################################
+## MapReduce Configuration
+###########################################
+
+# History Server
+default.hs.address=192.168.221.155
+default.hs.port=19888
+
+###########################################
+## Resource Manager Configuration
+###########################################
+
+# Resource Manager
+default.rm.address=192.168.221.155
+default.rm.port=8032
+
+# Web Application Proxy
+default.wap.address=192.168.221.155
+default.wap.port=8088
+
+###########################################
+## Namenode Configuration
+###########################################
+
+# Namenode
+default.nn.scheme=hdfs
+default.nn.address=192.168.221.155
+default.nn.port=8020
+
+###########################################
+## Agent Configuration
+###########################################
+
+# Resource Manager Agent
+default.rm.agent.address=192.168.221.155
+default.rm.agent.port=18032
+
+# Namenode Agent
+default.nn.agent.address=192.168.221.155
+default.nn.agent.port=10070
+
+# Hive Metastore Agent
+default.hive.metastore.agent.address=192.168.221.155
+default.hive.metastore.agent.port=19083
+
+# Hive Server 2 Agent
+default.hive.server2.agent.address=192.168.221.155
+default.hive.server2.agent.port=10001
+
+###########################################
+## Hive Configuration
+###########################################
+
+default.hive.metastore.address=192.168.221.155
+default.hive.metastore.port=9083
+
+default.hive.server2.url=jdbc:hive2://192.168.221.155:10000
+default.hive.server2.username=hive
+----
+<1> Flamingo Web's IP and port
+====
+
+==== How to install Flamingo Agent
+
+Flamingo monitors each component of Hadoop EcoSystem and provides an advanced feature by installing JVM-based Flamingo Agent in each component.
+Flamingo Engine communicates with Agent and handles requests. Collector communicates with each Agent and collects metrics.
+This section explains how to install Flamingo Agent.
+
+[IMPORTANT]
+Flamingo's distributes file system brownser and monitors are patented.
+Therefore the source code of Flamingo Agent is not open. Only a binary file is provided.
+Note that decompiling or modifying Flamingo Agent violates the patent law.
+
+===== How to install Resource Manager Agent
+
+In order to monitor a ResourceManager and manage YARN applications, Flamingo Agent for YARN ResourceManager must be installed.
+If Flamingo is not on a Cloudera CDH distribution, add the following option to `YARN_OPTS`.
+
+[source,bash]
+----
+-javaagent:<FLAMINGO_HOME>/agents/flamingo2-hadoop2-rm-agent-2.0.0.jar=resourcescript:resourcemanager.bm
+----
+
+If Flamingo is on a Cloudera CDH distribution, log in to Cloudera Manager, go to Resource Manager, and add the following to the `ResourceManager Java Options`.
+
+image::install/cdh-rm-agent.png[scaledwidth=100%,Cloudera CDH 5의 Resource Manager Agent 설정]
+
+A path to the Agent JAR files must be absolute.
+
+[source,bash]
+----
+-javaagent:<FLAMINGO_HOME>/agents/flamingo2-hadoop2-rm-agent-2.0.0.jar=resourcescript:resourcemanager.bm
+-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:-CMSConcurrentMTEnabled
+-XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled
+----
+
+[WARNING]
+If access to the Agent JAR file is denied, the JVM will not work properly. If a ResourceManager does not start, make sure that the ResourceManager has permission to access the JAR file.
+For Cloudera CDH, Pivotal HD, and Hortonworks HDP, the Resource Manager's system account is `yarn`, so the Flamingo ResourceManager Agent JAR file must be in a directory owned by `yarn`.
+Sometimes, a `permission deined to MANIFEST.MF` error might return. In such a case, check the system account of the ResourceManager, make adjustment accordingly.
+
+====== Troubleshooting for Cloudera CDH
+
+For Cloudera CDH, a ResourceManager will not work if a wrong path is given to `ResourceManager의 Java Options`. Configure Flamingo Reesource Manager Agent to `ResourceManager Java Options` and select "yarn > instance". Then you can see "ResourceManager" as below.
+
+image::install/cdh-rm-restart-1.png[scaledwidth=100%,Resource Manager 관리 화면]
+
+Click "ResourceManager" and detailed information will appear. Then select "Restart" in the menu.
+
+image::install/cdh-rm-restart-2.png[scaledwidth=100%,Resource Manager 재시작 메뉴]
+
+The ResourceManager will restart, and it takes some time. It it fails to restart, an error message will appear as below. In order to find a cause of the error, click "Stdout".
+
+image::install/cdh-rm-restart-3.png[scaledwidth=100%,Resource Manager 재시작]
+
+ResourceManager script output shows an error occurred during initialization of VM as below.
+
+image::install/cdh-rm-restart-4.png[scaledwidth=100%,Stdout 로그 확인]
+
+Now let's check the stderr log. An error has occurred while opening a zip file or a JAR manifest is missing. This is usually due to incorrect file name, permission denial, or corrupted file. In order to back trace the problem, log in as `yarn`, and run `jar tvf <JAR>` to see if you can access and unzip the file.
+
+image::install/cdh-rm-restart-5.png[scaledwidth=100%,Stderr 로그 확인]
+
+If it is correctly configured, you cand see the following screen when you restrat the ResourceManager.
+
+image::install/cdh-rm-restart-6.png[scaledwidth=100%,정상 동작]
+
+===== How to install Namenode Agent
+
+Flamingo Namenode Agent is a JVM agent that monitors a Namenode, collects data from a HDFS and manages a HDFS. Like the ResourceManager Agent, add the following to the Namenode.
+The following properties apply to a Namenode agent for Hadoop version 2.0 ~ 2.5.
+
+[source,bash]
+----
+-javaagent:<FLAMINGO_HOME>/agents/flamingo2-hadoop20-nn-agent-2.0.0.jar=resourcescript:namenode2.bm
+-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:-CMSConcurrentMTEnabled
+-XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled
+----
+
+The following properties apply to a Namenode agent for Hadoop 2.6 or above.
+
+[source,bash]
+----
+-javaagent:<FLAMINGO_HOME>/agents/flamingo2-hadoop26-nn-agent-2.0.0.jar=resourcescript:namenode2.bm
+-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:-CMSConcurrentMTEnabled
+-XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled
+----
+
+[WARNING]
+If access to the Agent JAR file is denied, the JVM will not work properly. If a Namenode does not start, make sure that the Namenode has permission to access the JAR file.
+For Cloudera CDH, Pivotal HD, and Hortonworks HDP, the Namenode's system account is `hdfs`, so the Flamingo Namenode Agent JAR file must be in a directory owned by `hdfs`.
+Sometimes, a `permission deined to MANIFEST.MF` error might return. In such a case, check the system account of the Namenode, make adjustment accordingly.
+
+[[mragent]]
+===== MapReduce Job Agent
+
+MapReduce Job Agent retrieves and saves MapReduce job and YARN application IDs when MapReduce, Hive, and Pig jobs are executed.
+Set the JAR file path as below in `/WEB-INF/config.properties`.
+
+[source,properties]
+----
+flamingo.mr.agent.jar.path=<FLAMINGO_HOME>/agents/flamingo2-hadoop2-mr-agent-2.0.0.jar
+----
+
+MapReduce Agent retrieve IDs when MapReduce, Hive, or Pig jobs are executed in the workflow designer, and submits the IDs to the monitors.
+MapReduce Agent provides the features as follows.
+
+* Collects and stores MapReduce job information
+* Inter-links workflows, YARN applications, and MapReduce jobs
+* When a workflow is force-killed, force-kills YARN applications, and MapReduce jobs
+* Collects other relevant information
+
+=== How to configure Pivotal HAWQ
+
+https://network.pivotal.io/products/pivotal-hawq[Pivotal HAWQ] is a SQL Engine on Hadoop that works with PHD(Pivotal Hadoop Distribution) and HDP(Hortonworks Hadoop Distribution).
+Pivotal HAWQ is an advanced SQL on Hadoop which supports ANSI SQL 100%, and performs numerous analytic jobs integrating MADlib, PL/Java, and Pivotal R.
+
+Flamingo is developed based on Pivotal HAWQ 1.2.1.0, and HAWQ 1.3.0.1 was released while this document is being written.
+
+Pivotal HAWQ 1.3 works on the following Hadoop distributions.
+
+* Pivotal - PHD 3.0
+* Hortonworks - HDP 2.2.4
+
+Pivotal HAWQ supports external integration through JDBC. Flamingo also supports HAWQ throught JDBC. There can be technical restrictions with what a JDBC can offer.
+
+In order to use Flamingo'sPivotal HAWQ Editor, a Pivotal HAWQ JDBC driver is required. Pivotal HAWQ JDBC Driver follows the Pivotal license policy. Users must install the JDBC driver on their own.
+
+* Pivotal HAWQ JDBC Driver : https://network.pivotal.io/products/pivotal-hawq[다운로드]
+
+After downloading the driver, `greenplum.jar`, from above link, copy the file to `/WEB-INF/lib`, and restart Flamingo.
+
+[[installterm]]
+=== How to install a remote web-terminal
+
+Flamingo 2.0.0's remote web terminal is Node.js-based. In order to connect to the remote web terminal, Node.js and other modules must be installed in the server.
+
+==== How to install Node.js
+
+Refer to the links below to install Node.js
+
+* CentOS : https://www.digitalocean.com/community/tutorials/how-to-install-and-run-a-node-js-app-on-centos-6-4-64bit[How To Install And Run A Node.js App On Centos 6.4 64bit]
+* Ubuntu : https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-an-ubuntu-14-04-server[How To Install Node.js on an Ubuntu 14.04 server]
+
+In Ubuntu, run the command as below.
+
+[source,bash]
+----
+# apt-get install nodejs npm
+----
+
+In Ubuntu, it is installed in `/usr/bin/nodejs`, create a symbolic link as `/usr/bin/node`.
+
+[source,bash]
+----
+# ln -s /usr/bin/nodejs /usr/bin/node
+----
+
+In Ubuntu, the following additional packages need to be installed.
+
+[source,bash]
+----
+# apt-get install nodejs-legacy
+# apt-get install npm
+# apt-get install g++
+----
+
+==== How to install a npm package
+
+To install the necessary packages, find the `node_modules` directory.
+The `node_modules` directory is `{prefix}/lib/node_modules`.
+`{prefix}` is usually `/usr/local/` or it varies based on a user's setting.
+Install the packages in following order.
+
+[source,bash]
+----
+# npm install npm@2.12.1 -g
+npm@2.12.1 /usr/local/lib/node_modules/npm
+
+# npm install async@0.9.0 -g
+async@0.9.0 /usr/local/lib/node_modules/async
+
+# npm install term.js@0.0.4 -g
+term.js@0.0.4 /usr/local/lib/node_modules/term.js
+
+# npm install express@3.20.2 -g
+express@3.20.2 /usr/local/lib/node_modules/express
+├── basic-auth@1.0.0
+├── merge-descriptors@1.0.0
+├── utils-merge@1.0.0
+├── cookie-signature@1.0.6
+├── methods@1.1.1
+├── cookie@0.1.2
+├── fresh@0.2.4
+├── escape-html@1.0.1
+├── range-parser@1.0.2
+├── content-type@1.0.1
+├── vary@1.0.0
+├── parseurl@1.3.0
+├── content-disposition@0.5.0
+├── commander@2.6.0
+├── depd@1.0.1
+├── etag@1.5.1 (crc@3.2.1)
+├── mkdirp@0.5.0 (minimist@0.0.8)
+├── proxy-addr@1.0.7 (forwarded@0.1.0, ipaddr.js@0.1.9)
+├── debug@2.1.3 (ms@0.7.0)
+├── connect@2.29.1 (pause@0.0.1, response-time@2.3.0, vhost@3.0.0, on-headers@1.0.0, basic-auth-connect@1.0.0, bytes@1.0.0, cookie-parser@1.3.4, method-override@2.3.2, serve-static@1.9.2, connect-timeout@1.6.1, qs@2.4.1, serve-favicon@2.2.0, http-errors@1.3.1, finalhandler@0.3.4, morgan@1.5.2, type-is@1.6.1, errorhandler@1.3.5, body-parser@1.12.3, compression@1.4.3, serve-index@1.6.3, express-session@1.10.4, csurf@1.7.0, multiparty@3.3.2)
+└── send@0.12.2 (destroy@1.0.3, ms@0.7.0, mime@1.3.4, on-finished@2.2.1)
+
+# npm install socket.io@1.3.5 -g
+socket.io@1.3.5 /usr/local/lib/node_modules/socket.io
+├── has-binary-data@0.1.3 (isarray@0.0.1)
+├── debug@2.1.0 (ms@0.6.2)
+├── socket.io-parser@2.2.4 (isarray@0.0.1, debug@0.7.4, component-emitter@1.1.2, benchmark@1.0.0, json3@3.2.6)
+├── socket.io-adapter@0.3.1 (object-keys@1.0.1, debug@1.0.2, socket.io-parser@2.2.2)
+├── socket.io-client@1.3.5 (to-array@0.1.3, indexof@0.0.1, component-bind@1.0.0, debug@0.7.4, backo2@1.0.2, object-component@0.0.3, component-emitter@1.1.2, has-binary@0.1.6, parseuri@0.0.2, engine.io-client@1.5.1)
+└── engine.io@1.5.1 (base64id@0.1.0, debug@1.0.3, engine.io-parser@1.2.1, ws@0.5.0)
+
+# npm install pty.js@0.2.7-1 -g
+pty.js@0.2.7-1 /usr/local/lib/node_modules/pty.js
+├── extend@1.2.1
+└── nan@1.7.0
+
+# npm install forever@0.14.1 -g
+forever@0.14.1 /usr/local/lib/node_modules/forever
+├── colors@0.6.2
+├── timespan@2.3.0
+├── optimist@0.6.1 (wordwrap@0.0.2, minimist@0.0.10)
+├── nssocket@0.5.3 (eventemitter2@0.4.14, lazy@1.0.11)
+├── winston@0.8.3 (cycle@1.0.3, stack-trace@0.0.9, eyes@0.1.8, isstream@0.1.2, async@0.2.10, pkginfo@0.3.0)
+├── cliff@0.1.10 (eyes@0.1.8, colors@1.0.3)
+├── nconf@0.6.9 (ini@1.3.3, async@0.2.9, optimist@0.6.0)
+├── forever-monitor@1.5.2 (watch@0.13.0, minimatch@1.0.0, ps-tree@0.0.3, broadway@0.3.6)
+├── flatiron@0.4.3 (optimist@0.6.0, director@1.2.7, broadway@0.3.6, prompt@0.2.14)
+└── utile@0.2.1 (deep-equal@1.0.0, ncp@0.4.2, async@0.2.10, i@0.3.3, mkdirp@0.5.0, rimraf@2.3.3)
+----
+
+==== How to install a remote web terminal
+
+Create `/usr/local/lib/node_modules/webterminal` and copy all .js files in Flamingo's `flamingo2-terminal-nodejs/terminal-server` to the directory.
+To run the terminal server as `root`, log in to the server as `root` and add the system account of remote web terminal to the sudoer.
+
+[source,bash]
+----
+# vi /etc/sudoers
+cloudine        ALL=(ALL)       NOPASSWD: ALL
+----
+
+If you would like to give sudo permission to certain processes, add them to sudoer as below.
+
+[source,bash]
+----
+# vi /etc/sudoers
+cloudine        ALL=(ALL)       NOPASSWD:/usr/bin/nodejs, /usr/local/bin/forever
+----
+
+Now run the following command to start the server. Run the server as `root` to allow multi-user access to the web terminal.
+
+[source,bash]
+----
+# sudo forever start /usr/local/lib/node_modules/webterminal/server.js
+# ps -ef | grep forever
+root      7207     1  2 09:34 ?        00:00:00 /usr/local/bin/node /usr/local/lib/node_modules/forever/bin/monitor /usr/local/lib/node_modules/webterminal/server.js
+# netstat -an | grep 9191
+----
+
+Run the following command to keep a log.
+
+[source,bash]
+----
+# sudo forever start -o /usr/local/lib/node_modules/webterminal/out.log -e /usr/local/lib/node_modules/webterminal/err.log /usr/local/lib/node_modules/webterminal/server.js
+----
+
+Run the following command to stop the server.
+
+[source,bash]
+----
+# sudo forever stop /usr/local/lib/node_modules/webterminal/server.js
+----
+
+=== How to integrate Flamingo with R
+
+Flamingo, since 2.0.0, fully supports R. In order to integrate Flamingo with R, R, RStudio, RHadoop, and RHive are required.
+After logging in to Flamingo, users can connect to RStudio Server.
+By doing this, Flamingo users can use R in Flamingo.
+R is not suitable for analyzing massive data. However, it has various analytic algorithms, and its visualization features are much more powerful than Hadoop.
+Using R with Hadoop provides a convenient and productive environment, and users can analyze data with more different algorithms.
+
+==== How to install R
+
+In order to integrate R with Flamingo, a R package must be installed in a server which would act as a R server. Flamingo and R can be installed in a same server, but R consumes a lot of resources such as CPU, memory, and storage.
+It is highly recommended to separate R from a Flamingo server. In practice, you will need one server for R, and another for Flamingo.
+However, if you want to run a R module from the workflow designer, Flamingo and R should be installed in a same server.
+
+Log in as `root`R to install R, and run the following command. (For CentOS only)
+
+[source,bash]
+----
+# yum install R
+----
+
+In Ubuntu, the following command will install R.
+
+[source,bash]
+----
+# apt-get install r-base gdebi-core libapparmor1
+----
+
+[NOTE]
+R packages will be installed through the Internet. If the Internet is not available, a R package repository is required in the server. Otherwise, R will not be installed.
+
+==== How to install RStudio Server
+
+Flamingo is designed to work with RStudio Server. RStudio Server, not RStudio, allows users to use R through a web browser.
+Especially, Flamingo unites Flamingo user accounts and RStudio Server user accounts, so users can access both Flamingo and R with one account.
+It's just that RStudio Server's user account system is Linux's user account system and Flamingo's is a service account system. In order to integrate two account systems, there are several things to consider such as
+whether users access Linux through RStudio Server to give permssion to create new things. Anyway this is relevant to administrators who are integrating Flamingo and R, so this matter won't be discussed here.
+
+RStudio Server must be installed in where R is installed. Download RStudio from http://www.rstudio.com/products/rstudio/download-server[RStudio Server 다운로드].
+Download the file according to your OS. Log in as `root` and execute the following commands.
+
+[source,bash]
+----
+# yum install openssl098e # Required only for RedHat/CentOS 6 and 7
+# wget http://download2.rstudio.org/rstudio-server-0.98.1103-x86_64.rpm
+# yum install --nogpgcheck rstudio-server-0.98.1103-x86_64.rpm
+----
+
+In Ubuntu use `gdebi` instead of `apt-get`. The following commands are valid in 64 bit Ubuntu.
+
+[source,bash]
+----
+# wget http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
+# gdebi rstudio-server-0.98.1103-amd64.deb
+----
+
+==== How to configure RStudio Server
+
+RStudio Server uses a port 8787 by default. When you get a `connection refused` error in your web browser, check the configuration file in the RStudio Server.
+
+* `/etc/rstudio/rserver.conf` 파일
+* `/etc/rstudio/rsession.conf` 파일
+
+RStudio Server's IP and ports are managed in `/etc/rstudio/rserver.conf`. Modify the following properties in the file to configure the network.
+
+[source,properties]
+----
+www-port=8787
+www-address=192.168.1.1
+----
+
+Execute the following command as `root` to restart RStudio Server.
+
+[source,bash]
+----
+# rstudio-server restart
+----
+
+Execute the following command to check if the port is open.
+
+[source,bash]
+----
+# netstat -an | grep 8787
+tcp        0      0 0.0.0.0:8787                0.0.0.0:*                   LISTEN
+----
+
+[NOTE]
+Due to security, if the RStudio Server port can't be opened to outside, it can be forwarded by using `rinetd`.
+
+==== How to configure Flamingo to integrate with RStudio Server
+
+Refer to <<rstudio, R/RStudio>>
+
+==== Things to know when installing RHive and RHadoop
+
+In order to load and analyze data in Hadoop HDFS, an integradtion module is required. RHive and RHadoop are the integration modules and need to be installed in where R and RStudio Server are installed.
+RHive is an R extension facilitating distributed computing via HIVE query, and RHadoop is a collection of five R packages that allow users to manage and analyze data with Hadoop.
+
+* https://github.com/nexr/RHive[RHive]
+* https://github.com/RevolutionAnalytics/rhdfs[RHadoop rhdfs]
+
+[NOTE]
+People often confuse that they can do big data analysis on RHive and RHadoop(rhdfs). RHive and RHadoop(rhdfs) load files from Hadoop HDFS, but they don't do the distributed computing.
+In order to use RHive and RHadoop with Flamingo, we can offer technical support(support@cloudine.co.kr).
+
+=== How to configure Flamingo
+
+==== Web Application Server
+
+Flamingo uses WebSocket, and one of the following web application servers is required. Flamingo is developed based on Apache Tomca, so using Apache Tomcat will facilitate the configuration. The followings are the web application servers compatible with Flamingo.
+
+* Tomcat 7.0.47+
+* Jetty 9.1+
+* GlassFish 4.1+
+* WebLogic 12.1.3+
+* Undertow 1.0+ (WildFly 8.0+)
+
+==== How to improve download via web performance
+
+Modify `<FLAMINGO_HOME>/conf/server.xml` in Tomcat to reduce downloading of script files. Set the compression option as below.
+
+[source,xml]
+----
+<Connector port="8080" protocol="HTTP/1.1"
+           connectionTimeout="20000"
+           compression="on" 
+           compressionMinSize="2048" 
+           noCompressionUserAgents="gozilla, traviata" 
+           compressableMimeType="text/css,text/html,text/xml,application/json,application/javascript,application/x-javascript,text/javascript,text/x-javascript,text/x-json"
+           redirectPort="8443"/>
+----
+
+[NOTE]
+This property is only available in Apache Tomcat. For other web applications, contact them for the instruction.
+
+==== How to configure Flamingo to UTF-8
+
+In order to handle multi-bytes character, Flamingo must be set to UTF-8.
+In Tomcat's connector property, change the connector's URI encoding to UTF-8 in `<FLAMINGO_HOME>/conf/server.xml` as below
+
+====
+[source,xml]
+----
+<Connector port="8080" protocol="HTTP/1.1"
+           connectionTimeout="20000"
+           redirectPort="8443" 
+           URIEncoding="UTF-8"/>  # <1>
+----
+<1> set to UTF-8
+====
+
+==== How to configure JVM Heap
+
+Flamingo executes MapReduce Job, Hive QL, and Pig Latin, so substantial amount of resource is necessary.
+If Tomcat's JVM heap is not set engough, it becomes meaningless.
+To configure Flamingo's JVM heap size, add `CATALINA_OPTS` at beginning of `<FLAMINGO_HOME>/bin/catalina.sh`.
+
+====
+[source,bash]
+----
+#   LOGGING_MANAGER (Optional) Override Tomcat's logging manager
+#                   Example (all one line)
+#                   LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+# -----------------------------------------------------------------------------
+
+CATALINA_OPTS="-Dflamingo -Xms4G -Xmx4G"  # <1>
+
+# OS specific support.  $var _must_ be set to either true or false.
+cygwin=false
+darwin=false
+os400=false
+case "`uname`" in
+CYGWIN*) cygwin=true;;
+Darwin*) darwin=true;;
+OS400*) os400=true;;
+esac
+----
+<1> JVM Heap Configuration
+====
+
+=== How to integrate Flamingo Web with WebSocket and Apache HTTP Server
+
+Flamingo Web utilizes WebSocket, so Apache HTTP Server needs mod_proxy and mod_proxy_wstunnel to work.
+In the Apache HTTP Server's configuration, modify the properties as below to configure WebSocket.
+
+====
+[source,bash]
+----
+ProxyRequests Off
+ProxyPreserveHost On
+
+<Proxy *>
+    Order deny,allow
+    Allow from all
+</Proxy>
+
+ProxyPass /websocket ws://<FLAMINGO_WEB_IP>:18080/websocket/  # <1>
+
+ProxyPass / http://<FLAMINGO_WEB_IP>:18080/
+ProxyPassReverse / http://<FLAMINGO_WEB_IP>:18080/
+<Location />
+    Order allow,deny
+    Allow from all
+</Location>
+----
+<1> WebSocket Configuration
+====
+
+=== How to configure Flamingo Logging
+
+==== Flamingo Web
+
+You can configure Flamingo Web logging in `/WEB-INF/logback-<PROFILE>.xml`. There are three types of log files as below.
+
+[width="80%",cols="10,20",options="header"]
+|=======
+|File  |Description
+|`<FLAMINGO_HOME>/logs/app.log` | Output log from Flamingo
+|`<FLAMINGO_HOME>/logs/exception.log` | Exception log
+|`<FLAMINGO_HOME>/logs/pool.log` | JDBC connection pool monitor log
+|=======
+
+Flamingo can be in deveopment mode for debugging or production mode. Each keeps a different log file.
+
+[width="80%",cols="10,20",options="header"]
+|=======
+|File  |Description
+|`/WEB-INF/logback-dev.xml` | Development
+|`/WEB-INF/logback-prd.xml` | Production
+|=======
+
+If you want to change Flamingo's logging to production, add `CATALINA_OPTS` at beginning of `<FLAMINGO_HOME>/bin/catalina.sh` as below.
+
+====
+[source,bash]
+----
+#   LOGGING_MANAGER (Optional) Override Tomcat's logging manager
+#                   Example (all one line)
+#                   LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+# -----------------------------------------------------------------------------
+
+CATALINA_OPTS="-Dflamingo -Dspring.profiles.active=prd -Xms4G -Xmx4G"  # <1>
+
+# OS specific support.  $var _must_ be set to either true or false.
+cygwin=false
+darwin=false
+os400=false
+case "`uname`" in
+CYGWIN*) cygwin=true;;
+Darwin*) darwin=true;;
+OS400*) os400=true;;
+esac
+----
+<1> Set to production logging mode
+====

@@ -1,0 +1,188 @@
+[[hive]]
+
+== Apache Hive
+
+Flamingo는 Apache Hive에서 지원하는 모든 관리 기능과 Hive 쿼리를 개발할 수 있는 기능을 제공합니다.
+
+* Hive Metastore 관리
+** 데이터베이스 관리
+** 테이블 관리
+** SERDE
+** 컬럼 구분자 지원
+** 입출력 포맷 지원
+** External & Managed 테이블
+* Hive 쿼리 실행 및 결과 처리
+** Hive 쿼리 실행
+** Hive 쿼리 실행 결과의 표시
+** Hive 쿼리 실행 결과의 다운로드
+
+=== 개요
+
+Apache Hive 관리 화면은 크게 좌측 메타스토어 영역, 우측 Hive 쿼리 에디터 영역으로 구성되어 있습니다.
+
+image::hive/hive-01.jpg[scaledwidth=100%,Hive 메인화면]
+
+메타스토어를 통해서 Hive의 데이터베이스 및 테이블을 관리할 수 있고, Hive 쿼리 에디터를 사용하여 Hive 쿼리 작성 및 결과를 확인할 수 있습니다.
+
+=== 알려진 문제점
+
+* Hive의 Thrift 및 Hive Server가 현재까지 성숙도가 높지 않아서 커넥션 관리를 포함한 관리 기능이 전반적으로 부족하여 사용상에 이슈가 발생할 수 있습니다.
+
+=== 메타스토어 개요
+
+Hive 메타스토어 관리 기능은 데이터베이스, 테이블, 컬럼의 세 가지 영역으로 구성되어 있습니다.
+
+* 데이터베이스 - Hive 데이터베이스의 목록 표시 및 생성, 삭제
+* 테이블 - Hive 테이블 목록 표시 및 생성, 삭제, 변경
+* 컬럼 - Hive 테이블의 컬럼 및 파티션 정보의 확인
+
+image::hive/hive-02.jpg[scaledwidth=50%,Hive 메타스토어]
+
+=== 데이터베이스 관리
+
+Hive 메타스토어 기능을 통해 Hive 데이터베이스를 관리할 수 있습니다.
+
+==== 데이터베이스 생성
+
+데이터베이스 목록 옆의 버튼을 선택하면 데이터베이스 관리 메뉴가 나타납니다. "데이터베이스 생성" 버튼을 클릭합니다.
+
+image::hive/hive-03.jpg[scaledwidth=50%,Hive Database 생성]
+
+데이터베이스 명, 상세설명 입력 후 "생성" 버튼을 선택하면 Hive 데이터베이스가 생성됩니다.
+
+image::hive/hive-04.jpg[scaledwidth=50%,Hive Database 생성]
+
+만약 데이터베이스 생성시 별도의 속성값을 지정하고 싶으면 데이터베이스 생성 창 하단의 데이터베이스 속성값 그리드를 통해서 속성값을 추가할 수 있습니다.
+
+image::hive/hive-07.jpg[scaledwidth=50%,Hive Database 생성]
+
+==== 데이터베이스 삭제
+
+삭제하려는 데이터베이스를 선택합니다.
+
+image::hive/hive-05.jpg[scaledwidth=50%,Hive 데이터베이스 삭제]
+
+데이터베이스 메뉴에서 "데이터베이스 삭제" 버튼을 선택하면 데이터베이스를 삭제할 수 있습니다.
+
+image::hive/hive-06.jpg[scaledwidth=50%,Hive 데이터베이스 삭제]
+
+=== 테이블 관리
+
+==== 테이블 생성
+
+Hive 테이블 생성하기 위해서 테이블을 생성하려는 Hive 데이터베이스를 선택 후 테이블 생성 버튼을 클릭합니다.
+
+image::hive/hive-08.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== 테이블 생성 기초
+
+Hive 테이블을 생성하기 위해서 테이블명, 구분자 유형, 칼럼 이 세가지 정보는 Hive 테이블을 생성하는데 필수값 입니다. 이 외에 필요에 따라서 구분자 유형 상세 및 입출력 파일 형식을 지정하여 사용할 수 있습니다.
+
+image::hive/hive-09.jpg[scaledwidth=70%,Hive 테이블 생성]
+
+===== 테이블 생성 유형
+
+Hive의 테이블은 2가지 유형이 있습니다. 첫 번째 Managed 테이블, 두 번째 External 테이블.
+Managed 테이블은 Hive 테이블 생성 위치를 Hive 메타스토어에서 지정하는 방식이고 External 테이블은 사용자가 Hive 테이블의 위치를 직접 지정하는 방식입니다.
+
+image::hive/hive-10.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+External 테이블의 경우 사용자가 직접 테이블 생성 위치를 지정해야 하기 때문에 "External 테이블" 선택 후 찾기 버튼을 클릭힙니다.
+
+image::hive/hive-11.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+HDFS 브라우저 창이 나타나면 Hive 테이블을 생성하려는 위치를 선택 후 "확인" 버튼을 클릭합니다.
+
+image::hive/hive-12.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== 테이블 구분자 유형
+
+Hive 테이블 구분자 유형은 2가지 유형이 있습니다. 첫 번째 구분자 직접지정, 두번째 SerDe(Serializer Deserializer)를 활용하는 방법입니다.
+
+구분자(Delimiter)를 사용하는 경우 필드, 행, 맵, 컬렉션 4가지 구분자를 선택할 수 있는데 일반적으로 필드(Column), 행(Row)만 지정을 하고 맵(Map), 컬렉션(Collection)의 경우 Hive 컬럼 중 Array, Map, Struct 타입을 사용하는 경우에만 지정합니다.
+
+image::hive/hive-13.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+Flamingo에서는 Hive에서 사용할 수 있는 구분자를 지정할 수 있도록 목록을 제공합니다. 구분자 목록에서 적용하려는 구분자를 선택 후 "확인" 버튼을 클립합니다.
+
+image::hive/hive-14.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+SerDe(Serializer Deserializer)를 사용하는 경우에는 사용자가 작성한 SerDe JAR 파일이 Hive에 배포되어 있어야합니다. 작성한 SerDe의 클래스명을 입력하십시오.
+
+[NOTE]
+JAR 파일 지정할 수 있는 기능은 다음 Flamingo 버전에서 지원할 예정입니다.
+
+image::hive/hive-15.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== 입/출력 파일 형식
+
+Hive 입/출력 파일 형식을 지정할 수 있습니다. SerDe와 마찬가지로 작성한 JAR 파일이 Hive에 배포되어 있어야 하며, Class명을 입력합니다.
+
+입/출력 파일 형식을 지정하지 않으면 Hive에서 기본적으로 제공하는 `org.apache.hadoop.mapred.TextInputFormat` 와 `org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat` 클래스을 사용하게 됩니다.
+
+image::hive/hive-16.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== 테이블 컬럼 추가/삭제
+
+테이블 컬럼은 하단의 "컬럼"탭에서 "추가" 버튼 클릭 후 "컬럼명", "자료형", "설명"을 입력합니다.
+
+image::hive/hive-17.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+Hive 컬럼 중 Array, Map, Struct 타입을 선택한 경우 자료형 좌측에 아이콘이 표시됩니다. 해당 아이콘을 선택하면 각 칼럼의 속성을 입력할 수 있는 팝업이 표시됩니다.
+
+image::hive/hive-18.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+Array 자료형은 Hive 컬럼 자료형 중 Numeric, Date/Time, String, Misc 타입 중 한가지가 배열 형태로 구성되어 있는 자료형 입니다.
+
+image::hive/hive-19.jpg[scaledwidth=30%,Hive 테이블 생성]
+
+Map 자료형은 Hive 컬럼 자료형 중 Numeric, Date/Time, String, Misc 타입이 Key/Value 형태로 구성되어 있는 자료형 입니다.
+
+image::hive/hive-20.jpg[scaledwidth=30%,Hive 테이블 생성]
+
+Struct 자료형은 Hive 컬럼 자료형 중 Numeric, Date/Time, String, Misc 타입이 구조체 형태로 구성되어 있는 자료형 입니다.
+
+image::hive/hive-21.jpg[scaledwidth=30%,Hive 테이블 생성]
+
+Hive 자료형에 대한 자세한 사항은 https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types[LanguageManual Types]를 참고하시면 됩니다.
+
+===== 파티션 추가/삭제
+
+파티션을 추가/삭제하는 방법은 테이블 컬럼 추가/삭제하는 방법과 동일합니다.
+파티션키로 사용하려는 칼럼을 추가 후 "컬럼명", "자료형", "설명"을 입력합니다.
+
+image::hive/hive-22.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== 테이블 속성
+
+데이터베이스 속성과 마찬가지로 테이블 속성을 지정할 수 있습니다.
+"속성"탭에서 원하는 테이블 속성을 추가/삭제 할 수 있습니다.
+
+image::hive/hive-23.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+==== 테이블 삭제
+
+삭제하려는 테이블을 선택 후 "삭제" 버튼을 클릭합니다.
+
+image::hive/hive-24.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+==== 테이블 변경
+
+변경하려는 테이블을 선택 후 "변경" 버튼을 클릭합니다.
+테이블 변경은 테이블 생성 방법과 동일합니다. 변경할 테이블 내용을 입력 후 변경하면 해당 내용이 반영됩니다.
+
+image::hive/hive-25.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+=== Hive 쿼리 실행
+
+Hive 쿼리 편집기는 두 부분으로 나뉘어져 있습니다. 첫 번째 쿼리 편집기, 두 번째 로그/데이터 확인
+쿼리 편집기는 Hive 쿼리를 직접 작성하는 영역입니다.. 로그/데이터 확인은 Hive 쿼리에 대한 로그 및 결과를 확인할수 있는 영역입니다.
+Hive 쿼리 실행하는 방법은 쿼리 편집기에 Hive 쿼리를 작성 후 "쿼리 실행" 버튼을 클릭합니다.
+
+image::hive/hive-26.jpg[scaledwidth=100%,Hive Query 실행]
+
+쿼리 실행이 완료되면 자동으로 하단 "데이터" 탭으로 이동합니다.
+
+한 페이지 당 100개의 행만 확인 가능합니다. 만약 쿼리의 결과가 100개의 행을 초과 한다면 "다음" 버튼을 클릭하여 추가적인 데이터를 확인할 수 있습니다.
+
+image::hive/hive-27.jpg[scaledwidth=100%,Hive Query 실행]

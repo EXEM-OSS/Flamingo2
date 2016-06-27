@@ -49,10 +49,5 @@ Ext.define('Flamingo2.view.monitoring.historyserver.Configuration', {
                 return value;
             }
         }
-    ],
-
-    initComponent: function () {
-        var me = this;
-        me.callParent(arguments);
-    }
+    ]
 });

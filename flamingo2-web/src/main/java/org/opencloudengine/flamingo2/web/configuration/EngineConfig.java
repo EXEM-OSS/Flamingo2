@@ -65,6 +65,12 @@ public class EngineConfig implements Serializable {
     public String hawqDriver;
     public String hawqPostgresqlDriver;
 
+    public String tajoAddress;
+    public String tajoPort;
+
+    public String sparkCollectorAddress;
+    public String sparkCollectorPort;
+
     public List<String> zookeepers;
 
     public Map<String, Integer> zookeeperAgents;
@@ -347,5 +353,37 @@ public class EngineConfig implements Serializable {
 
     public void setHawqPostgresqlDriver(String hawqPostgresqlDriver) {
         this.hawqPostgresqlDriver = hawqPostgresqlDriver;
+    }
+
+    public String getTajoAddress() {
+        return tajoAddress;
+    }
+
+    public void setTajoAddress(String tajoAddress) {
+        this.tajoAddress = tajoAddress;
+    }
+
+    public String getTajoPort() {
+        return tajoPort;
+    }
+
+    public void setTajoPort(String tajoPort) {
+        this.tajoPort = tajoPort;
+    }
+
+    public String getSparkCollectorAddress() {
+        return sparkCollectorAddress;
+    }
+
+    public void setSparkCollectorAddress(String sparkCollectorAddress) {
+        this.sparkCollectorAddress = sparkCollectorAddress;
+    }
+
+    public String getSparkCollectorPort() {
+        return sparkCollectorPort;
+    }
+
+    public void setSparkCollectorPort(String sparkCollectorPort) {
+        this.sparkCollectorPort = sparkCollectorPort;
     }
 }

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.realtime.spark.streaming.SparkStreamingRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <resultMap id="ioTServiceMap" type="org.opencloudengine.flamingo2.model.rest.IoTService">
+        <result property="id"                 column="id"                  jdbcType="BIGINT"/>
+        <result property="serviceId"          column="serviceId"           jdbcType="VARCHAR"/>
+        <result property="serviceName"        column="serviceName"         jdbcType="VARCHAR"/>
+        <result property="serviceTypeId"      column="serviceTypeId"       jdbcType="VARCHAR"/>
+        <result property="serviceTypeName"    column="serviceTypeName"     jdbcType="VARCHAR"/>
+        <result property="deviceTypeId"       column="deviceTypeId"        jdbcType="VARCHAR"/>
+        <result property="deviceTypeName"     column="deviceTypeName"      jdbcType="VARCHAR"/>
+        <result property="columnsType"        column="columnsType"         jdbcType="VARCHAR"/>
+        <result property="columnName"         column="columnName"          jdbcType="VARCHAR"/>
+        <result property="columnType"         column="columnType"          jdbcType="VARCHAR"/>
+        <result property="filtering"          column="filtering"           jdbcType="TINYINT"/>
+        <result property="masking"            column="masking"             jdbcType="TINYINT"/>
+        <result property="orderby"            column="orderby"             jdbcType="INTEGER"/>
+        <result property="workDate"           column="workDate"            jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="sparkStreamingMap" type="org.opencloudengine.flamingo2.model.rest.SparkStreaming">
+        <result property="id"                       column="ID"                         jdbcType="BIGINT"/>
+        <result property="server"                   column="SERVER"                     jdbcType="VARCHAR"/>
+        <result property="sparkUserWorkingPath"     column="SPARK_USER_WORKING_PATH"    jdbcType="VARCHAR"/>
+        <result property="jarFileFQP"               column="JAR_FILE_FQP"               jdbcType="VARCHAR"/>
+        <result property="jarFilename"              column="JAR_FILENAME"               jdbcType="VARCHAR"/>
+        <result property="applicationId"            column="APPLICATION_ID"             jdbcType="VARCHAR"/>
+        <result property="applicationName"          column="APPLICATION_NAME"           jdbcType="VARCHAR"/>
+        <result property="streamingClass"           column="STREAMING_CLASS"            jdbcType="VARCHAR"/>
+        <result property="javaOpts"                 column="JAVA_OPTS"                  jdbcType="VARCHAR"/>
+        <result property="variables"                column="VARIABLES"                  jdbcType="VARCHAR"/>
+        <result property="username"                 column="USERNAME"                   jdbcType="VARCHAR"/>
+        <result property="state"                    column="STATE"                      jdbcType="VARCHAR"/>
+        <result property="registeredDate"           column="REGISTERED_DATE"            jdbcType="TIMESTAMP"/>
+        <result property="startTime"                column="START_TIME"                 jdbcType="TIMESTAMP"/>
+        <result property="finishTime"               column="FINISH_TIME"                jdbcType="TIMESTAMP"/>
+        <result property="duration"                 column="DURATION"                   jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="sparkStreamingHistoryMap" type="org.opencloudengine.flamingo2.model.rest.SparkStreamingHistory">
+        <result property="id"                       column="ID"                         jdbcType="BIGINT"/>
+        <result property="applicationId"            column="APPLICATION_ID"             jdbcType="VARCHAR"/>
+        <result property="applicationName"          column="APPLICATION_NAME"           jdbcType="VARCHAR"/>
+        <result property="username"                 column="USERNAME"                   jdbcType="VARCHAR"/>
+        <result property="cpuUsage"                 column="CPU_USAGE"                  jdbcType="DOUBLE"/>
+        <result property="activeThreads"            column="ACTIVE_THREADS"             jdbcType="BIGINT"/>
+        <result property="memoryUsage"              column="MEMORY_USAGE"               jdbcType="BIGINT"/>
+        <result property="registeredDate"           column="REGISTERED_DATE"            jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Sql Fragments -->
+    <!-- ==================================================================================== -->
+
+    <sql id="whereIoTColumnsPK">WHERE columnsType = #{columnsType}</sql>
+    <sql id="wherePK">WHERE ID = #{id}</sql>
+    <sql id="whereAppId">WHERE APPLICATION_ID = #{applicationId}</sql>
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="selectIoTServices" parameterType="map" resultMap="ioTServiceMap">
+        <if test="depth == 0">
+            SELECT DISTINCT
+                serviceId,
+                serviceName
+            FROM FL_IOT
+        </if>
+        <if test="depth == 1">
+            SELECT DISTINCT
+                serviceId,
+                serviceTypeId,
+                serviceTypeName
+            FROM FL_IOT
+            WHERE serviceId = #{serviceId}
+        </if>
+        <if test="depth == 2">
+            SELECT DISTINCT
+                serviceId,
+                serviceTypeId,
+                deviceTypeId,
+                deviceTypeName
+            FROM FL_IOT
+            WHERE serviceId = #{serviceId}
+            AND serviceTypeId = #{serviceTypeId}
+        </if>
+    </select>
+
+    <select id="selectIoTServiceColumns" parameterType="map" resultMap="ioTServiceMap">
+        SELECT columnName, columnType, filtering, masking
+        FROM FL_IOT
+        <include refid="whereIoTColumnsPK"/>
+        ORDER BY orderby ASC
+    </select>
+
+    <select id="selectAllSparkStreamingApps" parameterType="map" resultMap="sparkStreamingMap">
+        SELECT *
+        FROM FL_SPARK_STREAMING
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="userLevel != 1">
+                AND USERNAME = #{username}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectTotalCountByUserLevel" parameterType="map" resultType="Integer">
+        SELECT COUNT(*)
+        FROM FL_SPARK_STREAMING
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="userLevel != 1">
+                AND USERNAME = #{username}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectRunningSparkStreamingCPUUsage" parameterType="map" resultType="map">
+        SELECT
+            CPU_USAGE AS cpuUsage,
+            DATE_FORMAT(REGISTERED_DATE, '%Y-%m-%d %H:%i:%s') AS time
+        FROM FL_SPARK_STREAMING_HISTORY
+        <include refid="whereAppId"/>
+        AND DATE(REGISTERED_DATE) BETWEEN #{startDate} AND #{endDate}
+        <if test="userLevel != 1">
+            AND USERNAME = #{username}
+        </if>
+<!--
+        <choose>
+            <when test="startDate == null or startDate == '' and endDate != null and endDate != ''">
+                <![CDATA[ AND REGISTERED_DATE <= #{endDate} ]]>
+            </when>
+            <when test="startDate != null and startDate != '' and endDate == null or endDate == ''">
+                <![CDATA[ AND REGISTERED_DATE >= #{startDate} ]]>
+            </when>
+            <when test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            </when>
+        </choose>-->
+    </select>
+
+    <select id="selectOptimalServer" parameterType="string" resultType="Integer">
+        SELECT COUNT(*)
+        FROM FL_SPARK_STREAMING
+        WHERE SERVER = #{server}
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 4. Exist Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="exist" parameterType="string" resultType="Integer">
+        SELECT COUNT(1)
+        FROM FL_SPARK_STREAMING
+        <include refid="wherePK"/>
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 5. Insert Statements -->
+    <!-- ==================================================================================== -->
+
+    <select id="insertSparkStreamingApp" parameterType="map">
+        INSERT INTO FL_SPARK_STREAMING (SERVER, SPARK_USER_WORKING_PATH, JAR_FILE_FQP, JAR_FILENAME, USERNAME, APPLICATION_ID, APPLICATION_NAME, STREAMING_CLASS, JAVA_OPTS, VARIABLES)
+        VALUES (
+            #{server},
+            #{sparkUserWorkingPath},
+            #{jarFileFQP},
+            #{jarFilename},
+            #{username},
+            #{applicationId},
+            #{applicationName},
+            #{streamingClass},
+            #{javaOpts},
+            #{variables}
+        )
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 6. Update Statements -->
+    <!-- ==================================================================================== -->
+
+    <select id="updateSparkStreamingApp" parameterType="map">
+        UPDATE FL_SPARK_STREAMING
+        <set>
+            STATE = #{state},
+            <if test="state == 'STANDBY'">
+                START_TIME = NULL,
+                DURATION = NULL
+            </if>
+            <if test="state == 'RUNNING'">
+                START_TIME = CURRENT_TIMESTAMP,
+                DURATION = CURRENT_TIMESTAMP
+            </if>
+        </set>
+        <include refid="whereAppId"/>
+    </select>
+
+    <!-- ==================================================================================== -->
+    <!-- 7. Delete Statements -->
+    <!-- ==================================================================================== -->
+
+    <select id="deleteSparkStreamingApp" parameterType="map">
+        DELETE FROM FL_SPARK_STREAMING
+        <include refid="whereAppId"/>
+    </select>
+
+</mapper>

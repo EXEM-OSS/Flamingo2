@@ -20,9 +20,9 @@ Ext.define('Flamingo2.view.hive.editor.Editor', {
 
     requires: [
         'Flamingo2.view.hive.editor.ResultSearchGridPanel',
-        'Flamingo2.view.hive.editor.QueryEditor',
         'Flamingo2.view.hive.editor.EditorController',
-        'Flamingo2.view.hive.editor.EditorModel'
+        'Flamingo2.view.hive.editor.EditorModel',
+        'Flamingo2.view.component.editor.AbstractEditor'
     ],
 
     controller: 'hiveEditorController',
@@ -34,7 +34,7 @@ Ext.define('Flamingo2.view.hive.editor.Editor', {
     border: false,
     items: [
         {
-            xtype: 'queryEditor',
+            xtype: 'abstractEditor',
             reference: 'queryEditor',
             itemId: 'editor',
             region: 'center',
@@ -54,7 +54,7 @@ Ext.define('Flamingo2.view.hive.editor.Editor', {
             flex: 1,
             items: [
                 {
-                    xtype: 'queryEditor',
+                    xtype: 'abstractEditor',
                     title: message.msg('common.log'),
                     layout: 'fit',
                     itemId: 'logviewer',

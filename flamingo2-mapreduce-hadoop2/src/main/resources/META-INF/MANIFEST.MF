@@ -3,4 +3,4 @@ Archiver-Version: Plexus Archiver
 Created-By: Apache Maven
 Built-By: Cloudine
 Build-Jdk: 1.7.0
-Main-Class: org.openflamingo.mapreduce.etl.MapReduceDriver
+Main-Class: org.opencloudengine.flamingo2.mapreduce.etl.MapReduceDriver

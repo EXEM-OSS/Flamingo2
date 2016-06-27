@@ -50,6 +50,7 @@ Ext.define('Flamingo2.view.designer.property.HADOOP_R', {
                 align: 'stretch'
             },
             items: [
+/*
                 {
                     xtype: 'textfield',
                     fieldLabel: message.msg('workflow.common.shell.workingpath'),
@@ -74,6 +75,7 @@ Ext.define('Flamingo2.view.designer.property.HADOOP_R', {
                         }
                     }
                 },
+*/
                 {
                     xtype: 'textareafield',
                     name: 'script',

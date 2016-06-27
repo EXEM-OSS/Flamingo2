@@ -27,7 +27,7 @@ public class SystemUserServiceTester {
 		String url = getRemoteServiceUrl("10.0.1.9", 18080);
 //		String url = getRemoteServiceUrl("localhost", 29090);
 
-		SystemUserService service = getRemoteService(url, SystemUserService.class);
+		SystemUserAgentService service = getRemoteService(url, SystemUserAgentService.class);
 
 //        System.out.println(service.existUser("hong"));
 //        System.out.println(service.createUser("hong","hong"));

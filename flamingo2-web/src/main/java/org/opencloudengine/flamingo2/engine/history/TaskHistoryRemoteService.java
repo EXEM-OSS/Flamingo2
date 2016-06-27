@@ -35,4 +35,6 @@ public interface TaskHistoryRemoteService {
     String getCommand(String identifier, String taskId);
 
     String getError(String identifier, String taskId);
+
+    List<TaskHistory> selectRunning();
 }

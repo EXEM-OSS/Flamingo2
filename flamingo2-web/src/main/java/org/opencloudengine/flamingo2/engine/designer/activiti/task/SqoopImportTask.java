@@ -32,10 +32,11 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.opencloudengine.flamingo2.util.StringUtils.unescape;
 import static org.opencloudengine.flamingo2.web.configuration.ConfigurationHelper.getHelper;
 
 /**
- * Java를 실행하는 태스크
+ * Sqoop Import를 실행하는 태스크
  *
  * @author Jae Hee, Lee
  * @since 2.0
@@ -47,18 +48,11 @@ public class SqoopImportTask extends InterceptorAbstractTask {
      */
     private Logger logger = LoggerFactory.getLogger(SqoopImportTask.class);
 
-    /**
-     * Default HDFS File System URL
-     */
-    private String fsDefaultFS;
-
     @Override
     public void runTask(ProcessInstance instance) throws Exception {
-        fsDefaultFS = String.format("hdfs://%s:%s", getHelper().get(clusterName + ".nn.address"), getHelper().get(clusterName + ".nn.port"));
-
         FileUtils.forceMkdir(new File(working));
 
-        saveScriptFile(buildCommand(working), working);
+        saveScriptFile(buildCommand(), working);
 
         String cli = MessageFormatter.arrayFormat("sh {}/script.sh", new Object[]{working}).getMessage();
         saveCommandFile(cli, working);
@@ -72,7 +66,7 @@ public class SqoopImportTask extends InterceptorAbstractTask {
         socketParams.put("type", "workflow");
         socketParams.put("user", getUser());
 
-        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(working), working, logger, fileWriter);
+        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(), working, logger, fileWriter);
         managedProcess.setSocketParams(socketParams);
         managedProcess.run();
     }
@@ -80,11 +74,11 @@ public class SqoopImportTask extends InterceptorAbstractTask {
     /**
      * command line 명령어를 생성한다.
      */
-    private String buildCommand(String working) {
+    private String buildCommand() {
         List<String> command = new LinkedList<>();
 
         try {
-            Map<String, String> defaultEnvs = getDefaultEnvs(working);
+            Map<String, String> defaultEnvs = getDefaultEnvs();
             Set<String> keys = defaultEnvs.keySet();
             for (String key : keys) {
                 if (!isEmpty(defaultEnvs.get(key))) {
@@ -98,32 +92,32 @@ public class SqoopImportTask extends InterceptorAbstractTask {
 
             command.add("import");
 
-            if (variable.get("jdbcUrl") != null && !StringUtils.isEmpty(variable.get("jdbcUrl").toString())) {
+            if (variable.get("jdbcUrl") != null && !isEmpty(variable.get("jdbcUrl").toString())) {
                 command.add("--connect");
                 command.add(variable.getProperty("jdbcUrl"));
             }
 
-            if (variable.get("jdbcDriver") != null && !StringUtils.isEmpty(variable.get("jdbcDriver").toString())) {
+            if (variable.get("jdbcDriver") != null && !isEmpty(variable.get("jdbcDriver").toString())) {
                 command.add("--driver");
                 command.add(variable.getProperty("jdbcDriver"));
             }
 
-            if (variable.get("sqoopTable") != null && !StringUtils.isEmpty(variable.get("sqoopTable").toString())) {
+            if (variable.get("sqoopTable") != null && !isEmpty(variable.get("sqoopTable").toString())) {
                 command.add("--table");
                 command.add(variable.getProperty("sqoopTable"));
             }
 
-            if (variable.get("sqoopUsername") != null && !StringUtils.isEmpty(variable.get("sqoopUsername").toString())) {
+            if (variable.get("sqoopUsername") != null && !isEmpty(variable.get("sqoopUsername").toString())) {
                 command.add("--username");
                 command.add(variable.getProperty("sqoopUsername"));
             }
 
-            if (variable.get("sqoopPassword") != null && !StringUtils.isEmpty(variable.get("sqoopPassword").toString())) {
+            if (variable.get("sqoopPassword") != null && !isEmpty(variable.get("sqoopPassword").toString())) {
                 command.add("--password");
                 command.add(variable.getProperty("sqoopPassword"));
             }
 
-            if (variable.get("output") != null && !StringUtils.isEmpty(variable.get("output").toString())) {
+            if (variable.get("output") != null && !isEmpty(variable.get("output").toString())) {
                 command.add("--target-dir");
                 command.add(variable.getProperty("output"));
             }
@@ -170,7 +164,7 @@ public class SqoopImportTask extends InterceptorAbstractTask {
      *
      * @return 환경변수
      */
-    public Map<String, String> getDefaultEnvs(String working) {
+    public Map<String, String> getDefaultEnvs() {
         Map<String, String> envs = new HashMap<>();
 
         envs.put("PATH", "/bin:/usr/bin:/usr/local/bin" + ":" + getHelper().get("hadoop.home") + "/bin" + ":" + getHelper().get("hive.home") + "/bin" + ":" + getHelper().get("pig.home") + "/bin");
@@ -192,7 +186,7 @@ public class SqoopImportTask extends InterceptorAbstractTask {
 
         if (environmentKeys != null) {
             for (int i = 0; i < environmentKeys.length; i++) {
-                envs.put(environmentKeys[i], environmentValues[i]);
+                envs.put(environmentKeys[i], unescape(environmentValues[i]));
             }
         }
 

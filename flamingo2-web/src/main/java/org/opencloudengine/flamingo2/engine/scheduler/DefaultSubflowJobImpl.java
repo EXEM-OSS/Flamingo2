@@ -302,7 +302,7 @@ public class DefaultSubflowJobImpl implements DefaultSubflowJob {
         metadata.put("current", 0);
         metadata.put("yyyyMMdd", DateUtils.getCurrentYyyymmdd());
         metadata.put("yyyy", DateUtils.parseDate(date, "yyyy"));
-        metadata.put("MM", DateUtils.parseDate(date, "mm"));
+        metadata.put("MM", DateUtils.parseDate(date, "MM"));
         metadata.put("dd", DateUtils.parseDate(date, "dd"));
         metadata.put("HH", DateUtils.parseDate(date, "HH"));
         metadata.put("mm", DateUtils.parseDate(date, "mm"));

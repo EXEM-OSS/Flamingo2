@@ -16,6 +16,8 @@
  */
 package org.opencloudengine.flamingo2.agent.namenode;
 
+import org.apache.hadoop.fs.ContentSummary;
+import org.apache.hadoop.fs.UnresolvedLinkException;
 import org.opencloudengine.flamingo2.model.rest.FileInfo;
 
 import java.io.IOException;
@@ -102,4 +104,23 @@ public interface Namenode2AgentService {
      * @return 디렉토리 및 파일 정보
      */
     FileInfo getFileInfo(String path);
+
+    /**
+     * HDFS 경로에 파일 목록을 페이징 처리 하여 가져온다..
+     *
+     * @param path HDFS 렉토리 경로
+     * @param page 페이지 번호
+     * @param start 시작 번호
+     * @param limit 목록 제한 갯수
+     * @return List<FileInfo>
+     */
+    Map getFilesPage(String path, int page, int start, int limit) throws IOException;
+
+    /**
+     * HDFS 경로에 파일, 디렉토리 갯수를 반환한다..
+     *
+     * @param path HDFS 디렉토리 경로
+     * @return ContentSummary
+     */
+    ContentSummary getContentSummary(String path) throws IOException;
 }

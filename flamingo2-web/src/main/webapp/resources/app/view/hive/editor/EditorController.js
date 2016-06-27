@@ -263,7 +263,7 @@ Ext.define('Flamingo2.view.hive.editor.EditorController', {
 
                     // 로그창의 내용을 모두 지운다.
                     if (tab.status == 'CANCEL') {
-                        error(message.msg('hive.msg.query_running_error'), '쿼리가 취소되었습니다.');
+                        error(message.msg('hive.msg.query_running_error'), message.msg('hive.msg.query_cancel'));
                     }
                     else {
                         refs.logViewer.setValue(result.error.exception);
@@ -347,7 +347,7 @@ Ext.define('Flamingo2.view.hive.editor.EditorController', {
                                             refs.resultGrid.getView().refresh();
                                         }, 300);
                                     } else {
-                                        info(message.msg('common.warn'), '조회된 데이터가 없습니다.');
+                                        info(message.msg('common.warn'), message.msg('hive.msg.empty_data'));
                                     }
                                     ;
 

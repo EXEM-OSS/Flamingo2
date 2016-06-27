@@ -80,6 +80,16 @@ public class ELEvaluator {
         }
 
         /**
+         * 컨텍스트에서 변수를 반환한다.
+         *
+         * @param name 변수명
+         * @return 변수의 값
+         */
+        public Object getFunction(String name) {
+            return functions.get(name);
+        }
+
+        /**
          * Context에 함수를 추가한다.
          *
          * @param prefix       함수의 Prefix

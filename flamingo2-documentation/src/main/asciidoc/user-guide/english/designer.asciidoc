@@ -1,0 +1,848 @@
+[[designer]]
+
+== Workflow Designer
+Workflow Designer contains various analytic Big Data modules in the UI. These modules allow users to freely analyze data. Relations between modules are represented by an arrow, which can be drawn with a mouse. All workflows can be saved and used again.
+
+=== Introduction to Workflow Designer
+
+Workflow Designer facilitates numerous analytic procedures and maximizes the convenience with the reusable modules.
+The key features of Workflow Designer are as follows.
+
+* Numerous embedded analytic modules (e.g. MapReduce, Pig, Hive, Bash Shell, Python, Spark, R, Mahout, Ankus, etc.)
+* Drag and drop analytic and processing modules and put parameters through the GUI.
+* Extract, transform, and load complex data with easy steps
+* Various integrated algorithms that provide the convenience for analysis
+* Scheduling batch jobs is available through Batch Job Manager
+
+In Workflow Designer, you can create workflows that actualize data processing procedures.
+
+image::designer/save_exec/introduction-00.png[워크플로우 디자이너 개요 화면1]
+
+Workflow Designer is composed of the GUIs for managing and designing workflows, configuring variables, and executing.
+
+image::designer/save_exec/introduction-01.png[워크플로우 디자이너 개요 화면2]
+
+=== How to save and execute workflows
+
+In order to create a workflow, drag and drop necessary modules to the canvas.
+
+image::designer/save_exec/save_exec-00.png[모듈 드래그 앤 드롭]
+
+Enter a workflow name and draw an arrow from Start to a next module.
+
+image::designer/save_exec/save_exec-01.png[모듈링크]
+
+Now draw an arrow from a last module to End. The workflow must continuously flow from Start to End.
+
+image::designer/save_exec/save_exec-02.png[모듈링크]
+
+Double click on a module and a configuration window will appear. Each module has its own configuration window. The following is Apache Pig Latin Script's.
+
+image::designer/save_exec/save_exec-03.png["스크립트탭",scaledwidth="70%"]
+
+Once a workflow is finished click Save.
+
+image::designer/save_exec/save_exec-04.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+Then select a folder to save the workflow.
+
+image::designer/save_exec/save_exec-05.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+Click OK
+
+image::designer/save_exec/save_exec-06.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+Now you can see the saved workflow in the workflow tree.
+
+image::designer/save_exec/save_exec-07.png[워크플로우 생성 확인]
+
+Click Run to execute the workflow. If the canvas is empty, clicking Run will not do anything. A workflow must be loaded before it can be executed.
+
+image::designer/save_exec/save_exec-08.png["워크플로우 실행 버튼",scaledwidth="45%"]
+
+Click Yes
+
+image::designer/save_exec/save_exec-09.png["워크플로우 실행 팝업창",scaledwidth="35%"]
+
+Now the workflow is running. Results of workflow jobs are available in Workflow History or <<dashboard, Workflow Monitor>>.
+
+image::designer/save_exec/save_exec-10.png["워크플로우 결과 화면",scaledwidth="70%"]
+
+Workflow Designer is very easy to use. However, entering wrong parameters will cause error.
+Therefore, before using each module, learn what their parameters do.
+
+=== MapReduce
+
+The MapReduce module executes a customized MapReduce job. Drag and drop the MapReduce module.
+
+image::designer/mapreduce/mapreduce-00.png[모듈 드래그 앤 드롭]
+
+Enter a workflow name and draw an arrow from Start to the module.
+
+image::designer/mapreduce/mapreduce-01.png[모듈링크]
+
+Then draw an arrow from the module to End.
+
+image::designer/mapreduce/mapreduce-02.png[모듈링크]
+
+Double click the module and enter necessary parameters in the configuration window.
+Select the MapReudce tab and enter a MapReduce JAR path and its driver class name.
+These two parameters are required to execute the job.
+The class name must be a fully qualified name, and it must be included in the JAR file.
+
+image::designer/mapreduce/mapreduce-03.png["맵리듀스 탭",scaledwidth="70%"]
+
+Click Browse to select a MapReduce JAR file. When the HDFS file explorer pops up, select a JAR file and click OK.
+
+image::designer/mapreduce/mapreduce-04.png["HDFS브라우저 화면",scaledwidth="70%"]
+
+Enter a fully qualified name for driver. You can also add depency JARs. In order to add dependency JARs, upload them to the HDFS first, and browse through the explorer.
+
+image::designer/mapreduce/mapreduce-05.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can add an input and output path. In case of input path, you can add multiple of them. However, for output path, there can be only one.
+
+image::designer/mapreduce/mapreduce-06.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, you can add configurations which you assign through a method, `Configuration.set()`.하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/mapreduce/mapreduce-07.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+In the Command Line Parameters tab, you can add parameters for a MapReduce job. Add parameters in separate lines.
+
+image::designer/mapreduce/mapreduce-08.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+Click Save
+
+image::designer/mapreduce/mapreduce-09.png["저장 버튼",scaledwidth="45%"]
+
+Click Yes on the pop-up window.
+
+image::designer/mapreduce/mapreduce-10.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+Select a folder to save and click OK.
+
+image::designer/mapreduce/mapreduce-11.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+You can see the workflow on the tree.
+
+image::designer/mapreduce/mapreduce-12.png[워크플로우 생성 확인]
+
+=== Apache Pig
+
+The Apache Pig Latin module is for executing Apache Pig Latin Scripts. Drag and drop the module to the canvas.
+
+image::designer/pig/pig-00.png[모듈 드래그 앤 드롭]
+
+Give the workflow a name and draw an arrow from Start to the module.
+
+image::designer/pig/pig-01.png[모듈링크]
+
+And draw an arrow from the module to End.
+
+image::designer/pig/pig-02.png[모듈링크]
+
+Double click the module and enter scripts to the pop-up editor.
+
+image::designer/pig/pig-03.png["Pig Latin 스크립트 탭",scaledwidth="70%"]
+
+In the Script Variables tab, you can add variables. These variables are mapped to their values when the script is executed.
+
+image::designer/pig/pig-04.png["스크립트 변수 탭",scaledwidth="70%"]
+
+In the Hadoop Configurations tab, enter keys and their values used in a method, `Configuration.set()`.
+
+image::designer/pig/pig-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Click Save.
+
+image::designer/pig/pig-06.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+Click Yes in the window.
+
+image::designer/pig/pig-07.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+Select a folder to save and click OK.
+
+image::designer/pig/pig-08.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+You can see the workflow in the tree.
+
+image::designer/pig/pig-09.png[워크플로우 생성 확인]
+
+=== Apache Hive
+
+The Apache Hive module is for executing Hive QL. In order to execute Hive QL, drag and drop the Apache Hive module.
+
+image::designer/hive/hive-00.png[모듈 드래그 앤 드롭]
+
+Give the workflow a name and draw an arrow from Start to the module.
+
+image::designer/hive/hive-01.png[모듈링크]
+
+Then draw an arrow from the module to End.
+
+image::designer/hive/hive-02.png[모듈링크]
+
+Double click the module and write Hive QL in the window.
+
+image::designer/hive/hive-03.png["스크립트 탭",scaledwidth="70%"]
+
+In the Script Variables tab, you can add variables. These variables are mapped to their values when the script is executed.
+
+image::designer/hive/hive-04.png["스크립트 변수 탭",scaledwidth="70%"]
+
+In the Hadoop Configurations tab, enter keys and their values used in a method, `Configuration.set()`.
+
+image::designer/hive/hive-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Click Save.
+
+image::designer/hive/hive-06.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+Click Yes on the pop-up window.
+
+image::designer/hive/hive-07.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+Select a folder to save and click OK.
+
+image::designer/hive/hive-08.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+You can see the workflow in the tree.
+
+image::designer/hive/hive-09.png[워크플로우 생성]
+
+=== Spark
+
+The Spark module is to run Apache Spark jobs. Drag and drop the Spark module to the canvas.
+
+image::designer/spark/spark-00.png[모듈 드래그 앤 드롭]
+
+Enter a name for the workflow and draw an arrow from Start to the module.
+
+image::designer/spark/spark-01.png[모듈링크]
+
+And draw an arrow from the module to End.
+
+image::designer/spark/spark-02.png[모듈링크]
+
+Double click on the module and the configuration window will appear. Spark takes different parameters when it runs on YARN or Standalone. So pay extra attention when entering parameters.
+Like MapReduce jobs, select a Spark JAR file and a fully qualified name for driver to execute it.
+The Spark module in Flamingo supports Java.
+For help, refer to the manual, https://spark.apache.org/docs/1.1.0/running-on-yarn.html[Running Spark on YARN].
+
+image::designer/spark/spark-03.png["스파크 탭",scaledwidth="70%"]
+
+Click the Dependcy JAR tab, and add a necessary JAR file.
+
+image::designer/spark/spark-04.png["의존 JAR파일 탭",scaledwidth="70%"]
+
+Click the Hadoop Configuration tab, and enter a key-value pair needed for Spark. These parameters will be passed on to the --conf option.
+
+image::designer/spark/spark-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Click the Command Line Parameter tab, and add necessary parameters.
+
+image::designer/spark/spark-06.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+Click Save.
+
+image::designer/spark/spark-07.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+Click Yes in the pop-up window.
+
+image::designer/spark/spark-08.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+Select a folder to save and click OK.
+
+image::designer/spark/spark-09.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+You can see the workflow in the tree.
+
+image::designer/spark/spark-10.png[워크플로우 생성]
+
+=== Java
+
+The Java module is to execute a Java application. This Java job is executed in a serve where Flamingo is installed, not in a remote cluster.
+In order to execute it, drag and drop the Java module to the canvas.
+
+image::designer/java/java-00.png[모듈 드래그 앤 드롭]
+
+Enter a name for the workflow, and draw an arrow from Start to the module.
+
+image::designer/java/java-01.png[모듈링크]
+
+Then draw an arrow from the module to End.
+
+image::designer/java/java-02.png[모듈링크]
+
+Double click on the module and click the Java tab. Enter a JAR file path and JVM options.
+
+image::designer/java/java-03.png["자바 탭",scaledwidth="70%"]
+
+You can add dependency JARs in the Classpath tab.
+
+image::designer/java/java-04.png["클래스패스 탭",scaledwidth="70%"]
+
+The command line parameters are entered in the Command Lie Parameter tab. Enter each parameter in separate lines.
+
+image::designer/java/java-05.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+Click Save.
+
+image::designer/java/java-06.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+Click Yes on the pop-up window.
+
+image::designer/java/java-07.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+Select a folder to save and click OK.
+
+image::designer/java/java-08.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+You can see the workflow in the tree.
+
+image::designer/java/java-09.png[워크플로우 생성]
+
+=== Sqoop Import
+
+Sqoop Import imports data from a RDBMS to a HDFS.
+Apache Sqoop must be installed in a server where Flamingo is in order to use Sqoop Import.
+Sqoop Import를 사용하기 위해서 Sqoop Import를 다음과 같이 드래그 앤 드롭합니다.
+
+image::designer/sqoopImport/sqoopImport-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module. Select the Source Database tab, and enter all necessary information for JDBC connection.
+
+image::designer/sqoopImport/sqoopImport-01.png["원본(데이터베이스) 탭",scaledwidth="70%"]
+
+In the Destination(HDFS) tab, you enter an output path in HDFS. You can have only one output path.
+
+image::designer/sqoopImport/sqoopImport-02.png["대상(HDFS) 탭",scaledwidth="70%"]
+
+Enter a name for the workflow, and draw an arrow from Start to the module, and from the module to End.
+
+image::designer/sqoopImport/sqoopImport-03.png[워크플로우 저장]
+
+=== Sqoop Export
+
+Sqoop Export pushed data in HDFS to a RDBMS.
+Apache Sqoop must be installed in a server where Flamingo is in order to use Sqoop Export.
+Drag and drop the Sqoop Export module to the canvas.
+
+image::designer/sqoopExport/sqoopExport-00.png[모듈 드래그 앤 드롭]
+
+Double click the module and click the Source(HDFS) tab. Enter a source path, and columns and delimiters of log files.
+
+image::designer/sqoopExport/sqoopExport-01.png["원본(HDFS) 탭",scaledwidth="70%"]
+
+You can configure JDBC connection information in the Destination(RDBMS) tab.
+
+image::designer/sqoopExport/sqoopExport-02.png["대상(데이터베이스) 탭",scaledwidth="70%"]
+
+Enter a name for the workflow, and drow an arrow from Start to the module, and from the module to End.
+
+image::designer/sqoopExport/sqoopExport-03.png[워크플로우 저장]
+
+=== Shell
+
+The Shell module is for executing BASH scripts, and it gets executed in a server where Flamingo is installed.
+
+image::designer/shell/shell-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter a BASH script.
+
+image::designer/shell/shell-01.png["Shell 스크립트 탭",scaledwidth="70%"]
+
+You can add script variables in the Script Variable tab. The variables are mapped to their values when a script is executed.
+
+image::designer/shell/shell-02.png["스크립트 변수 탭",scaledwidth="70%"]
+
+The Command Line Parameter tab is to assign parameters. Enter each parameter in separate lines.
+
+image::designer/shell/shell-03.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+Enter a name for the workflow, and draw an arrow from Start to the module and from the module to End.
+
+image::designer/shell/shell-04.png[워크플로우 생성]
+
+=== R
+
+The R module is for executing R scripts, and it gets executed in a server where Flamingo is installed. R must be installed in where Flamingo is.
+Drag and drop the R module to the canvas.
+
+image::designer/r/r-00.png[모듈 드래그 앤 드롭]
+
+Enter a name for the workflow and draw an arrow from Start to the module.
+
+image::designer/r/r-01.png[모듈링크]
+
+And draw an arrow from the module to End.
+
+image::designer/r/r-02.png[모듈링크]
+
+Double click on the module and write a script on the window.
+
+image::designer/r/r-03.png["R 스크립트 탭",scaledwidth="70%"]
+
+You can add script variables in the Script Variable tab. The variables are mapped to their values when a script is executed.
+
+image::designer/r/r-04.png["스크립트 변수 탭",scaledwidth="70%"]
+
+The Command Line Parameter tab is to assign parameters. Enter each parameter in separate lines.
+
+image::designer/r/r-05.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+In the R Option tab, you can select options for restore and save.
+
+image::designer/r/r-06.png["R옵션 탭",scaledwidth="70%"]
+
+Click Save.
+
+image::designer/r/r-07.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+Click Yes on the window.
+
+image::designer/r/r-08.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+Select a folder to save and click OK.
+
+image::designer/r/r-09.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+You can see the workflow in the tree.
+
+image::designer/r/r-10.png[워크플로우 생성]
+
+=== Python
+
+The Python module is for running Python scripts. It gets executed in a server where Flamingo is installed.모듈은 Python 스크립트를 실행하는 모듈로써 Flamingo가 설치되어 있는 서버에서 실행됩니다.
+Python must be installed in a server where Flamingo is installed.
+Drag and drop the module to the canvas.
+
+image::designer/python/python-00.png[모듈 드래그 앤 드롭]
+
+Enter a name for the workflow and draw an arrow from Start to the module.
+
+image::designer/python/python-01.png[모듈링크]
+
+And draw an arrow from the module to End.
+
+image::designer/python/python-02.png[모듈링크]
+
+Double click on the module and click the Python tab. Enter a Python script.
+
+image::designer/python/python-03.png["파이썬 스크립트 탭",scaledwidth="70%"]
+
+In the Script Variable tab, you can replace a variable. `${goodbye}` with `Good Bye!!`.
+
+image::designer/python/python-04.png["스크립트 변수 탭",scaledwidth="70%"]
+
+The Command Line Parameter tab is to assign parameters. Enter each parameter in separate lines.
+
+image::designer/python/python-05.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+Click Save.
+
+image::designer/python/python-06.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+Click Yes on the window.
+
+image::designer/python/python-07.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+Select a folder to save and click OK.
+
+image::designer/python/python-08.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+You can see the workflow in the tree.
+
+image::designer/python/python-09.png[워크플로우 생성]
+
+=== Numeric Statistics
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/numericStatistics/numericStatistics-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/numericStatistics/numericStatistics-02.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/numericStatistics/numericStatistics-03.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/numericStatistics/numericStatistics-04.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/numericStatistics/numericStatistics-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/numericStatistics/numericStatistics-01.png[워크플로우 저장]
+
+=== Nominal Statistics
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/numericStatistics/numericStatistics-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/numericStatistics/numericStatistics-02.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/numericStatistics/numericStatistics-03.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/numericStatistics/numericStatistics-04.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/numericStatistics/numericStatistics-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/numericStatistics/numericStatistics-01.png[워크플로우 저장]
+
+=== Certainty Factor based Sum
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-05.png[워크플로우 저장]
+
+=== Normalization
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/normalization/normalization-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/normalization/normalization-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/normalization/normalization-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/normalization/normalization-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/normalization/normalization-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/normalization/normalization-05.png[워크플로우 저장]
+
+=== Remove Characters
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/removeChar/removeChar-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/removeChar/removeChar-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/removeChar/removeChar-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/removeChar/removeChar-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/removeChar/removeChar-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/removeChar/removeChar-05.png[워크플로우 저장]
+
+=== Boolean Similarity/Correlation
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-05.png[워크플로우 저장]
+
+=== Numeric Similarity/Correlation
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-05.png[워크플로우 저장]
+
+=== String Similarity
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-05.png[워크플로우 저장]
+
+=== ID3 Classification
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/ID3/ID3-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/ID3/ID3-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/ID3/ID3-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/ID3/ID3-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/ID3/ID3-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/ID3/ID3-05.png[워크플로우 저장]
+
+=== K-Means Clustering
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/KMeans/KMeans-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/KMeans/KMeans-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/KMeans/KMeans-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/KMeans/KMeans-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/KMeans/KMeans-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/KMeans/KMeans-05.png[워크플로우 저장]
+
+=== EM Clustering
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/EM/EM-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/EM/EM-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/EM/EM-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/EM/EM-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/EM/EM-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/EM/EM-05.png[워크플로우 저장]
+
+=== CF based Similarity
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-05.png[워크플로우 저장]
+
+=== Content based Similarity
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-05.png[워크플로우 저장]
+
+=== User Similarity based Recommendation
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/userRecommendation/userRecommendation-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/userRecommendation/userRecommendation-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/userRecommendation/userRecommendation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/userRecommendation/userRecommendation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/userRecommendation/userRecommendation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/userRecommendation/userRecommendation-05.png[워크플로우 저장]
+
+=== Item Similarity based Recommendation
+
+Select the module, and drag and drop it to the canvas.
+
+image::designer/itemRecommendation/itemRecommendation-00.png[모듈 드래그 앤 드롭]
+
+Double click on the module and enter parameters in the Parameter tab.
+
+image::designer/itemRecommendation/itemRecommendation-01.png["파라미터 탭",scaledwidth="70%"]
+
+Enter a JAR file path and its driver class name in the MapReduce tab.
+
+image::designer/itemRecommendation/itemRecommendation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+In the Input/Output tab, you can enter input and output path. You can enter multiple input paths, but only one output path.
+
+image::designer/itemRecommendation/itemRecommendation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+In the Hadoop Configuration tab, enter key-value pairs.
+
+image::designer/itemRecommendation/itemRecommendation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+Enter a name for the workflow and draw an arrow from Start to the module and from the module to End.
+
+image::designer/itemRecommendation/itemRecommendation-05.png[워크플로우 저장]

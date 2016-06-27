@@ -57,6 +57,8 @@ Ext.define('Flamingo2.model.fs.audit.AuditList', {
                         return message.msg('hdfs.audit.model.hiveTable');
                     case 'VISUALIZATION':
                         return message.msg('hdfs.audit.model.visualization');
+                    case 'COPY_TO_LOCAL':
+                        return message.msg('hdfs.audit.model.copyToLocal');
                     default:
                         return message.msg('hdfs.audit.model.notExist');
                 }

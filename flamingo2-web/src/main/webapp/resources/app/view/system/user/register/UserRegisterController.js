@@ -198,7 +198,7 @@ Ext.define('Flamingo2.view.system.user.register.UserRegisterController', {
         var params = {
             clusterName: ENGINE.id,
             username: refs.username.getValue(),
-            password: escape(refs.password.getValue()),
+            newPassword: escape(refs.password.getValue()),
             name: refs.name.getValue(),
             email: refs.email.getValue(),
             orgId: orgId,

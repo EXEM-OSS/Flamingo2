@@ -29,7 +29,7 @@ Ext.define('Flamingo2.view.monitoring.applications.YarnApplicationModel', {
             rootVisible: true,
             proxy: {
                 type: 'ajax',
-                url: '/monitoring/resourcemanager/queues.json',
+                url: CONSTANTS.MONITORING.YA.QUEUES,
                 extraParams: {
                     clusterName: ENGINE.id
                 }
@@ -41,12 +41,36 @@ Ext.define('Flamingo2.view.monitoring.applications.YarnApplicationModel', {
             }
         },
 
+        timeSeriesStore: {
+            fields: ['time', 'sum'],
+            autoLoad: false,
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.MONITORING.YA.TIME_SERIES,
+                extraParams: {
+                    clusterName: ENGINE.id
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            },
+            remoteSort: true,
+            sorters: [
+                {
+                    property: 'num',
+                    direction: 'ASC'
+                }
+            ]
+        },
+
         allApplicationsStore: {
             model: 'Flamingo2.model.monitoring.resourcemanager.Application',
             autoLoad: false,
             proxy: {
                 type: 'ajax',
-                url: '/monitoring/resourcemanager/apps/all.json',
+                url: CONSTANTS.MONITORING.YA.ALL_APPICATION,
                 extraParams: {
                     clusterName: ENGINE.id
                 },
@@ -71,11 +95,7 @@ Ext.define('Flamingo2.view.monitoring.applications.YarnApplicationModel', {
             fields: ['name', 'source', 'value'],
             proxy: {
                 type: 'ajax',
-                url: '/monitoring/application/history/jobs/job/configuration.json',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
+                url: CONSTANTS.MONITORING.HS.CONF,
                 extraParams: {
                     clusterName: ENGINE.id
                 },

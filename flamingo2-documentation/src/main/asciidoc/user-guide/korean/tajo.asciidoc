@@ -1,0 +1,148 @@
+[[tajo]]
+
+== Apache Tajo
+
+Flamingo는 Apache Tajo에서 지원하는 관리 기능과 Tajo 쿼리를 개발할 수 있는 기능을 제공합니다.
+
+* Tajo Metas 관리
+** 데이터베이스 관리
+** 테이블 관리
+** SERDE
+** Compress
+** 컬럼 구분자 지원
+** 입출력 포맷 지원
+* Tajo 쿼리 실행 및 결과 처리
+** Tajo 쿼리 실행
+** Tajo 쿼리 실행 결과의 표시
+** Tajo 쿼리 실행 결과의 다운로드
+
+
+=== 개요
+
+Apache Tajo 관리 화면은 크게 좌측 메타스토어 영역, 우측 Tajo 쿼리 에디터 영역으로 구성되어 있습니다.
+
+image::tajo/tajo-01.jpg[scaledwidth=100%,Tajo 메인화면]
+
+메타스토어를 통해서 Tajo 데이터베이스 및 테이블을 관리할 수 있고, Tajo 쿼리 에디터를 사용하여 Tajo 쿼리 작성 및 결과를 확인할 수 있습니다.
+
+=== 메타스토어 개요
+
+Tajo 메타스토어 관리 기능은 데이터베이스, 테이블, 컬럼의 세 가지 영역으로 구성되어 있습니다.
+
+* 데이터베이스 - Tajo 데이터베이스의 목록 표시 및 생성, 삭제
+* 테이블 - Tajo 테이블 목록 표시 및 생성, 삭제, 변경
+* 컬럼 - Tajo 테이블의 컬럼 및 파티션 정보의 확인
+
+image::tajo/tajo-02.jpg[scaledwidth=50%,Tajo 메타스토어]
+
+=== 데이터베이스 관리
+
+Tajo 메타스토어 기능을 통해 Tajo 데이터베이스를 관리할 수 있습니다.
+
+==== 데이터베이스 생성
+
+데이터베이스 목록 옆의 버튼을 선택하면 데이터베이스 관리 메뉴가 나타납니다. "데이터베이스 생성" 버튼을 클릭합니다.
+
+image::tajo/tajo-03.jpg[scaledwidth=50%,Tajo Database 생성]
+
+데이터베이스 명 입력 후 "생성" 버튼을 선택하면 Tajo 데이터베이스가 생성됩니다.
+
+image::hive/hive-04.jpg[scaledwidth=50%,Tajo Database 생성]
+
+==== 데이터베이스 삭제
+
+삭제하려는 데이터베이스를 선택합니다.
+
+데이터베이스 메뉴에서 "데이터베이스 삭제" 버튼을 선택하면 데이터베이스를 삭제할 수 있습니다.
+
+image::tajo/tajo-05.jpg[scaledwidth=50%,Tajo 데이터베이스 삭제]
+
+=== 테이블 관리
+
+==== 테이블 생성
+
+Tajo 테이블 생성하기 위해서 테이블을 생성하려는 Tajo 데이터베이스를 선택 후 테이블 생성 버튼을 클릭합니다.
+
+image::tajo/tajo-06.jpg[scaledwidth=50%,Tajo 테이블 생성]
+
+===== 테이블 생성 기초
+
+Tajo 생성하기 위해서 테이블명, 파일형식, 칼럼 이 세가지 정보는 Tajo 테이블을 생성하는데 필수값 입니다. 이 외에 파일형식에 따라서 Delimiter 및 SerDe, Compress를 지정하여 사용할 수 있습니다.
+
+image::tajo/tajo-07.jpg[scaledwidth=70%,Tajo 테이블 생성]
+
+===== 테이블 생성 유형
+
+Tajo의 테이블은 2가지 유형이 있습니다. 첫 번째 Base 테이블, 두 번째 External 테이블.
+
+Tajo Client에서 Base 테이블 생성 기능은 지원하지 않기 때문에 External 테이블만 생성할 수 있습니다.
+
+Base 테이블 생성을 원하신다면 Tajo Editor 에서 직접 DDL구문을 입력해야 합니다.
+
+image::tajo/tajo-08.jpg[scaledwidth=50%,Tajo 테이블 생성]
+
+External 테이블의 경우 사용자가 직접 테이블 생성 위치를 지정해야 하기 때문에 "External 테이블" 선택 후 찾기 버튼을 클릭힙니다.
+
+HDFS 브라우저 창이 나타나면 Tajo 테이블을 생성하려는 위치를 선택 후 "확인" 버튼을 클릭합니다.
+
+image::tajo/tajo-09.jpg[scaledwidth=50%,Tajo 테이블 생성]
+
+===== 테이블 컬럼 추가/삭제
+
+테이블 컬럼은 하단의 "컬럼"탭에서 "추가" 버튼 클릭 후 "컬럼명", "자료형"을 입력합니다.
+
+image::tajo/tajo-10.jpg[scaledwidth=50%,Tajo 테이블 생성]
+
+Tajo 자료형에 대한 자세한 사항은 http://tajo.apache.org/docs/current/sql_language/data_model.html[Data Model]를 참고하시면 됩니다.
+
+===== 파티션 추가/삭제
+
+파티션을 추가/삭제하는 방법은 테이블 컬럼 추가/삭제하는 방법과 동일합니다.
+
+파티션키로 사용하려는 칼럼을 추가 후 "컬럼명", "자료형"을 입력합니다.
+
+===== 테이블 파일형식 지정
+
+Tajo는 4가지 타입의 파일형식을 지원합니다.
+
+* Text
+* RCFile
+* Parquet
+* SequenceFile
+
+위 타입 중 원하는 파일형식을 선택 합니다.
+
+파일형식 선택 후 각 형식에 맞는 값을 입력합니다.
+
+image::tajo/tajo-11.jpg[scaledwidth=50%,Tajo 테이블 생성]
+
+image::tajo/tajo-12.jpg[scaledwidth=50%,Tajo 테이블 생성]
+
+image::tajo/tajo-13.jpg[scaledwidth=50%,Tajo 테이블 생성]
+
+image::tajo/tajo-14.jpg[scaledwidth=50%,Tajo 테이블 생성]
+
+==== 테이블 삭제
+
+삭제하려는 테이블을 선택 후 "삭제" 버튼을 클릭합니다.
+
+image::tajo/tajo-15.jpg[scaledwidth=50%,Tajo 테이블 삭제]
+
+==== 테이블 변경
+
+테이블 변경 기능은 다음버전에서 추가될 예정입니다.
+
+=== Tajo 쿼리 실행
+
+Tajo 쿼리 편집기는 두 부분으로 나뉘어져 있습니다. 첫 번째 쿼리 편집기, 두 번째 로그/데이터 확인
+쿼리 편집기는 Tajo 쿼리를 직접 작성하는 영역입니다.. 로그/데이터 확인은 Tajo 쿼리에 대한 로그 및 결과를 확인할수 있는 영역입니다.
+Tajo 쿼리 실행하는 방법은 쿼리 편집기에 Tajo 쿼리를 작성 후 "쿼리 실행" 버튼을 클릭합니다.
+
+image::tajo/tajo-16.jpg[scaledwidth=100%,Tajo Query 실행]
+
+쿼리 실행이 완료되면 자동으로 하단 "데이터" 탭으로 이동합니다.
+
+한 쿼리당 기본 5000개의 행만 조회할 수 있습니다. 쿼리 편집기 우측 상단의 "최대 행 수" 값을 변경하여 조회할 수 있는 행의 갯수를 변경합니다.
+
+image::tajo/tajo-17.jpg[scaledwidth=100%,Tajo Query 실행]
+

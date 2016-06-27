@@ -101,22 +101,19 @@ Ext.define('Flamingo2.view.fs.audit.AuditGrid', {
                 auditGrid.getStore().getProxy().extraParams.endDate = endDateFields.getValue();
                 auditGrid.getStore().getProxy().extraParams.auditType = auditType.getValue();
                 auditGrid.getStore().getProxy().extraParams.path = path.getValue();
-                auditGrid.getStore().load();
             },
             listeners: {
-                beforechange: function (toolbar, nextPage, eOpts) {
-                    var auditGrid = query('auditGrid');
+                beforechange: function (toolbar, page, eOpts) {
                     var startDateFields = query('auditGrid #gridStartDate');
                     var endDateFields = query('auditGrid #gridEndDate');
                     var auditType = query('auditGrid #type');
                     var path = query('auditGrid #path');
 
-                    auditGrid.getStore().getProxy().extraParams.clusterName = ENGINE.id;
-                    auditGrid.getStore().getProxy().extraParams.nextPage = nextPage;
-                    auditGrid.getStore().getProxy().extraParams.startDate = startDateFields.getValue();
-                    auditGrid.getStore().getProxy().extraParams.endDate = endDateFields.getValue();
-                    auditGrid.getStore().getProxy().extraParams.auditType = auditType.getValue();
-                    auditGrid.getStore().getProxy().extraParams.path = path.getValue();
+                    toolbar.getStore().getProxy().extraParams.clusterName = ENGINE.id;
+                    toolbar.getStore().getProxy().extraParams.startDate = startDateFields.getValue();
+                    toolbar.getStore().getProxy().extraParams.endDate = endDateFields.getValue();
+                    toolbar.getStore().getProxy().extraParams.auditType = auditType.getValue();
+                    toolbar.getStore().getProxy().extraParams.path = path.getValue();
                 }
             }
         }
@@ -132,18 +129,19 @@ Ext.define('Flamingo2.view.fs.audit.AuditGrid', {
     tbar: [
         {
             xtype: 'tbtext',
-            text: message.msg('hdfs.audit.tbar.grid.condition')
+            text: message.msg('common.searchCondition')
         },
         '|',
         {
             xtype: 'tbtext',
-            text: message.msg('hdfs.audit.tbar.grid.start')
+            text: message.msg('common.startDate')
         },
         {
             xtype: 'datefield',
             format: 'Y-m-d',
             reference: 'startDate',
             itemId: 'gridStartDate',
+            editable: false,
             value: '',
             maxValue: new Date(),
             vtype: 'dateRange',
@@ -166,13 +164,14 @@ Ext.define('Flamingo2.view.fs.audit.AuditGrid', {
         },
         {
             xtype: 'tbtext',
-            text: message.msg('hdfs.audit.tbar.grid.end')
+            text: message.msg('common.endDate')
         },
         {
             xtype: 'datefield',
             format: 'Y-m-d',
             reference: 'endDate',
             itemId: 'gridEndDate',
+            editable: false,
             value: '',
             maxValue: new Date(),
             vtype: 'dateRange',
@@ -195,7 +194,7 @@ Ext.define('Flamingo2.view.fs.audit.AuditGrid', {
         },
         {
             xtype: 'tbtext',
-            text: message.msg('hdfs.audit.tbar.grid.condition_type')
+            text: message.msg('common.searchType')
         },
         {
             xtype: 'combo',
@@ -232,7 +231,7 @@ Ext.define('Flamingo2.view.fs.audit.AuditGrid', {
         {
             xtype: 'button',
             formBind: true,
-            text: message.msg('hdfs.audit.button.grid.search'),
+            text: message.msg('common.retrieve'),
             iconCls: 'common-search',
             labelWidth: 50,
             listeners: {
@@ -242,12 +241,19 @@ Ext.define('Flamingo2.view.fs.audit.AuditGrid', {
         {
             xtype: 'button',
             formBind: true,
-            text: message.msg('hdfs.audit.button.grid.search_clear'),
+            text: message.msg('common.reset'),
             iconCls: 'common-search-clear',
             labelWidth: 50,
             listeners: {
-                click: 'onAuditResetClick'
+                click: 'onAuditGridResetClick'
             }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onAuditGridRefreshClick'
         }
     ],
     listeners: {

@@ -20,36 +20,22 @@ Ext.define('Flamingo2.view.monitoring.namenode.DatanodeStatus', {
 
     border: false,
 
-    initComponent: function () {
-        var me = this;
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['num', 'nodeAll', 'nodeDead', 'nodeLive', 'reg_dt'],
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
-                extraParams: {
-                    clusterName: ENGINE.id
-                },
-                remoteSort: true,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'total'
-                }
-            }
-        });
-
-        me.items = {
+    items: [
+        {
             xtype: 'cartesian',
-            border: false,
-            store: store,
+            itemId: 'datanodeStatusChart',
+            height: 250,
+            bind: {
+                store: '{datanodeStatusStore}'
+            },
             insetPadding: 20,
             interactions: 'itemhighlight',
             legend: {
                 docked: 'bottom',
                 border: false,
-                style: {borderColor: 'red'}
+                style: {
+                    borderColor: 'red'
+                }
             },
             axes: [
                 {
@@ -58,12 +44,12 @@ Ext.define('Flamingo2.view.monitoring.namenode.DatanodeStatus', {
                     position: 'left',
                     grid: true,
                     titleMargin: 20,
-                    renderer: function (value) {
-                        return toCommaNumber(value);
-                    },
                     label: {
                         fontFamily: 'Nanum Gothic',
                         fontSize: '12px'
+                    },
+                    renderer: function (value) {
+                        return toCommaNumber(value);
                     }
                 }
             ],
@@ -100,7 +86,8 @@ Ext.define('Flamingo2.view.monitoring.namenode.DatanodeStatus', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + toCommaNumber(storeItem.get('nodeAll')) + '</b></font>');
+                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <span style="color: #CC2900; "><b>'
+                                + toCommaNumber(storeItem.get('nodeAll')) + '</b></font>');
                         }
                     }
                 },
@@ -132,7 +119,8 @@ Ext.define('Flamingo2.view.monitoring.namenode.DatanodeStatus', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + toCommaNumber(storeItem.get('nodeDead')) + '</b></font>');
+                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <span style="color: #CC2900; "><b>'
+                                + toCommaNumber(storeItem.get('nodeDead')) + '</b></font>');
                         }
                     }
                 },
@@ -165,13 +153,19 @@ Ext.define('Flamingo2.view.monitoring.namenode.DatanodeStatus', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + toCommaNumber(storeItem.get('nodeLive')) + '</b></font>');
+                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <span style="color: #CC2900; "><b>'
+                                + toCommaNumber(storeItem.get('nodeLive')) + '</b></font>');
                         }
                     }
                 }
             ]
-        };
-
-        me.callParent(arguments);
-    }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onDatanodeStatusRefreshClick'
+        }
+    ]
 });

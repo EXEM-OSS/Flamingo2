@@ -21,7 +21,6 @@ Ext.define('Flamingo2.view.monitoring.namenode.Namenode', {
     requires: [
         'Flamingo2.view.monitoring.namenode.NamenodeController',
         'Flamingo2.view.monitoring.namenode.NamenodeModel',
-
         'Flamingo2.view.monitoring.namenode.NamenodeSummary',
         'Flamingo2.view.monitoring.namenode.NamenodeChart'
     ],
@@ -38,15 +37,13 @@ Ext.define('Flamingo2.view.monitoring.namenode.Namenode', {
     },
     items: [
         {
-            iconCls: 'common-view',
-            border: true,
-            title: message.msg('monitoring.namenode.summary'),
             xtype: 'namenodeSummary',
-            margin: '0 0 0 0'
+            title: message.msg('monitoring.namenode.summary'),
+            iconCls: 'common-view',
+            border: true
         },
         {
-            xtype: 'namenodeChart',
-            margin: '5 0 0 0'
+            xtype: 'namenodeChart'
         }
     ]
 });

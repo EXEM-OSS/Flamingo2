@@ -1,0 +1,32 @@
+[[etc]]
+
+== Product Title
+
+=== Changing the Flamingo Title
+
+In order to change Flamingo's title, modify `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` as below.
+
+====
+[source,properties]
+----
+application.top=Flamingo 2 Big Data Platform By Cloudine Inc # <1>
+application.title=Flamingo 2 Big Data Platform # <1>
+----
+<1> Applicable *ONLY* to commercial license holders
+====
+
+You can also switch the title without modifying the property file, `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties`.
+
+====
+[source,bash]
+----
+#!/bin/sh
+
+JAVA_HOME=/usr/local/java/jdk7
+_RUNJAVA=$JAVA_HOME/bin/java
+CATALINA_OPTS="-Dflamingoweb -Dapplication.top=\"Pelican Big Data Platform\" -Dapplication.title=\"Pelican Big Data Platform by pikdata\" -Xms4G -Xmx4G" # <1>
+----
+<1> Applicable *ONLY* to commercial license holders
+====
+
+Changing Flamingo's title is allowed only if you are the commercial license holder. Customizing Flamingo only allowed by purchasing a commercial license. Also switching from a commercial license to an open source license is strictly prohibited.

@@ -1,0 +1,187 @@
+[[hive]]
+
+== Apache Hive
+
+Flamingo fully supports Apache Hive and Hive QL.
+
+* Hive Metastore Management
+** Database Management
+** Table Management
+** SERDE
+** Supports Column Delimiter
+** Supports Input/Output Format
+** External & Managed Table
+* Hive QL Processing and Result
+** Hive Query Execution
+** Viewable Hive Query Result
+** Downloadable Hive Query Result
+
+=== Introduction
+
+Apache Hive Manager is composed of the metastore panel in the right and the Hive query editor in the left.
+
+image::hive/hive-01.jpg[scaledwidth=100%,Hive 메인화면]
+
+You can manage tables and databases through the metastore. Also you can write and process queries and get results in the Hive editor.
+
+=== Known Issues
+
+* Hive Thrift and Hive Server are not quite up to date. So please note that there can be problems with managing connections and other matters.
+
+=== Metastore
+
+Hive Metstore manages databases, tables and columns.
+
+* Database - Create, drop, and list Hive databases.
+* Table - Create, drop, and list Hive tables.
+* Column - Check Hive table columns and partitions
+
+image::hive/hive-02.jpg[scaledwidth=50%,Hive 메타스토어]
+
+=== Managing Databases
+
+You can manage databases through Hive Metastore
+
+==== Creating a Database
+
+Select `Create Database` from the drop-down menu.
+
+image::hive/hive-03.jpg[scaledwidth=50%,Hive Database 생성]
+
+Enter a database name, and a description. Click `Create`.
+
+image::hive/hive-04.jpg[scaledwidth=50%,Hive Database 생성]
+
+If you want to set other properties, you can do so in the Database Property grid.
+
+image::hive/hive-07.jpg[scaledwidth=50%,Hive Database 생성]
+
+==== Dropping a Database
+
+Select a database to drop.
+
+image::hive/hive-05.jpg[scaledwidth=50%,Hive 데이터베이스 삭제]
+
+Select `Drop Database` from the drop-down menu.
+
+image::hive/hive-06.jpg[scaledwidth=50%,Hive 데이터베이스 삭제]
+
+=== Managing Tables
+
+==== Creating a Table
+
+In order to create a table, select a database first and then click `Create Table`.
+
+image::hive/hive-08.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== Basics of Creating a Table
+
+A table name, a delimiter type, and one or more columns are required to create a table. Besides them, you can optionally set others such as an input/output format.
+
+image::hive/hive-09.jpg[scaledwidth=70%,Hive 테이블 생성]
+
+===== Table Types
+
+There are two types of table, managed tables and external tables.
+The Hive metastore manages a location of managed tables. On the other hand, a location of external tables is specified by users.
+
+image::hive/hive-10.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+A location of external tables is specified by users, so after selecting `External`, click `Browse` to set the location.
+
+image::hive/hive-11.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+When the HDFS Browser pops up, select the location and click `OK`.
+
+image::hive/hive-12.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== Table Delimiter Types
+
+There are two types of Hive table delimiter, characters and SerDe(Serializer Deserializer).
+
+You can set delimiters for rows, fields, map keys and collection items. Normally, the delimiters are set for fields (columns). Delimiters for rows. Map keys and collections items are specified if the columns are an array, map, or struct type.
+
+image::hive/hive-13.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+Flamingo provides the list of delimiters. Just select a delimiter from the list and click `OK`.
+
+image::hive/hive-14.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+If you are using a SerDe(Serializer Deserializer), the JAR file must be deployed with Hive. Enter a fully qualified class name.
+
+[NOTE]
+The JAR file configuration will be available in the next version of Flamingo.
+
+image::hive/hive-15.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== Input/Output File Format
+
+You can set a custom input/output file format in Hive. The JAR file must be deployed with Hive. Enter a fully qualified class name.
+
+By default, Hive uses `org.apache.hadoop.mapred.TextInputFormat` and `org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat`.
+
+image::hive/hive-16.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== Adding/Dropping a Table Column
+
+Click `Add` in the column tab, and enter a column name, data type, and description.
+
+image::hive/hive-17.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+If any of the columns is a type of array, map, or struct, click the icon button to enter more specific properties.
+
+image::hive/hive-18.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+The array is that the column is a type of numeric, date/time, string, or misc.
+
+image::hive/hive-19.jpg[scaledwidth=30%,Hive 테이블 생성]
+
+The map is that the column is a type of numeric, date/time, string, or misc as a key/value pair.
+
+image::hive/hive-20.jpg[scaledwidth=30%,Hive 테이블 생성]
+
+The struct is that the column is a type of numeric, date/time, string, or misc in a struct.
+
+image::hive/hive-21.jpg[scaledwidth=30%,Hive 테이블 생성]
+
+For more details on the Hive data types, go to the link, https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types[LanguageManual Types]
+
+===== Adding/Dropping Partitions
+
+Adding or dropping partitions is same as adding or dropping tables.
+Click `Add` in the partition tab, and enter a column name, data type, and description.
+
+image::hive/hive-22.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+===== Table Properties
+
+In the property tab, you add or drop the table properties.
+
+image::hive/hive-23.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+==== Dropping a Table
+
+Select a table and click `Drop`.
+
+image::hive/hive-24.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+==== Altering a Table
+
+Select a table and click `Alter`.
+Table altering process is same as creating. Modify the fields and save it.
+
+image::hive/hive-25.jpg[scaledwidth=50%,Hive 테이블 생성]
+
+=== Processing Hive Query
+
+The Hive query editor has two main components, the query editor and the log/data tab.
+You can write and edit Hive queries in the editor and check the log and result in the log/data tab.
+Enter queries in the editor and click `Run`.
+
+image::hive/hive-26.jpg[scaledwidth=100%,Hive Query 실행]
+
+When the query is processed, 쿼리 실행이 완료되면 자동으로 하단 "데이터" 탭으로 이동합니다.
+
+100 rows are viewable per page. If it exceeds 100 rows, click `Next` to go to the next page.
+
+image::hive/hive-27.jpg[scaledwidth=100%,Hive Query 실행]

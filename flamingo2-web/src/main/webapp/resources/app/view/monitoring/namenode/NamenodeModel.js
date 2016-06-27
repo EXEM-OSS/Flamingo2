@@ -18,11 +18,112 @@ Ext.define('Flamingo2.view.monitoring.namenode.NamenodeModel', {
     extend: 'Ext.app.ViewModel',
     alias: 'viewmodel.namenodeModel',
 
-    requires: [],
-
     data: {
         title: message.msg('monitoring.namenode.title')
     },
 
-    stores: {}
+    stores: {
+        hdfsUsageStore: {
+            fields: ['num', 'total', 'used', 'free', 'reg_dt'],
+            autoLoad: false,
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
+                extraParams: {
+                    clusterName: ENGINE.id
+                },
+                remoteSort: true,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            }
+        },
+        jvmHeapUsageStore: {
+            fields: ['num', 'jvmMaxMemory', 'jvmTotalMemory', 'jvmUsedMemory', 'jvmFreeMemory', 'reg_dt'],
+            autoLoad: false,
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
+                extraParams: {
+                    clusterName: ENGINE.id
+                },
+                remoteSort: true,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            }
+        },
+        blockStatusStore: {
+            fields: ['num', 'corruptReplicaBlocks', 'pendingReplicationBlocks', 'scheduledReplicationBlocks', 'underReplicatedBlocks', 'missingBlocks', 'reg_dt'],
+            autoLoad: false,
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
+                extraParams: {
+                    clusterName: ENGINE.id
+                },
+                remoteSort: true,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            }
+        },
+        fileCountStore: {
+            fields: ['num', 'totalFiles', 'reg_dt'],
+            autoLoad: false,
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
+                extraParams: {
+                    clusterName: ENGINE.id
+                },
+                remoteSort: true,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            }
+        },
+        blockCountStore: {
+            fields: ['num', 'totalBlocks', 'reg_dt'],
+            autoLoad: false,
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
+                extraParams: {
+                    clusterName: ENGINE.id
+                },
+                remoteSort: true,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            }
+        },
+        datanodeStatusStore: {
+            fields: ['num', 'nodeAll', 'nodeDead', 'nodeLive', 'reg_dt'],
+            autoLoad: false,
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
+                extraParams: {
+                    clusterName: ENGINE.id
+                },
+                remoteSort: true,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            }
+        }
+    }
 });

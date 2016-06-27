@@ -49,9 +49,9 @@ public class UserServiceImpl implements UserService {
     public boolean acknowledge(String username, String password) {
         Map userMap = new HashMap();
         userMap.put("username", username);
-        userMap.put("password", password);
+        userMap.put("encodedPassword", password);
 
-        return userRepository.updateByAck(userMap) > 0;
+        return userRepository.updateByAck(userMap);
     }
 
     @Override
@@ -59,15 +59,15 @@ public class UserServiceImpl implements UserService {
         String username = (String) userMap.get("username");
         Long userId = null;
 
-        if (userRepository.exist(username) > 0) {
+        if (userRepository.exist(username)) {
             throw new ServiceException("Already exists.");
         }
 
-        if (userRepository.insertByUser(userMap) > 0) {
+        if (userRepository.insertByUser(userMap)) {
             userId = userRepository.selectUserIdByUsername(username);
         }
 
-        return userRepository.insertByAuth(userId) > 0;
+        return userRepository.insertByAuth(userId);
     }
 
     @Override
@@ -75,34 +75,54 @@ public class UserServiceImpl implements UserService {
         String username = (String) userMap.get("username");
         Long userId = null;
 
-        if (userRepository.exist(username) > 0) {
+        if (userRepository.exist(username)) {
             throw new ServiceException("Already exist.");
         }
 
-        if (userRepository.insertByManager(userMap) > 0) {
+        if (userRepository.insertByManager(userMap)) {
             userId = userRepository.selectUserIdByUsername(username);
         }
 
-        return userRepository.insertByAuth(userId) > 0;
+        return userRepository.insertByAuth(userId);
+    }
+
+    @Override
+    public boolean createWorkflowDesignerUser(String username) {
+        return userRepository.insertWorkflowDesignerUser(username);
     }
 
     @Override
     public boolean updatePassword(Map userMap) {
-        return userRepository.updatePassword(userMap) > 0;
+        return userRepository.updatePassword(userMap);
     }
 
     @Override
     public boolean deleteUser(String username) {
-        if (userRepository.exist(username) < 1) {
-            throw new ServiceException("The user does not exist.");
-        }
+        return userRepository.exist(username) && userRepository.deleteByUsername(username);
+    }
 
-        return userRepository.deleteByUsername(username) > 0;
+    @Override
+    public boolean deleteWorkflowDesignerUser(String username) {
+        return userRepository.deleteWorkflowDesignerUser(username);
     }
 
     @Override
     public boolean updateUserInfo(Map userMap) {
-        return userRepository.updateUserInfo(userMap) > 0;
+        /**
+         * 사용자 정보 변경 프로세서
+         *
+         * Case 1. 사용자 정보 변경, 등급: 일반사용자 -> 관리자
+         * Case 2. 사용자 정보 변경, 등급: 관리자 -> 일반사용자
+         * Case 3. 사용자 정보 변경
+         */
+        if (userMap.containsKey("level") && userMap.get("level") == 1) {
+            return userRepository.insertUserAuth(userMap)
+                    && userRepository.updateUserInfo(userMap);
+        } else if (userMap.containsKey("level") && userMap.get("level") == 2) {
+            return userRepository.deleteUserAuth(userMap) && userRepository.updateUserInfo(userMap);
+        } else {
+            return userRepository.updateUserInfo(userMap);
+        }
     }
 
     @Override
@@ -143,7 +163,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean createOrganization(Map organizationMap) {
-        return organizationRepository.insert(organizationMap) > 0;
+        return organizationRepository.insert(organizationMap);
     }
 
     @Override
@@ -156,12 +176,12 @@ public class UserServiceImpl implements UserService {
          * 삭제할 소속 정보를 다수의 유저가 사용하고 있을 경우
          * 관련된 모든 유저의 소속 정보를 기본 소속 코드 정보(OCE)로 초기화 한 후 소속 정보를 삭제한다.
          */
-        if (userRepository.selectUserByOrgId(orgId) > 0) {
-            if (userRepository.updateById(organizationMap) > 0) {
-                deleted = organizationRepository.delete(organizationMap) > 0;
+        if (userRepository.selectUserByOrgId(orgId)) {
+            if (userRepository.updateById(organizationMap)) {
+                deleted = organizationRepository.delete(organizationMap);
             }
         } else {
-            deleted = organizationRepository.delete(organizationMap) > 0;
+            deleted = organizationRepository.delete(organizationMap);
         }
 
         return deleted;
@@ -169,12 +189,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updateOrganizationInfo(Map organizationMap) {
-        return organizationRepository.update(organizationMap) > 0;
+        return organizationRepository.update(organizationMap);
     }
 
     @Override
     public boolean updateUserHomeInfo(Map<String, String> userMap) {
-        return userRepository.updateUserHomeInfo(userMap) > 0;
+        return userRepository.updateUserHomeInfo(userMap);
     }
 
+    @Override
+    public String selectPasswordByUsername(String username) {
+        return userRepository.selectPasswordByUsername(username);
+    }
 }

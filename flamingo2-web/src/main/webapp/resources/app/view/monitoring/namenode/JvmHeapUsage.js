@@ -20,35 +20,18 @@ Ext.define('Flamingo2.view.monitoring.namenode.JvmHeapUsage', {
 
     border: false,
 
-    initComponent: function () {
-        var me = this;
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['num', 'jvmMaxMemory', 'jvmTotalMemory', 'jvmUsedMemory', 'jvmFreeMemory', 'reg_dt'],
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
-                extraParams: {
-                    clusterName: ENGINE.id
-                },
-                remoteSort: true,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'total'
-                }
-            }
-        });
-
-        me.items = {
+    items: [
+        {
             xtype: 'cartesian',
-            border: false,
-            store: store,
+            itemId: 'jvmHeapUsageChart',
+            height: 250,
+            bind: {
+                store: '{jvmHeapUsageStore}'
+            },
             insetPadding: 20,
             interactions: 'itemhighlight',
             legend: {
-                docked: 'bottom',
-                border: false
+                docked: 'bottom'
             },
             axes: [
                 {
@@ -98,7 +81,8 @@ Ext.define('Flamingo2.view.monitoring.namenode.JvmHeapUsage', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + storeItem.get('jvmMaxMemory') + 'M</b></font>');
+                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <span style="color: #CC2900; "><b>'
+                                + storeItem.get('jvmMaxMemory') + 'M</b></font>');
                         }
                     }
                 },
@@ -129,13 +113,19 @@ Ext.define('Flamingo2.view.monitoring.namenode.JvmHeapUsage', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + storeItem.get('jvmUsedMemory') + 'M</b></font>');
+                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <span style="color: #CC2900; "><b>'
+                                + storeItem.get('jvmUsedMemory') + 'M</b></font>');
                         }
                     }
                 }
             ]
-        };
-
-        me.callParent(arguments);
-    }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onJVMHeapUsageRefreshClick'
+        }
+    ]
 });

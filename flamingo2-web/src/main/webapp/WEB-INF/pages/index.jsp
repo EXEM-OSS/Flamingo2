@@ -21,6 +21,7 @@
     <script type="text/javascript" src="/resources/lib/jquery/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="/resources/lib/bootstrap-3.3.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/resources/lib/respond/respond.js"></script>
+    <script type="text/javascript" src="/resources/lib/validator/validator.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             <c:if test="${not empty SUCCESS}">
@@ -59,7 +60,7 @@
                             <form id="login-form" action="/j_spring_security_check" method="post" role="form" style="display: block;">
                                 <c:if test="${!isExpired}">
                                 <div class="form-group">
-                                    <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="" required autofocus>
+                                    <input type="text" style="ime-mode:disabled;text-transform: lowercase;" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="" required autofocus>
                                 </div>
                                 <div class="form-group">
                                     <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password" required>
@@ -84,26 +85,29 @@
                                     </div>
                                 </div>
                             </form>
-                            <form id="register-form" action="/auth/register" method="post" role="form" style="display: none;">
-                                <div class="form-group">
-                                    <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="" required>
+                            <form id="register-form" action="/auth/register" method="post" role="form" style="display: none;" data-toggle="validator" >
+                                <div class="form-group regist_username">
+                                    <input type="text" style="ime-mode:disabled;text-transform: lowercase;" pattern="^([_a-z]){3,}$" name="username" id="username-regist" tabindex="1" class="form-control" data-error="Username is invalid" placeholder="Username" value="" required>
+                                    <span class="help-block with-errors">English Only</span>
                                 </div>
                                 <div class="form-group">
                                     <input type="text" name="name" id="name" tabindex="1" class="form-control" placeholder="Name" value="" required>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email" value="" required>
+                                    <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email" value="" data-error="Email address is invalid" required>
+                                    <div class="help-block with-errors"></div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password" required>
+                                    <input type="password" name="password" id="password-regist" tabindex="2" class="form-control" placeholder="Password" required>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" name="confirmPassword" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password" required>
+                                    <input type="password" name="confirmPassword" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password" data-match="#password-regist" required>
+                                    <div class="help-block with-errors"></div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-sm-6 col-sm-offset-3">
-                                            <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Regist">
+                                            <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register">
                                         </div>
                                     </div>
                                 </div>
@@ -126,7 +130,7 @@
                 Invalid username or password
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+                <button type="button" class="btn btn-default" id="okButton" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
@@ -141,7 +145,7 @@
                 License Expired.<br><a href="<%=ConfigurationHelper.getHelper().get("homepage")%>"><%=ConfigurationHelper.getHelper().get("homepage")%></a> You must reissue the license key.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+                <button type="button" id="bt" class="btn btn-default" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
@@ -161,9 +165,18 @@
             $("#login-form").fadeOut(100);
             $('#login-form-link').removeClass('active');
             $(this).addClass('active');
+
             e.preventDefault();
         });
-
+        $('#username').keypress(function(e){var r=e.which;return r>=48&&57>=r||r>=97&&122>=r?!0:!1});
+        $('.regist_username > input').keypress(function(e){var r=e.which;return r>=48&&57>=r||r>=97&&122>=r?!0:!1});
+        $('#myModal').keypress(function(e){
+            if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                e.preventDefault();
+                $('#okButton').click();
+                $('#username').focus();
+            }
+        });
     });
 </script>
 </body>

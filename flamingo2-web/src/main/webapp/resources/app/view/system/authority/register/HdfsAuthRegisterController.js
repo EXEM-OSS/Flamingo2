@@ -54,7 +54,8 @@ Ext.define('Flamingo2.view.system.authority.HdfsAuthRegisterController', {
         var params = {
             hdfsPathPattern: refs.hdfsPathPattern.getValue(),
             authId: refs.userAuthCombo.getValue(),
-            level: refs.userLevelCombo.getValue()
+            level: refs.userLevelCombo.getValue(),
+            applyAll: refs.applyAll.getValue()
         };
 
         invokePostByMap(url, params,

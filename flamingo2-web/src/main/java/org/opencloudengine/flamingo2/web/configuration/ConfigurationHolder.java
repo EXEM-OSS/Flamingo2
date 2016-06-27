@@ -109,6 +109,12 @@ public class ConfigurationHolder {
             engine.setHawqAutoCommit(props.getProperty(qualifier + ".hawq.autoCommit"));
             engine.setHawqDriver(props.getProperty(qualifier + ".hawq.driver"));
             engine.setHawqPostgresqlDriver(props.getProperty(qualifier + ".hawq.postgresql.driver"));
+
+            engine.setTajoAddress(props.getProperty(qualifier + ".tajo.address"));
+            engine.setTajoPort(props.getProperty(qualifier + ".tajo.port"));
+
+            engine.setSparkCollectorAddress(props.getProperty(qualifier + ".spark.collector.address"));
+            engine.setSparkCollectorPort(props.getProperty(qualifier + ".spark.collector.port"));
         }
     }
 

@@ -17,7 +17,7 @@
 /**
  * HAWQ > Browser
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  * @see Flamingo2.view.hawq.Hawq > hawqBrowser
  * @see Flamingo2.view.hawq.browser.HawqBrowserController

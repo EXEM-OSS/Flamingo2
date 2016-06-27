@@ -1,0 +1,861 @@
+[[hawq]]
+
+== Managing Pivotal HAWQ
+
+Flamingo 2 supports managing and developing on Pivotal HAWQ(HAdoop With Query), a SQL-on-Hadoop. The provided features are as below.
+
+* Manage Database
+* Manage Schema
+* Manage Table
+* Manage View
+* Manage External Table
+* Manage Function
+* Process Query
+* Search Query Plan
+* Download Results
+* Result Charts
+* Search Table Info
+* Manage Role
+* Manage Resource Queue
+* Manage Session
+* Manage Lock Table
+
+image::hawq/editor/hawqeditor-00.png[scaledwidth=100%,Pivotal HAWQ 지원 기능의 메인 화면]
+
+To learn more about Pivotal HAWQ, please go to the link, http://hawq.docs.pivotal.io/index.html[링크].
+
+=== Configuring HAWQ
+
+In order to connect to HAWQ, add connection type, database, user, CIDR-address, and authentication method at the bottom of `$MASTER_DATA_DIRECTORY/pg_hba.conf`.
+
+[subs="verbatim,attributes"]
+----
+$ cd $MASTER_DATA_DIRECTORY
+$ vi pg_hba.conf
+host  all  gpadmin  172.16.213.1/28  trust
+$ gpstop -u <1>
+----
+<1> Reload `pg_hba.conf`
+
+=== Configuring Flamingo
+
+In order to use HAWQ in Flamingo에서 HAWQ, locate `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/hadoop.properties`, and modify the following options.
+
+[source,properties]
+----
+###########################################
+## Pivotal HAWQ Configuration
+## hawq.jdbc.type={greenplum|postgresql}
+###########################################
+
+default.hawq.jdbc.type=greenplum
+default.hawq.greenplum.connectionUrl=jdbc:pivotal:greenplum://
+default.hawq.postgresql.connectionUrl=jdbc:postgresql://
+default.hawq.host=172.16.213.138
+default.hawq.port=5432
+default.hawq.databaseName=gpadmin
+default.hawq.user=gpadmin
+default.hawq.password=
+default.hawq.autoCommit=false
+default.hawq.driver=com.pivotal.jdbc.GreenplumDriver
+default.hawq.postgresql.driver=org.postgresql.Driver
+----
+
+The following properties need to be modified.
+
+* `default.hawq.jdbc.type`
+* `default.hawq.host`
+* `default.hawq.port`
+* `default.hawq.databaseName`
+* `default.hawq.user`
+* `default.hawq.password`
+
+`default.hawq.jdbc.type` can be set to `greenplum` or `postgresql`, If it is set to `greenplum`, JDBC driver loads greenplum. If it is set to `postgresql`, JDBC driver loads postgres. To set the setting to greenplum, `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/lib/greenplum.jar` is required.
+
+For help about Greenplum Database's JDBC Driver, please go to the link, https://network.pivotal.io/products/pivotal-gpdb[다운로드].
+
+If the configuration is completed, restart Flamingo and access HAWQ.
+
+=== Connection Manager
+
+Connection Manager manages connections to HAWQ for databases and schemas. Currently a Hadoop cluster can support only up to 1 HAWQ.
+
+==== Selecting a Database
+
+Select a database, and a default schema gets loaded. Also the object explorer gets refreshed.
+
+image::hawq/editor/hawqeditor-01.png[scaledwidth=35%,데이터베이스 선택]
+
+==== Refreshing a Database List
+
+When you select the menu as below, a database list gets updated.
+
+image::hawq/editor/hawqeditor-02.png[scaledwidth=35%,데이터베이스 갱신]
+
+==== Creating a Database
+
+To create a database, select `Create Database` in the menu.
+
+image::hawq/editor/hawqeditor-03.png[scaledwidth=35%,데이터베이스 생성]
+
+==== Entering Create Database Parameters
+
+Select Create Database in the menu, and the parameter window will appear.
+
+* Name (Required)
+** The name of a database to create.
+* DB owner (Optional)
+** The name of the database user who will own the new database, or DEFAULT to use the default owner (the user executing the command).
+* Template (Optional)
+** The name of the template from which to create the new database, or DEFAULT to use the default template (template1).
+* Encoding (Optional)
+** Character set encoding to use in the new database. Specify a string constant (such as 'SQL_ASCII'), an integer encoding number, or DEFAULT to use the default encoding.
+* Conn Limit (Optional)
+** The maximum number of concurrent connections possible. The default of -1 means there is no limitation.
+
+image::hawq/editor/hawqeditor-04.png[scaledwidth=35%,데이터베이스 생성 화면]
+
+Enter values for the parameters.
+
+image::hawq/editor/hawqeditor-05.png[scaledwidth=30%,데이터베이스 정보 입력]
+
+When the values are entered, Click Create.
+
+image::hawq/editor/hawqeditor-06.png[scaledwidth=35%,데이터베이스 생성 입력정보 확인]
+
+If the database is created, a message window will appear as below.
+
+image::hawq/editor/hawqeditor-07.png[scaledwidth=35%,데이터베이스 생성 확인]
+
+The created database now added to the list.
+
+image::hawq/editor/hawqeditor-08.png[scaledwidth=40%,생성된 데이터베이스 목록 확인]
+
+==== Dropping a Database
+
+Select `Drop Database` in the menu.
+
+image::hawq/editor/hawqeditor-09.png[scaledwidth=35%,데이터베이스 삭제]
+
+Click `Yes` to delete the database.
+
+image::hawq/editor/hawqeditor-10.png[scaledwidth=30%,데이터베이스 삭제 확인]
+
+If the database is dropped, the following message will appear.
+
+image::hawq/editor/hawqeditor-11.png[scaledwidth=30%,데이터베이스 삭제 완료]
+
+=== Managing a Schema
+
+When you select a schema, its information will be displayed in Object Explorer.
+
+image::hawq/editor/hawqeditor-12.png[scaledwidth=35%,스키마 선택]
+
+==== Refreshing the Schema List
+
+Select `Refresh Schema List` in the menu.
+
+image::hawq/editor/hawqeditor-13.png[scaledwidth=35%,스키마 목록 갱신]
+
+==== Creating a Schema
+
+Select `Create Schema` in the menu.
+
+image::hawq/editor/hawqeditor-14.png[scaledwidth=35%,스키마 생성]
+
+When you select the menu, a window that takes parameters will pop-up as below.
+
+* Schema name (Required)
+** The name of a schema to be created. If this is omitted, the user name is used as the schema name. The name cannot begin with pg_, as such names are reserved for system catalog schemas.
+* Role name (Optional)
+** The name of the role who will own the schema. If omitted, defaults to the role executing the command. Only superusers may create schemas owned by roles other than themselves.
+* Schema element (Optional)
+** An SQL statement defining an object to be created within the schema. Currently, only CREATE TABLE, CREATE VIEW, CREATE INDEX, CREATE SEQUENCE, and GRANT are accepted as clauses within CREATE SCHEMA. Other kinds of objects may be created in separate commands after the schema is created.
+
+image::hawq/editor/hawqeditor-15.png[scaledwidth=30%,스키마 생성]
+
+==== Entering Create Schema Parameters
+
+In order to create a schema, enter necessary parameters. When done, click `Create`.
+
+image::hawq/editor/hawqeditor-16.png[scaledwidth=30%,스키마 생성 정보 입력]
+
+When a message appears, click `Yes`.
+
+image::hawq/editor/hawqeditor-17.png[scaledwidth=30%,스키마 생성 확인]
+
+If the schema is successfully created, the following message will appear.
+
+image::hawq/editor/hawqeditor-18.png[scaledwidth=30%,스키마 생성 완료]
+
+==== Dropping a Schema
+
+In order to drop a schema, select `Drop Schema` in the menu.
+
+image::hawq/editor/hawqeditor-19.png[scaledwidth=35%,스키마 삭제]
+
+Click `Yes` when a confirmation message appears.
+
+image::hawq/editor/hawqeditor-20.png[scaledwidth=30%,스키마 삭제 확인]
+
+If the schema is successfully dropped, the following message box will appear.
+
+image::hawq/editor/hawqeditor-21.png[scaledwidth=30%,스키마 삭제 완료]
+
+NOTE: If it fails to delete a schema, drop the table through a query.
+
+=== Managing Tables
+
+==== Creating a Table
+
+Right click on Object Explorer, and select `Create Table` in the menu.
+
+image::hawq/editor/hawqeditor-22.png[scaledwidth=30%,테이블 생성]
+
+`Table name, database name, shema name and columns` are required, and the rest is optional.
+
+image::hawq/editor/hawqeditor-23.png[scaledwidth=100%,테이블 생성 폼]
+
+Click `Add` to add more columns, and `Delete` to drop columns.
+
+image::hawq/editor/hawqeditor-24.png[scaledwidth=100%,컬럼 추가]
+
+Configure the table options.
+
+If `Append only` is true, an append-only table is created.
+
+The following storage options are available:
+* APPENDONLY
+** Set to TRUE to create the table as an append-only table. If FALSE is specified, an error message displays stating that heap tables are not supported.
+* BLOCKSIZE
+** Set to the size, in bytes for each block in a table. The BLOCKSIZE must be between 8192 and 2097152 bytes, and be a multiple of 8192. The default is 32768.
+* ORIENTATION
+** Set to column for column-oriented storage, or row (the default) for row-oriented storage, or parquet. This option is only valid if APPENDONLY=TRUE. Heap-storage tables can only be row-oriented.
+* COMPRESSTYPE
+** Set to ZLIB (the default) or QUICKLZ to specify the type of compression used. QuickLZ uses less CPU power and compresses data faster at a lower compression ratio than zlib. Conversely, zlib provides more compact compression ratios at lower speeds. This option is only valid if APPENDONLY=TRUE.
+* COMPRESSLEVEL
+** For zlib compression of append-only tables, set to an integer value between 1 (fastest compression) to 9 (highest compression ratio). QuickLZ compression level can only be set to 1. If not declared, the default is 1. This option is valid only if APPENDONLY=TRUE.
+
+image::hawq/editor/hawqeditor-25.png[scaledwidth=50%,옵션]
+
+Table Partition
+
+Besides DEFAULT PARTITION, all options must be defined. Flamingo;s HAWQ partition supports only 1 depth. For more specific configurations, you have to create partitions through a query.
+
+* DEFAULT PARTITION name
+** Declares a default partition. When data does not match to an existing partition, it is inserted into the default partition. Partition designs that do not have a default partition will reject incoming rows that do not match to an existing partition.
+* PARTITION name
+** Declares a name to use for the partition. Partitions are created using the following naming convention: parentname_level#_prt_givenname .
+* PARTITION TYPE
+** Declares partition type: LIST (list of values) or RANGE (a numeric or date range).
+* START
+** For range partitions, defines the starting range value for the partition. By default, start values are INCLUSIVE. For example, if you declared a start date of '2008-01-01', then the partition would contain all dates greater than or equal to '2008-01-01'. Typically the data type of the START expression is the same type as the partition key column. If that is not the case, then you must explicitly cast to the intended data type.
+* END
+** For range partitions, defines the ending range value for the partition. By default, end values are EXCLUSIVE. For example, if you declared an end date of '2008-02-01', then the partition would contain all dates less than but not equal to '2008-02-01'. Typically the data type of the END expression is the same type as the partition key column. If that is not the case, then you must explicitly cast to the intended data type.
+
+image::hawq/editor/hawqeditor-26.png[scaledwidth=100%,파티션]
+
+Set table options accordingly.
+
+image::hawq/editor/hawqeditor-27.png[scaledwidth=100%,테이블 정보 입력]
+
+image::hawq/editor/hawqeditor-28.png[scaledwidth=100%,테이블, 컬럼정보 입력]
+
+image::hawq/editor/hawqeditor-29.png[scaledwidth=100%,옵션 정보 입력]
+
+When done entering necessary options, click `Create`.
+
+image::hawq/editor/hawqeditor-30.png[scaledwidth=30%,테이블 생성 확인]
+
+If the table is successfully created, the following message will be displayed.
+
+image::hawq/editor/hawqeditor-31.png[scaledwidth=30%,테이블 생성]
+
+==== Updating the Table List
+
+Once the table is created, click `Refresh` in the uppder right corner of Object Explorer.
+
+image::hawq/editor/hawqeditor-31-1.png[scaledwidth=35%,테이블 목록 갱신]
+
+==== Altering a Table
+
+Right click on the table name to be altered. Select `Alter Table` in the menu.
+
+image::hawq/editor/hawqeditor-38.png[scaledwidth=35%,테이블 변경]
+
+image::hawq/editor/hawqeditor-39.png[scaledwidth=100%,테이블 변경 폼]
+
+==== Modifying a Column
+
+===== Adding a Column
+
+Click `Add` to add a new column.
+
+image::hawq/editor/hawqeditor-40.png[scaledwidth=100%,컬럼 추가]
+
+===== Adding Column Properties
+
+Add the column's properties accordingly.
+
+image::hawq/editor/hawqeditor-41.png[scaledwidth=100%,컬럼 추가 정보 입력]
+
+Click `Save` to save the changes.
+
+image::hawq/editor/hawqeditor-42.png[scaledwidth=30%,컬럼 변경내역 저장]
+
+Click `Yes` and the columns will be updated.
+
+image::hawq/editor/hawqeditor-43.png[scaledwidth=30%,컬럼 변경내역 저장 확인]
+
+===== Updated Columns
+
+The updated columns are now displayed. Click `Refresh` to update the list again.
+
+image::hawq/editor/hawqeditor-44.png[scaledwidth=100%,컬럼 변경내역 조회]
+
+==== Distributed Key
+
+To set distributed keys, select a column from the list. You can select more than one column.
+
+image::hawq/editor/hawqeditor-46.png[scaledwidth=50%,분산키 변경]
+
+Click `Modify` at the bottom to alter the table property.
+
+image::hawq/editor/hawqeditor-47.png[scaledwidth=35%,분산키 변경 버튼]
+
+Click `Yes` in the message box.
+
+image::hawq/editor/hawqeditor-48.png[scaledwidth=30%,분산키 변경 확인]
+
+The added distributed keys will be displayed as below.
+
+image::hawq/editor/hawqeditor-49.png[scaledwidth=50%,분산키 변경 확인1]
+
+The columns selected as a distributed key will be marked as `true`.
+
+image::hawq/editor/hawqeditor-50.png[scaledwidth=100%,분산키 변경 확인2]
+
+==== Renaming a Table
+
+Enter a new table for a table and click `Modify`.
+
+image::hawq/editor/hawqeditor-51.png[scaledwidth=65%,테이블명 변경]
+
+==== Table Option and Partition
+
+The following is the table options.
+
+image::hawq/editor/hawqeditor-53.png[scaledwidth=50%,옵션]
+
+The following show the table partition definition.
+
+image::hawq/editor/hawqeditor-54.png[scaledwidth=100%,파티션]
+
+[WARNING]
+In order to modify options and partitions, you can do it through a query.
+
+==== Adding a Constraint
+
+Click `Add` to add new constraints. A constraint name cannot be redundant, and primary key and foreign key constraints are not supported in HAWQ.
+Enter constraints in the Source and a key will be specified by HAWQ.
+
+image::hawq/editor/hawqeditor-55.png[scaledwidth=100%,제약사항 추가]
+
+After entering the constraints, click `Save` in the upper menu bar.
+
+image::hawq/editor/hawqeditor-56.png[scaledwidth=100%,제약사항 입력]
+
+image::hawq/editor/hawqeditor-57.png[scaledwidth=30%,제약사항 변경 확인]
+
+If it is successfully saved, the Constraint tab will be updated with a new key.
+
+image::hawq/editor/hawqeditor-58.png[scaledwidth=100%,제약사항 목록 확인]
+
+==== Dropping a Table
+
+Right click on a name of table to be deleted, and select `Drop Table` in the menu.
+When the table is successfully deleted, a message will appear and the list gets updated.
+
+image::hawq/editor/hawqeditor-59.png[scaledwidth=50%,테이블 삭제]
+
+[NOTE]
+If a table is not empty, it cannot be deleted. In order to delete such table, it must be done through a query.
+
+=== Editor
+
+==== Processing Queries
+
+If no query is highlighted, all queries in the editor get procesed. If a query is highlighted, only 드래그 없이 쿼리 실행 버튼 선택 시 모든 쿼리를 실행합니다. 드래그 후에 쿼리 실행 버튼 선택 시 드래그 된 부분만 실행합니다.
+
+image::hawq/editor/hawqeditor-83.png[scaledwidth=100%,쿼리 실행]
+
+===== Processing SELECT INTO and SELECT
+
+After entering a query (or queries), click `Execute Query`.\
+
+image::hawq/editor/hawqeditor-61.png[scaledwidth=100%,NOT SELECT 쿼리 입력]
+
+If the query (or queries) is successfully executed, the following result will be printed in the Log panel.
+
+image::hawq/editor/hawqeditor-62.png[scaledwidth=100%,NOT SELECT 쿼리 로그]
+
+===== Processing SELECT
+
+After entering a query, click `Execute`. +
+A query result is printed in the Data panel. +
+A selected column in the result can be copied.
+
+WARNING: The `headers` can't be copied.
+
+image::hawq/editor/hawqeditor-63.png[scaledwidth=100%,SELECT 쿼리 입력]
+
+==== Query Plan
+
+After entering a SELECT query, click `View Plan` to see the query plan.
+
+image::hawq/editor/hawqeditor-64.png[scaledwidth=100%,실행 계획 보기 버튼]
+
+NOTE: This executes EXPLAIN. +
+If you want to execute EXPLAIN ANALYZE, put ANALYZE at the beginning of the query statement.
+
+image::hawq/editor/hawqeditor-65.png[scaledwidth=100%,쿼리 실행 계획 보기]
+
+==== Downloading a Result
+
+Click `Download` to download a result in a CSV file.
+
+image::hawq/editor/hawqeditor-84.png[scaledwidth=100%,결과 다운로드]
+
+==== Message
+
+When a query is executed and it returns a message, the message is displayed in the Message tab.
+
+image::hawq/editor/hawqeditor-85.png[scaledwidth=100%,메시지]
+
+==== Chart
+
+Using the first and the second columns of a query result, it plots a chart. The first column is the x-axis, and the second column is the y-axis.
+The second column must be numeric. Click `Full Page` in the upper right corner to view the chart in full page.
+
+The following is an example of a donut chart.
+
+image::hawq/editor/hawqeditor-donut.png[scaledwidth=100%,도넛 차트]
+
+The following is an example of a bar chart.
+
+image::hawq/editor/hawqeditor-bar.png[scaledwidth=100%,바 차트]
+
+The following is an example of an area chart.
+
+image::hawq/editor/hawqeditor-area.png[scaledwidth=100%,영역 차트]
+
+The following is an example of a line chart.
+
+image::hawq/editor/hawqeditor-line.png[scaledwidth=100%,라인 차트]
+
+=== View
+
+==== Creating a View
+
+Right click on the view panel, and select `Create View`.
+
+image::hawq/editor/hawqeditor-66.png[scaledwidth=35%,뷰 생성]
+
+A CREATE VIEW query template is created in the query editor.
+
+image::hawq/editor/hawqeditor-67.png[scaledwidth=35%,뷰 생성 쿼리]
+
+Modify the query template and execute it to create a view.
+
+image::hawq/editor/hawqeditor-68.png[scaledwidth=100%,뷰 생성 쿼리 입력]
+
+==== Dropping a View
+
+Right click on a view you want to remove and select `Drop View` in the menu.
+
+image::hawq/editor/hawqeditor-69.png[scaledwidth=35%,뷰 삭제]
+
+Click `Yes` in the message box. The list gets updated after the view is deleted.
+
+image::hawq/editor/hawqeditor-70.png[scaledwidth=35%,뷰 삭제 확인]
+
+NOTE: If a view is not empty, it can't be deleted. In this case, you must delete the view using a query.
+
+=== External Table
+
+==== Preparing Data for an External Table
+
+Before creating an external table, prepare data for the table. We will explain `gpfdist` here. For more detail refer to the HAWQ's `CREATE EXTERNAL TABLE` manual (http://pivotalhd-210.docs.pivotal.io/doc/2100/webhelp/index.html#hawq-topics/CREATE-EXTERNAL-TABLE.html[1.2.1.1], http://hawq.docs.pivotal.io/docs-hawq/topics/CREATE-EXTERNAL-TABLE.html[1.3.0])
+
+[source,bash]
+----
+[pivhdsne:~]$ mkdir exttest
+[pivhdsne:~]$ cd exttest
+[pivhdsne:exttest]$ vi test.txt
+[pivhdsne:exttest]$ cat test.txt
+1 a apache
+2 b boolean
+3 c click
+4 d data
+5 e etl
+6 f flamingo
+7 g gpadmin
+8 h hbase
+9 i intel
+10 j java
+[pivhdsne:exttest]$ gpfdist -d . -p 8081 &
+[1] 7404
+[pivhdsne:exttest]$ Serving HTTP on port 8081, directory /home/gpadmin/exttest
+----
+
+==== Creating an External Table
+
+Right click on the External Table panel, and select `Create External Table` in the menu.
+
+image::hawq/editor/hawqeditor-71.png[scaledwidth=35%,External 테이블 생성]
+
+The required fields are Table Name, Database Name, Schema Name, Column Name or Reference Table, Location, and Format. The rest fields are optional.
+Check `Writable` to write to the table. Otherwise, the table is read-only.
+If the table is accessible through HTTP, check `Web Table`.
+Click `Add` to add columns and `Drop` to delete columns.
+Reference Table specifies a table from which the new external table automatically copies all column names, data types and HAWQ distribution policy.
+
+image::hawq/editor/hawqeditor-72.png[scaledwidth=100%,External 테이블 일반]
+
+Click `Add` to add a location and `Drop` to delete a location.
+`Hint` is the guide to add a location. It is optional.
+Enter a path or location of data in `Location`.
+
+image::hawq/editor/hawqeditor-73.png[scaledwidth=100%,External 테이블 위치]
+
+Select data format and enter values for each field.
+`Fill missing fields` set missing trailing field values to NULL (instead of reporting an error) when a row of data has missing data fields at the end of a line or row
+Blank rows, fields with a NOT NULL constraint, and trailing delimiters on a line will still report an error.
+
+image::hawq/editor/hawqeditor-74.png[scaledwidth=100%,External 테이블 형식]
+
+Enter all appropriate values and click `Create`.
+The following shows the external table basic configuration panel.
+
+image::hawq/editor/hawqeditor-75.png[scaledwidth=100%,External 테이블 일반 정보 입력]
+
+The following is the location panel.
+
+image::hawq/editor/hawqeditor-76.png[scaledwidth=100%,External 테이블 위치 정보 입력]
+
+The following is the data format panel.
+
+image::hawq/editor/hawqeditor-77.png[scaledwidth=100%,External 테이블 형식 정보 입력]
+
+==== Searching an External Table
+
+Enter a query as below to search an external table.
+
+image::hawq/editor/hawqeditor-78.png[scaledwidth=100%,External 테이블 정보 조회]
+
+==== Altering an External Table
+
+As altering a table, you can add and delete columns and rename the table.
+
+image::hawq/editor/hawqeditor-86.png[scaledwidth=35%,External 테이블 변경]
+
+==== Dropping an External Table
+
+Right click on a table you want to delete. Select `Drop Table` in the menu.
+When the table is successfully dropped, you will be notified with a message box.
+
+image::hawq/editor/hawqeditor-87.png[scaledwidth=35%,External 테이블 삭제]
+
+NOTE: If an external table is not empty, it won't be deleted. In this case, you can delete it using a query.
+
+=== Function
+
+==== Creating a Function
+
+image::hawq/editor/hawqeditor-79.png[scaledwidth=35%,함수 생성]
+
+Right click on the Function panel. Select `Create Function` from the menu and the function creating query template will be generated in the editor.
+
+image::hawq/editor/hawqeditor-80.png[scaledwidth=50%,함수 생성 쿼리]
+
+Use the template to create a function and execute it.
+
+image::hawq/editor/hawqeditor-81.png[scaledwidth=50%,함수 생성 쿼리 입력]
+
+Once the function is generated, you can call the function in the editor.
+
+image::hawq/editor/hawqeditor-82.png[scaledwidth=100%,함수 사용]
+
+==== Dropping a Function
+
+Right click on a function you want to delete. Select `Drop Function` from the menu.
+
+image::hawq/editor/hawqeditor-88.png[scaledwidth=30%,함수 삭제]
+
+Click `Yes` and the function will be deleted from the list.
+
+image::hawq/editor/hawqeditor-89.png[scaledwidth=30%,함수 삭제 확인]
+
+[NOTE]
+If a function is associated with other object, it won't be dropped. In this case, use a query statement to drop the function.
+
+=== Table Property
+
+Click on a table or a view, its object information is displayed in the Table Property panel. When you select an object, you can se its columns, metadata, partitions, and a script.
+
+==== Column
+
+===== Viewing Columns
+
+You can view the column list as below.
+
+image::hawq/editor/hawqeditor-32.png[scaledwidth=30%,컬럼 목록 조회]
+
+===== Viewing Column Property
+
+By double clicking on a column, you view its property.
+
+image::hawq/editor/hawqeditor-33.png[scaledwidth=30%,컬럼 상세정보]
+
+==== Metadata
+
+When you click on the Metadata tab, you can view the metadata of a table.
+
+image::hawq/editor/hawqeditor-34.png[scaledwidth=30%,메타데이터 목록 조회]
+
+==== Partition
+
+===== Viewing the Partition List
+
+Click the partition tab, and you will see the list of partitions.
+
+image::hawq/editor/hawqeditor-35.png[scaledwidth=30%,파티션 목록 조회]
+
+===== Partition Property
+
+Right click on a partition and select `Property` from the menu.
+
+image::hawq/editor/hawqeditor-35-1.png[scaledwidth=30%,파티션 상세 조회]
+
+image::hawq/editor/hawqeditor-37.png[scaledwidth=30%,파티션 상세정보]
+
+==== Create Table Script
+
+View the Create Table script.
+
+image::hawq/editor/hawqeditor-36.png[scaledwidth=30%,생성문 조회]
+
+== Managing Pivotal HAWQ Authorization
+
+=== Role
+
+The role management is one of the important features in the Pivotal HAWQ Authorization Management. Only the system administrator has the privileges to manage roles.
+To manage roles, go to System Management > HAWQ Authorization Management.
+
+image::hawq/auth/hawqauth-00.png[scaledwidth=100%,롤 관리]
+
+==== Creating a Role
+
+To create a role, click `Add`.
+
+* Name
+** The name of the new role.
+* SUPERUSER | NOSUPERUSER
+** If SUPERUSER is specified, the role being defined will be a superuser, who can override all access restrictions within the database. Superuser status is dangerous and should be used only when really needed. You must yourself be a superuser to create a new superuser. NOSUPERUSER is the default.
+* CREATEDB | NOCREATEDB
+** If CREATEDB is specified, the role being defined will be allowed to create new databases. NOCREATEDB (the default) will deny a role the ability to create databases.
+* CREATE-ROLE | NOCREATE-ROLE
+** If CREATEDB is specified, the role being defined will be allowed to create new roles, alter other roles, and drop other roles. NOCREATE-ROLE (the default) will deny a role the ability to create roles or modify roles other than their own.
+* CREATEEXTTABLE | NOCREATEEXTTABLE
+** If CREATEEXTTABLE is specified, the role being defined is allowed to create external tables. The default type is readable and the default protocol is gpfdist if not specified. NOCREATEEXTTABLE (the default) denies the role the ability to create external tables. Note that external tables that use the file or execute protocols can only be created by superusers.
+* INHERIT | NOINHERIT
+** If specified, INHERIT (the default) allows the role to use whatever database privileges have been granted to all roles it is directly or indirectly a member of. With NOINHERIT, membership in another role only grants the ability to SET ROLE to that other role.
+* LOGIN | NOLOGIN
+** If specified, LOGIN allows a role to log in to a database. A role having the LOGIN attribute can be thought of as a user. Roles with NOLOGIN (the default) are useful for managing database privileges, and can be thought of as groups.
+* CONNECTION LIMIT connlimit
+** The number maximum of concurrent connections this role can make. The default of -1 means there is no limitation.
+* PASSWORD password
+** Sets the user password for roles with the LOGIN attribute. If you do not plan to use password authentication you can omit this option. If no password is specified, the password will be set to null and password authentication will always fail for that user. A null password can optionally be written explicitly as PASSWORD NULL.
+* ENCRYPTED | UNENCRYPTED
+** These key words control whether the password is stored encrypted in the system catalogs. (If neither is specified, the default behavior is determined by the configuration parameter password_encryption.) If the presented password string is already in MD5-encrypted format, then it is stored encrypted as-is, regardless of whether ENCRYPTED or UNENCRYPTED is specified (since the system cannot decrypt the specified encrypted password string). This allows reloading of encrypted passwords during dump/restore.
+Note that older clients may lack support for the MD5 authentication mechanism that is needed to work with passwords that are stored encrypted.
+* VALID UNTIL 'timestamp'
+** The VALID UNTIL clause sets a date and time after which the role's password is no longer valid. If this clause is omitted the password will never expire.
+* IN ROLE rolename
+** Adds the new role as a member of the named roles. Note that there is no option to add the new role as an administrator; use a separate GRANT command to do that.
+* ROLE rolename
+** Adds the named roles as members of this role, making this new role a group.
+* ADMIN rolename
+** The ADMIN clause is like ROLE, but the named roles are added to the new role WITH ADMIN OPTION, giving them the right to grant membership in this role to others.
+* RESOURCE QUEUE queue_name
+** The name of the resource queue to which the new user-level role is to be assigned. Only roles with LOGIN privilege can be assigned to a resource queue. The special keyword NONE means that the role is assigned to the default resource queue. A role can only belong to one resource queue.
+* DENY deny_point | DENY BETWEEN deny_point AND deny_point
+** The DENY and DENY BETWEEN keywords set time-based constraints that are enforced at login. DENY sets a day or a day and time to deny access. DENY BETWEEN sets an interval during which access is denied. Both use the parameter deny_point that has the following format:
+* DAY day [ TIME 'time' ]
+** The two parts of the deny_point parameter use the following formats:
+For day:
+
+{'Sunday' | 'Monday' | 'Tuesday' |'Wednesday' | 'Thursday' | 'Friday' |
+'Saturday' | 0-6 }
+For time:
+
+{ 00-23 : 00-59 | 01-12 : 00-59 { AM | PM }}
+The DENY BETWEEN clause uses two deny_point parameters:
+DENY BETWEEN deny_point AND deny_point
+
+
+
+For more details, go to the link: http://pivotalhd-210.docs.pivotal.io/doc/2100/webhelp/index.html#hawq-topics/CREATE-ROLE.html[링크]
+
+image::hawq/auth/hawqauth-01.png[scaledwidth=50%,롤 추가 폼]
+
+Enter necessary values and click `Save`.
+
+image::hawq/auth/hawqauth-02.png[scaledwidth=50%,룰 정보 입력]
+
+Click `Yes` and the role is created.
+
+image::hawq/auth/hawqauth-03.png[scaledwidth=30%,롤 생성 확인]
+
+The following message box will pop up if the role is successfully created.
+
+image::hawq/auth/hawqauth-04.png[scaledwidth=30%,롤 생성]
+
+The role is added.
+
+image::hawq/auth/hawqauth-05.png[scaledwidth=50%,생성된 롤 확인]
+
+==== Role Property
+
+Select a role from the list.
+
+image::hawq/auth/hawqauth-06.png[scaledwidth=100%,롤 상세정보 확인]
+
+==== Alter a Role
+
+Select a role to alter and modify necessary parameters.
+
+For example, change the connection limit from -1 to 5.
+
+image::hawq/auth/hawqauth-07.png[scaledwidth=50%,롤 수정 정보 입력]
+
+Click `Yes` and now the role is altered.
+
+image::hawq/auth/hawqauth-08.png[scaledwidth=30%,롤 변경 확인]
+
+If the role is altered successfully, the following message box will pop up.
+
+image::hawq/auth/hawqauth-09.png[scaledwidth=30%,롤 변경]
+
+The role is altered.
+
+image::hawq/auth/hawqauth-10.png[scaledwidth=100%,변경된 롤 확인]
+
+==== Dropping a Role
+
+Right click on a role and select `Drop Role` from the menu.
+
+image::hawq/auth/hawqauth-11.png[scaledwidth=50%,롤 삭제]
+
+Click `Yes` to drop the role.
+
+image::hawq/auth/hawqauth-12.png[scaledwidth=30%,롤 삭제 확인]
+
+If the role is successfully dropped, the following message box will appear.
+
+image::hawq/auth/hawqauth-13.png[scaledwidth=30%,롤 삭제]
+
+=== Resource Queue
+
+==== Adding a Resource QUeue
+
+Click `Add`.
+
+image::hawq/auth/hawqauth-14.png[scaledwidth=100%,리소스 큐 목록 확인]
+
+* name
+** The name of the resource queue.
+* ACTIVE_STATEMENTS integer
+** Resource queues with an ACTIVE_STATEMENTS threshold limit the number of queries that can be executed by roles assigned to that queue. It controls the number of active queries that are allowed to run at the same time. The value for ACTIVE_STATEMENTS should be an integer greater than 0.
+* MEMORY_LIMIT 'memory_units'
+** Sets the total memory quota for all statements submitted from users in this resource queue. Memory units can be specified in kB, MB or GB. The minimum memory quota for a resource queue is 10MB. There is no maximum, however the upper boundary at query execution time is limited by the physical memory of a segment host. The default is no limit (-1).
+* MAX_COST float
+** Resource queues with a MAX_COST threshold set a maximum limit on the total cost of queries that can be executed by roles assigned to that queue. Cost is measured in the estimated total cost for the query as determined by the HAWQ query planner (as shown in the EXPLAIN output for a query). Therefore, an administrator must be familiar with the queries typically executed on the system in order to set an appropriate cost threshold for a queue. Cost is measured in units of disk page fetches; 1.0 equals one sequential disk page read. The value for MAX_COST is specified as a floating point number (for example 100.0) or can also be specified as an exponent (for example 1e+2).
+* COST_OVERCOMMIT boolean
+** If a resource queue is limited based on MAX_COST, then the administrator can allow COST_OVERCOMMIT (the default). This means that a query that exceeds the allowed cost threshold will be allowed to run but only when the system is idle. If COST_OVERCOMMIT=FALSE is specified, queries that exceed the cost limit will always be rejected and never allowed to run.
+* MIN_COST float
+** The minimum query cost limit of what is considered a small query. Queries with a cost under this limit will not be queued and run immediately. Cost is measured in the estimated total cost for the query as determined by the HAWQ query planner (as shown in the EXPLAIN output for a query). Therefore, an administrator must be familiar with the queries typically executed on the system in order to set an appropriate cost for what is considered a small query. Cost is measured in units of disk page fetches; 1.0 equals one sequential disk page read. The value for MIN_COST is specified as a floating point number (for example 100.0) or can also be specified as an exponent (for example 1e+2).
+* PRIORITY={MIN|LOW|MEDIUM|HIGH|MAX}
+** Sets the priority of queries associated with a resource queue. Queries or statements in queues with higher priority levels will receive a larger share of available CPU resources in case of contention. Queries in low-priority queues may be delayed while higher priority queries are executed. If no priority is specified, queries associated with the queue have a priority of MEDIUM.
+
+image::hawq/auth/hawqauth-15.png[scaledwidth=50%,리소스 큐 추가 폼]
+
+Enter values for the parameters and click `Save`.
+
+image::hawq/auth/hawqauth-16.png[scaledwidth=50%,리소스 큐 정보 입력]
+
+Click `Yes` and the resource queue is created.
+
+image::hawq/auth/hawqauth-17.png[scaledwidth=30%,리소스 큐 생성 확인]
+
+If the resource queue is successfully created, the following message box will appear.
+
+image::hawq/auth/hawqauth-18.png[scaledwidth=30%,리소스 큐 생성]
+
+The resource queue is created.
+
+image::hawq/auth/hawqauth-19.png[scaledwidth=50%,추가된 리소스 큐 확인]
+
+==== Resource Queue Property
+
+Select a resource queue from the list and view its property.
+
+image::hawq/auth/hawqauth-20.png[scaledwidth=100%,리소스 큐 상세정보 확인]
+
+==== Dropping a Resource Queue
+
+Right click on a resource queue to delete, and select `Drop Resource Queue`.
+
+image::hawq/auth/hawqauth-21.png[scaledwidth=50%,리소스 큐 삭제]
+
+Click `Yes` and the resource queue gets dropped.
+
+image::hawq/auth/hawqauth-22.png[scaledwidth=30%,리소스 큐 삭제 확인]
+
+The following message box will appear if the resource queue is successfully dropped.
+
+image::hawq/auth/hawqauth-23.png[scaledwidth=30%,리소스 큐 삭제]
+
+=== Session
+
+==== Session List
+
+You can view the currently running sessions.
+
+image::hawq/auth/hawqauth-24.png[scaledwidth=100%,세션 목록]
+
+==== Stopping a Session
+
+Click `Stop` and the query gets stopped.
+
+image::hawq/auth/hawqauth-25.png[scaledwidth=50%,세션 중지]
+
+=== Lock Table
+
+==== Lock Table List
+
+Lock Table List
+
+image::hawq/auth/hawqauth-26.png[scaledwidth=100%,Lock 테이블 목록]
+
+Bring the mouse cursor to Pending pid or Other pid, and its query statement will appear.
+
+image::hawq/auth/hawqauth-27.png[scaledwidth=100%,실행중 쿼리 확인]
+
+Click `Stop` to stop the query.
+
+image::hawq/auth/hawqauth-28.png[scaledwidth=50%,쿼리 중지]
+
+=== Known Issues
+
+* Pivotal HAWQ supports only JDBC connections, so if you execute Long Running queries, it can cause problems with the connection management.

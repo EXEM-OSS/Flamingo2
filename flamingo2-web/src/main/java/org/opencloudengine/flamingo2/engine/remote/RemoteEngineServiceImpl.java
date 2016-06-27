@@ -16,12 +16,14 @@
  */
 package org.opencloudengine.flamingo2.engine.remote;
 
-import org.opencloudengine.flamingo2.agent.system.SystemUserService;
+import org.opencloudengine.flamingo2.engine.archive.mapreduce.ArchiveMapReduceRemoteService;
+import org.opencloudengine.flamingo2.engine.archive.yarn.ArchiveYarnRemoteService;
 import org.opencloudengine.flamingo2.engine.batch.BatchService;
 import org.opencloudengine.flamingo2.engine.designer.DesignerService;
 import org.opencloudengine.flamingo2.engine.fs.FileSystemRemoteService;
 import org.opencloudengine.flamingo2.engine.fs.audit.FileSystemAuditRemoteService;
 import org.opencloudengine.flamingo2.engine.hadoop.HistoryServerRemoteService;
+import org.opencloudengine.flamingo2.engine.hadoop.MapReduceRemoteService;
 import org.opencloudengine.flamingo2.engine.hadoop.NamenodeRemoteService;
 import org.opencloudengine.flamingo2.engine.hadoop.ResourceManagerRemoteService;
 import org.opencloudengine.flamingo2.engine.hawq.HawqService;
@@ -32,7 +34,11 @@ import org.opencloudengine.flamingo2.engine.hive.HiveQueryRemoteService;
 import org.opencloudengine.flamingo2.engine.monitoring.AlarmRemoteService;
 import org.opencloudengine.flamingo2.engine.monitoring.CLDBRemoteService;
 import org.opencloudengine.flamingo2.engine.pig.PigRemoteService;
+import org.opencloudengine.flamingo2.engine.realtime.spark.streaming.SparkStreamingRemoteService;
 import org.opencloudengine.flamingo2.engine.scheduler.SchedulerRemoteService;
+import org.opencloudengine.flamingo2.engine.spark.SparkRemoteService;
+import org.opencloudengine.flamingo2.engine.system.UserRemoteService;
+import org.opencloudengine.flamingo2.engine.tajo.TajoRemoteService;
 import org.opencloudengine.flamingo2.engine.tree.TreeService;
 import org.opencloudengine.flamingo2.engine.visual.VisualService;
 import org.opencloudengine.flamingo2.web.configuration.EngineConfig;
@@ -121,12 +127,6 @@ public class RemoteEngineServiceImpl implements EngineService {
     }
 
     @Override
-    public SystemUserService getSystemUserService() {
-        String url = getRemoteServiceUrl("systemuser");
-        return getRemoteService(url, SystemUserService.class);
-    }
-
-    @Override
     public PigRemoteService getPigRemoteService() {
         String url = getRemoteServiceUrl("pig");
         return getRemoteService(url, PigRemoteService.class);
@@ -180,6 +180,48 @@ public class RemoteEngineServiceImpl implements EngineService {
         return getRemoteService(url, TreeService.class);
     }
 
+    @Override
+    public TajoRemoteService getTajoRemoteService() {
+        String url = getRemoteServiceUrl("tajo");
+        return getRemoteService(url, TajoRemoteService.class);
+    }
+
+    @Override
+    public ArchiveYarnRemoteService getArchiveYarnApplicationRemoteService() {
+        String url = getRemoteServiceUrl("archiveYarn");
+        return getRemoteService(url, ArchiveYarnRemoteService.class);
+    }
+
+    @Override
+    public ArchiveMapReduceRemoteService getArchiveMapReduceRemoteService() {
+        String url = getRemoteServiceUrl("archiveMapReduce");
+        return getRemoteService(url, ArchiveMapReduceRemoteService.class);
+    }
+
+    @Override
+    public MapReduceRemoteService getMapReduceRemoteService() {
+        String url = getRemoteServiceUrl("mapreduce");
+        return getRemoteService(url, MapReduceRemoteService.class);
+    }
+
+    @Override
+    public SparkStreamingRemoteService getSparkStreamingRemoteService() {
+        String url = getRemoteServiceUrl("sparkStreaming");
+        return getRemoteService(url, SparkStreamingRemoteService.class);
+    }
+
+    @Override
+    public SparkRemoteService getSparkRemoteService() {
+        String url = getRemoteServiceUrl("spark");
+        return getRemoteService(url, SparkRemoteService.class);
+    }
+
+    @Override
+    public UserRemoteService getUserRemoteService() {
+        String url = getRemoteServiceUrl("user");
+        return getRemoteService(url, UserRemoteService.class);
+    }
+
     private <T> T getRemoteService(String url, Class<T> clazz) {
         HttpInvokerProxyFactoryBean factoryBean = new HttpInvokerProxyFactoryBean();
         factoryBean.setServiceUrl(url);
@@ -189,7 +231,7 @@ public class RemoteEngineServiceImpl implements EngineService {
     }
 
     private String getRemoteServiceUrl(String serviceName) {
-        return arrayFormat("http://{}:{}/remote/{}", new Object[]{"locahost", "9090", serviceName}).getMessage();
+        return arrayFormat("http://{}:{}/remote/{}", new Object[]{"localhost", "9090", serviceName}).getMessage();
     }
 
 }

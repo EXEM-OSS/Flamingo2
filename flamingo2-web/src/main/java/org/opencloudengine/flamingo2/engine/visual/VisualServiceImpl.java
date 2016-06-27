@@ -59,6 +59,7 @@ public class VisualServiceImpl implements VisualService {
 
         Map returnMap = new HashMap();
 
+        String scriptPath = servletContext.getRealPath("/WEB-INF") + "/classes/rscript";
         String filename = RandomStringUtils.randomAlphanumeric(10);
         Process process = Runtime.getRuntime().exec("/bin/sh");
 
@@ -69,7 +70,12 @@ public class VisualServiceImpl implements VisualService {
                 .build();
 
         try {
-            expect.sendLine("Rscript /appl/Rscript/loadHdfsData.R " + params.get("datafile").toString() + " " + filename);
+            String cmd = MessageFormatter.arrayFormat("Rscript {}/loadHdfsData.R {} '{}'", new String[]{
+                    scriptPath,
+                    params.get("datafile").toString(),
+                    params.get("options").toString()
+            }).getMessage();
+            expect.sendLine(cmd);
 
             String result[] = expect.expect(regexp("\\{success.+\\}$")).getInput().split("\n");
 
@@ -102,12 +108,13 @@ public class VisualServiceImpl implements VisualService {
         try {
             //expect.expect(contains("$"));
             String filename = RandomStringUtils.randomAlphanumeric(10);
-            String cmd = MessageFormatter.arrayFormat("Rscript {}/listVariablesHdfs.R {} {} {} {}", new String[]{
+            String cmd = MessageFormatter.arrayFormat("Rscript {}/listVariablesHdfs.R {} {} {} {} '{}'", new String[]{
                     scriptPath,
                     rDataTemp,
                     params.get("dataFile").toString(),
                     filename,
-                    params.get("header").toString()
+                    params.get("header").toString(),
+                    params.get("options").toString()
             }).getMessage();
 
             logger.info(cmd);

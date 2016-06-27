@@ -27,6 +27,30 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerModel', {
     },
 
     stores: {
+        mrJobSumChartStore: {
+            fields: ['time', 'sum'],
+            autoLoad: false,
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.MONITORING.HS.TIME_SERIES,
+                extraParams: {
+                    clusterName: ENGINE.id
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            },
+            remoteSort: true,
+            sorters: [
+                {
+                    property: 'num',
+                    direction: 'ASC'
+                }
+            ]
+        },
+
         tasksStore: {
             autoLoad: false,
             model: 'Flamingo2.model.monitoring.historyserver.Tasks',
@@ -36,13 +60,9 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerModel', {
                 extraParams: {
                     clusterName: ENGINE.id
                 },
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
                 reader: {
                     type: 'json',
-                    rootProperty: 'tasks.task',
+                    rootProperty: 'list',
                     totalProperty: 'total'
                 }
             },
@@ -61,10 +81,6 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerModel', {
             proxy: {
                 type: 'ajax',
                 url: CONSTANTS.MONITORING.HS.CONF,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
                 extraParams: {
                     clusterName: ENGINE.id
                 },
@@ -90,7 +106,7 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerModel', {
                 url: CONSTANTS.MONITORING.HS.JOBS,
                 reader: {
                     type: 'json',
-                    rootProperty: 'jobs.job',
+                    rootProperty: 'list',
                     totalProperty: 'total'
                 },
                 extraParams: {
@@ -111,8 +127,7 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerModel', {
             autoLoad: false,
             proxy: {
                 type: 'ajax',
-                url: CONSTANTS.MONITORING.HS.COUNTERS,
-                headers: {'Accept': 'application/json'}
+                url: CONSTANTS.MONITORING.HS.COUNTERS
             },
             sorters: [
                 {

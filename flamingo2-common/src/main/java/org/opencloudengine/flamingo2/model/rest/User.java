@@ -38,9 +38,17 @@ public class User implements Serializable {
 
     private String name;
 
+    private Long orgId;
+
+    private Short authId;
+
     private Short level;
 
-    private String description;
+    private Boolean enabled;
+
+    private Timestamp registerDate;
+
+    private Timestamp updateDate;
 
     private String linuxUserHome;
 
@@ -48,19 +56,30 @@ public class User implements Serializable {
 
     private String userGroup;
 
-    private Timestamp registerDate;
-
-    private Timestamp updateDate;
-
-    private Boolean enabled;
-
-    private Long orgId;
-
-    private Long authId;
+    private String description;
 
     private String websocketKey;
 
     public User() {}
+
+    public User(Long id, String username, String password, String email, String name, Long orgId, Short authId, Short level, Boolean enabled, Timestamp registerDate, Timestamp updateDate, String linuxUserHome, String hdfsUserHome, String userGroup, String description, String websocketKey) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.name = name;
+        this.orgId = orgId;
+        this.authId = authId;
+        this.level = level;
+        this.enabled = enabled;
+        this.registerDate = registerDate;
+        this.updateDate = updateDate;
+        this.linuxUserHome = linuxUserHome;
+        this.hdfsUserHome = hdfsUserHome;
+        this.userGroup = userGroup;
+        this.description = description;
+        this.websocketKey = websocketKey;
+    }
 
     public Long getId() {
         return id;
@@ -102,6 +121,22 @@ public class User implements Serializable {
         this.name = name;
     }
 
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
+    }
+
+    public Short getAuthId() {
+        return authId;
+    }
+
+    public void setAuthId(Short authId) {
+        this.authId = authId;
+    }
+
     public Short getLevel() {
         return level;
     }
@@ -110,12 +145,28 @@ public class User implements Serializable {
         this.level = level;
     }
 
-    public String getDescription() {
-        return description;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Timestamp getRegisterDate() {
+        return registerDate;
+    }
+
+    public void setRegisterDate(Timestamp registerDate) {
+        this.registerDate = registerDate;
+    }
+
+    public Timestamp getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Timestamp updateDate) {
+        this.updateDate = updateDate;
     }
 
     public String getLinuxUserHome() {
@@ -142,44 +193,12 @@ public class User implements Serializable {
         this.userGroup = userGroup;
     }
 
-    public Timestamp getRegisterDate() {
-        return registerDate;
+    public String getDescription() {
+        return description;
     }
 
-    public void setRegisterDate(Timestamp registerDate) {
-        this.registerDate = registerDate;
-    }
-
-    public Timestamp getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Timestamp updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Long getOrgId() {
-        return orgId;
-    }
-
-    public void setOrgId(Long orgId) {
-        this.orgId = orgId;
-    }
-
-    public Long getAuthId() {
-        return authId;
-    }
-
-    public void setAuthId(Long authId) {
-        this.authId = authId;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getWebsocketKey() {
@@ -198,16 +217,16 @@ public class User implements Serializable {
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
+                ", orgId=" + orgId +
+                ", authId=" + authId +
                 ", level=" + level +
-                ", description='" + description + '\'' +
+                ", enabled=" + enabled +
+                ", registerDate=" + registerDate +
+                ", updateDate=" + updateDate +
                 ", linuxUserHome='" + linuxUserHome + '\'' +
                 ", hdfsUserHome='" + hdfsUserHome + '\'' +
                 ", userGroup='" + userGroup + '\'' +
-                ", registerDate=" + registerDate +
-                ", updateDate=" + updateDate +
-                ", enabled=" + enabled +
-                ", orgId=" + orgId +
-                ", authId=" + authId +
+                ", description='" + description + '\'' +
                 ", websocketKey='" + websocketKey + '\'' +
                 '}';
     }

@@ -1,0 +1,94 @@
+[[hdfs-auth]]
+
+== HDFS Browser Authorization
+
+Flamingo는 HDFS Browser provides the authorization management feature. This feature allows to modify the authorization policy of files and directories of a group.
+
+image::system/hdfs-auth/hdfs-authority.png[scaledwidth=100%,HDFS 브라우저 권한관리 메인 화면]
+
+[NOTE]
+HDFS Browser Authorization Manager and System Manager only work under the system administrator account.
+
+=== Authorization Manager
+
+You can set the users' privileges on the features of the HDFS Browser in HDFS Browser Authorization Manager according to the user grade.
+The user grades are divided into System Admin(Level 1), User(Level 2~5). The system administrator has full access to all features and files.
+Users must be approved by the system administrator. Once approved, the authorization of each user's home directory is set to its owner.
+Each user is allowed to use only the home directory in HDFS.
+The authorization of each path is verified using `Ant Pattern`.
+
+[NOTE]
+In order to modify a user's home directory in HDFS, change the value of `user.home.hdfs.path` in `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties`.
+
+==== Adding an Authorization
+
+Select a directory in the directory list and click `Add Authorization`.
+
+image::system/hdfs-auth/hdfs-auth-add0.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]
+
+The selected directory is in HDFS, and the rule can be applied recursively.
+
+image::system/hdfs-auth/hdfs-auth-add1.png[scaledwidth=40%,권한 추가 화면]
+
+In order to apply the policy recursively, check `Include sub-directories`
+
+image::system/hdfs-auth/hdfs-auth-add2.png[scaledwidth=40%,권한 추가 화면]
+
+The applied policy can be verified in the list.오른쪽 HDFS 경로 설정 정보 목록에 추가된 권한 정보가 표시됩니다.
+Clicking on the directory will show you the detail information.
+
+image::system/hdfs-auth/hdfs-auth-add3.png[scaledwidth=100%,권한 추가 화면]
+
+[NOTE]
+Once users are approved by the system administrator, the authorization of each user's home directory is set to its owner and the detail can be verified in HDFS Browser Authorization Manager.
+
+==== Deleting an Authorization
+
+In HDFS Path Configuration List, select a directory and click `Remove`.
+
+image::system/hdfs-auth/hdfs-auth-delete0.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]
+
+Click `Yes` on the confirmation.
+
+image::system/hdfs-auth/hdfs-auth-delete1.png[scaledwidth=40%,권한 삭제 화면]
+
+==== Altering an Authorization권한 수정
+
+In HDFS Path Configuration List, select a directory
+In HDFS Browser User Authorization Information, click `Modify`.
+
+image::system/hdfs-auth/hdfs-auth-modify0.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]
+
+In HDFS Browser Authorization, the authorization is displayed.
+
+image::system/hdfs-auth/hdfs-auth-modify1.png[scaledwidth=50%,권한 정보 수정 화면]
+
+Check or uncheck Path, Authorization, or Grade to change the authorizations.
+These features are used in HDFS Browser.
+You can set an authorization on each feature.
+Check features you want to authorize.
+If you don't want to apply the authorization policy to sub-directories, remove the "/**" ant pattern (e.g. /user/cloudine).
+Click `Save` once finished.
+
+image::system/hdfs-auth/hdfs-auth-modify2.png[scaledwidth=50%,권한 정보 수정 화면]
+
+The updated authorization can be viewed when select a directory.수정된 권한 정보를 선택하면 HDFS 브라우저 사용 권한 정보 필드에 상세 정보가 보여집니다.
+
+image::system/hdfs-auth/hdfs-auth-modify3.png[scaledwidth=100%,권한 정보 수정 화면]
+
+The applied authozation policy is verified in HDFS Browser.
+If you make an unauthorized action, you will be prompted.
+
+image::system/hdfs-auth/hdfs-auth-modify4.png[scaledwidth=100%,권한 정보 수정 화면]
+
+==== Refreshing HDFS Browser
+
+Click `Refresh` to update the directory list.
+
+image::system/hdfs-auth/hdfs-auth-refresh0.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]
+
+==== Refreshing the Authorization List
+
+Click the `Refresh` button in HDFS Path Configuration Information to update the list.
+
+image::system/hdfs-auth/hdfs-auth-refresh1.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]

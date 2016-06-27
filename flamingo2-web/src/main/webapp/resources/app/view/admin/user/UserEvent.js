@@ -108,7 +108,7 @@ Ext.define('Flamingo2.view.admin.user.UserEvent', {
     tbar: [
         {
             xtype: 'tbtext',
-            text: message.msg('hdfs.audit.tbar.chart.condition')
+            text: message.msg('common.searchCondition')
         },
         {
             xtype: 'combo',

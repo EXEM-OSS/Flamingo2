@@ -18,35 +18,14 @@ Ext.define('Flamingo2.view.dashboard.DashboardSumChart', {
     extend: 'Ext.Panel',
     alias: 'widget.dashboardSumChart',
 
-    initComponent: function () {
-        var me = this;
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['time', 'sum'],
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: '/dashboard/timeseries.json',
-                extraParams: {
-                    clusterName: ENGINE.id,
-                    status: me.status
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'total'
-                }
-            },
-            remoteSort: true,
-            sorters: [{
-                property: 'num',
-                direction: 'ASC'
-            }]
-        });
-
-        me.items = {
+    items: [
+        {
             xtype: 'cartesian',
+            itemId: 'workflowHistoryChart',
+            bind: {
+                store: '{workflowHistoryChartStore}'
+            },
             height: 160,
-            store: store,
             interactions: 'itemhighlight',
             axes: [
                 {
@@ -115,8 +94,13 @@ Ext.define('Flamingo2.view.dashboard.DashboardSumChart', {
                     }
                 }
             ]
-        };
-
-        me.callParent(arguments);
-    }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onWorkflowHistoryChartRefreshClick'
+        }
+    ]
 });

@@ -3,7 +3,6 @@ package org.opencloudengine.flamingo2.util.cli;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import org.opencloudengine.flamingo2.core.exception.ServiceException;
-import org.opencloudengine.flamingo2.core.security.SessionUtils;
 import org.opencloudengine.flamingo2.model.rest.User;
 import org.opencloudengine.flamingo2.util.ApplicationContextRegistry;
 import org.opencloudengine.flamingo2.util.StringUtils;
@@ -120,6 +119,19 @@ public class ManagedProcess {
         this.logger = logger;
     }
 
+    public ManagedProcess(final String cmd, final Map<String, String> env, final String workingDir, final Logger logger, FileWriter fileWriter) {
+        this.cmd = StringUtils.stringToCollection(cmd, " ");
+        this.env = env;
+        this.workingDir = workingDir;
+        this.processId = -1;
+        this.startupLatch = new CountDownLatch(1);
+        this.completeLatch = new CountDownLatch(1);
+        this.logger = logger;
+        this.fileWriter = fileWriter;
+        String baseDir = fileWriter.getBaseDir();
+        this.errWriter = new FileWriter(logger, baseDir + "/err.log");
+    }
+
     public ManagedProcess(final List<String> cmd, final Map<String, String> env, final String workingDir, final Logger logger, FileWriter fileWriter) {
         this.cmd = cmd;
         this.env = env;
@@ -163,6 +175,37 @@ public class ManagedProcess {
     public void removeSocketParam(String key) {
         this.socketParams.remove(key);
     }
+
+    public void runBackground() throws IOException {
+        if (this.isStarted() || this.isComplete()) {
+            throw new IllegalStateException("프로세스는 오직 1번만 실행할 수 있습니다.");
+        }
+
+        ProcessBuilder builder = new ProcessBuilder(cmd);
+        builder.directory(new File(workingDir));
+        builder.environment().putAll(env);
+        this.process = builder.start();
+        this.processId = processId(process);
+
+        if (processId == 0) {
+            logger.warn("PID를 알 수 없습니다.");
+        } else {
+            // 프로세스 파일에 프로세스 ID를 기록한다.
+            String baseDir = fileWriter.getBaseDir();
+            File pid = new File(baseDir, "PID");
+            FileCopyUtils.copy(String.valueOf(processId).getBytes(), pid);
+        }
+
+        this.startupLatch.countDown();
+
+        LogGobbler outputGobbler = new LogGobbler(new InputStreamReader(process.getInputStream()), logger, 30, fileWriter, socketParams);
+        LogGobbler errorGobbler = new LogGobbler(new InputStreamReader(process.getErrorStream()), logger, 30, errWriter, socketParams);
+        LogGobbler totalGobbler = new LogGobbler(new InputStreamReader(process.getErrorStream()), logger, 30, fileWriter, socketParams);
+
+        outputGobbler.start();
+        errorGobbler.start();
+        totalGobbler.start();
+}
 
     /**
      * 이 프로세스를 실행한다. 프로세스가 완료될 때까지 블로킹한다.
@@ -424,7 +467,6 @@ public class ManagedProcess {
                     if (fileWriter != null) fileWriter.log(line);
                     buffer.append(line);
 
-
                     //socketParams 가 있고 유저의 웹소켓이 있다면 브로드캐스팅.
                     if (socketParams != null) {
                         Map sendMessage = new HashMap();
@@ -434,7 +476,9 @@ public class ManagedProcess {
                         sendMessage.putAll(socketParams);
                         String message = objectMapper.writeValueAsString(sendMessage);
 
-                        webSocketUtil.PushNotification(user.getUsername(), "/topic/cloudine", message);
+                        if (!StringUtils.isEmpty(user.getWebsocketKey())) {
+                            webSocketUtil.PushNotification(user.getWebsocketKey(), "/topic/workflowLog", message);
+                        }
                     }
                 }
             } catch (IOException e) {

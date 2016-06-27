@@ -25,6 +25,7 @@ import org.apache.thrift.transport.TTransport;
 import org.opencloudengine.flamingo2.model.hive.Schema;
 
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,11 +71,11 @@ public interface HiveThrift2Client {
 
     public String getLog() throws HiveSQLException, TException;
 
-    public Map[] getResults(FetchOrientation orientation, int maxRows, FetchType fetchType) throws Exception;
+    public LinkedHashMap[] getResults(FetchOrientation orientation, int maxRows, FetchType fetchType) throws Exception;
 
-    public Map[] getResults(TFetchOrientation orientation, int maxRows, FetchType fetchType) throws Exception;
+    public LinkedHashMap[] getResults(TFetchOrientation orientation, int maxRows, FetchType fetchType) throws Exception;
 
-    public Map[] getResults(int maxRows) throws SQLException, TException;
+    public LinkedHashMap[] getResults(int maxRows) throws SQLException, TException;
 
     public String getError();
 }

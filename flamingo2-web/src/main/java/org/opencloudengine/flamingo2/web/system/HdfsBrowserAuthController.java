@@ -115,6 +115,8 @@ public class HdfsBrowserAuthController extends DefaultController {
     @RequestMapping(value = "createHdfsBrowserAuth", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response createHdfsBrowserAuth(@RequestBody Map hdfsBrowserAuthMap) {
+        hdfsBrowserAuthMap.put("ackKey", "disapproved");
+
         boolean createHdfsAuth = hdfsBrowserAuthService.createHdfsBrowserAuth(hdfsBrowserAuthMap);
 
         Response response = new Response();
@@ -125,6 +127,8 @@ public class HdfsBrowserAuthController extends DefaultController {
     @RequestMapping(value = "deleteHdfsBrowserAuth", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response deleteHdfsBrowserAuth(@RequestBody Map hdfsBrowserAuthMap) {
+        hdfsBrowserAuthMap.put("deleteCondition", "deletePattern");
+
         boolean deletedHdfsAuth = hdfsBrowserAuthService.deleteHdfsBrowserAuth(hdfsBrowserAuthMap);
 
         Response response = new Response();

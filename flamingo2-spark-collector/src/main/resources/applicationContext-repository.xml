@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!-- ========================= DATASOURCE DEFINITION ========================= -->
+
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maximumPoolSize" value="${jdbc.max.pool}"/>
+        <property name="connectionTestQuery" value="select 1"/>
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="cachePrepStmts">true</prop>
+                <prop key="prepStmtCacheSize">250</prop>
+                <prop key="prepStmtCacheSqlLimit">2048</prop>
+                <prop key="useServerPrepStmts">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- ========================= MYBATIS DEFINITION ========================= -->
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:/mybatis-config.xml"/>
+        <property name="mapperLocations" value="classpath:/mybatis/**/*-mapper.xml"/>
+    </bean>
+
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactory"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="org.opencloudengine.flamingo2.spark.collector"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+    </bean>
+
+    <!-- ========================= TRANSACTION DEFINITION ========================= -->
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <constructor-arg type="org.springframework.transaction.PlatformTransactionManager" ref="transactionManager"/>
+    </bean>
+
+</beans>

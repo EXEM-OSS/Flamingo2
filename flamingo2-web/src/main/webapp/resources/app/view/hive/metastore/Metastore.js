@@ -71,6 +71,10 @@ Ext.define('Flamingo2.view.hive.metastore.Metastore', {
                 text: message.msg('hive.database.drop'),
                 iconCls: 'common-database-remove',
                 handler: 'onDropDatabaseClick'
+            }, {
+                text: message.msg('hive.database.script'),
+                iconCls: 'common-information',
+                handler: 'onPropDatabaseClick'
             }]
         }]
 
@@ -202,6 +206,9 @@ Ext.define('Flamingo2.view.hive.metastore.Metastore', {
         }, {
             text: message.msg('hawq.button.table.drop'),
             handler: 'onTableDropClick'
+        }, {
+            text: message.msg('hive.properties'),
+            handler: 'onTablePropertiesClick'
         }]
     }, {
         xtype: 'menu',

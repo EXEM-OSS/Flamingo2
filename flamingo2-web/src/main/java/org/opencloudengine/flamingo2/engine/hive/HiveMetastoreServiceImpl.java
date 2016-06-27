@@ -37,16 +37,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class HiveMetastoreServiceImpl implements HiveMetastoreService {
 
     @Autowired
     private FileSystemAuditRemoteService fileSystemAuditRemoteService;
+
+    @Autowired
+    private HiveQueryRemoteService queryRemoteService;
 
     /**
      * Jackson JSON Object Mapper
@@ -84,6 +84,8 @@ public class HiveMetastoreServiceImpl implements HiveMetastoreService {
         for (String tablename : tableList) {
             Map tableMap = new HashMap();
             Table table = client.getTable(dbname, tablename);
+
+            System.out.println(table.toString());
 
             tableMap.put("tableName", table.getTableName());
             tableMap.put("createTime", table.getCreateTime());
@@ -357,6 +359,9 @@ public class HiveMetastoreServiceImpl implements HiveMetastoreService {
             paramMap.put(propMap.get("key"), propMap.get("value"));
         }
 
+        if (params.get("tableType").toString().equals("EXTERNAL_TABLE") || propList.size() > 0 )
+            paramMap.putAll(tbl.getParameters());
+
         tbl.setParameters(paramMap);
 
         client.createTable(tbl);
@@ -572,6 +577,79 @@ public class HiveMetastoreServiceImpl implements HiveMetastoreService {
         tbl.setParameters(paramMap);
 
         client.alter_table(params.get("database").toString(), orgTable.get("tableName").toString(), tbl);
+    }
+
+    @Override
+    public Map getTableScript(EngineConfig engineConfig, Map params) throws TException, IOException {
+        try {
+            String uuid = UUID.randomUUID().toString();
+            String query = MessageFormatter.arrayFormat("show create table {}.{}", new String[]{params.get("database").toString(), params.get("table").toString()}).getMessage();
+
+            params.put("uuid", uuid);
+            params.put("query", query);
+            params.put("hiveserver2Url", engineConfig.getHiveServerUrl());
+            params.put("hiveserver2Username", engineConfig.getHiveServerUsername());
+            params.put("engineConfig", engineConfig);
+
+            queryRemoteService.execute(params);
+
+            Map []results = queryRemoteService.getResults(uuid);
+            StringBuilder builder = new StringBuilder();
+
+            for (Map result : results) {
+                builder.append(result.get("createtab_stmt").toString());
+                builder.append("\n");
+            }
+
+            Map returnMap = new HashMap();
+
+            returnMap.put("script", builder.toString());
+
+            queryRemoteService.getClientMap().remove(uuid);
+            return returnMap;
+        } catch (Exception ex) {
+            throw new ServiceException(ex);
+        }
+    }
+
+    @Override
+    public Map getDatabaseScript(EngineConfig engineConfig, Map params) throws TException, IOException {
+        Map returnMap = new HashMap();
+        StringBuilder builder = new StringBuilder();
+        HiveMetaStoreClient client = getMetaStoreClient(engineConfig);
+        Database database = client.getDatabase(params.get("database").toString());
+
+        builder.append(MessageFormatter.arrayFormat("CREATE DATABASE {} \n ", new String[]{params.get("database").toString()}).getMessage());
+
+        String desc = database.getDescription();
+        if (StringUtils.isNotEmpty(desc)) {
+            builder.append(MessageFormatter.arrayFormat("COMMENT \"{}\" \n ", new String[]{desc}).getMessage());
+        }
+
+        builder.append(MessageFormatter.arrayFormat("LOCATION \"{}\" \n ", new String[]{database.getLocationUri()}).getMessage());
+
+        if (database.getParametersSize() > 0) {
+            Map paramMap = database.getParameters();
+
+            int i;
+            Object []keyList = paramMap.keySet().toArray();
+
+            builder.append("WITH DBPROPERTIES (");
+            for (i = 0; i < database.getParametersSize(); i++) {
+                String key = keyList[i].toString();
+
+                builder.append(MessageFormatter.arrayFormat("{}={}", new String[]{key, paramMap.get(key).toString()}).getMessage());
+
+                if (i < database.getParametersSize() - 1) {
+                    builder.append(", \n ");
+                }
+            }
+            builder.append(")");
+        }
+
+        returnMap.put("script", builder.toString());
+
+        return returnMap;
     }
 
     public HiveMetaStoreClient getMetaStoreClient(EngineConfig engineConfig) {

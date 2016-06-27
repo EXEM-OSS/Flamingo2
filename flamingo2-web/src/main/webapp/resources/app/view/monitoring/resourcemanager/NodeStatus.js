@@ -23,13 +23,11 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.NodeStatus', {
     items: [
         {
             xtype: 'cartesian',
+            itemId: 'nodeStatusChart',
             height: 300,
             insetPadding: 40,
             interactions: 'itemhighlight',
             //theme: 'yellow-gradients',
-            listeners: {
-                afterrender: 'onStoreAfterrender'
-            },
             bind: {
                 store: '{nodeStatusStore}'
             },
@@ -83,11 +81,22 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.NodeStatus', {
                 label: {
                     field: 'value',
                     display: 'insideEnd',
+                    orientation: 'horizontal',
                     renderer: function (value) {
                         return value;
                     }
                 }
+            },
+            listeners: {
+                afterrender: 'onStoreAfterrender'
             }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onRMNodeStatusRefreshClick'
         }
     ]
 });

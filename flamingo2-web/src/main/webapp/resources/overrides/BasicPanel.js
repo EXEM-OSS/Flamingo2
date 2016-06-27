@@ -32,7 +32,10 @@ Ext.define('Flamingo2.panel.Panel', {
             var header, title;
 
             if (LICENSE.TRIAL == 'true') {
-                title = '<h1 style="display: inline">{title}</h1><p style="display: inline;color: red;">Trial Version</p>'
+                title = '<h1 style="display: inline">{title}</h1><p style="display: inline;color: red;">' + message.msg('license.trial') + '</p>'
+            }
+            else if (LICENSE.DEVELOPER == 'true') {
+                title = '<h1 style="display: inline">{title}</h1><p style="display: inline;color: red;">' + message.msg('license.developer') + '</p>'
             }
             else {
                 title = '<h1>{title}</h1>'

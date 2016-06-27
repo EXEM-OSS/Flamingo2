@@ -1,0 +1,90 @@
+[[hdfs-auth]]
+
+== HDFS 브라우저 권한관리
+
+Flamingo는 HDFS 브라우저 권한을 관리하기 위해 다양한 권한관리 기능을 제공합니다. 이 기능을 활용하면 그룹에 따라서 디렉토리 및 파일에 대한 상세한 권한관리 정책을 설정할 수 있습니다.
+
+image::system/hdfs-auth/hdfs-authority.png[scaledwidth=100%,HDFS 브라우저 권한관리 메인 화면]
+
+[NOTE]
+HDFS 브라우저 권한관리를 포함한 시스템 관리 메뉴는 관리자 권한의 계정에서만 사용할 수 있습니다.
+
+=== 권한 관리
+
+HDFS 브라우저 권한관리는 Flamingo의 HDFS 브라우저에서 제공되는 기능(디렉토리 생성,삭제 및 파일 삭제, 다운로드 등)을 사용자 등급별로 사용 권한을 설정할 수 있습니다. 사용자 등급은 관리자(1등급), 사용자(2~5등급)에 따라 구분되며, 관리자(admin) 계정은 HDFS 브라우저의 모든 경로에서 브라우저 기능 사용 권한을 가집니다. 일반 사용자의 경우 사용자 관리 메뉴에서 관리자의 회원가입 승인 처리가 완료되는 시점에서 자동으로 지정된 HDFS 사용자 홈 디렉토리(default=/user) 하위 경로에 권한 정보가 추가됩니다. 따라서 관리자를 제외한 모든 일반 사용자는 HDFS 파일 시스템 상에서 자신의 홈 디렉토리(예; `/user/cloudine`)로 시작되는 경로에서만 브라우저 기능을 사용할 수 있습니다. 각 경로에 추가되는 권한은 `Ant Pattern`을 통해 사용 권한을 체크합니다.
+
+[NOTE]
+HDFS 파일 시스템의 사용자 홈 디렉토리 기본 경로를 변경하려면 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일의 `user.home.hdfs.path` 값을 하십시오.
+
+==== 권한 추가
+
+왼쪽 HDFS 파일시스템에서 경로를 선택 후 권한 추가 버튼을 클릭합니다.
+
+image::system/hdfs-auth/hdfs-auth-add0.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]
+
+선택한 경로는 HDFS 파일 시스템 경로와 동일하며, 전체 경로 혹은 세부 경로에 대한 권한을 설정할 수 있습니다.
+
+image::system/hdfs-auth/hdfs-auth-add1.png[scaledwidth=40%,권한 추가 화면]
+
+선택한 경로의 하위 모든 경로까지 권한 정보를 적용하려면 하위경로포함 옵션(/**)을 체크합니다.
+
+image::system/hdfs-auth/hdfs-auth-add2.png[scaledwidth=40%,권한 추가 화면]
+
+오른쪽 HDFS 경로 설정 정보 목록에 추가된 권한 정보가 표시됩니다.
+추가한 권한 정보를 선택하면 HDFS 브라우저 사용 권한 정보 창에 상세 권한 정보가 표시됩니다.
+
+image::system/hdfs-auth/hdfs-auth-add3.png[scaledwidth=100%,권한 추가 화면]
+
+[NOTE]
+관리자 계정으로 사용자 승인 후에 각 사용자 홈 디렉토리 및 하위 모든 경로에 대한 사용 권한 정보가 추가되며, HDFS 경로 설정 정보 목록에 표시됩니다.
+
+==== 권한 삭제
+
+오른쪽 HDFS 경로 설정 정보 목록에서 삭제할 권한을 선택 후 삭제 버튼을 클릭합니다.
+
+image::system/hdfs-auth/hdfs-auth-delete0.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]
+
+예 버튼을 선택하면 권한 정보가 삭제됩니다.
+
+image::system/hdfs-auth/hdfs-auth-delete1.png[scaledwidth=40%,권한 삭제 화면]
+
+==== 권한 수정
+
+오른쪽 HDFS 경로 설정 정보 목록에서 수정할 권한을 선택합니다.
+HDFS 브라우저 사용 권한 정보 창에서 권한 수정 버튼을 클릭합니다.
+
+image::system/hdfs-auth/hdfs-auth-modify0.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]
+
+HDFS 브라우저 권한 수정 창에 선택한 경로의 권한 정보가 표시됩니다.
+
+image::system/hdfs-auth/hdfs-auth-modify1.png[scaledwidth=50%,권한 정보 수정 화면]
+
+경로, 권한, 등급의 경우 수정을 원하는 부부의 체크 박스를 선택해야 수정이 가능합니다.
+디렉토리 및 파일의 각 기능 들은 HDFS 브라우저에서 제공되는 기능 목록입니다.
+따라서 각 기능에 대해 사용 권한을 개별적으로 설정할 수 있습니다.
+사용 권한은 체크된 기능만 사용 가능합니다.
+만약 하위 디렉토리를 포함하지 않고 특정 경로에서만 사용 권한을 부여하고 싶을 경우 경로 뒤의 "/**" Ant Pattern을 제거해야 합니다(ex. /user/cloudine). 
+저장 버튼을 클릭하면 선택하 경로에 대한 권한이 업데이트 됩니다.
+
+image::system/hdfs-auth/hdfs-auth-modify2.png[scaledwidth=50%,권한 정보 수정 화면]
+
+수정된 권한 정보를 선택하면 HDFS 브라우저 사용 권한 정보 필드에 상세 정보가 보여집니다.
+
+image::system/hdfs-auth/hdfs-auth-modify3.png[scaledwidth=100%,권한 정보 수정 화면]
+
+적용된 권한 정보는 HDFS 브라우저 상에서 바로 확인할 수 있습니다.
+권한이 없는 디렉토리에서 사용 권한이 없는 기능을 선택할 경우 다음과 같은 결과가 표시됩니다. 
+
+image::system/hdfs-auth/hdfs-auth-modify4.png[scaledwidth=100%,권한 정보 수정 화면]
+
+==== HDFS 브라우저 갱신
+
+HDFS 파일 시스템의 갱신 버튼을 클릭하면 HDFS 파일 시스템의 디렉토리 목록이 업데이트됩니다.
+
+image::system/hdfs-auth/hdfs-auth-refresh0.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]
+
+==== 권한 목록 갱신
+
+HDFS 경로 설정 정보의 갱신 버튼을 클릭하면 경로 설정 정보 목록이 업데이트 됩니다.
+
+image::system/hdfs-auth/hdfs-auth-refresh1.png[scaledwidth=100%,HDFS 브라우저 권한관리 화면]

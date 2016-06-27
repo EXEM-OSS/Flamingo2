@@ -65,4 +65,10 @@ public class WorkflowHistoryRemoteServiceImpl implements WorkflowHistoryRemoteSe
         return workflowHistoryRepository.selectTotalCountByUsername(startDate, endDate, start, limit, username, workflowName, status, sf_parentIdentifier);
     }
 
+    @Override
+    public List<WorkflowHistory> selectRunning() {
+        WorkflowHistoryRepository workflowHistoryRepository = ApplicationContextRegistry.getApplicationContext().getBean(WorkflowHistoryRepository.class);
+        return workflowHistoryRepository.selectRunning();
+    }
+
 }

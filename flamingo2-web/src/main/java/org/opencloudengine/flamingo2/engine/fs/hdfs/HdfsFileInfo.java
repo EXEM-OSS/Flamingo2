@@ -19,7 +19,6 @@ package org.opencloudengine.flamingo2.engine.fs.hdfs;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.hadoop.fs.ContentSummary;
 import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.hdfs.server.blockmanagement.BlockInfo;
 import org.opencloudengine.flamingo2.model.rest.ExtJSTreeNode;
 import org.opencloudengine.flamingo2.model.rest.FileInfo;
 
@@ -72,7 +71,7 @@ public class HdfsFileInfo extends ExtJSTreeNode implements FileInfo {
 
     private long directoryCount;
 
-    public HdfsFileInfo(FileStatus fileStatus, ContentSummary contentSummary, BlockInfo blockInfo) {
+    public HdfsFileInfo(FileStatus fileStatus, ContentSummary contentSummary) {
         this.fullyQualifiedPath = fileStatus.getPath().toUri().getPath();
         this.filename = isEmpty(getFilename(fullyQualifiedPath)) ? getDirectoryName(fullyQualifiedPath) : getFilename(fullyQualifiedPath);
         this.length = fileStatus.getLen();

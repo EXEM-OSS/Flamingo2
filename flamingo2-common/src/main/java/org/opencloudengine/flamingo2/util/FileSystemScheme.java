@@ -25,7 +25,7 @@ package org.opencloudengine.flamingo2.util;
  */
 public enum FileSystemScheme {
 
-    LOCAL("file:"), HDFS("hdfs://");
+    LOCAL("file://"), HDFS("hdfs://"), MAPRFS("maprfs://");
 
     /**
      * Scheme

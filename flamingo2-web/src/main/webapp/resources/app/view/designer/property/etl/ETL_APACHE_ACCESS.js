@@ -15,17 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * ETL Apache Access Log
+ * @cli hadoop jar flamingo2-mapreduce-hadoop2-2.0.5-job.jar apache_access --input <IN> --output <OUT> --printMismatch true --outputDelimiter ','
+ * @extend Flamingo2.view.designer.property._NODE_ETL
+ * @author <a href="mailto:haneul.kim@cloudine.co.kr">Haneul, Kim</a>
+ * @see <a href="http://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html" target="_blank">Apache Hadoop MapReduce Tutorial</a>
+ */
 Ext.ns('Flamingo2.view.designer.property.etl');
 Ext.define('Flamingo2.view.designer.property.etl.ETL_APACHE_ACCESS', {
     extend: 'Flamingo2.view.designer.property._NODE_ETL',
     alias: 'widget.ETL_APACHE_ACCESS',
-
-    requires: [
-        'Flamingo2.view.designer.property._JarBrowserField',
-        'Flamingo2.view.designer.property._BrowserField',
-        'Flamingo2.view.designer.property._InputGrid',
-        'Flamingo2.view.designer.property._KeyValueGrid'
-    ],
 
     width: 450,
     height: 320,
@@ -47,7 +47,7 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_APACHE_ACCESS', {
                 {
                     xtype: 'checkboxfield',
                     name: 'printMismatch',
-                    checked: true,
+                    inputValue: true,
                     fieldLabel: message.msg('workflow.dp.accessToCSV.tab.parameter.nonMatchRows.label'),
                     boxLabel: message.msg('workflow.dp.accessToCSV.tab.parameter.nonMatchRows.boxLabel')
                 },
@@ -95,13 +95,13 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_APACHE_ACCESS', {
                                             },
                                             {
                                                 name: message.msg('workflow.common.delimiter.tab'),
-                                                value: '\'\\t\'',
-                                                description: '\'\\t\''
+                                                value: '\u0009',
+                                                description: '\\t'
                                             },
                                             {
                                                 name: message.msg('workflow.common.delimiter.blank'),
-                                                value: '\'\\s\'',
-                                                description: '\'\\s\''
+                                                value: '\u0020',
+                                                description: ' '
                                             },
                                             {
                                                 name: message.msg('workflow.common.delimiter.user.def'),
@@ -144,7 +144,6 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_APACHE_ACCESS', {
             ]
         },
         {
-
             title: message.msg('workflow.common.mapreduce'),
             xtype: 'form',
             border: false,
@@ -158,21 +157,12 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_APACHE_ACCESS', {
             },
             items: [
                 {
-                    xtype: 'fieldcontainer',
+                    xtype: 'textfield',
+                    name: 'jar',
                     fieldLabel: message.msg('workflow.common.mapreduce.jar'),
-                    defaults: {
-                        hideLabel: true
-                    },
-                    layout: 'hbox',
-                    items: [
-                        {
-                            xtype: '_jarBrowserField',
-                            name: 'jar',
-                            allowBlank: false,
-                            readOnly: false,
-                            flex: 1
-                        }
-                    ]
+                    value: ETL.JAR,
+                    disabledCls: 'disabled-plain',
+                    readOnly: true
                 },
                 {
                     xtype: 'textfield',
@@ -180,7 +170,7 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_APACHE_ACCESS', {
                     fieldLabel: message.msg('workflow.common.mapreduce.driver'),
                     value: 'apache_access',
                     disabledCls: 'disabled-plain',
-                    allowBlank: false
+                    readOnly: true
                 }
             ]
         },
@@ -283,34 +273,21 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_APACHE_ACCESS', {
      */
     afterPropertySet: function (props) {
         props.mapreduce = {
-            "driver": props.driver ? props.driver : '',
-            "jar": props.jar ? props.jar : '',
-            "confKey": props.hadoopKeys ? props.hadoopKeys : '',
-            "confValue": props.hadoopValues ? props.hadoopValues : '',
+            driver: props.driver || '',
+            jar: props.jar || '',
+            confKey: props.hadoopKeys || '',
+            confValue: props.hadoopValues || '',
             params: []
         };
 
         if (props.input) {
             props.mapreduce.params.push("--input", props.input);
         }
-
         if (props.output) {
             props.mapreduce.params.push("--output", props.output);
         }
-
-        if (props.printMismatch) {
-            props.mapreduce.params.push("--printMismatch", "true");
-        } else {
-            props.mapreduce.params.push("--printMismatch", "false");
-        }
-
-        if (props.delimiter) {
-            if (props.delimiter == 'CUSTOM') {
-                props.mapreduce.params.push("--outputDelimiter", props.delimiterValue);
-            } else {
-                props.mapreduce.params.push("--outputDelimiter", props.delimiter);
-            }
-        }
+        props.mapreduce.params.push("--printMismatch", props.printMismatch);
+        props.mapreduce.params.push("--outputDelimiter", '\'' + (props.delimiter === 'CUSTOM' ? props.delimiterValue : props.delimiter) + '\'');
 
         this.callParent(arguments);
     }

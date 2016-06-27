@@ -56,6 +56,7 @@ Ext.define('Flamingo2.view.fs.audit.AuditChart', {
         },
         {
             xtype: 'auditTrend',
+            itemId: 'auditTrendChart',
             bind: {
                 store: '{auditTrendStore}'
             },
@@ -66,16 +67,15 @@ Ext.define('Flamingo2.view.fs.audit.AuditChart', {
             border: true
         }
     ],
-
     tbar: [
         {
             xtype: 'tbtext',
-            text: message.msg('hdfs.audit.tbar.chart.condition')
+            text: message.msg('common.searchCondition')
         },
         '|',
         {
             xtype: 'tbtext',
-            text: message.msg('hdfs.audit.tbar.chart.condition_type')
+            text: message.msg('common.searchType')
         },
         {
             xtype: 'combo',
@@ -89,9 +89,6 @@ Ext.define('Flamingo2.view.fs.audit.AuditChart', {
             value: 'ACT',
             bind: {
                 store: '{keyword}'
-            },
-            listeners: {
-                //select: 'onAuditChartSelect'
             }
         },
         {
@@ -100,16 +97,17 @@ Ext.define('Flamingo2.view.fs.audit.AuditChart', {
         },
         {
             xtype: 'tbtext',
-            text: message.msg('hdfs.audit.tbar.chart.start')
+            text: message.msg('common.startDate')
         },
         {
             xtype: 'datefield',
-            format: 'Y-m-d',
             itemId: 'startDateAuditChart',
+            width: 100,
+            editable: false,
+            vtype: 'dateRange',
+            format: 'Y-m-d',
             value: '',
             maxValue: new Date(),
-            vtype: 'dateRange',
-            width: 100,
             listeners: {
                 afterrender: function (item) {
                     if (item.rawValue == '') {
@@ -136,16 +134,17 @@ Ext.define('Flamingo2.view.fs.audit.AuditChart', {
         },
         {
             xtype: 'tbtext',
-            text: message.msg('hdfs.audit.tbar.chart.end')
+            text: message.msg('common.endDate')
         },
         {
             xtype: 'datefield',
-            format: 'Y-m-d',
             itemId: 'endDateAuditChart',
+            width: 100,
+            format: 'Y-m-d',
+            vtype: 'dateRange',
+            editable: false,
             value: '',
             maxValue: new Date(),
-            vtype: 'dateRange',
-            width: 100,
             listeners: {
                 afterrender: function (item) {
                     if (item.rawValue == '') {
@@ -170,7 +169,7 @@ Ext.define('Flamingo2.view.fs.audit.AuditChart', {
         {
             xtype: 'button',
             formBind: true,
-            text: message.msg('hdfs.audit.button.chart.search'),
+            text: message.msg('common.retrieve'),
             iconCls: 'common-search',
             labelWidth: 50,
             listeners: {
@@ -180,12 +179,19 @@ Ext.define('Flamingo2.view.fs.audit.AuditChart', {
         {
             xtype: 'button',
             formBind: true,
-            text: message.msg('hdfs.audit.button.chart.search_clear'),
+            text: message.msg('common.reset'),
             iconCls: 'common-search-clear',
             labelWidth: 50,
             listeners: {
                 click: 'onAuditChartResetClick'
             }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onAuditChartRefreshClick'
         }
     ]
 });

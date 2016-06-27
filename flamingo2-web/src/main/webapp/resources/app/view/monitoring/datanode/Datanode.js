@@ -21,31 +21,28 @@ Ext.define('Flamingo2.view.monitoring.datanode.Datanode', {
     requires: [
         'Flamingo2.view.monitoring.datanode.DatanodeController',
         'Flamingo2.view.monitoring.datanode.DatanodeModel',
-
         'Flamingo2.view.monitoring.datanode.Livenodes',
         'Flamingo2.view.monitoring.datanode.Deadnodes',
         'Flamingo2.view.monitoring.datanode.Decommissioningnodes'
     ],
+
+    controller: 'datanodeController',
+    viewModel: {
+        type: 'datanodeModel'
+    },
 
     flex: 1,
     layout: {
         type: 'vbox',
         align: 'stretch'
     },
-
-    controller: 'datanodeController',
-
-    viewModel: {
-        type: 'datanodeModel'
-    },
-
     items: [
         {
-            iconCls: 'common-view',
-            border: true,
             xtype: 'liveNodes',
             title: message.msg('monitoring.datanode.live_datanode'),
             itemId: 'live',
+            iconCls: 'common-view',
+            border: true,
             flex: 3
         },
         {
@@ -58,21 +55,21 @@ Ext.define('Flamingo2.view.monitoring.datanode.Datanode', {
             },
             items: [
                 {
-                    iconCls: 'common-view',
-                    border: true,
                     xtype: 'deadNodes',
                     title: message.msg('monitoring.datanode.dead_datanode'),
                     itemId: 'dead',
+                    iconCls: 'common-view',
+                    border: true,
                     flex: 1,
                     margin: '0 5 0 0'
                 },
                 {
-                    iconCls: 'common-view',
-                    border: true,
                     xtype: 'decommissioningNodes',
                     title: message.msg('monitoring.datanode.decommission_datanode'),
-                    flex: 1,
-                    itemId: 'decommissioning'
+                    itemId: 'decommissioning',
+                    iconCls: 'common-view',
+                    border: true,
+                    flex: 1
                 }
             ]
         }

@@ -19,7 +19,13 @@ Ext.define('Flamingo2.view.main.About', {
     extend: 'Ext.window.Window',
     alias: 'widget.about',
 
+    requires: [
+        'Flamingo2.view.main.AboutModel'
+    ],
+    viewModel: 'about',
+
     width: 450,
+    height: 300,
     resizable: true,
     closable: true,
     hideCollapseTool: false,
@@ -32,46 +38,73 @@ Ext.define('Flamingo2.view.main.About', {
 
     items: [
         {
-            xtype: 'form',
-            width: '100%',
-            bodyPadding: 10,
-            border: false,
-            style: {
-                background: '#ffffff'
-            },
-            defaults: {
-                xtype: 'displayfield',
-                labelWidth: 120,
-                labelAlign: 'right'
-            },
+            xtype: 'tabpanel',
+            plain: false,
+            activeTab: 0,
             items: [
                 {
-                    fieldLabel: message.msg('about.product'),
-                    value: config['application.title']
+                    xtype: 'form',
+                    title: message.msg('about.title.version'),
+                    width: '100%',
+                    bodyPadding: 10,
+                    border: false,
+                    style: {
+                        background: '#ffffff'
+                    },
+                    defaults: {
+                        xtype: 'displayfield',
+                        labelWidth: 120,
+                        labelAlign: 'right'
+                    },
+                    items: [
+                        {
+                            fieldLabel: message.msg('about.product'),
+                            value: config['application.title']
+                        },
+                        {
+                            fieldLabel: message.msg('about.version'),
+                            value: config['version']
+                        },
+                        {
+                            fieldLabel: message.msg('about.build.date'),
+                            value: config['build.timestamp']
+                        },
+                        {
+                            fieldLabel: message.msg('about.build.number'),
+                            value: config['build.number']
+                        },
+                        {
+                            fieldLabel: message.msg('about.revision.number'),
+                            value: config['revision.number']
+                        },
+                        {
+                            fieldLabel: message.msg('about.organization'),
+                            value: config['organization']
+                        },
+                        {
+                            fieldLabel: message.msg('about.homepage'),
+                            value: '<a href="' + config['homepage'] + '" target="_blank">' + config['homepage'] + '</a>'
+                        }
+                    ]
                 },
                 {
-                    fieldLabel: message.msg('about.version'),
-                    value: config['version']
-                },
-                {
-                    fieldLabel: message.msg('about.build.date'),
-                    value: config['build.timestamp']
-                },
-                {
-                    fieldLabel: message.msg('about.build.number'),
-                    value: config['build.number']
-                },
-                {
-                    fieldLabel: message.msg('about.revision.number'),
-                    value: config['revision.number']
-                },
-                {
-                    fieldLabel: message.msg('about.organization'),
-                    value: config['organization']
-                },
-                {
-                    fieldLabel: message.msg('about.homepage'),
-                    value: '<a href="' + config['homepage'] + '" target="_blank">' + config['homepage'] + '</a>'
+                    xtype: 'grid',
+                    title: message.msg('about.title.license'),
+                    border: false,
+                    layout: 'fit',
+                    bind: {
+                        store: '{dependency}'
+                    },
+                    viewConfig: {
+                        stripeRows: true,
+                        columnLines: true,
+                        enableTextSelection: true
+                    },
+                    columns: [
+                        {text: message.msg('about.license.project'), dataIndex: 'project', align: 'center', flex: 1},
+                        {text: message.msg('about.license.license'), dataIndex: 'license', align: 'center', flex: 1},
+                        {text: message.msg('about.license.organ'), dataIndex: 'organ', align: 'center', flex: 1}
+                    ]
                 }
             ]
         }

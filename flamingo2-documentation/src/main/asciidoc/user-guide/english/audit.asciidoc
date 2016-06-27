@@ -1,0 +1,93 @@
+[[audit]]
+
+== HDFS Audit Log
+
+Flamingo keeps track of users' activities in the HDFS Browser.
+
+image::fs/audit/hdfs-audit.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit Log 메인 화면]
+
+=== Searching Log
+
+By setting a type, a start date and an end date, you can search the activity logs of the HDFS Browser. Enter each value and click `Search`. Then you can see the activity list, statistics and the time-series histogram. To clear all fields, click `Clear`.
+
+image::fs/audit/hdfs-audit-statistics0.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit Log 통계 조건 화면]
+
+The followings are the search criteria.
+
+* Type
+* Start/End Date
+
+==== Type
+
+The available search types are `Action`, `User`, `File Type`, `Access Method`.
+
+image::fs/audit/hdfs-audit-statistics1.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit Log 조회유형 화면]
+
+==== Start/End Date
+
+By default, the date is set from the first day of a month to the current date. The dates are changeable as needed.
+
+image::fs/audit/hdfs-audit-statistics2.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit Log 조회유형 화면]
+
+=== Type List
+
+The type list is sorted by a number of each activity in descending order.
+
+image::fs/audit/hdfs-audit-typeList.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit Log 유형 목록 화면]
+
+=== The Statistic of Activity Type
+
+A chart is drawn based on activities.
+
+image::fs/audit/hdfs-audit-typeStat.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit Log 유형별 화면]
+
+=== Time-Series Statistic
+
+The chart of activities based on dates.
+
+image::fs/audit/hdfs-audit-dateTypeStat.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit Log 날짜별 유형 통계 화면]
+
+=== Audit List
+
+The Audit List shows full contents of log files. By default, the dates are set as explained above, and you can refine the search by entering dates, a type and a relevant path. All fields can be cleared by clicking `Clear`.
+
+The search criteria are as below.
+
+* Start/End Date
+* Search Type
+* Path
+* Pagination
+
+image::fs/audit/hdfs-audit-list0.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit 목록 화면]
+
+Click `Search` after entering the start and end dates. The list is sorted by date with the most recent one at top.
+
+==== Start/End Dates
+
+image::fs/audit/hdfs-audit-list1.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit 목록 화면]
+
+The audit types are equivalent of the features in the HDFS Browser.
+
+==== Search Types
+
+image::fs/audit/hdfs-audit-list2.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit 목록 화면]
+
+This filters the list by a selected type.
+
+image::fs/audit/hdfs-audit-list3.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit 목록 화면]
+
+==== Path
+
+Enter a path in HDFS and all logs related the path will be displayed.
+
+image::fs/audit/hdfs-audit-list4.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit 목록 화면]
+
+==== Pagination
+
+Enter a page number you want to view.
+
+image::fs/audit/hdfs-audit-list5.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit 목록 화면]
+
+Click `Refresh` to reload a result.
+
+image::fs/audit/hdfs-audit-list6.png[scaledwidth=100%,scaledwidth=100%,HDFS Audit 목록 화면]

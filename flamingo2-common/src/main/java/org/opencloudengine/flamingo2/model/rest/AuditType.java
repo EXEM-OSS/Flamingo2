@@ -106,7 +106,12 @@ public enum AuditType implements Serializable {
     /**
      * 시각화
      */
-    VISUALIZATION("visualization");
+    VISUALIZATION("visualization"),
+
+    /**
+     * HDFS 디레토리 및 파일을 로컬 경로에 저장
+     */
+    COPY_TO_LOCAL("copyToLocal");
 
     /**
      * 문자열 값

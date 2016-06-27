@@ -1,0 +1,32 @@
+[[pig]]
+
+== Apache Pig
+
+Apache Pig는 Pig Latin이라는 스크립트를 통해 HDFS에 저장되어 있는 로그를 처리하는 스크립트 엔진입니다.
+개발자가 작성한 Pig Latin 스크립트는 MapReduce로 변경되어 동작합니다.
+Flamingo에서는 Pig Latin 스크립트를 개발하는데 있어서 편리함을 제공하고자 Pig Latin 스크립트 편집기를 제공하빈다.
+
+* Pig Latin 스크립트 편집기
+* Pig 실행로그 확인
+* HDFS 브라우저
+
+=== 개요
+
+Apache Pig Latin 스크립트 편집기는 두 부분으로 나뉘어져 있습니다. 첫 번째 Pig Latin 스크립트 편집기를 활용하여 Pig 스크립트를 작성할 수 있습니다.
+두 번째 실행로그 확인 창은 Pig Latin 스크립트를 실행하는 실행로그를 확인할 수 있습니다.
+
+image::pig/pig-01.jpg[scaledwidth=100%,Apache Pig 메인 화면]
+
+=== 사용방법
+
+Pig Latin 스크립트 편집기를 통해 Pig Latin 스크립트를 작성한 후 "쿼리실행" 버튼을 클릭하면 Pig Latin 스크립트가 실행이 됩니다.
+Pig Latin 스크립트를 실행할 때 로그는 Flamingo에서 WebSocket을 통해서 서버에서 웹 브라우저로 실시간으로 전달됩니다.
+
+image::pig/pig-02.jpg[scaledwidth=100%,Apache Pig 메인 화면]
+
+일단 Pig Latin 스크립트의 실행이 완료되면 HDFS 브라우저를 통해서 결과 파일을 확인할 수 있습니다.
+Hive와 다르게 Pig는 파일로 결과가 저장되고
+
+[WARNING]
+Pig Latin 스크립트에서 DUMP 명령어를 통해서 대용량의 로그를 화면에 출력하는 경우 WebSocket을 통해 대량의 데이터를 브라우저로 전송할 때 브라우저에서 커넥션을 끊는 현상이 발생합니다.
+따라서 많은 양의 데이터를 DUMP 명령어를 통해서 출력하지 않도록 해야 합니다.

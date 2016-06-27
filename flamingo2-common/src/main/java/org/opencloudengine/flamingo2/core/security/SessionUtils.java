@@ -78,6 +78,11 @@ public class SessionUtils {
         return user.getUserGroup();
     }
 
+    public static Long getOrgId() {
+        User user = users.get();
+        return user.getOrgId();
+    }
+
     public static String getWebsocketKey() {
         User user = users.get();
         return user.getWebsocketKey();

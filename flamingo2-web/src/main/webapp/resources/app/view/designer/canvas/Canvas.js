@@ -20,6 +20,8 @@ Ext.ns('Flamingo2.view.designer.shape.bpmn');
 Ext.ns('Flamingo2.view.designer.shape.etl');
 Ext.ns('Flamingo2.view.designer.shape.giraph');
 Ext.ns('Flamingo2.view.designer.shape.mahout');
+Ext.ns('Flamingo2.view.designer.shape.rules');
+Ext.ns('Flamingo2.view.designer.shape.gis');
 
 var shapes = [
     'Flamingo2.view.designer.shape.HADOOP_HIVE',
@@ -58,6 +60,24 @@ var shapes = [
     'Flamingo2.view.designer.shape.etl.ETL_UIMA_SEQ',
     'Flamingo2.view.designer.shape.etl.ETL_APACHE_ACCESS',
     'Flamingo2.view.designer.shape.etl.ETL_CHAR_REMOVER',
+    'Flamingo2.view.designer.shape.etl.ETL_ACCOUNTING',
+    'Flamingo2.view.designer.shape.etl.ETL_AGGREGATE',
+    'Flamingo2.view.designer.shape.etl.ETL_CLEAN',
+    'Flamingo2.view.designer.shape.etl.ETL_FILTER',
+    'Flamingo2.view.designer.shape.etl.ETL_GENERATE',
+    'Flamingo2.view.designer.shape.etl.ETL_GREP',
+    'Flamingo2.view.designer.shape.etl.ETL_GROUPBY',
+    'Flamingo2.view.designer.shape.etl.ETL_RANK',
+    'Flamingo2.view.designer.shape.etl.ETL_REPLACE_COLUMN',
+    'Flamingo2.view.designer.shape.etl.ETL_REPLACE_DELIMITER',
+    'Flamingo2.view.designer.shape.etl.ETL_TEXT_TO_SEQ',
+
+    'Flamingo2.view.designer.shape.rules.MVEL_EDITOR',
+    'Flamingo2.view.designer.shape.rules.MVEL_FILE',
+    'Flamingo2.view.designer.shape.rules.DROOLS_EDITOR',
+    'Flamingo2.view.designer.shape.rules.DROOLS_FILE',
+    'Flamingo2.view.designer.shape.rules.ESPER_EDITOR',
+    'Flamingo2.view.designer.shape.rules.ESPER_FILE',
 
     'Flamingo2.view.designer.shape.mahout.ALG_MAHOUT_CF_ITEM',
     'Flamingo2.view.designer.shape.mahout.ALG_MAHOUT_KMEANS',
@@ -75,7 +95,10 @@ var shapes = [
     'Flamingo2.view.designer.shape.mahout.ALG_MAHOUT_TRAINNB',
     'Flamingo2.view.designer.shape.mahout.ALG_MAHOUT_QUALCLUSTER',
     'Flamingo2.view.designer.shape.mahout.ALG_MAHOUT_CLUSTER_DUMP',
-    'Flamingo2.view.designer.shape.mahout.ALG_MAHOUT_SEQDIRECTORY'
+    'Flamingo2.view.designer.shape.mahout.ALG_MAHOUT_SEQDIRECTORY',
+
+    'Flamingo2.view.designer.shape.gis.DBF_TO_CSV',
+    'Flamingo2.view.designer.shape.gis.ExtractLink'
 ];
 
 for (var i = 0; i < shapes.length; i++) {
@@ -159,6 +182,24 @@ Ext.define('Flamingo2.view.designer.canvas.Canvas', {
         'Flamingo2.view.designer.property.etl.ETL_UIMA_SEQ',
         'Flamingo2.view.designer.property.etl.ETL_APACHE_ACCESS',
         'Flamingo2.view.designer.property.etl.ETL_CHAR_REMOVER',
+        'Flamingo2.view.designer.property.etl.ETL_ACCOUNTING',
+        'Flamingo2.view.designer.property.etl.ETL_AGGREGATE',
+        'Flamingo2.view.designer.property.etl.ETL_CLEAN',
+        'Flamingo2.view.designer.property.etl.ETL_FILTER',
+        'Flamingo2.view.designer.property.etl.ETL_GENERATE',
+        'Flamingo2.view.designer.property.etl.ETL_GREP',
+        'Flamingo2.view.designer.property.etl.ETL_GROUPBY',
+        'Flamingo2.view.designer.property.etl.ETL_RANK',
+        'Flamingo2.view.designer.property.etl.ETL_REPLACE_COLUMN',
+        'Flamingo2.view.designer.property.etl.ETL_REPLACE_DELIMITER',
+        'Flamingo2.view.designer.property.etl.ETL_TEXT_TO_SEQ',
+
+        'Flamingo2.view.designer.property.rules.MVEL_EDITOR',
+        'Flamingo2.view.designer.property.rules.MVEL_FILE',
+        'Flamingo2.view.designer.property.rules.DROOLS_EDITOR',
+        'Flamingo2.view.designer.property.rules.DROOLS_FILE',
+        'Flamingo2.view.designer.property.rules.ESPER_EDITOR',
+        'Flamingo2.view.designer.property.rules.ESPER_FILE',
 
         'Flamingo2.view.designer.property.mahout.ALG_MAHOUT_CF_ITEM',
         'Flamingo2.view.designer.property.mahout.ALG_MAHOUT_KMEANS',
@@ -176,7 +217,10 @@ Ext.define('Flamingo2.view.designer.canvas.Canvas', {
         'Flamingo2.view.designer.property.mahout.ALG_MAHOUT_TRAINNB',
         'Flamingo2.view.designer.property.mahout.ALG_MAHOUT_QUALCLUSTER',
         'Flamingo2.view.designer.property.mahout.ALG_MAHOUT_CLUSTER_DUMP',
-        'Flamingo2.view.designer.property.mahout.ALG_MAHOUT_SEQDIRECTORY'
+        'Flamingo2.view.designer.property.mahout.ALG_MAHOUT_SEQDIRECTORY',
+
+        'Flamingo2.view.designer.property.gis.DBF_TO_CSV',
+        'Flamingo2.view.designer.property.gis.ExtractLink'
     ],
 
     controller: 'canvasController',

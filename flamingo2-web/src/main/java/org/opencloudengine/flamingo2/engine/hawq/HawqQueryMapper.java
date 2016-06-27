@@ -34,7 +34,7 @@ import java.util.Map;
  * Pivotal HAWQ Query Registry Mapper.
  * classpath:hawq-query.xml 에 저장된 query 를 불러오는 Component.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 @Component

@@ -117,6 +117,11 @@ Ext.define('Flamingo2.view.designer.canvas.events.onCanvasLabel', {
                      */
                 }
             }
+        } else if (shapeElement.shape.TYPE === OG.Constants.SHAPE_TYPE.IMAGE) {
+            var shapeData = Ext.clone(canvas.graph.getCustomData(shapeElement)),
+                title = shapeElement.shape.label;
+            shapeData.metadata.name = title;
+            canvas.graph.setCustomData(shapeElement, shapeData);
         }
     }
 });

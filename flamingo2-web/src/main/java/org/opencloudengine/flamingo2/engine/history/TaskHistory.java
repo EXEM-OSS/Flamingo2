@@ -60,7 +60,7 @@ public class TaskHistory implements Serializable {
         this.startDate = new Timestamp(System.currentTimeMillis());
         this.duration = 0;
         this.year = DateUtils.parseDate(startDate, "yyyy");
-        this.month = DateUtils.parseDate(startDate, "mm");
+        this.month = DateUtils.parseDate(startDate, "MM");
         this.day = DateUtils.parseDate(startDate, "dd");
         this.status = "RUNNING";
         this.logDirectory = instance.get("logdir") + "/" + taskId;

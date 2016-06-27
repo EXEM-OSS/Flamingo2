@@ -44,9 +44,11 @@ public interface HdfsBrowserAuthRepository {
 
     int insertHdfsBrowserAuth(Map hdfsBrowserAuthMap);
 
+    int insertHdfsBrowserAuthAll(Map hdfsBrowserAuthMap);
+
     int deleteHdfsBrowserAuth(Map hdfsBrowserAuthMap);
 
-    int exist(Map hdfsBrowserAuthMap);
+    boolean exist(Map hdfsBrowserAuthMap);
 
     int updatedHdfsBrowserAuth(Map hdfsBrowserAuthMap);
 }

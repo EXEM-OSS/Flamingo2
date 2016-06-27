@@ -16,10 +16,12 @@
  */
 package org.opencloudengine.flamingo2.engine.fs;
 
+import org.apache.hadoop.fs.ContentSummary;
 import org.opencloudengine.flamingo2.engine.fs.hdfs.HdfsFileInfo;
 import org.opencloudengine.flamingo2.model.rest.FileInfo;
 import org.opencloudengine.flamingo2.web.configuration.EngineConfig;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +57,27 @@ public interface FileSystemRemoteService {
     List<FileInfo> getFiles(EngineConfig engineConfig, String path);
 
     /**
+     * 파일 목록을 반환한다.
+     *
+     * @param engineConfig Engine Config
+     * @param path         HDFS file path to check
+     * @param page 페이지 번호
+     * @param start 시작 번호
+     * @param limit 목록 제한 갯수
+     * @return 파일 목록
+     */
+    Map getFilesPage(EngineConfig engineConfig, String path, int page, int start, int limit) throws IOException;
+
+    /**
+     * 파일/디렉토리 정보를 반환한다.
+     *
+     * @param engineConfig Engine Config
+     * @param path         HDFS file path to check
+     * @return 파일/디렉토리 정보
+     */
+    ContentSummary getContentSummary(EngineConfig engineConfig, String path) throws IOException;
+
+    /**
      * 디렉토리를 생성한다.
      *
      * @param engineConfig Engine Config
@@ -78,21 +101,21 @@ public interface FileSystemRemoteService {
     /**
      * 디렉토리를 이동한다.
      *
-     * @param engineConfig Engine Config
-     * @param currentPath  HDFS directory source path to move
-     * @param dstPath      HDFS directory target path to be moved
-     * @param username     Username
+     * @param engineConfig      Engine Config
+     * @param currentPath       HDFS directory source path to move
+     * @param dstPath           HDFS directory target path to be moved
+     * @param username          Username
      * @return 디렉토리 이동 여부
      */
-    boolean moveDirectory(EngineConfig engineConfig, String currentPath, String dstPath, String username);
+    boolean moveDirectory(EngineConfig engineConfig, String currentPath, String dstPath , String username);
 
     /**
      * 디렉토리명을 변경한다.
      *
-     * @param engineConfig  Engine Config
-     * @param srcPath       HDFS directory source path to rename
-     * @param directoryName HDFS directory new name to be renamed
-     * @param username      Username
+     * @param engineConfig      Engine Config
+     * @param srcPath           HDFS directory source path to rename
+     * @param directoryName     HDFS directory new name to be renamed
+     * @param username          Username
      * @return 디렉토리명 변경 여부
      */
     boolean renameDirectory(EngineConfig engineConfig, String srcPath, String directoryName, String username);
@@ -146,24 +169,25 @@ public interface FileSystemRemoteService {
     /**
      * 파일을 이동한다.
      *
-     * @param engineConfig Engine Config
-     * @param srcFileList  HDFS file(s) fullyQualified path to move
-     * @param dstPath      HDFS file(s) destination path to be moved
-     * @param username     Username
+     * @param engineConfig      Engine Config
+     * @param srcFileList       HDFS file(s) fullyQualified path to move
+     * @param dstPath           HDFS file(s) destination path to be moved
+     * @param username          Username
      * @return 이동된 파일 목록
      */
-    List<String> moveFiles(EngineConfig engineConfig, List<String> srcFileList, String dstPath, String username);
+    List<String> moveFiles(EngineConfig engineConfig, List<String> srcFileList, String dstPath , String username);
 
     /**
      * 파일명을 변경한다.
      *
-     * @param engineConfig Engine Config
-     * @param srcPath      HDFS file Source path to rename
-     * @param filename     HDFS filename to be renamed
-     * @param username     Username
+     * @param engineConfig          Engine Config
+     * @param fullyQualifiedPath    HDFS file fully qualified path
+     * @param srcPath               HDFS file Source path to rename
+     * @param filename              HDFS filename to be renamed
+     * @param username              Username
      * @return 변경 여부
      */
-    boolean renameFile(EngineConfig engineConfig, String srcPath, String filename, String username);
+    boolean renameFile(EngineConfig engineConfig, String fullyQualifiedPath, String srcPath, String filename, String username);
 
     /**
      * 파일을 삭제한다.
@@ -172,10 +196,9 @@ public interface FileSystemRemoteService {
      * @param files        HDFS file(s) path to delete
      * @param srcPath      HDFS file source path to delete
      * @param username     Username
-     * @param userLevel    User Level
      * @return 삭제된 파일 목록
      */
-    List<String> deleteFiles(EngineConfig engineConfig, String files, String srcPath, String username, int userLevel);
+    List<String> deleteFiles(EngineConfig engineConfig, String files, String srcPath, String username);
 
     /**
      * 업로드한 파일을 저장한다.
@@ -240,6 +263,8 @@ public interface FileSystemRemoteService {
      */
     boolean deleteHdfsUserHome(EngineConfig engineConfig, String hdfsUserHome);
 
+    boolean copyToLocal(EngineConfig engineConfig, String srcFullyQualifiedPath, String linuxUserHome, String username);
+
     /**
      * 쓰기 금지 목록 패턴을 검증한다.
      *
@@ -256,4 +281,6 @@ public interface FileSystemRemoteService {
      * @param username              Username
      */
     void validateBeforeDownload(EngineConfig engineConfig, String srcFilePath, String fullyQualifiedPath, String username);
+
+//    boolean getNamenodeStatus();
 }

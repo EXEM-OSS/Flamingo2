@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * Created by Park on 15. 6. 30..
- */
 Ext.define('Flamingo2.view.component.NotificationController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.notification',

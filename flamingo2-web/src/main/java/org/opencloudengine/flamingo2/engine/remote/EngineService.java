@@ -16,12 +16,14 @@
  */
 package org.opencloudengine.flamingo2.engine.remote;
 
-import org.opencloudengine.flamingo2.agent.system.SystemUserService;
+import org.opencloudengine.flamingo2.engine.archive.mapreduce.ArchiveMapReduceRemoteService;
+import org.opencloudengine.flamingo2.engine.archive.yarn.ArchiveYarnRemoteService;
 import org.opencloudengine.flamingo2.engine.batch.BatchService;
 import org.opencloudengine.flamingo2.engine.designer.DesignerService;
 import org.opencloudengine.flamingo2.engine.fs.FileSystemRemoteService;
 import org.opencloudengine.flamingo2.engine.fs.audit.FileSystemAuditRemoteService;
 import org.opencloudengine.flamingo2.engine.hadoop.HistoryServerRemoteService;
+import org.opencloudengine.flamingo2.engine.hadoop.MapReduceRemoteService;
 import org.opencloudengine.flamingo2.engine.hadoop.NamenodeRemoteService;
 import org.opencloudengine.flamingo2.engine.hadoop.ResourceManagerRemoteService;
 import org.opencloudengine.flamingo2.engine.hawq.HawqService;
@@ -32,7 +34,11 @@ import org.opencloudengine.flamingo2.engine.hive.HiveQueryRemoteService;
 import org.opencloudengine.flamingo2.engine.monitoring.AlarmRemoteService;
 import org.opencloudengine.flamingo2.engine.monitoring.CLDBRemoteService;
 import org.opencloudengine.flamingo2.engine.pig.PigRemoteService;
+import org.opencloudengine.flamingo2.engine.realtime.spark.streaming.SparkStreamingRemoteService;
 import org.opencloudengine.flamingo2.engine.scheduler.SchedulerRemoteService;
+import org.opencloudengine.flamingo2.engine.spark.SparkRemoteService;
+import org.opencloudengine.flamingo2.engine.system.UserRemoteService;
+import org.opencloudengine.flamingo2.engine.tajo.TajoRemoteService;
 import org.opencloudengine.flamingo2.engine.tree.TreeService;
 import org.opencloudengine.flamingo2.engine.visual.VisualService;
 
@@ -61,8 +67,6 @@ public interface EngineService {
 
     HawqService getHawqService();
 
-    SystemUserService getSystemUserService();
-
     PigRemoteService getPigRemoteService();
 
     SchedulerRemoteService getSchedulerRemoteService();
@@ -80,4 +84,18 @@ public interface EngineService {
     AlarmRemoteService getAlarmRemoteService();
 
     TreeService getTreeRemoteService();
+
+    TajoRemoteService getTajoRemoteService();
+
+    ArchiveYarnRemoteService getArchiveYarnApplicationRemoteService();
+
+    ArchiveMapReduceRemoteService getArchiveMapReduceRemoteService();
+
+    MapReduceRemoteService getMapReduceRemoteService();
+
+    SparkStreamingRemoteService getSparkStreamingRemoteService();
+
+    SparkRemoteService getSparkRemoteService();
+
+    UserRemoteService getUserRemoteService();
 }

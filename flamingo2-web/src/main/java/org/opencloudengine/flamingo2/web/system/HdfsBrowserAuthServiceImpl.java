@@ -29,6 +29,7 @@ import java.util.Map;
  * HDFS Browser의 사용 권한을 관리하기 위한 HDFS Browser Authority Service Implements
  *
  * @author Myeongha KIM
+ * @since 2.0
  */
 @Service
 public class HdfsBrowserAuthServiceImpl implements HdfsBrowserAuthService {
@@ -58,11 +59,33 @@ public class HdfsBrowserAuthServiceImpl implements HdfsBrowserAuthService {
 
     @Override
     public boolean createHdfsBrowserAuth(Map hdfsBrowserAuthMap) {
-        if (hdfsBrowserAuthRepository.exist(hdfsBrowserAuthMap) > 0) {
+        String ackKey = (String) hdfsBrowserAuthMap.get("ackKey");
+        String hdfsPathPattern = (String) hdfsBrowserAuthMap.get("hdfsPathPattern");
+        boolean inserted;
+
+        if (hdfsBrowserAuthRepository.exist(hdfsBrowserAuthMap)) {
             throw new ServiceException("The pattern information that already exists.");
         }
 
-        return hdfsBrowserAuthRepository.insertHdfsBrowserAuth(hdfsBrowserAuthMap) > 0;
+        /**
+         * Case 1. 관리자가 사용자 가입 승인 시 사용자의 HDFS Browser 사용 권한 정보가 추가되는 경우
+         * Case 2. 관리자가 직접 사용자의 HDFS Browser 사용 권한 패턴 정보를 추가할 경우
+         * Case 2.1 추가하려는 경로에 하위경로포함 옵션이 적용된 HDFS Browser 사용 권한 패턴 정보가 이미 있을 경우
+         */
+        if (ackKey.equalsIgnoreCase("approved")) {
+            inserted = hdfsBrowserAuthRepository.insertHdfsBrowserAuthAll(hdfsBrowserAuthMap) > 0;
+        } else {
+            boolean applyAll = (Boolean) hdfsBrowserAuthMap.get("applyAll");
+            if (!applyAll) {
+                hdfsBrowserAuthMap.put("hdfsPathPattern", hdfsPathPattern + "/**");
+                if (hdfsBrowserAuthRepository.exist(hdfsBrowserAuthMap)) {
+                    throw new ServiceException("Please delete user's hdfs path pattern with sub-directory included(/**) option before add a hdfs path pattern without sub-directory included option.");
+                }
+            }
+            inserted = hdfsBrowserAuthRepository.insertHdfsBrowserAuth(hdfsBrowserAuthMap) > 0;
+        }
+
+        return inserted;
     }
 
     @Override
@@ -78,22 +101,40 @@ public class HdfsBrowserAuthServiceImpl implements HdfsBrowserAuthService {
 
     @Override
     public void getHdfsBrowserUserDirAuth(Map<String, String> dirMap) {
-        if (hdfsBrowserAuthRepository.selectHdfsBrowserUserDirAuth(dirMap) < 1) {
+        // 리턴되는 값은 0 또는 1
+        if (hdfsBrowserAuthRepository.selectHdfsBrowserUserDirAuth(dirMap) != 1) {
             throw new ServiceException("You do not have permission.");
         }
     }
 
     @Override
     public void getHdfsBrowserUserFileAuth(Map<String, String> fileMap) {
-        if (hdfsBrowserAuthRepository.selectHdfsBrowserUserFileAuth(fileMap) < 1) {
+        // 리턴되는 값은 0 또는 1
+        if (hdfsBrowserAuthRepository.selectHdfsBrowserUserFileAuth(fileMap) != 1) {
             throw new ServiceException("You do not have permission.");
         }
     }
 
     @Override
     public boolean deleteHdfsBrowserAuth(Map hdfsBrowserAuthMap) {
-        if (hdfsBrowserAuthRepository.exist(hdfsBrowserAuthMap) < 1) {
-            throw new ServiceException("HDFS authority information does not exist to delete.");
+        String deleteCondition = (String) hdfsBrowserAuthMap.get("deleteCondition");
+
+        /**
+         * Case 1. 사용자 삭제 시 해당 사용자에 부여된 모든 HDFS 패턴 정보를 삭제할 때
+         * Case 1.1 삭제할 모든 HDFS 패턴을 정보를 조회한다.
+         * Case 2. 특정 HDFS 패턴만 삭제할 때
+         * Case 2.1 삭제할 단일 HDFS 패턴 정보를 조회한다.
+         */
+        if (deleteCondition.equalsIgnoreCase("deleteUser")) {
+            // 리턴되는 값은 0 또는 1
+            if (!hdfsBrowserAuthRepository.exist(hdfsBrowserAuthMap)) {
+                throw new ServiceException("HDFS authority information does not exist to delete.");
+            }
+        } else {
+            // 리턴되는 값은 0 또는 1
+            if (!hdfsBrowserAuthRepository.exist(hdfsBrowserAuthMap)) {
+                throw new ServiceException("HDFS authority information does not exist to delete.");
+            }
         }
 
         return hdfsBrowserAuthRepository.deleteHdfsBrowserAuth(hdfsBrowserAuthMap) > 0;
@@ -117,7 +158,7 @@ public class HdfsBrowserAuthServiceImpl implements HdfsBrowserAuthService {
             hdfsAuthKeyMap.put("authId", updateValuesMap.get("auth_id"));
             hdfsAuthKeyMap.put("level", updateValuesMap.get("level"));
 
-            if (hdfsBrowserAuthRepository.exist(hdfsAuthKeyMap) > 0) {
+            if (hdfsBrowserAuthRepository.exist(hdfsAuthKeyMap)) {
                 throw new ServiceException("The pattern information that already exists.");
             }
         }
@@ -148,7 +189,10 @@ public class HdfsBrowserAuthServiceImpl implements HdfsBrowserAuthService {
 
     @Override
     public void validateHdfsHomeWritePermission(String currentPath, String filter, int userLevel) {
-        if (currentPath.equalsIgnoreCase(filter) && userLevel != 1) {
+        /*        if (currentPath.equalsIgnoreCase(filter) && userLevel != 1) {
+            throw new ServiceException("You do not have permission.");
+        } */
+        if (currentPath.equalsIgnoreCase(filter)) {
             throw new ServiceException("You do not have permission.");
         }
     }

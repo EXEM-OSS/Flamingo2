@@ -15,17 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * ETL Character Remover
+ * @cli hadoop jar flamingo2-mapreduce-hadoop2-2.0.5-job.jar remove_chars --input <IN> --output <OUT> --characters ','
+ * @extend Flamingo2.view.designer.property._NODE_ETL
+ * @author <a href="mailto:haneul.kim@cloudine.co.kr">Haneul, Kim</a>
+ * @see <a href="http://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html" target="_blank">Apache Hadoop MapReduce Tutorial</a>
+ */
 Ext.ns('Flamingo2.view.designer.property.etl');
 Ext.define('Flamingo2.view.designer.property.etl.ETL_CHAR_REMOVER', {
     extend: 'Flamingo2.view.designer.property._NODE_ETL',
     alias: 'widget.ETL_CHAR_REMOVER',
-
-    requires: [
-        'Flamingo2.view.designer.property._JarBrowserField',
-        'Flamingo2.view.designer.property._BrowserField',
-        'Flamingo2.view.designer.property._InputGrid',
-        'Flamingo2.view.designer.property._KeyValueGrid'
-    ],
 
     width: 450,
     height: 320,
@@ -50,94 +50,87 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_CHAR_REMOVER', {
                     layout: 'hbox',
                     items: [
                         {
-                            xtype: 'fieldcontainer',
-                            layout: 'hbox',
-                            items: [
-                                {
-                                    xtype: 'combo',
-                                    name: 'characters',
-                                    value: ',',
-                                    flex: 1,
-                                    forceSelection: true,
-                                    multiSelect: false,
-                                    editable: false,
-                                    readOnly: this.readOnly,
-                                    displayField: 'name',
-                                    valueField: 'value',
-                                    mode: 'local',
-                                    queryMode: 'local',
-                                    triggerAction: 'all',
-                                    tpl: '<tpl for="."><div class="x-boundlist-item" data-qtip="{description}">{name}</div></tpl>',
-                                    store: Ext.create('Ext.data.Store', {
-                                        fields: ['name', 'value', 'description'],
-                                        data: [
-                                            {
-                                                name: message.msg('workflow.common.delimiter.double.colon'),
-                                                value: '::',
-                                                description: '::'
-                                            },
-                                            {
-                                                name: message.msg('workflow.common.delimiter.comma'),
-                                                value: ',',
-                                                description: ','
-                                            },
-                                            {
-                                                name: message.msg('workflow.common.delimiter.pipe'),
-                                                value: '|',
-                                                description: '|'
-                                            },
-                                            {
-                                                name: message.msg('workflow.common.delimiter.tab'),
-                                                value: '\'\\t\'',
-                                                description: '\'\\t\''
-                                            },
-                                            {
-                                                name: message.msg('workflow.common.delimiter.blank'),
-                                                value: '\'\\s\'',
-                                                description: '\'\\s\''
-                                            },
-                                            {
-                                                name: message.msg('workflow.common.delimiter.user.def'),
-                                                value: 'CUSTOM',
-                                                description: message.msg('workflow.common.delimiter.user.def')
-                                            }
-                                        ]
-                                    }),
-                                    listeners: {
-                                        change: function (combo, newValue, oldValue, eOpts) {
-                                            // 콤보 값에 따라 관련 textfield 를 enable | disable 처리한다.
-                                            var customValueField = combo.nextSibling('textfield');
-                                            if (newValue === 'CUSTOM') {
-                                                customValueField.enable();
-                                                customValueField.isValid();
-                                            } else {
-                                                customValueField.disable();
-                                                if (newValue) {
-                                                    customValueField.setValue(newValue);
-                                                } else {
-                                                    customValueField.setValue(',');
-                                                }
-                                            }
+                            xtype: 'combo',
+                            name: 'characters',
+                            value: ',',
+                            flex: 1,
+                            forceSelection: true,
+                            multiSelect: false,
+                            editable: false,
+                            readOnly: this.readOnly,
+                            displayField: 'name',
+                            valueField: 'value',
+                            mode: 'local',
+                            queryMode: 'local',
+                            triggerAction: 'all',
+                            tpl: '<tpl for="."><div class="x-boundlist-item" data-qtip="{description}">{name}</div></tpl>',
+                            store: Ext.create('Ext.data.Store', {
+                                fields: ['name', 'value', 'description'],
+                                data: [
+                                    {
+                                        name: message.msg('workflow.common.delimiter.double.colon'),
+                                        value: '::',
+                                        description: '::'
+                                    },
+                                    {
+                                        name: message.msg('workflow.common.delimiter.comma'),
+                                        value: ',',
+                                        description: ','
+                                    },
+                                    {
+                                        name: message.msg('workflow.common.delimiter.pipe'),
+                                        value: '|',
+                                        description: '|'
+                                    },
+                                    {
+                                        name: message.msg('workflow.common.delimiter.tab'),
+                                        value: '\u0009',
+                                        description: '\u0009'
+                                    },
+                                    {
+                                        name: message.msg('workflow.common.delimiter.blank'),
+                                        value: '\u0020',
+                                        description: '\u0020'
+                                    },
+                                    {
+                                        name: message.msg('workflow.common.delimiter.user.def'),
+                                        value: 'CUSTOM',
+                                        description: message.msg('workflow.common.delimiter.user.def')
+                                    }
+                                ]
+                            }),
+                            listeners: {
+                                change: function (combo, newValue, oldValue, eOpts) {
+                                    // 콤보 값에 따라 관련 textfield 를 enable | disable 처리한다.
+                                    var customValueField = combo.nextSibling('textfield');
+                                    if (newValue === 'CUSTOM') {
+                                        customValueField.enable();
+                                        customValueField.isValid();
+                                    } else {
+                                        customValueField.disable();
+                                        if (newValue) {
+                                            customValueField.setValue(newValue);
+                                        } else {
+                                            customValueField.setValue(',');
                                         }
                                     }
-                                },
-                                {
-                                    xtype: 'textfield',
-                                    name: 'charactersValue',
-                                    flex: 1,
-                                    disabled: true,
-                                    readOnly: this.readOnly,
-                                    allowBlank: false,
-                                    value: ','
                                 }
-                            ]
+                            }
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'charactersValue',
+                            flex: 1,
+                            disabled: true,
+                            readOnly: this.readOnly,
+                            allowBlank: false,
+                            value: ','
                         }
                     ]
                 }
             ]
         },
         {
-
             title: message.msg('workflow.common.mapreduce'),
             xtype: 'form',
             border: false,
@@ -154,7 +147,7 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_CHAR_REMOVER', {
                     xtype: 'textfield',
                     name: 'jar',
                     fieldLabel: message.msg('workflow.common.mapreduce.jar'),
-                    value: ANKUS.JAR,
+                    value: ETL.JAR,
                     disabledCls: 'disabled-plain',
                     readOnly: true
                 },
@@ -246,7 +239,7 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_CHAR_REMOVER', {
                 {
                     xtype: 'displayfield',
                     height: 20,
-                    value: 'None'
+                    value: '<a href="http://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html" target="_blank">Apache Hadoop MapReduce Tutorial</a>'
                 }
             ]
         }
@@ -287,28 +280,20 @@ Ext.define('Flamingo2.view.designer.property.etl.ETL_CHAR_REMOVER', {
      */
     afterPropertySet: function (props) {
         props.mapreduce = {
-            "driver": props.driver ? props.driver : '',
-            "jar": props.jar ? props.jar : '',
-            "confKey": props.hadoopKeys ? props.hadoopKeys : '',
-            "confValue": props.hadoopValues ? props.hadoopValues : '',
+            driver: props.driver || '',
+            jar: props.jar || '',
+            confKey: props.hadoopKeys || '',
+            confValue: props.hadoopValues || '',
             params: []
         };
 
         if (props.input) {
             props.mapreduce.params.push("--input", props.input);
         }
-
         if (props.output) {
             props.mapreduce.params.push("--output", props.output);
         }
-
-        if (props.characters) {
-            if (props.characters == 'CUSTOM') {
-                props.mapreduce.params.push("--characters", props.charactersValue);
-            } else {
-                props.mapreduce.params.push("--characters", props.characters);
-            }
-        }
+        props.mapreduce.params.push("--characters", '\'' + (props.characters === 'CUSTOM' ? props.charactersValue : props.characters) + '\'');
 
         this.callParent(arguments);
     }

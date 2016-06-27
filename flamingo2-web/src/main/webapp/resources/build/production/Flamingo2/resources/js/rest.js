@@ -4,9 +4,14 @@
 
 var CONSTANTS                           = {};
 
-CONSTANTS.TEMPLATE                      = {};
 CONSTANTS.CONTEXT_PATH                  = '';
+CONSTANTS.CONFIG                        = {};
+CONSTANTS.MAIN                          = {};
+CONSTANTS.MAIN.NOTIFICATION             = {};
+CONSTANTS.TEMPLATE                      = {};
 CONSTANTS.DESIGNER                      = {};
+CONSTANTS.DESIGNER.VM                   = {};
+CONSTANTS.DESIGNER.TREE                 = {};
 CONSTANTS.PIG                           = {};
 CONSTANTS.HIVE                          = {};
 CONSTANTS.HIVE.METASTORE                = {};
@@ -29,19 +34,23 @@ CONSTANTS.TREE                          = {};
 CONSTANTS.USER                          = {};
 CONSTANTS.USER.MANAGE                   = {};
 CONSTANTS.USER.QA                       = {};
+CONSTANTS.USER.PREFERENCE               = {};
+CONSTANTS.USER.PREFERENCE.EVENT         = {};
 CONSTANTS.MENU                          = {};
 CONSTANTS.MONITORING                    = {};
+CONSTANTS.MONITORING.RM                 = {};
+CONSTANTS.MONITORING.YA                 = {};
+CONSTANTS.MONITORING.HS                 = {};
 CONSTANTS.MONITORING.CLUSTERNODES       = {};
 CONSTANTS.MONITORING.NAMENODE           = {};
-CONSTANTS.MONITORING.HS                 = {};
-CONSTANTS.MONITORING.RM                 = {};
+CONSTANTS.MONITORING.DATANODE           = {};
 CONSTANTS.MONITORING.CLDB               = {};
 CONSTANTS.SYSTEM                        = {};
 CONSTANTS.SYSTEM.LANGUAGE               = {};
 CONSTANTS.SYSTEM.USER                   = {};
 CONSTANTS.SYSTEM.MENU                   = {};
 CONSTANTS.SYSTEM.AUTHORITY              = {};
-CONSTANTS.CONFIG                        = {};
+CONSTANTS.SYSTEM.LICENSE                = {};
 CONSTANTS.HAWQ                          = {};
 CONSTANTS.HAWQ.BROWSER                  = {};
 CONSTANTS.HAWQ.EDITOR                   = {};
@@ -52,12 +61,32 @@ CONSTANTS.SETTING.META                  = {};
 CONSTANTS.EVENTLIST                     = {};
 CONSTANTS.SERVICELIST                   = {};
 CONSTANTS.PREFERENCES                   = {};
+CONSTANTS.TAJO                          = {};
+CONSTANTS.SPARK                         = {};
+CONSTANTS.SPARK.MONITORING              = {};
+CONSTANTS.ARCHIVE                       = {};
+CONSTANTS.ARCHIVE.YARN                  = {};
+CONSTANTS.ARCHIVE.MAPREDUCE             = {};
+CONSTANTS.REALTIME                      = {};
+CONSTANTS.REALTIME.SPARK                = {};
+CONSTANTS.REALTIME.SPARK.STREAMING      = {};
+CONSTANTS.UIMA                          = {};
+
+///////////////////////////////////////
+// Main Page Notification
+///////////////////////////////////////
+
+CONSTANTS.MAIN.NOTIFICATION.GET_ALARM       = '/monitoring/alarm/getAlarm';
+
+///////////////////////////////////////
+// Manual
+///////////////////////////////////////
+
+CONSTANTS.MANUAL_PAGE     = '/resource/manual/index.html';
 
 ///////////////////////////////////////
 // Configuration
 ///////////////////////////////////////
-
-CONSTANTS.MANUAL_PAGE     = '/resource/manual/index.html';
 
 CONSTANTS.CONFIG.ENGINES  = '/config/engines.json';
 
@@ -71,7 +100,6 @@ CONSTANTS.SYSTEM.LANGUAGE.EXPORT_ZIP                = '/system/language/export/m
 CONSTANTS.SYSTEM.LANGUAGE.IMPORT_XLSX               = '/system/language/import/message.json';
 CONSTANTS.SYSTEM.LANGUAGE.IMPORT_ZIP               = '/system/language/import/zip.json';
 CONSTANTS.SYSTEM.LANGUAGE.SAVE                      = '/system/language/save.json';
-
 
 ///////////////////////////////////////
 // System > User
@@ -127,6 +155,16 @@ CONSTANTS.MONITORING.RM.CONTAINERSTATUS               = '/monitoring/resourceman
 CONSTANTS.MONITORING.RM.QUEUEMEMORY                   = '/monitoring/resourcemanager/queuememory.json';
 CONSTANTS.MONITORING.RM.JVMHEAP                       = '/monitoring/resourcemanager/jvmheap.json';
 CONSTANTS.MONITORING.RM.APP_RUNNING                   = '/monitoring/resourcemanager/apps/running.json';
+CONSTANTS.MONITORING.RM.APP_KILL                      = '/monitoring/resourcemanager/app/kill.json';
+CONSTANTS.MONITORING.RM.APP_LOG                       = '/monitoring/resourcemanager/app/log.json';
+CONSTANTS.MONITORING.RM.APP_REPORT                    = '/monitoring/resourcemanager/app/report.json';
+CONSTANTS.MONITORING.RM.APP_DOWNLOAD                  = '/monitoring/resourcemanager/app/download.json';
+CONSTANTS.MONITORING.RM.APP_MOVE                      = '/monitoring/resourcemanager/app/move.json';
+
+// Yarn Application
+CONSTANTS.MONITORING.YA.TIME_SERIES                   = '/monitoring/resourcemanager/apps/timeseries.json';
+CONSTANTS.MONITORING.YA.ALL_APPICATION                = '/monitoring/resourcemanager/apps/all.json';
+CONSTANTS.MONITORING.YA.QUEUES                        = '/monitoring/resourcemanager/queues.json';
 
 // History Server
 CONSTANTS.MONITORING.HS.JOB                           = '/monitoring/application/history/jobs/job.json';
@@ -134,6 +172,7 @@ CONSTANTS.MONITORING.HS.JOBS                          = '/monitoring/application
 CONSTANTS.MONITORING.HS.CONF                          = '/monitoring/application/history/jobs/job/configuration.json';
 CONSTANTS.MONITORING.HS.TASKS                         = '/monitoring/application/history/jobs/job/tasks.json';
 CONSTANTS.MONITORING.HS.COUNTERS                      = '/monitoring/application/history/jobs/job/counters.json';
+CONSTANTS.MONITORING.HS.TIME_SERIES                   = '/monitoring/application/history/jobs/timeseries.json';
 
 // Cluster Nodes
 CONSTANTS.MONITORING.CLUSTERNODES.TIMESERIES          = '/monitoring/clusternode/timeseries.json';
@@ -145,6 +184,11 @@ CONSTANTS.MONITORING.NAMENODE.DFS_USAGE               = '/monitoring/namenode/df
 CONSTANTS.MONITORING.NAMENODE.BLOCK_STATUS            = '/monitoring/namenode/blockstatus.json';
 CONSTANTS.MONITORING.NAMENODE.INFO                    = '/monitoring/namenode/info.json';
 
+// Datanode
+CONSTANTS.MONITORING.DATANODE.DEAD_NODES              = '/monitoring/datanode/deadnodes.json';
+CONSTANTS.MONITORING.DATANODE.DECOMMISSIONING_NODES   = '/monitoring/datanode/decommissioningnodes.json';
+CONSTANTS.MONITORING.DATANODE.LIVE_NODES              = '/monitoring/datanode/livenodes.json';
+
 // MapR CLDB
 CONSTANTS.MONITORING.CLDB.METRICS                     = '/monitoring/cldb/metrics.json';
 
@@ -152,11 +196,16 @@ CONSTANTS.MONITORING.CLDB.METRICS                     = '/monitoring/cldb/metric
 // Admin
 ///////////////////////////////////////
 
-CONSTANTS.SYSTEM.WEBSOCKET              = '/websocket';
-
+CONSTANTS.SYSTEM.WEBSOCKET               = '/websocket';
 CONSTANTS.SYSTEM.MENU.SELECT             = '/system/menu/select';//'/resources/data/menu.json';//'/admin/menu/select';
 CONSTANTS.SYSTEM.MENU.SELECT_NODE        = '/system/menu/selectNode';
 CONSTANTS.SYSTEM.MENU.SAVE               = '/system/menu/save';
+
+///////////////////////////////////////
+// License
+///////////////////////////////////////
+
+CONSTANTS.SYSTEM.LICENSE.VALID          = '/system/license/valid';
 
 ///////////////////////////////////////
 // SERVICELIST
@@ -175,9 +224,7 @@ CONSTANTS.EVENTLIST.SELECT              = '/resources/data/eventlist.json';
 ///////////////////////////////////////
 
 CONSTANTS.USER.QA.SELECT                = '/resources/data/qalist.json';
-CONSTANTS.USER.PREFERENCE = {};
-CONSTANTS.USER.PREFERENCE.EVENT = {};
-CONSTANTS.USER.PREFERENCE.EVENT.LIST = "/user/preference/event/list.json";
+CONSTANTS.USER.PREFERENCE.EVENT.LIST    = "/user/preference/event/list.json";
 
 ///////////////////////////////////////
 // Setting > Metadata
@@ -191,106 +238,90 @@ CONSTANTS.SETTING.META.SAVE             = '/setting/metadata/save';
 // Constants
 ///////////////////////////////////////
 
-CONSTANTS.GRID_SIZE_PER_PAGE        = 22;
-CONSTANTS.ROOT                      = '/';
-CONSTANTS.FILE_UPLOAD_TIMEOUT       = 120000;
+CONSTANTS.ROOT                          = '/';
+CONSTANTS.GRID_SIZE_PER_PAGE            = 22;
+CONSTANTS.FILE_UPLOAD_TIMEOUT           = 120000;
 
 ///////////////////////////////////////
 // Workflow Designer
 ///////////////////////////////////////
 
-CONSTANTS.DESIGNER.SAVE = "/designer/save.json";
-CONSTANTS.DESIGNER.LOAD = "/designer/load.json";
-CONSTANTS.DESIGNER.RUN = "/designer/run.json";
-CONSTANTS.DESIGNER.COPY = "/designer/copy.json";
-CONSTANTS.DESIGNER.SHOW = "/designer/show.json";
-CONSTANTS.DESIGNER.GET = "/designer/get.json";
-CONSTANTS.DESIGNER.DELETE = "/designer/delete.json";
-CONSTANTS.DESIGNER.STATUS = "/designer/status.json";
-CONSTANTS.DESIGNER.STATUS_DETAIL = "/designer/status/detail.json";
+CONSTANTS.DESIGNER.SAVE                     = "/designer/save.json";
+CONSTANTS.DESIGNER.LOAD                     = "/designer/load.json";
+CONSTANTS.DESIGNER.RUN                      = "/designer/run.json";
+CONSTANTS.DESIGNER.COPY                     = "/designer/copy.json";
+CONSTANTS.DESIGNER.SHOW                     = "/designer/show.json";
+CONSTANTS.DESIGNER.GET                      = "/designer/get.json";
+CONSTANTS.DESIGNER.NEW                      = "/designer/new.json";
+CONSTANTS.DESIGNER.DELETE                   = "/designer/delete.json";
+CONSTANTS.DESIGNER.RENAME                   = "/designer/rename.json";
+CONSTANTS.DESIGNER.STATUS                   = "/designer/status.json";
+CONSTANTS.DESIGNER.STATUS_DETAIL            = "/designer/status/detail.json";
 
-CONSTANTS.DESIGNER.VM = {};
-CONSTANTS.DESIGNER.VM.PROPERTIES = "/designer/vm/properties.json";
+CONSTANTS.DESIGNER.VM.PROPERTIES            = "/designer/vm/properties.json";
 
-//CONSTANTS.DESIGNER.GET_TREE         = '/tree/get.json';
-//CONSTANTS.DESIGNER.NEW_FOLDER       = '/tree/folder/new.json';
-//CONSTANTS.DESIGNER.GET_STATUS       = '/designer/status.json';
-//CONSTANTS.DESIGNER.LOAD_WORKFLOW    = '/designer/load.json';
-//CONSTANTS.DESIGNER.SAVE_WORKFLOW    = '/designer/save.json';
-//CONSTANTS.DESIGNER.RUN_WORKFLOW     = '/designer/run.json';
-//CONSTANTS.DESIGNER.COPY_WORKFLOW    = '/designer/copy.json';
-//CONSTANTS.DESIGNER.SHOW_XML         = '/designer/xml.json';
-//CONSTANTS.DESIGNER.GET              = '/designer/get.json';
-//CONSTANTS.DESIGNER.DELETE           = '/designer/delete.json';
-//CONSTANTS.DESIGNER.CREATE           = '/designer/create.json';
-//CONSTANTS.DESIGNER.RENAME           = '/designer/rename.json';
-//CONSTANTS.DESIGNER.HIVE_DBS         = '/designer/hive/dbs.json';
-//CONSTANTS.DESIGNER.HIVE_COLUMNS     = '/designer/hive/columns.json';
-
-CONSTANTS.DESIGNER.TREE = {};
-CONSTANTS.DESIGNER.TREE.GET = "/tree/get.json";
-CONSTANTS.DESIGNER.TREE.NEW = "/tree/new.json";
-CONSTANTS.DESIGNER.TREE.RENAME = "/tree/rename.json";
+CONSTANTS.DESIGNER.TREE.GET                 = "/tree/get.json";
 
 ///////////////////////////////////////
 // Batch Job
 ///////////////////////////////////////
 
-CONSTANTS.BATCH.GET_WORKFLOW          = '/batch/get.json';
-CONSTANTS.BATCH.REGIST                = '/batch/regist.json';
-CONSTANTS.BATCH.LIST                  = '/batch/list.json';
-CONSTANTS.BATCH.SUSPEND               = '/batch/suspend.json';
-CONSTANTS.BATCH.RESUME                = '/batch/resume.json';
-CONSTANTS.BATCH.STOP                  = '/batch/stop.json';
-CONSTANTS.BATCH.WORKFLOW_ENGINE       = '/batch/summary.json';
-CONSTANTS.BATCH.METRICS               = '/batch/metrics.json';
+CONSTANTS.BATCH.GET_WORKFLOW                = '/batch/get.json';
+CONSTANTS.BATCH.REGIST                      = '/batch/regist.json';
+CONSTANTS.BATCH.LIST                        = '/batch/list.json';
+CONSTANTS.BATCH.SUSPEND                     = '/batch/suspend.json';
+CONSTANTS.BATCH.RESUME                      = '/batch/resume.json';
+CONSTANTS.BATCH.STOP                        = '/batch/stop.json';
+CONSTANTS.BATCH.WORKFLOW_ENGINE             = '/batch/summary.json';
+CONSTANTS.BATCH.METRICS                     = '/batch/metrics.json';
+
 ///////////////////////////////////////
 // Admin > Workflow Engine
 ///////////////////////////////////////
 
-CONSTANTS.ADMIN.WE.REGIST_JOB           = '/admin/engine/regist.json';
-CONSTANTS.ADMIN.WE.ADD_ENGINE           = '/admin/engine/add.json';
-CONSTANTS.ADMIN.WE.DEL_ENGINE           = '/admin/engine/delete.json';
-CONSTANTS.ADMIN.WE.LIST_ENGINES         = '/resources/data/engine.json';//'/admin/engine/engines.json';
-CONSTANTS.ADMIN.WE.GET_ENVS             = '/admin/engine/envs.json';
-CONSTANTS.ADMIN.WE.GET_PROPS            = '/admin/engine/props.json';
-CONSTANTS.ADMIN.WE.GET_TRIGGERS         = '/admin/engine/triggers.json';
-CONSTANTS.ADMIN.WE.GET_RUNNING_JOBS     = '/admin/engine/running.json';
-CONSTANTS.ADMIN.WE.GET_AIO              = '/admin/engine/aio.json';
+CONSTANTS.ADMIN.WE.REGIST_JOB               = '/admin/engine/regist.json';
+CONSTANTS.ADMIN.WE.ADD_ENGINE               = '/admin/engine/add.json';
+CONSTANTS.ADMIN.WE.DEL_ENGINE               = '/admin/engine/delete.json';
+CONSTANTS.ADMIN.WE.LIST_ENGINES             = '/resources/data/engine.json';//'/admin/engine/engines.json';
+CONSTANTS.ADMIN.WE.GET_ENVS                 = '/admin/engine/envs.json';
+CONSTANTS.ADMIN.WE.GET_PROPS                = '/admin/engine/props.json';
+CONSTANTS.ADMIN.WE.GET_TRIGGERS             = '/admin/engine/triggers.json';
+CONSTANTS.ADMIN.WE.GET_RUNNING_JOBS         = '/admin/engine/running.json';
+CONSTANTS.ADMIN.WE.GET_AIO                  = '/admin/engine/aio.json';
 
 ///////////////////////////////////////
 // Admin > Hadoop
 ///////////////////////////////////////
 
-CONSTANTS.ADMIN.HADOOP.GET_HADOOP_CLUSTERS      = '/admin/hadoop/clusters.json';
-CONSTANTS.ADMIN.HADOOP.ADD_HADOOP_CLUSTER       = '/admin/hadoop/add.json';
-CONSTANTS.ADMIN.HADOOP.UPDATE_HADOOP_CLUSTER    = '/admin/hadoop/update.json';
-CONSTANTS.ADMIN.HADOOP.DELETE_HADOOP_CLUSTER    = '/admin/hadoop/delete.json';
-CONSTANTS.ADMIN.HADOOP.UPDATE_HADOOP_CONF       = '/admin/hadoop/jobConf.json';
+CONSTANTS.ADMIN.HADOOP.GET_HADOOP_CLUSTERS          = '/admin/hadoop/clusters.json';
+CONSTANTS.ADMIN.HADOOP.ADD_HADOOP_CLUSTER           = '/admin/hadoop/add.json';
+CONSTANTS.ADMIN.HADOOP.UPDATE_HADOOP_CLUSTER        = '/admin/hadoop/update.json';
+CONSTANTS.ADMIN.HADOOP.DELETE_HADOOP_CLUSTER        = '/admin/hadoop/delete.json';
+CONSTANTS.ADMIN.HADOOP.UPDATE_HADOOP_CONF           = '/admin/hadoop/jobConf.json';
 
 ///////////////////////////////////////
 // Admin > Hive
 ///////////////////////////////////////
 
-CONSTANTS.ADMIN.HIVE.GET_HIVE_SERVERS     = '/admin/hive/servers.json';
-CONSTANTS.ADMIN.HIVE.ADD_HIVE_SERVER      = '/admin/hive/add.json';
-CONSTANTS.ADMIN.HIVE.UPDATE_HIVE_SERVER   = '/admin/hive/update.json';
-CONSTANTS.ADMIN.HIVE.DELETE_HIVE_SERVER   = '/admin/hive/delete.json';
+CONSTANTS.ADMIN.HIVE.GET_HIVE_SERVERS       = '/admin/hive/servers.json';
+CONSTANTS.ADMIN.HIVE.ADD_HIVE_SERVER        = '/admin/hive/add.json';
+CONSTANTS.ADMIN.HIVE.UPDATE_HIVE_SERVER     = '/admin/hive/update.json';
+CONSTANTS.ADMIN.HIVE.DELETE_HIVE_SERVER     = '/admin/hive/delete.json';
 
 ///////////////////////////////////////
 // Admin > User
 ///////////////////////////////////////
 
-CONSTANTS.ADMIN.USER.GET_GROUP          = '/admin/user/group/get.json';
-CONSTANTS.ADMIN.USER.ADD_GROUP          = '/admin/user/group/add.json';
-CONSTANTS.ADMIN.USER.DELETE_GROUP       = '/admin/user/group/delete.json';
-CONSTANTS.ADMIN.USER.GET_USER_ALL       = '/admin/user/list.json';
-CONSTANTS.ADMIN.USER.GET_USER           = '/admin/user/userGroup.json';
-CONSTANTS.ADMIN.USER.ADD_USER           = '/admin/user/add.json';
-CONSTANTS.ADMIN.USER.DELETE_USER        = '/admin/user/delete.json';
-CONSTANTS.ADMIN.USER.UPDATE_USER        = '/admin/user/update.json';
-CONSTANTS.ADMIN.USER.GET_AUTHORITY      = '/admin/user/authority.json';
-CONSTANTS.ADMIN.USER.GET_GRADE_All      = '/admin/user/grade/list.json';
+CONSTANTS.ADMIN.USER.GET_GROUP              = '/admin/user/group/get.json';
+CONSTANTS.ADMIN.USER.ADD_GROUP              = '/admin/user/group/add.json';
+CONSTANTS.ADMIN.USER.DELETE_GROUP           = '/admin/user/group/delete.json';
+CONSTANTS.ADMIN.USER.GET_USER_ALL           = '/admin/user/list.json';
+CONSTANTS.ADMIN.USER.GET_USER               = '/admin/user/userGroup.json';
+CONSTANTS.ADMIN.USER.ADD_USER               = '/admin/user/add.json';
+CONSTANTS.ADMIN.USER.DELETE_USER            = '/admin/user/delete.json';
+CONSTANTS.ADMIN.USER.UPDATE_USER            = '/admin/user/update.json';
+CONSTANTS.ADMIN.USER.GET_AUTHORITY          = '/admin/user/authority.json';
+CONSTANTS.ADMIN.USER.GET_GRADE_All          = '/admin/user/grade/list.json';
 
 ///////////////////////////////////////
 // Admin > HDFS
@@ -328,33 +359,32 @@ CONSTANTS.ADMIN.AUTH.SAVE_AUTH             = '/admin/auth/saveAuth.json';
 // Pig > Editor
 ///////////////////////////////////////
 
-CONSTANTS.PIG.SAVE      = '/pig/save.json';
-CONSTANTS.PIG.LOAD      = '/pig/load.json';
-CONSTANTS.PIG.RUN       = '/pig/run.json';
-CONSTANTS.PIG.LIST      = '/pig/list.json';
-CONSTANTS.PIG.GET_LOG   = '/pig/log.json';
-CONSTANTS.PIG.DELETE    = '/pig/delete.json';
-CONSTANTS.PIG.EXECUTE   = '/pig/execute.json';
+CONSTANTS.PIG.SAVE                          = '/pig/save.json';
+CONSTANTS.PIG.LOAD                          = '/pig/load.json';
+CONSTANTS.PIG.RUN                           = '/pig/run.json';
+CONSTANTS.PIG.LIST                          = '/pig/list.json';
+CONSTANTS.PIG.GET_LOG                       = '/pig/log.json';
+CONSTANTS.PIG.DELETE                        = '/pig/delete.json';
+CONSTANTS.PIG.EXECUTE                       = '/pig/execute.json';
 
 ///////////////////////////////////////
 // Hive > Editor
 ///////////////////////////////////////
 
-CONSTANTS.HIVE.HISTORY          = '/hive/query/history.json';
-CONSTANTS.HIVE.EXECUTE          = '/hive/query/execute.json';
-CONSTANTS.HIVE.CANCEL           = '/hive/query/cancel.json';
-CONSTANTS.HIVE.RESULTS          = '/hive/query/results.json';
-CONSTANTS.HIVE.EXPLAIN          = '/hive/query/explain.json';
-CONSTANTS.HIVE.LIST             = '/hive/query/list.json';
-CONSTANTS.HIVE.SAVE             = '/hive/query/save.json';
-CONSTANTS.HIVE.DELETE           = '/hive/query/delete.json';
-CONSTANTS.HIVE.DB               = '/hive/query/databases.json';
-CONSTANTS.HIVE.CHECK_SIZE       = '/hive/query/size.json';
-CONSTANTS.HIVE.DOWNLOAD         = '/hive/query/download.json';
-CONSTANTS.HIVE.GET_LOG          = '/hive/query/getLog.json';
-CONSTANTS.HIVE.GET_LOG_ASYNC    = '/hive/query/getLogAsync.json';
-CONSTANTS.HIVE.GET_PAGE         = '/hive/query/getPage.json';
-
+CONSTANTS.HIVE.HISTORY                      = '/hive/query/history.json';
+CONSTANTS.HIVE.EXECUTE                      = '/hive/query/execute.json';
+CONSTANTS.HIVE.CANCEL                       = '/hive/query/cancel.json';
+CONSTANTS.HIVE.RESULTS                      = '/hive/query/results.json';
+CONSTANTS.HIVE.EXPLAIN                      = '/hive/query/explain.json';
+CONSTANTS.HIVE.LIST                         = '/hive/query/list.json';
+CONSTANTS.HIVE.SAVE                         = '/hive/query/save.json';
+CONSTANTS.HIVE.DELETE                       = '/hive/query/delete.json';
+CONSTANTS.HIVE.DB                           = '/hive/query/databases.json';
+CONSTANTS.HIVE.CHECK_SIZE                   = '/hive/query/size.json';
+CONSTANTS.HIVE.DOWNLOAD                     = '/hive/query/download.json';
+CONSTANTS.HIVE.GET_LOG                      = '/hive/query/getLog.json';
+CONSTANTS.HIVE.GET_LOG_ASYNC                = '/hive/query/getLogAsync.json';
+CONSTANTS.HIVE.GET_PAGE                     = '/hive/query/getPage.json';
 
 ///////////////////////////////////////
 // Hive > Browser
@@ -370,16 +400,18 @@ CONSTANTS.HIVE.METASTORE.CREATE_TABLE             = '/hive/metastore/createTable
 CONSTANTS.HIVE.METASTORE.DROP_TABLE               = '/hive/metastore/dropTable.json';
 CONSTANTS.HIVE.METASTORE.TABLE_INFO               = '/hive/metastore/tableInfo.json';
 CONSTANTS.HIVE.METASTORE.ALTER_TABLE              = '/hive/metastore/alterTable.json';
+CONSTANTS.HIVE.METASTORE.GET_TABLE_SCRIPT         = '/hive/metastore/tableScript';
+CONSTANTS.HIVE.METASTORE.GET_DATABASE_SCRIPT      = '/hive/metastore/databaseScript';
 
 ///////////////////////////////////////
 // File System > AUDIT
 ///////////////////////////////////////
 
-CONSTANTS.FS.AUDIT.LIST                 = '/fs/audit/list.json';
-CONSTANTS.FS.AUDIT.TOP10                = '/fs/audit/top10.json';
-CONSTANTS.FS.AUDIT.STATUS               = '/fs/audit/nowStatus.json';
-CONSTANTS.FS.AUDIT.TREND                = '/fs/audit/trend.json';
-CONSTANTS.FS.AUDIT.INSERT               = '/fs/audit/insert.json';
+CONSTANTS.FS.AUDIT.LIST                     = '/fs/audit/list.json';
+CONSTANTS.FS.AUDIT.TOP10                    = '/fs/audit/top10.json';
+CONSTANTS.FS.AUDIT.STATUS                   = '/fs/audit/nowStatus.json';
+CONSTANTS.FS.AUDIT.TREND                    = '/fs/audit/trend.json';
+CONSTANTS.FS.AUDIT.INSERT                   = '/fs/audit/insert.json';
 
 ///////////////////////////////////////
 // File System > HDFS
@@ -405,52 +437,53 @@ CONSTANTS.FS.HDFS_GET_DEFAULT_FILE_CONTENTS     = '/fs/hdfs/initViewFileContents
 CONSTANTS.FS.HDFS_GET_FILE_CONTENTS             = '/fs/hdfs/viewFileContents.json';
 CONSTANTS.FS.HDFS_GET_MERGE_FILE                = '/fs/hdfs/mergeFiles';
 CONSTANTS.FS.HDFS_SET_PERMISSION                = '/fs/hdfs/setPermission';
+CONSTANTS.FS.HDFS_COPY_TO_LOCAL                 = '/fs/hdfs/copyToLocal';
 
 ///////////////////////////////////////
 // Workflow Management > Dashboard
 ///////////////////////////////////////
 
-CONSTANTS.DASHBOARD.GET_YARN_ID             = '/dashboard/yarnId.json';
-CONSTANTS.DASHBOARD.GET_MR_ID               = '/dashboard/mrId.json';
-CONSTANTS.DASHBOARD.GET_ACTION_HISTORY      = '/dashboard/actions.json';
-CONSTANTS.DASHBOARD.GET_WORKFLOW_HISTORY    = '/dashboard/workflows.json';
-CONSTANTS.DASHBOARD.GET_WORKFLOW_XML        = '/dashboard/xml.json';
-CONSTANTS.DASHBOARD.GET_LOG                 = '/dashboard/log.json';
-CONSTANTS.DASHBOARD.GET_LOGS                = '/dashboard/logs.json';
-CONSTANTS.DASHBOARD.GET_SCRIPT              = '/dashboard/script.json';
-CONSTANTS.DASHBOARD.GET_WORKFLOW            = '/dashboard/workflow.json';
-CONSTANTS.DASHBOARD.KILL                    = '/dashboard/kill.json';
-CONSTANTS.DASHBOARD.JOBS                    = '/dashboard/allJobs.json';
-CONSTANTS.DASHBOARD.HADOOP_JOB_CONF         = '/dashboard/jobConf.json';
-CONSTANTS.DASHBOARD.HADOOP_JOB_COUNTERS     = '/dashboard/jobCounters.json';
-CONSTANTS.DASHBOARD.HADOOP_MR_SUMMARY       = '/dashboard/mapreduceSummary.json';
-CONSTANTS.DASHBOARD.HADOOP_JOB              = '/dashboard/job.json';
-CONSTANTS.DASHBOARD.HADOOP_PROGRESS_MAP     = '/dashboard/map.json';
-CONSTANTS.DASHBOARD.HADOOP_PROGRESS_REDUCE  = '/dashboard/reduce.json';
-CONSTANTS.DASHBOARD.HADOOP_JOB_TRACKER      = '/dashboard/jobTracker.json';
-CONSTANTS.DASHBOARD.HADOOP_HDFS             = '/dashboard/hdfs.json';
-CONSTANTS.DASHBOARD.HADOOP_CLUSTER_SUMMARY  = '/dashboard/clusterSummary.json';
-CONSTANTS.DASHBOARD.HADOOP_TASK_TRACKERS    = '/dashboard/taskTrackers.json';
-CONSTANTS.DASHBOARD.JOB_CONF_DOWNLOAD_FILE  = '/dashboard/download.json';
-CONSTANTS.DASHBOARD.GET_FLAMINGO_JOB        = '/dashboard/flamingoJob.json';
-CONSTANTS.DASHBOARD.JT_TASK_TRACKERS        = '/dashboard/jt/taskTrackers.json';
-CONSTANTS.DASHBOARD.JT_TASK_TRACKER_DETAIL  = '/dashboard/jt/taskTrackerDetail.json';
-CONSTANTS.DASHBOARD.DATANODES               = '/dashboard/datanodes.json';
-CONSTANTS.DASHBOARD.JT_FAILED_TASKS         = '/dashboard/jt/failedTasks.json';
-CONSTANTS.DASHBOARD.TASK.GET                = "/dashboard/task/get.json";
-CONSTANTS.DASHBOARD.TASK.LIST               = "/dashboard/task/list.json";
-CONSTANTS.DASHBOARD.TASK.LOG                = "/dashboard/task/log.json";
-CONSTANTS.DASHBOARD.WORKFLOW_SUMMARY        = "/dashboard/timeseries.json";
+CONSTANTS.DASHBOARD.GET_YARN_ID                 = '/dashboard/yarnId.json';
+CONSTANTS.DASHBOARD.GET_MR_ID                   = '/dashboard/mrId.json';
+CONSTANTS.DASHBOARD.GET_ACTION_HISTORY          = '/dashboard/actions.json';
+CONSTANTS.DASHBOARD.GET_WORKFLOW_HISTORY        = '/dashboard/workflows.json';
+CONSTANTS.DASHBOARD.GET_WORKFLOW_XML            = '/dashboard/xml.json';
+CONSTANTS.DASHBOARD.GET_LOG                     = '/dashboard/log.json';
+CONSTANTS.DASHBOARD.GET_LOGS                    = '/dashboard/logs.json';
+CONSTANTS.DASHBOARD.GET_SCRIPT                  = '/dashboard/script.json';
+CONSTANTS.DASHBOARD.GET_WORKFLOW                = '/dashboard/workflow.json';
+CONSTANTS.DASHBOARD.KILL                        = '/dashboard/kill.json';
+CONSTANTS.DASHBOARD.JOBS                        = '/dashboard/allJobs.json';
+CONSTANTS.DASHBOARD.HADOOP_JOB_CONF             = '/dashboard/jobConf.json';
+CONSTANTS.DASHBOARD.HADOOP_JOB_COUNTERS         = '/dashboard/jobCounters.json';
+CONSTANTS.DASHBOARD.HADOOP_MR_SUMMARY           = '/dashboard/mapreduceSummary.json';
+CONSTANTS.DASHBOARD.HADOOP_JOB                  = '/dashboard/job.json';
+CONSTANTS.DASHBOARD.HADOOP_PROGRESS_MAP         = '/dashboard/map.json';
+CONSTANTS.DASHBOARD.HADOOP_PROGRESS_REDUCE      = '/dashboard/reduce.json';
+CONSTANTS.DASHBOARD.HADOOP_JOB_TRACKER          = '/dashboard/jobTracker.json';
+CONSTANTS.DASHBOARD.HADOOP_HDFS                 = '/dashboard/hdfs.json';
+CONSTANTS.DASHBOARD.HADOOP_CLUSTER_SUMMARY      = '/dashboard/clusterSummary.json';
+CONSTANTS.DASHBOARD.HADOOP_TASK_TRACKERS        = '/dashboard/taskTrackers.json';
+CONSTANTS.DASHBOARD.JOB_CONF_DOWNLOAD_FILE      = '/dashboard/download.json';
+CONSTANTS.DASHBOARD.GET_FLAMINGO_JOB            = '/dashboard/flamingoJob.json';
+CONSTANTS.DASHBOARD.JT_TASK_TRACKERS            = '/dashboard/jt/taskTrackers.json';
+CONSTANTS.DASHBOARD.JT_TASK_TRACKER_DETAIL      = '/dashboard/jt/taskTrackerDetail.json';
+CONSTANTS.DASHBOARD.DATANODES                   = '/dashboard/datanodes.json';
+CONSTANTS.DASHBOARD.JT_FAILED_TASKS             = '/dashboard/jt/failedTasks.json';
+CONSTANTS.DASHBOARD.TASK.GET                    = "/dashboard/task/get.json";
+CONSTANTS.DASHBOARD.TASK.LIST                   = "/dashboard/task/list.json";
+CONSTANTS.DASHBOARD.TASK.LOG                    = "/dashboard/task/log.json";
+CONSTANTS.DASHBOARD.WORKFLOW_SUMMARY            = "/dashboard/timeseries.json";
 
 ///////////////////////////////////////
 // Workflow Management > Designer
 ///////////////////////////////////////
 
-CONSTANTS.REST_RENAME_TREE            = '/rest/tree/rename.do.json';
-CONSTANTS.REST_GET_WORKFLOW           = '/rest/job/workflow.do.json';
-CONSTANTS.REST_MOVE_TREE              = '/rest/designer/move.do.json';
-CONSTANTS.REST_HDFS_GET_FILE          = '/rest/hdfs/file.do.json';
-CONSTANTS.REST_HDFS_FS_STATUS         = '/rest/hadoop/fileSystemStatus.do.json';
+CONSTANTS.REST_RENAME_TREE                  = '/rest/tree/rename.do.json';
+CONSTANTS.REST_GET_WORKFLOW                 = '/rest/job/workflow.do.json';
+CONSTANTS.REST_MOVE_TREE                    = '/rest/designer/move.do.json';
+CONSTANTS.REST_HDFS_GET_FILE                = '/rest/hdfs/file.do.json';
+CONSTANTS.REST_HDFS_FS_STATUS               = '/rest/hadoop/fileSystemStatus.do.json';
 
 ///////////////////////////////////////
 // Hadoop 2.x Monitoring
@@ -530,22 +563,97 @@ CONSTANTS.HAWQ.AUTH.DROP_ROLE                  = '/hawq/auth/dropRole';
 CONSTANTS.HAWQ.AUTH.SESSIONS                   = '/hawq/auth/sessions';
 CONSTANTS.HAWQ.AUTH.LOCK_TABLES                = '/hawq/auth/lockTables';
 
-
 ///////////////////////////////////////
 // Visual
 ///////////////////////////////////////
 
-CONSTANTS.VISUAL.RELOAD_DATA              = '/visual/reloadData.json';
-CONSTANTS.VISUAL.LOAD_HDFS                = '/visual/loadHdfs.json';
-CONSTANTS.VISUAL.LOCAL_UPLOAD             = '/visual/upload.json';
-CONSTANTS.VISUAL.LIST_VARIABLES_HDFS      = '/visual/listVariablesHdfs.json';
-CONSTANTS.VISUAL.LIST_VARIABLES_LOCAL     = '/visual/listVariablesLocal.json';
-CONSTANTS.VISUAL.CREATE_PNG               = '/visual/createPng.json';
+CONSTANTS.VISUAL.RELOAD_DATA                = '/visual/reloadData.json';
+CONSTANTS.VISUAL.LOAD_HDFS                  = '/visual/loadHdfs.json';
+CONSTANTS.VISUAL.LOCAL_UPLOAD               = '/visual/upload.json';
+CONSTANTS.VISUAL.LIST_VARIABLES_HDFS        = '/visual/listVariablesHdfs.json';
+CONSTANTS.VISUAL.LIST_VARIABLES_LOCAL       = '/visual/listVariablesLocal.json';
+CONSTANTS.VISUAL.CREATE_PNG                 = '/visual/createPng.json';
 
 ///////////////////////////////////////
 // Preferences
 ///////////////////////////////////////
 
-CONSTANTS.PREFERENCES.CHANGE_PASSWORD   = '/auth/password.json';
+CONSTANTS.PREFERENCES.CHANGE_PASSWORD       = '/auth/password.json';
 
+///////////////////////////////////////
+// Apache Tajo
+///////////////////////////////////////
 
+CONSTANTS.TAJO.GET_DATABASES                = '/tajo/databases.json';
+CONSTANTS.TAJO.GET_TABLES                   = '/tajo/tables.json';
+CONSTANTS.TAJO.GET_COLUMNS                  = '/tajo/columns.json';
+CONSTANTS.TAJO.GET_PARTITIONS               = '/tajo/partitions.json';
+CONSTANTS.TAJO.CREATE_DATABASE              = '/tajo/createDB.json';
+CONSTANTS.TAJO.DROP_DATABASE                = '/tajo/dropDB.json';
+CONSTANTS.TAJO.CREATE_TABLE                 = '/tajo/createTable.json';
+CONSTANTS.TAJO.DROP_TABLE                   = '/tajo/dropTable.json';
+CONSTANTS.TAJO.TABLE_INFO                   = '/tajo/tableInfo.json';
+CONSTANTS.TAJO.ALTER_TABLE                  = '/tajo/alterTable.json';
+CONSTANTS.TAJO.EXECUTE                      = '/tajo/execute.json';
+CONSTANTS.TAJO.RESULTS                      = '/tajo/results.json';
+CONSTANTS.TAJO.CANCEL                       = '/tajo/cancel.json';
+CONSTANTS.TAJO.RESULTS                      = '/tajo/results.json';
+
+///////////////////////////////////////
+// Archive
+///////////////////////////////////////
+
+// Yarn Application
+CONSTANTS.ARCHIVE.YARN.GET_SUMMARY                  = '/archive/yarn/summary';
+CONSTANTS.ARCHIVE.YARN.GET_ALL_APPLICATION          = '/archive/yarn/allApplications';
+CONSTANTS.ARCHIVE.YARN.GET_APP_REPORT               = '/archive/yarn/appReport';
+
+// MapReduce
+CONSTANTS.ARCHIVE.MAPREDUCE.GET_SUMMARY                 = '/archive/mapreduce/summary';
+CONSTANTS.ARCHIVE.MAPREDUCE.GET_ALL_MR_JOBS             = '/archive/mapreduce/allMapReduceJobs';
+CONSTANTS.ARCHIVE.MAPREDUCE.GET_MR_JOB_REPORT           = '/archive/mapreduce/mapReduceJobReport';
+CONSTANTS.ARCHIVE.MAPREDUCE.GET_MR_JOB_COUNTERS         = '/archive/mapreduce/mapReduceJobCounters';
+CONSTANTS.ARCHIVE.MAPREDUCE.GET_MR_JOB_CONFIGURATION    = '/archive/mapreduce/mapReduceJobConfiguration';
+CONSTANTS.ARCHIVE.MAPREDUCE.GET_MR_JOB_TASK             = '/archive/mapreduce/mapReduceJobTask';
+
+///////////////////////////////////////
+// Spark
+///////////////////////////////////////
+
+CONSTANTS.SPARK.MONITORING.GET_JOB_CHART               = '/spark/monitoring/getJobChart';
+CONSTANTS.SPARK.MONITORING.GET_APPLICATIONS            = '/spark/monitoring/getApplications';
+CONSTANTS.SPARK.MONITORING.GET_JOBS                    = '/spark/monitoring/getJobs';
+CONSTANTS.SPARK.MONITORING.GET_STAGES                  = '/spark/monitoring/getStages';
+CONSTANTS.SPARK.MONITORING.GET_ENVIRONMENT             = '/spark/monitoring/getEnvironment';
+CONSTANTS.SPARK.MONITORING.GET_EXECUTORS               = '/spark/monitoring/getExecutors';
+CONSTANTS.SPARK.MONITORING.GET_STORAGE                 = '/spark/monitoring/getStorage';
+CONSTANTS.SPARK.MONITORING.GET_JOBS_TIMELINE           = '/spark/monitoring/getJobsTimeline';
+CONSTANTS.SPARK.MONITORING.GET_STAGES_TIMELINE         = '/spark/monitoring/getStagesTimeline';
+CONSTANTS.SPARK.MONITORING.GET_STAGE_DEATIL_CHART      = '/spark/monitoring/getStageDetailChart';
+CONSTANTS.SPARK.MONITORING.GET_JOBS_TIMELINE           = '/spark/monitoring/getJobsTimeline';
+CONSTANTS.SPARK.MONITORING.GET_TASK_TIMELINE           = '/spark/monitoring/getTaskTimeline';
+
+///////////////////////////////////////
+// Real-Time
+///////////////////////////////////////
+
+// Spark Streaming
+
+//CONSTANTS.REALTIME.SPARK.STREAMING.GET_IOT_SERVICES                     = '/resources/data/ioTServiceTree.json';
+//CONSTANTS.REALTIME.SPARK.STREAMING.GET_IOT_SERVICE_COLUMNS              = '/resources/data/ioTServiceColumns.json';
+
+CONSTANTS.REALTIME.SPARK.STREAMING.GET_IOT_SERVICES                     = '/realtime/spark/streaming/ioTServices';
+CONSTANTS.REALTIME.SPARK.STREAMING.GET_IOT_SERVICE_COLUMNS              = '/realtime/spark/streaming/ioTServiceColumns';
+CONSTANTS.REALTIME.SPARK.STREAMING.GET_SPARK_STREAMING_APPS             = '/realtime/spark/streaming/sparkStreamingApps';
+CONSTANTS.REALTIME.SPARK.STREAMING.CREATE_SPARK_STREAMING_APP           = '/realtime/spark/streaming/createSparkStreamingApp';
+CONSTANTS.REALTIME.SPARK.STREAMING.START_SPARK_STREAMING_APP            = '/realtime/spark/streaming/startSparkStreamingApp';
+CONSTANTS.REALTIME.SPARK.STREAMING.STOP_SPARK_STREAMING_APP             = '/realtime/spark/streaming/stopSparkStreamingApp';
+CONSTANTS.REALTIME.SPARK.STREAMING.KILL_SPARK_STREAMING_APP             = '/realtime/spark/streaming/killSparkStreamingApp';
+CONSTANTS.REALTIME.SPARK.STREAMING.GET_SPARK_STREAMING_APP_SUMMARY      = '/realtime/spark/streaming/getSparkStreamingAppSummary';
+
+///////////////////////////////////////
+// Apache UIMA
+///////////////////////////////////////
+
+CONSTANTS.UIMA.GET_UIMA_LOGS                    = '/uima/logs';
+CONSTANTS.UIMA.GET_UIMA_SUMMARY                 = '/uima/summary';

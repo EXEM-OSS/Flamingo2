@@ -23,6 +23,7 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.JvmHeapUsage', {
     items: [
         {
             xtype: 'polar',
+            itemId: 'jvmHeapUsageChart',
             height: 300,
             listeners: {
                 afterrender: 'onStoreAfterrender'
@@ -63,6 +64,13 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.JvmHeapUsage', {
                     }
                 }
             ]
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onRMJVMHeapUsageRefreshClick'
         }
     ]
 });

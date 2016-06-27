@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.archive.mapreduce.ArchiveMapReduceRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <resultMap id="mapReduceHistoryMap" type="org.opencloudengine.flamingo2.model.rest.MapReduceHistory">
+        <result property="id"                       column="ID"                     jdbcType="BIGINT"/>
+        <result property="system"                   column="SYSTEM"                 jdbcType="VARCHAR"/>
+        <result property="jobId"                    column="JOB_ID"                 jdbcType="VARCHAR"/>
+        <result property="name"                     column="NAME"                   jdbcType="LONGVARCHAR"/>
+        <result property="queue"                    column="QUEUE"                  jdbcType="VARCHAR"/>
+        <result property="user"                     column="USER"                   jdbcType="VARCHAR"/>
+        <result property="state"                    column="STATE"                  jdbcType="VARCHAR"/>
+        <result property="username"                 column="USERNAME"               jdbcType="VARCHAR"/>
+        <result property="type"                     column="TYPE"                   jdbcType="VARCHAR"/>
+        <result property="mapsTotal"                column="MAPS_TOTAL"             jdbcType="BIGINT"/>
+        <result property="mapsCompleted"            column="MAPS_COMPLETED"         jdbcType="BIGINT"/>
+        <result property="reducesTotal"             column="REDUCES_TOTAL"          jdbcType="BIGINT"/>
+        <result property="reducesCompleted"         column="REDUCES_COMPLETED"      jdbcType="BIGINT"/>
+        <result property="failedMapAttempts"        column="FAILED_MAP_ATTEMPTS"    jdbcType="BIGINT"/>
+        <result property="killedMapAttempts"        column="KILLED_MAP_ATTEMPTS"    jdbcType="BIGINT"/>
+        <result property="failedReduceAttempts"     column="FAILED_REDUCE_ATTEMPTS" jdbcType="BIGINT"/>
+        <result property="killedReduceAttempts"     column="KILLED_REDUCE_ATTEMPTS" jdbcType="BIGINT"/>
+        <result property="avgMapTime"               column="AVG_MAP_TIME"           jdbcType="BIGINT"/>
+        <result property="avgShuffleTime"           column="AVG_SHUFFLE_TIME"       jdbcType="BIGINT"/>
+        <result property="avgMergeTime"             column="AVG_MERGE_TIME"         jdbcType="BIGINT"/>
+        <result property="avgReduceTime"            column="AVG_REDUCE_TIME"        jdbcType="BIGINT"/>
+        <result property="submitTime"               column="SUBMIT_TIME"            jdbcType="TIMESTAMP"/>
+        <result property="startTime"                column="START_TIME"             jdbcType="TIMESTAMP"/>
+        <result property="finishTime"               column="FINISH_TIME"            jdbcType="TIMESTAMP"/>
+        <result property="counters"                 column="COUNTERS"               jdbcType="LONGVARCHAR"/>
+        <result property="configuration"            column="CONFIGURATION"          jdbcType="LONGVARCHAR"/>
+        <result property="tasks"                    column="TASKS"                  jdbcType="LONGVARCHAR"/>
+        <result property="registeredDate"           column="REGISTERED_DATE"        jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="selectMapReduceJobSummary" parameterType="map" resultType="map">
+        SELECT
+        (@row:=@row+1) AS num,
+        COUNT(*) AS sum,
+        DATE_FORMAT(MAX(START_TIME), '%Y-%m-%d %H') AS time,
+        START_TIME
+        FROM FL_CL_MR_DUMP, (SELECT @row := 0) r
+        WHERE SYSTEM = #{clusterName}
+        <if test="userLevel != 1">
+            AND USER = #{username}
+        </if>
+        <if test="filter != null and filter != '' and filter != 'ALL'">
+            AND STATE = #{filter}
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND DATE(START_TIME) BETWEEN #{startDate} AND #{endDate}
+        </if>
+        GROUP BY DATE_FORMAT(START_TIME, '%Y-%m-%d %H')
+        ORDER BY START_TIME ASC
+    </select>
+
+    <select id="selectAllMapReduceJobs" parameterType="map" resultMap="mapReduceHistoryMap">
+        SELECT *
+        FROM FL_CL_MR_DUMP, (SELECT @row := 0) r
+        WHERE SYSTEM = #{clusterName}
+        <if test="userLevel != 1">
+            AND USER = #{username}
+        </if>
+        <if test="filter != null and filter != '' and filter != 'ALL'">
+            AND STATE = #{filter}
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND DATE(START_TIME) BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="mrJobName != null and mrJobName != ''">
+            AND APPLICATION_TYPE LIKE '%${mrJobName}%' OR NAME LIKE '%${mrJobName}%'
+        </if>
+        ORDER BY START_TIME DESC
+        LIMIT #{startRow}, #{limit}
+    </select>
+
+    <select id="selectTotalCountByUserLevel" parameterType="map" resultType="Integer">
+        SELECT COUNT(*)
+        FROM FL_CL_MR_DUMP
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="userLevel != 1">
+                AND USER = #{username}
+            </if>
+            <if test="filter != null and filter != '' and filter != 'ALL'">
+                AND STATE = #{filter}
+            </if>
+            <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                AND DATE(START_TIME) BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test="mrJobName != null and mrJobName != ''">
+                AND APPLICATION_TYPE LIKE '%${mrJobName}%' OR NAME LIKE '%${mrJobName}%'
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectMapReduceJobReport" parameterType="map" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT *
+        FROM FL_CL_MR_DUMP
+        WHERE JOB_ID = #{jobId}
+    </select>
+
+    <select id="selectMapReduceJobCounters" parameterType="map" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT COUNTERS
+        FROM FL_CL_MR_DUMP
+        WHERE JOB_ID = #{jobId}
+    </select>
+
+    <select id="selectMapReduceJobConfiguration" parameterType="map" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT CONFIGURATION
+        FROM FL_CL_MR_DUMP
+        WHERE JOB_ID = #{jobId}
+    </select>
+
+    <select id="selectMapReduceJobTask" parameterType="map" resultType="org.apache.commons.collections.map.CaseInsensitiveMap">
+        SELECT TASKS
+        FROM FL_CL_MR_DUMP
+        WHERE JOB_ID = #{jobId}
+    </select>
+
+</mapper>

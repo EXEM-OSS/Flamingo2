@@ -48,17 +48,15 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationController',
      * Workflow Information Window에서 Action 탭의 Workflow Grid 목록을 가져온다.
      */
     onActionGridAfterRender: function () {
-        var actionListGrid = query('actionDetailForm #actionListGrid');
-        var identifier = query('jobDetailForm #identifier');
+        var workflowHistoryTreePanel = query('workflowHistory');
+        var identifier = workflowHistoryTreePanel.getSelectionModel().getSelection()[0].get('identifier');
 
-        setTimeout(function () {
-            actionListGrid.getStore().load({
-                params: {
-                    clusterName: ENGINE.id,
-                    identifier: identifier.getValue()
-                }
-            });
-        }, 10);
+        this.getViewModel().getStore('actionInformationStore').load({
+            params: {
+                clusterName: ENGINE.id,
+                identifier: identifier
+            }
+        });
     },
 
     /**
@@ -66,16 +64,13 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationController',
      */
     onActionGridRefreshButton: function () {
         var identifier = query('jobDetailForm #identifier');
-        var actionListGrid = query('actionDetailForm #actionListGrid');
 
-        setTimeout(function () {
-            actionListGrid.getStore().load({
-                params: {
-                    clusterName: ENGINE.id,
-                    identifier: identifier.getValue()
-                }
-            })
-        }, 10);
+        this.getViewModel().getStore('actionInformationStore').load({
+            params: {
+                clusterName: ENGINE.id,
+                identifier: identifier.getValue()
+            }
+        });
     },
 
     /**
@@ -97,8 +92,6 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationController',
         var startDate = selectedRecord[0].data.startDate;
         var endDate = selectedRecord[0].data.endDate;
         var duration = selectedRecord[0].data.duration;
-        var identifier = selectedRecord[0].data.identifier;
-        var taskId = selectedRecord[0].data.taskId;
 
         if (startDate > 0)
             selectedRecord[0].data.startDate = App.Util.Date.format(new Date(startDate), 'yyyy-MM-dd HH:mm:ss');
@@ -220,8 +213,6 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationController',
                 error(message.msg('workflow.msg_get_action_list'), message.msg('workflow.msg_get_action_list_fail'));
             }
         );
-
-        // FIXME me.onLogTabSelection(selectedItem);
     },
 
     /**
@@ -247,6 +238,7 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationController',
                     params: {
                         clusterName: ENGINE.id,
                         identifier: identifier,
+                        taskId: taskId,
                         type: 'task'
                     }
                 });
@@ -255,6 +247,7 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationController',
                     params: {
                         clusterName: ENGINE.id,
                         identifier: identifier,
+                        taskId: taskId,
                         type: 'task'
                     }
                 });
@@ -306,60 +299,6 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationController',
                 );
             }
         }
-    },
-
-    /**
-     * Workflow Information Window에서 Action 탭의 실행 로그 필드 정보를 갱신한다.
-     */
-    onActionLogRefresh: function () {
-        var me = this;
-        var refs = me.getReferences();
-        var actionListGrid = query('actionDetailForm #actionListGrid');
-        var selectedItem = actionListGrid.getSelectionModel().getLastSelected();
-
-        if (!selectedItem) {
-            error(message.msg('workflow.msg_get_action_detail'), message.msg('workflow.msg_refresh_action_detail'));
-            return false;
-        }
-
-        var url = CONSTANTS.DASHBOARD.GET_LOGS;
-        var params = {
-            clusterName: ENGINE.id,
-            identifier: selectedItem.get('identifier'),
-            taskId: selectedItem.get('taskId')
-        };
-
-        invokeGet(url, params,
-            function (response) {
-                var res = Ext.decode(response.responseText);
-
-                if (res.success) {
-                    refs.log.setValue(res.map.log);
-                } else if (res.error.cause) {
-                    refs.log.setValue(res.error.cause);
-                } else {
-                    refs.log.setValue(message.msg('dashboard.wdetail.log.none'));
-                }
-            },
-            function () {
-                refs.log.setValue(message.msg('dashboard.wdetail.log.none'));
-            }
-        );
-    },
-
-    /**
-     * Sub Workflow Grid 목록이 없는 Action Tab에서 로그 정보를 갱신한다.
-     */
-    onSubActionLogRefresh: function () {
-        var workflowHistoryTreePanel = query('workflowHistory');
-        var selectedItem = workflowHistoryTreePanel.getSelectionModel().getLastSelected();
-    },
-
-    /**
-     * 워크플로우 실행 이력 그리드의 아이템을 더블클릭시 CodeMirror Editor를 Resizing 처리 이벤트 핸들러.
-     */
-    onCodemirrorResize: function (editor, width, height) {
-        editor.getEl().query('.CodeMirror')[0].CodeMirror.setSize('100%', height);
     },
 
     /**
@@ -448,26 +387,6 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationController',
         }
     },
 
-    /**
-     * 워크플로우 실행 이력 창의 그리드 정보를 갱신한다.
-     * @param identifier
-     */
-    updatetasks: function (identifier) {
-        var me = this;
-        var workflowGrid = query('workflowMonitoring #workflowGrid');
-
-        me.destroyProgresses();
-
-        setTimeout(function () {
-            workflowGrid.getStore().load({
-                params: {
-                    clusterName: ENGINE.id,
-                    identifier: identifier
-                }
-            }, 10);
-        })
-    },
-
     destroyProgresses: function () {
         var progreses = Ext.ComponentQuery.query('progressbar[name=taskProgress]');
         Ext.each(progreses, function (progrese) {
@@ -481,30 +400,5 @@ Ext.define('Flamingo2.view.dashboard.information.WorkflowInformationController',
      */
     onCloseWorkflowInformationWindow: function () {
         this.getView().close();
-    },
-
-    /**
-     * 워크플로우 실행 이력 그리드의 목록을 가져오는 핸들러. (onJobDetailAfterRender 로 동작하던 코드)
-     */
-    onJobDetail: function () {
-        var last = Ext.ComponentQuery.query('jobDetail')[0].job;
-        var jobInfo = Ext.ComponentQuery.query('jobDetail #jobDetailForm')[0];
-
-        var jobDetailModel = {};
-        jobDetailModel.jobId = last.get('jobStringId');
-        jobDetailModel.workflowId = last.get('workflowId');
-        jobDetailModel.workflowName = last.get('workflowName');
-        jobDetailModel.status = last.get('status');
-        jobDetailModel.username = last.get('username');
-        jobDetailModel.startDate = App.Util.Date.format(new Date(last.get('startDate')), 'yyyy-MM-dd HH:mm:ss');
-        jobDetailModel.endDate = App.Util.Date.format(new Date(last.get('endDate')), 'yyyy-MM-dd HH:mm:ss');
-        jobDetailModel.elapsed = App.Util.Date.toHumanReadableTime(Math.floor(last.get('elapsed') / 1000));
-        jobDetailModel.currentStep = last.get('currentStep');
-        jobDetailModel.totalStep = last.get('totalStep');
-
-        jobInfo.getForm().setValues(jobDetailModel);
-
-        query('jobDetail #workflowXml').setValue(last.get('workflowXml'));
-        query('jobDetail #exception').setValue(last.get('exception'));
     }
 });

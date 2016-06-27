@@ -19,6 +19,7 @@ package org.opencloudengine.flamingo2.web.system;
 import io.cloudine.flamingo2.license.LicenseUtil;
 import org.apache.commons.io.IOUtils;
 import org.opencloudengine.flamingo2.core.exception.ServiceException;
+import org.opencloudengine.flamingo2.web.configuration.ConfigurationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -39,8 +40,7 @@ public class LicenseServiceImpl implements LicenseService, InitializingBean {
      */
     private Logger logger = LoggerFactory.getLogger(LicenseServiceImpl.class);
 
-    @Value("#{config['license.file.path']}")
-    String licenseFilePath;
+    String licenseFilePath = ConfigurationHelper.getHelper().get("license.file.path");
 
     @Value("#{config['license.filename']}")
     String licenseFilename;
@@ -64,6 +64,18 @@ public class LicenseServiceImpl implements LicenseService, InitializingBean {
             throw new ServiceException("The license file can not be created.", e);
         } finally {
             IOUtils.closeQuietly(fos);
+        }
+    }
+
+    @Override
+    public String getTrial() {
+        try {
+            LicenseUtil licenseUtil = new LicenseUtil(licenseFilePath);
+            String trial = licenseUtil.createTrial();
+            return trial;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new ServiceException(ex);
         }
     }
 

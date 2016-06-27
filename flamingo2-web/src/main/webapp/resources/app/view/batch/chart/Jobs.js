@@ -124,5 +124,12 @@ Ext.define('Flamingo2.view.batch.chart.Jobs', {
                 }
             }
         }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onRunningBatchJobsRefreshClick'
+        }
     ]
 });

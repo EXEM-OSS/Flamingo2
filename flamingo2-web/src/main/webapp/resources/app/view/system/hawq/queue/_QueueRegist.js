@@ -17,7 +17,7 @@
 /**
  * System > HAWQ > Resource Queue > List grid > tbar add button click
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  * @see Flamingo2.view.system.hawq.queue._QueueRegistController
  * @see Flamingo2.view.system.hawq.HawqAuthModel

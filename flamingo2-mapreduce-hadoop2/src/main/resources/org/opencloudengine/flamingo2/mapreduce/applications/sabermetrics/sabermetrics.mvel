@@ -1,0 +1,285 @@
+import org.opencloudengine.flamingo2.mapreduce.applications.sabermetrics.*;
+
+/**
+ * Glossary: http://mlb.mlb.com/mlb/official_info/baseball_basics/abbreviations.jsp
+ */
+
+/**
+ * Total Bases
+ */
+def TB (batting) {
+    return (batting._1B + 2 * batting._2B + 3 * batting._3B + 4 * batting.HR);
+}
+
+/**
+ * Slugging Percentage (장타율)
+ *
+ * See : https://en.wikipedia.org/wiki/Slugging_percentage
+ *
+ * AB : The number of at-bats for a given player
+ */
+def SLG (batting) {
+    return TB(batting) / batting.AB;
+}
+
+/**
+ * On-base Percentage (출루율)
+ *
+ * See : https://en.wikipedia.org/wiki/On-base_percentage
+ *
+ * H = Hits
+ * BB = Bases on Balls (Walks)
+ * HBP = Hit By Pitch
+ * AB = At bats
+ * SF = Sacrifice Flies
+ *
+ */
+def OBP (batting) {
+    return ((batting.H + batting.BB + batting.HBP)/(batting.AB + batting.BB + batting.SF + batting.HBP));
+}
+
+/**
+ * Gross Production Average
+ * 출루율에 1.8의 가중치를 부여
+ * OPS보다 실제 득점과의 상관관계가 더 높으면서도 여전히 계산하기가 쉽다는 장점
+ */
+def GPA (batting) {
+    return (SLG(batting) + 1.8 * OBP(batting)) / 4;
+}
+
+/**
+ * On-base plus Slugging
+ * 타자의 출루 능력과 장타력을 골고루 평가할 수 있는 계산식
+ *
+ * See : https://en.wikipedia.org/wiki/On-base_plus_slugging
+ *
+ * H = Hits
+ * BB = Bases on Balls (Walks)
+ * HBP = Hit By Pitch
+ * AB = At bats
+ * SF = Sacrifice Flies
+ * TB = Total bases
+ *
+ */
+def OPS (batting) {
+    return SLG(batting) + OBP(batting);
+}
+
+/**
+ * Adjusted OPS (조정 OPS)
+ * 구장 효과(Park Factor)를 반영할 뿐 아니라, 100을 평균으로 하여 스케일도 조정되기 때문에, 특정 시즌에 특정 타자가 리그 평균에 비해 얼마나 좋은 활약을 펼쳤는지 알 수 있는 계산식
+ */
+def OPSPlus (batting) {
+    return 100 * ((OBP(batting)/lgOBP + SLG(batting)/lgSLG) - 1);
+}
+
+/**
+ * Isolated Power
+ *
+ * See : https://www.baseballprospectus.com/glossary/index.php?search=ISO
+ *
+ * SLG = Slugging Percentage
+ * AVG = Batting Average
+ *
+ */
+def ISO (batting) {
+    return (batting._2B + batting._3B * 2 + batting.HR * 3) / batting.AB;
+}
+
+/**
+ * Equivalent Average
+ *
+ * See : https://en.wikipedia.org/wiki/Equivalent_average
+ *
+ * H = Hit
+ * TB = Total Bases
+ * BB = Bases on Balls (Walks)
+ * HBP = Hit by pitch
+ * SB = Stolen base
+ * SH = Sacrifice hit (typically, sacrifice bunt)
+ * SF = Sacrifice fly
+ * AB = At bat
+ * CS = Caught stealing
+ *
+ */
+def EQA (batting) {
+    return (batting.H + TB(batting) + 1.5 * (batting.BB + batting.HBP) + batting.SB + batting.SH + batting.SF)/(batting.AB + batting.BB + batting.HBP + batting.SH + batting.SF + batting.CS + (batting.SB / 3));
+}
+
+/**
+ * Log5
+ *
+ * See : https://en.wikipedia.org/wiki/Log5
+ *
+ * 0 = A defeats B | 1 = B defeats A
+ */
+def log5 (probA, probB, order) {
+    if(order == 0) {
+        prob <- (probA - (probA*probB)) / (probA + probB - (2 * probA * probB))
+    }
+    if(order == 1) {
+        prob <- (probB - (probB*probA)) / (probB + probA - (2 * probB * probA))
+    }
+    else {
+        prob <- (probA - (probA*probB)) / (probA + probB - (2 * probA * probB))
+    }
+    return(prob)
+}
+
+/**
+ * Pythagorean Expectation
+ *
+ * See : https://en.wikipedia.org/wiki/Pythagorean_expectation
+ *
+ * RS: Runs Scored
+ * RA: Runs Allowed
+ *
+ */
+def PYTH (team) {
+    return (team.RS * team.RS) / ((team.RS * team.RS) + (team.RA * team.RA));
+}
+
+/**
+ * Runs Created (Basic)
+ *
+ * See : https://en.wikipedia.org/wiki/Runs_created
+ *
+ * H = Hits
+ * BB = Base on Balls
+ * TB = Total Bases
+ * AB = At bats
+ *
+ */
+def RC (batting) {
+    return ((batting.H + batting.BB) * TB(batting))/(batting.AB + batting.BB);
+}
+
+/**
+ * Runs Created 27
+ */
+def RC27 (batting) {
+    return 27 * RC(batting) / (batting.AB - batting.H + batting.CS + batting.GIDP + batting.SH + batting.SF);
+}
+
+/**
+ * Runs Created (Basic + SB; Stolen Base)
+ *
+ * See : https://en.wikipedia.org/wiki/Runs_created
+ *
+ * H = Hits
+ * BB = Base on Balls
+ * TB = Total Bases
+ * AB = At bats
+ * CS = Caught Stealing
+ * SB = Stolen Base
+ *
+ */
+def RCSB (batting) {
+    return ((batting.H + batting.BB - batting.CS) * (TB(batting) + (0.55 * batting.SB)))/(batting.AB + batting.BB);
+}
+
+/**
+ * Runs Created (Technical)
+ */
+def RCT (batting) {
+    return ((batting.H + batting.BB - batting.CS + batting.HBP - batting.GIDP) * (TB(batting) + (0.26 * (batting.BB - batting.IBB + batting.HBP)) + (0.52 * (batting.SH + batting.SF + batting.SB)))) / (batting.AB + batting.BB + batting.HBP + batting.SH + batting.SF);
+}
+
+/**
+ * Runs Created using past three MLB season data
+ */
+def rcPX (SINGLES, DOUBLES, TRIPLES, HR, BB, SB) {
+    rc <- (-391.39753 + 0.44953*(SINGLES) + 0.85285*(DOUBLES) + 1.05912*(TRIPLES) + 1.36359*(HR) + 0.31761*(BB) + 0.21599*(SB))
+    return(rc)
+}
+
+/**
+ * Plate Appearance (PA)
+ *
+ * See : https://en.wikipedia.org/wiki/WOBA
+ *
+ * AB = At bat
+ * BB = Base on Balls
+ * HBP = Hit by pitch
+ * SH = Sacrifice hit (typically, sacrifice bunt)
+ * SF = Sacrifice fly
+ *
+ */
+def PA (batting) {
+    return batting.AB + batting.BB + batting.HBP + batting.SH + batting.SF +
+}
+
+/**
+ * wOBA (weighted on-base average)
+ *
+ * See : https://en.wikipedia.org/wiki/WOBA
+ * See : http://baseball-lab.com/woba-fip-constants
+ *
+ * NIBB = Non-intentional bases on balls
+ * HBP = Hit by pitch
+ * 1B = Single
+ * RBOE = Reached base on error
+ * 2B = Double
+ * 3B = Triple
+ * HR = Home run
+ * PA = Plate appearance
+ *
+ */
+def wOBA (BB, HBP, SINGLE, RBOE, DOUBLE, TRIPLE, HR, PA) {
+  return ((0.72*BB)+(0.75*HBP)+(0.90*SINGLE)+(0.92*RBOE)+(1.24*DOUBLE) + (1.56 * TRIPLE) + (1.95 * HR)) / PA;
+}
+
+/**
+ * WHIP (Walks plus hits per inning pitched; 이닝당 안타 볼넷 허용률)
+ * 야구에서 투수의 성적 평가 항목 중 하나로서 피안타 수와 볼넷 수의 합을 투구 이닝으로 나눈 수치
+ *
+ * See : https://en.wikipedia.org/wiki/Walks_plus_hits_per_inning_pitched
+ *
+ * BB = Walks
+ * H = Hit
+ * IP = Inning Pitching
+ *
+ */
+def WHIP (pitching, IP) {
+    return (pitching.BB + pitching.H) / IP;
+}
+
+/**
+ * Secondary Average
+ *
+ * See : https://en.wikipedia.org/wiki/Secondary_average
+ *
+ * BB = bases on balls
+ * TB = Total bases
+ * H = Hits
+ * SB = Stolen bases
+ * CS = Caught stealing
+ * AB = At bats
+ *
+ */
+def SECA (batting) {
+    return (batting.BB + (TB(batting) - batting.H) + (batting.SB - batting.CS)) / batting.AB;
+}
+
+/**
+ * Defense-Independent Component ERA (DICE)
+ *
+ * See : https://en.wikipedia.org/wiki/Defense-Independent_Component_ERA
+ *
+ */
+def dice (pitching, IP) {
+    return 3 + ((13 * pitching.HR + 3 * pitching.BB + 3 * pitching.HBP - 2 * pitching.SO ) / IP);
+}
+
+/**
+ * Field Independent Pitching
+ * 수비와는 독립적으로 투수의 실제적인 능력을 알아볼 수 있는 계산법
+ *
+ * See : http://www.fangraphs.com/library/pitching/fip
+ *
+ * C : FIP Constant (http://baseball-lab.com/woba-fip-constants)
+ *
+ */
+def FIP (pitching, IP, C) {
+    return ((13 * pitching.HR + 3 * pitching.BB - 2 * pitching.SO) / IP) + C;
+}

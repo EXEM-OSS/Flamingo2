@@ -1,0 +1,37 @@
+= Flamingo 2 Big Data Platform: 사용자 가이드
+Cloudine, Inc.
+v2.0.0, 2015-07-01:
+:doctype: book
+:source-highlighter: coderay
+:listing-caption: Listing
+:sectnums:
+:toc:
+:toc-title: Table of Contents
+:toclevels: 4
+ifdef::backend-pdf[]
+:pagenums:
+:pygments-style: bw
+:source-highlighter: pygments
+endif::[]
+:imagesdir: images
+:homepage: http://www.cloudine.io
+
+include::pr01.asciidoc[pre]
+include::install.asciidoc[install]
+include::monitoring.asciidoc[monitoring]
+include::designer.asciidoc[designer]
+include::dashboard.asciidoc[dashboard]
+include::batch.asciidoc[batch]
+include::hdfs.asciidoc[hdfs]
+include::hdfs-auth.asciidoc[hdfs-auth]
+include::audit.asciidoc[audit]
+include::hive.asciidoc[hive]
+include::pig.asciidoc[pig]
+include::hawq.asciidoc[hawq]
+include::r.asciidoc[rstudio]
+include::terminal.asciidoc[terminal]
+include::user.asciidoc[user]
+include::etc.asciidoc[etc]
+include::release.asciidoc[release]
+include::info.asciidoc[info]
+include::glossary.asciidoc[glossary]

@@ -16,6 +16,7 @@
             <list>
                 <ref bean="engineJobDetail"/>
                 <ref bean="alarmJobDetail"/>
+                <ref bean="runningJob"/>
             </list>
         </property>
 
@@ -23,6 +24,7 @@
             <list>
                 <ref bean="engineJobTrigger"/>
                 <ref bean="alarmJobTrigger"/>
+                <ref bean="runningJobTrigger"/>
             </list>
         </property>
     </bean>
@@ -55,6 +57,17 @@
         <property name="cronExpression" value="0 * * * * ?"/>
     </bean>
 
+    <bean name="runningJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="durability" value="true"/>
+        <property name="jobClass" value="org.opencloudengine.flamingo2.engine.scheduler.jobs.RunningJob"/>
+        <!--<property name="applicationContextJobDataKey" value="spring"/>-->
+    </bean>
+
+    <bean id="runningJobTrigger" class="org.opencloudengine.flamingo2.engine.scheduler.QuartzCronTriggerFactoryBean">
+        <property name="jobDetail" ref="runningJob"/>
+        <property name="cronExpression" value="0 * * * * ?"/>
+    </bean>
+
     <!-- ========================= ENGINE REMOTE SERVICE DEFINITION ========================= -->
 
     <bean id="requestExecutor"
@@ -65,6 +78,17 @@
         <property name="connectionTimeout" value="3"/>
     </bean>
 
+    <!-- User Remote Service -->
+    <bean id="userRemoteServiceDelegator" class="org.opencloudengine.flamingo2.engine.remote.SystemUserServiceDelegator">
+        <property name="urls" value="${user.system.agent.urls}"/>
+    </bean>
+
+    <bean name="/remote/user" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="userRemoteServiceDelegator"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.system.UserRemoteService"/>
+    </bean>
+
+    <!-- Hive Query Remote Service -->
     <bean id="hiveQueryRemoteService" class="org.opencloudengine.flamingo2.engine.hive.HiveQueryRemoteServiceImpl"/>
 
     <bean name="/remote/hive" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
@@ -72,6 +96,7 @@
         <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.hive.HiveQueryRemoteService"/>
     </bean>
 
+    <!-- History Server Remote Service -->
     <bean id="historyServerRemoteService" class="org.opencloudengine.flamingo2.engine.hadoop.HistoryServerRemoteServiceImpl"/>
 
     <bean name="/remote/history" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
@@ -80,6 +105,7 @@
                   value="org.opencloudengine.flamingo2.engine.hadoop.HistoryServerRemoteService"/>
     </bean>
 
+    <!-- Resource Manager Remote Service -->
     <bean id="resourceManagerRemoteService" class="org.opencloudengine.flamingo2.engine.hadoop.ResourceManagerRemoteServiceImpl"/>
 
     <bean name="/remote/resourcemanager" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
@@ -87,6 +113,7 @@
         <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.hadoop.ResourceManagerRemoteService"/>
     </bean>
 
+    <!-- System Metrics Remote Service -->
     <bean id="systemMetricsRemoteService" class="org.opencloudengine.flamingo2.engine.remote.SystemMetricsRemoteServiceImpl"/>
 
     <bean name="/remote/system" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
@@ -94,6 +121,7 @@
         <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.remote.SystemMetricsRemoteService"/>
     </bean>
 
+    <!-- Namenode Remote Service -->
     <bean id="namenodeRemoteService" class="org.opencloudengine.flamingo2.engine.hadoop.NamenodeRemoteServiceImpl"/>
 
     <bean name="/remote/namenode" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
@@ -101,6 +129,7 @@
         <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.hadoop.NamenodeRemoteService"/>
     </bean>
 
+    <!-- MapR CLDB Remote Service -->
     <bean id="cldbRemoteService" class="org.opencloudengine.flamingo2.engine.monitoring.CLDBRemoteServiceImpl"/>
 
     <bean name="/remote/cldb" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
@@ -108,6 +137,7 @@
         <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.monitoring.CLDBRemoteService"/>
     </bean>
 
+    <!-- File System Audit Remote Service -->
     <bean id="fileSystemAuditRemoteService" class="org.opencloudengine.flamingo2.engine.fs.audit.FileSystemAuditRemoteServiceImpl"/>
 
     <bean name="/remote/audit" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
@@ -149,7 +179,7 @@
         <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.history.TaskHistoryRemoteService"/>
     </bean>
 
-    <!-- Job Scheduler Remote Service -->
+    <!-- HDFS Browser Remote Service -->
     <bean id="hdfsFileSystemRemoteService" class="org.opencloudengine.flamingo2.engine.fs.hdfs.HdfsFileSystemRemoteServiceImpl">
         <property name="fileSystemAuditRemoteService" ref="fileSystemAuditRemoteService"/>
     </bean>
@@ -185,14 +215,52 @@
         <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.tree.TreeService"/>
     </bean>
 
-    <bean id="systemUserServiceDelegator"
-          class="org.opencloudengine.flamingo2.engine.remote.SystemUserServiceDelegator">
-        <property name="urls" value="${user.system.agent.urls}"/>
+    <!-- Tajo Remote Service -->
+    <bean id="tajoRemoteService" class="org.opencloudengine.flamingo2.engine.tajo.TajoRemoteServiceImpl"/>
+
+    <bean name="/remote/tajo" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="tajoRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.tajo.TajoRemoteService"/>
     </bean>
 
-    <bean name="/remote/systemuser" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-        <property name="service" ref="systemUserServiceDelegator"/>
-        <property name="serviceInterface" value="org.opencloudengine.flamingo2.agent.system.SystemUserService"/>
+    <!-- Archive Yarn Application Remote Service -->
+    <bean id="archiveYarnRemoteService" class="org.opencloudengine.flamingo2.engine.archive.yarn.ArchiveYarnRemoteServiceImpl"/>
+
+    <bean name="/remote/archiveYarn" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="archiveYarnRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.archive.yarn.ArchiveYarnRemoteService"/>
+    </bean>
+
+    <!-- Archive MapReduce Remote Service -->
+    <bean id="archiveMRRemoteService" class="org.opencloudengine.flamingo2.engine.archive.mapreduce.ArchiveMapReduceRemoteServiceImpl"/>
+
+    <bean name="/remote/archiveMapReduce" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="archiveMRRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.archive.mapreduce.ArchiveMapReduceRemoteService"/>
+    </bean>
+
+    <!-- MapReduce Remote Service -->
+    <bean id="mapReduceRemoteService" class="org.opencloudengine.flamingo2.engine.hadoop.MapReduceRemoteServiceImpl"/>
+
+    <bean name="/remote/mapreduce" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="mapReduceRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.hadoop.MapReduceRemoteService"/>
+    </bean>
+
+    <!-- Spark Streaming Remote Service For Flamingo Web's Spark Streaming Controller -->
+    <bean id="sparkStreamingRemoteService" class="org.opencloudengine.flamingo2.engine.realtime.spark.streaming.SparkStreamingRemoteRemoteServiceImpl"/>
+
+    <bean name="/remote/sparkStreaming" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="sparkStreamingRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.realtime.spark.streaming.SparkStreamingRemoteService"/>
+    </bean>
+
+    <!-- Spark Remote Service -->
+    <bean id="sparkRemoteService" class="org.opencloudengine.flamingo2.engine.spark.SparkRemoteServiceImpl"/>
+
+    <bean name="/remote/spark" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="sparkRemoteService"/>
+        <property name="serviceInterface" value="org.opencloudengine.flamingo2.engine.spark.SparkRemoteService"/>
     </bean>
 
     <!-- ========================= EL SERVICE DEFINITION ========================= -->

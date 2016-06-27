@@ -54,7 +54,7 @@ public class DatanodeController extends DefaultController {
         return response;
     }
 
-    @RequestMapping(value = "/decommisioningnodes", method = RequestMethod.GET)
+    @RequestMapping(value = "/decommissioningnodes", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Response decommisioningnodes(@RequestParam String clusterName) {
         EngineConfig engineConfig = this.getEngineConfig(clusterName);

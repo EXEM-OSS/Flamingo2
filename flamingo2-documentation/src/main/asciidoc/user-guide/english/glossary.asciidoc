@@ -1,0 +1,13 @@
+[[glossary]]
+
+== 용어집
+
+[width="80%",cols="5,20",options="header"]
+|=======
+|용어  |설명
+|Flamingo System Agent |Flamingo의 사용자 계정과 리눅스 사용자의 시스템 계정을 상호 연계하기 위한 웹 애플리케이션.
+|Flamingo Resource Manager Agent |Hadoop의 Resource Manager가 동작하는 JVM에서 같이 동작하는 Agent로써 Flamingo는 Resource Manager Agent와 통신하며 YARN 애플리케이션 및 정보를 수집한다.
+|Flamingo Namenode Agent |Hadoop의 Namemnode가 동작하는 JVM에서 같이 동작하는 Agent로써 Flamingo는 Namenode Agent와 통신하며 HDFS 브라우저의 요청을 처리한다.
+|Flamingo Collector |Flamingo Resource Manager Agent와 Namenode Agent와 통신하면서 관련 정보를 주기적으로 수집하는 웹 애플리케이션.
+|Flamingo MapReduce Job Agent |Hadoop의 MapReduce Job을 실행할 때 MapReduce Job ID와 YARN 애플리케이션 ID를 추출하는 Agent.
+|=======

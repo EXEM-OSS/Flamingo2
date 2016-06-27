@@ -89,11 +89,7 @@ Ext.define('Flamingo2.view.designer.property.HADOOP_JAVA', {
                     title: message.msg('workflow.common.dependency.jar'),
                     flex: 1
                 }
-            ],
-            listeners: {
-                afterrender: function (form, eOpts) {
-                }
-            }
+            ]
         },
         {
             title: message.msg('workflow.common.command'),

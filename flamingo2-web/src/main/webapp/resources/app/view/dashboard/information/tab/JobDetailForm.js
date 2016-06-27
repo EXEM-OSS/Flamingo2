@@ -112,19 +112,19 @@ Ext.define('Flamingo2.view.dashboard.information.tab.JobDetailForm', {
                                     labelAlign: 'right',
                                     fieldLabel: message.msg('dashboard.jobdetail.job.elapsed'),
                                     name: 'elapsed',
-                                    renderer: function (value) {
+                                    renderer: function (value, metaData, record) {
                                         var diff;
                                         var status = query('jobDetailForm #status');
 
                                         if (status.getValue() == 'RUNNING') {
-                                            var start = new Date(item.record.data.startDate);
-                                            var end = new Date(item.record.data.endDate);
-                                            diff = (end.getTime() - start.getTime()) / 1000;
-                                            return App.Util.Date.toHumanReadableTime(Math.floor(diff));
+                                            var start = new Date(record.get('startDate'));
+                                            var now = new Date();
+                                            diff = (now.getTime() - start.getTime()) / 1000;
                                         } else {
                                             diff = value / 1000;
-                                            return App.Util.Date.toHumanReadableTime(Math.floor(diff));
                                         }
+
+                                        return App.Util.Date.toHumanReadableTime(Math.floor(diff));
                                     }
                                 },
                                 {

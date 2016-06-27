@@ -141,29 +141,6 @@ public class HistoryServerRemoteServiceImpl implements HistoryServerRemoteServic
     public Map<String, Object> getJob(String historyServerUrl, String jobId) {
         String url = MessageFormatter.format("http://{}/ws/v1/history/mapreduce/jobs/{}", historyServerUrl, jobId).getMessage();
         Map result = invoke(url);
-/*
-        try {
-            Map<String, Object> conf = getJobConf(historyServerUrl, jobId);
-            logger.debug("{}", conf);
-            if (conf.get("flamingo.workflow.id") != null) {
-                result.put("flamingo_workflow_id", conf.get("flamingo.workflow.id"));
-            }
-            if (conf.get("flamingo.workflow.name") != null) {
-                result.put("flamingo_workflow_name", conf.get("flamingo.workflow.name"));
-            }
-            if (conf.get("flamingo.username") != null) {
-                result.put("flamingo_username", conf.get("flamingo.username"));
-            }
-            if (conf.get("flamingo.job.stringId") != null) {
-                result.put("flamingo_job_id", conf.get("flamingo.job.stringId"));
-            }
-            if (conf.get("flamingo.action.name") != null) {
-                result.put("flamingo_action_name", conf.get("flamingo.action.name"));
-            }
-        } catch (Exception ex) {
-            logger.warn("Unable to retreive configuration of job.", ex);
-        }
-*/
         return result;
     }
 
@@ -175,7 +152,6 @@ public class HistoryServerRemoteServiceImpl implements HistoryServerRemoteServic
         Map<String, Object> jobMap = (Map<String, Object>) jobRestMap.get("job");
         Map<String, Object> returnMap = new HashMap<>();
         List<Map<String, Object>> jobList = new ArrayList<>();
-
 
         for (Object keyset : jobMap.keySet().toArray()) {
             Map<String, Object> map = new HashMap<>();

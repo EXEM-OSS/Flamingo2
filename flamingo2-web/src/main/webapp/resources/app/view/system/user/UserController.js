@@ -151,9 +151,14 @@ Ext.define('Flamingo2.view.system.user.UserController', {
             return false;
         }
 
+        var username = selectedUser.get('username');
+        var status = selectedUser.get('enabled');
+        var msg = status ? format(message.msg('system.user.msg.delete.yesNo.enabledUser'), username, username)
+            : format(message.msg('system.user.msg.delete.yesNo.disabledUser'), username);
+
         Ext.MessageBox.show({
             title: message.msg('system.user.common.user.delete'),
-            message: format(message.msg('system.user.msg.delete.yesNo'), selectedUser.get('username'), selectedUser.get('username')),
+            message: msg,
             buttons: Ext.MessageBox.YESNO,
             icon: Ext.MessageBox.WARNING,
             fn: function handler(btn) {
@@ -161,8 +166,8 @@ Ext.define('Flamingo2.view.system.user.UserController', {
                     var url = CONSTANTS.SYSTEM.USER.DELETE_USER;
                     var params = {
                         clusterName: ENGINE.id,
-                        username: selectedUser.get('username'),
-                        status: selectedUser.get('enabled'),
+                        username: username,
+                        status: status,
                         hdfsUserHome: selectedUser.get('hdfs_user_home'),
                         authId: selectedUser.get('auth_id'),
                         level: selectedUser.get('level')
@@ -180,6 +185,8 @@ Ext.define('Flamingo2.view.system.user.UserController', {
                                     buttons: Ext.MessageBox.OK,
                                     icon: Ext.MessageBox.INFO
                                 });
+
+                                me.onRefreshUserClick();
                             } else {
                                 Ext.MessageBox.show({
                                     title: message.msg('common.notice'),
@@ -187,6 +194,8 @@ Ext.define('Flamingo2.view.system.user.UserController', {
                                     buttons: Ext.MessageBox.OK,
                                     icon: Ext.MessageBox.WARNING
                                 });
+
+                                me.onRefreshUserClick();
                             }
                         },
                         function () {
@@ -233,6 +242,8 @@ Ext.define('Flamingo2.view.system.user.UserController', {
             return false;
         }
 
+        var username = selectedUser.get('username');
+
         Ext.MessageBox.show({
             title: message.msg('common.notice'),
             message: format(message.msg('system.user.msg.ack.yesNo'), selectedUser.get('username')),
@@ -244,10 +255,9 @@ Ext.define('Flamingo2.view.system.user.UserController', {
                     var params = {
                         clusterName: ENGINE.id,
                         name: selectedUser.get('name'),
-                        username: selectedUser.get('username'),
+                        username: username,
                         authId: selectedUser.get('auth_id'),
-                        level: selectedUser.get('level'),
-                        userGroup: selectedUser.get('user_group')
+                        level: selectedUser.get('level')
                     };
 
                     invokePostByMap(url, params,

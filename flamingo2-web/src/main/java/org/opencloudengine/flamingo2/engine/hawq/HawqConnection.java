@@ -21,7 +21,7 @@ import java.sql.Connection;
 /**
  * query 종료를 위해 pid 를 함께 관리하기 위한 class.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 public class HawqConnection {

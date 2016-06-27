@@ -1,0 +1,36 @@
+package org.opencloudengine.flamingo2.mapreduce.gis.esri.mapreduce;
+
+import org.opencloudengine.flamingo2.mapreduce.gis.esri.io.PolygonFeatureWritable;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static org.junit.Assert.*;
+
+/**
+ */
+public class PolygonFeatureReaderTest extends MapreduceFS {
+    @Test
+    public void testPolygonFeatureReader() throws IOException, URISyntaxException, InterruptedException {
+        final Path dbf = getPath("/testpolygon.dbf");
+        final Path shp = getPath("/testpolygon.shp");
+        final FileSplit fileSplit = getFileSplit(shp);
+        final PolygonFeatureInputFormat pointInputFormat = new PolygonFeatureInputFormat();
+        final TaskAttemptContext taskAttemptContext = new TaskAttemptContextImpl(m_jobConfig, new TaskAttemptID());
+        final RecordReader<LongWritable, PolygonFeatureWritable> recordReader = pointInputFormat.createRecordReader(fileSplit, taskAttemptContext);
+        assertTrue(recordReader.nextKeyValue());
+        assertEquals(1L, recordReader.getCurrentKey().get());
+        assertPolygonValues(recordReader.getCurrentValue());
+        assertPolygonNameValue(recordReader.getCurrentValue().attributes);
+        assertFalse(recordReader.nextKeyValue());
+        recordReader.close();
+    }
+}

@@ -29,5 +29,27 @@ Ext.define('Flamingo2.view.batch.chart.EngineSummaryChartController', {
             refs.engineJvmHeapUsage.getStore().load();
             refs.jobs.getStore().load();
         }, 100);
+    },
+
+    /**
+     * JVM Heap 사용량 정보를 업데이트한다.
+     */
+    onJVNHeapRefreshClick: function () {
+        var jvmHeapUsageChart = query('engineJvmHeapUsage');
+
+        setTimeout(function() {
+            jvmHeapUsageChart.getStore().load();
+        }, 100);
+    },
+
+    /**
+     * 실행 중인 배치작업 현황 정보를 업데이트한다.
+     */
+    onRunningBatchJobsRefreshClick: function () {
+        var runningBatchJobsChart = query('jobs');
+
+        setTimeout(function() {
+            runningBatchJobsChart.getStore().load();
+        }, 100);
     }
 });

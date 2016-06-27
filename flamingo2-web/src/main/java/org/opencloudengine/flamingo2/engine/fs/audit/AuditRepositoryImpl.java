@@ -47,7 +47,7 @@ public class AuditRepositoryImpl extends PersistentRepositoryImpl<AuditHistory, 
 
     @Override
     public List<AuditHistory> selectByCondition(Map auditConditionMap) {
-        int nextPage = (int) auditConditionMap.get("nextPage");
+        int page = (int) auditConditionMap.get("page");
         int limit = (int) auditConditionMap.get("limit");
         int startRow = 0;
 
@@ -58,10 +58,10 @@ public class AuditRepositoryImpl extends PersistentRepositoryImpl<AuditHistory, 
          * Case 1 : 첫 페이지
          * Case 2 : 이전/다음/랜덤 페이지
          */
-        if (nextPage == 0) {
+        if (page == 0) {
             auditConditionMap.put("startRow", startRow);
         } else {
-            startRow = (nextPage * limit) - limit;
+            startRow = (page * limit) - limit;
             auditConditionMap.put("startRow", startRow);
         }
 

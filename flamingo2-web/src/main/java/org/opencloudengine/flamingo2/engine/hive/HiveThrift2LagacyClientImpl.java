@@ -290,11 +290,11 @@ public class HiveThrift2LagacyClientImpl implements HiveThrift2Client {
     }
 
     @Override
-    public Map[] getResults(FetchOrientation orientation, int maxRows, FetchType fetchType) throws Exception {
+    public LinkedHashMap[] getResults(FetchOrientation orientation, int maxRows, FetchType fetchType) throws Exception {
         throw new NotSupportedException("Not Supported");
     }
 
-    public Map[] getResults(TFetchOrientation orientation, int maxRows, FetchType fetchType) throws TException {
+    public LinkedHashMap[] getResults(TFetchOrientation orientation, int maxRows, FetchType fetchType) throws TException {
         if (currentOperation == null)
             throw new TException("Least one operation is executed.");
 
@@ -316,7 +316,7 @@ public class HiveThrift2LagacyClientImpl implements HiveThrift2Client {
 
         List<TColumn> columns = tRowSet.getColumns();
         TColumn[] cols = columns.toArray(new TColumn[columns.size()]);
-        Map[] vs = new Map[fetchedRows.numRows()];
+        LinkedHashMap[] vs = new LinkedHashMap[fetchedRows.numRows()];
         for (int i = 0; i < cols.length; i++) {
             Schema schema = scs[i];
             TColumn col = cols[i];
@@ -327,20 +327,20 @@ public class HiveThrift2LagacyClientImpl implements HiveThrift2Client {
         return vs;
     }
 
-    private static void bindColumns(String columnName, Map[] vs, List values) {
+    private static void bindColumns(String columnName, LinkedHashMap[] vs, List values) {
         Object[] objects = values.toArray(new Object[values.size()]);
         for (int i = 0; i < values.size(); i++) {
             Object value = objects[i];
             if (vs[i] == null) {
-                vs[i] = new HashMap();
+                vs[i] = new LinkedHashMap();
             }
 
-            Map column = vs[i];
+            LinkedHashMap column = vs[i];
             column.put(columnName, value);
         }
     }
 
-    public Map[] getResults(int maxRows) throws TException {
+    public LinkedHashMap[] getResults(int maxRows) throws TException {
         return getResults(TFetchOrientation.FETCH_NEXT, maxRows, FetchType.QUERY_OUTPUT);
     }
 

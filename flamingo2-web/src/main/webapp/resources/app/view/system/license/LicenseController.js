@@ -78,12 +78,12 @@ Ext.define('Flamingo2.view.system.license.LicenseController', {
         var refs = me.getReferences();
 
         if (Ext.isEmpty(refs.licenseKey.getValue())) {
-            Ext.Msg.alert(message.msg('common.warn'), '라이센스 키를 입력하시오.');
+            Ext.Msg.alert(message.msg('common.warn'), message.msg('license.msg.input_license_key'));
             return;
         }
         Ext.MessageBox.show({
             title: message.msg('common.confirm'),
-            message: 'Flamingo 라이센스 키를 갱신 하시겠습니까?',
+            message: message.msg('license.msg.update_license_key'),
             buttons: Ext.MessageBox.YESNO,
             icon: Ext.MessageBox.QUESTION,
             fn: function (btn) {
@@ -111,11 +111,11 @@ Ext.define('Flamingo2.view.system.license.LicenseController', {
 
                 if (result.success) {
                     // 실행시 로그 창을 먼저 표시한다.
-                    Ext.Msg.alert(message.msg('common.success'), 'Flamingo 라이센스 키를 갱신하였습니다.');
+                    Ext.Msg.alert(message.msg('common.success'), message.msg('license.msg.update_license_key_success'));
                     me.onAfterrender();
                     return;
                 } else {
-                    Ext.Msg.alert(message.msg('common.error'), 'Flamingo 라이센스 키가 올바르지 않습니다.');
+                    Ext.Msg.alert(message.msg('common.error'), message.msg('license.msg.invalid_license_key'));
                     return;
                 }
             },

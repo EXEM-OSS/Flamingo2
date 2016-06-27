@@ -1,0 +1,142 @@
+[[user]]
+== User Management
+
+Flamingo provides the tool to add, alter, and delete users and groups. For group names in Linux and HDFS, Flamingo user names are applied.
+Only the system administrator has the privileges to use the user management tool.
+
+image::system/user/user-management.png[scaledwidth=100%,사용자 관리 메인화면]
+
+=== Group Management
+
+Flamingo groups are managed on its own in the database aside from Linux and HDFS.
+
+==== Adding a Group
+
+Select `Add Group` from the menu.
+
+image::system/user/user-org-add0.png[scaledwidth=100%,사용자 관리 메뉴화면]
+
+Enter the group information.
+
+image::system/user/user-org-add1.png[scaledwidth=30%,소속 추가화면]
+
+[NOTE]
+Flamingo groups are managed on its own in the database aside from Linux and HDFS.
+
+image::system/user/user-org-add2.png[scaledwidth=100%,소속 추가화면]
+
+==== Deleting a Group
+
+Select a group to remove and click `Delete Group` from the menu.
+
+image::system/user/user-org-delete0.png[scaledwidth=100%,사용자 관리 메뉴화면]
+
+Select the group from the list and click `OK`.
+
+image::system/user/user-org-delete1.png[scaledwidth=30%,소속 삭제화면]
+
+[WARNING]
+If there is any remaining user in the group to be removed, the user will be assigned to the default group (e.g. OCE), and the group will be deleted. So the system administrator must make sure that there are no members left in the group before deleting.
+
+==== Altering a Group
+
+Select a group and click `Alter Group`. Note that the altered group information will be applied to all members of the group. So keep this in mind before altering group.
+
+image::system/user/user-org-modify0.png[scaledwidth=100%,사용자 관리 메뉴화면]
+
+Select a group from the list.
+
+image::system/user/user-org-modify1.png[scaledwidth=30%,소속 정보 수정화면]
+
+Click `Save` and the information is modified.
+
+image::system/user/user-org-modify2.png[scaledwidth=30%,소속 정보 수정화면]
+
+=== User Management
+
+==== Adding a User
+
+There are two ways to add users in Flamingo.
+
+* Send request through the sign up page.
+* The system administrator manually adds users.
+
+===== Sending a Request through the Sign Up Page
+
+In the log in page of Flamingo, click the `Registration` tab, and enter user information. Click `Register` and the request is sent to the system administrator.
+
+image::system/user/user-register0.png[scaledwidth=50%,사용자 등록화면]
+
+[NOTE]
+The user cannot log in until he/she is approved by the system administrator.
+
+===== Adding Users Manually by the System Administrator
+
+Log in as the system administrator, select `Add User` from the menu.
+
+image::system/user/user-add0.png[scaledwidth=100%,사용자 관리 메뉴화면]
+
+Enter user information.
+
+image::system/user/user-add1.png[scaledwidth=30%,사용자 추가화면]
+
+Enter a group, and select the authority and level. In case of adding a system administrator, the level is fixed to 1.
+
+image::system/user/user-add2.png[scaledwidth=30%,사용자 추가화면]
+
+Now you can see the user is added to the list.
+
+image::system/user/user-add3.png[scaledwidth=100%,사용자 추가화면]
+
+[NOTE]
+Either the user is registered through the sign up page or manually added by the system administrator, the system administrator must approve the registration. Otherwise, the user will not be able to log in. The home directory in Linux and HDFS also must be approved by the system administrator before using.
+
+==== Approving Users
+
+While users on hold for approval, select a user and select `Approve User` from the menu.
+
+image::system/user/user-ack0.png[scaledwidth=100%,사용자 관리 메뉴화면]
+
+Verify the user to approve.
+
+image::system/user/user-ack1.png[scaledwidth=100%,사용자 승인화면]
+
+The user's home directory in Linux and HDFS, and status get updated. The user's group name in Linux and HDFS is as same as the user name.
+
+image::system/user/user-ack2.png[scaledwidth=100%,사용자 승인화면]
+
+[NOTE]
+If Flamingo System Agent is workf properly and the system administrator approves a user, the user is added to Linux where Flamingo System Agent is installed, and the user's home directory is created under the `/user` folder in HDFS.
+
+==== Deleting a User
+
+Select `Delete User` from the menu.
+
+image::system/user/user-delete0.png[scaledwidth=100%,사용자 관리 메뉴화면]
+
+When deleting a user, the user's home directory in HDFS also gets deleted (`/user`). If Flamingo System Agent is working in Linux, the user is also deleted from the system.
+
+image::system/user/user-delete1.png[scaledwidth=100%,사용자 삭제화면]
+
+[NOTE]
+You can configure whether to use Flamingo System Agent or not by setting the property `user.system.agent.apply` in `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties`.
+
+==== Altering a User
+
+Select a user and click `Alter User` in the menu.
+
+image::system/user/user-modify0.png[scaledwidth=100%,사용자 관리 메뉴화면]
+
+Enter new information and click `Save`. The user information is updated.
+
+image::system/user/user-modify1.png[scaledwidth=100%,사용자 정보 수정화면]
+
+To change password, click in the password box, then the password box becomes active.
+
+image::system/user/user-modify2.png[scaledwidth=30%,사용자 정보 수정화면]
+
+===== Refreshing the User List
+
+Select `Refresh` from the mensu, and the list gets updated.
+
+image::system/user/user-refresh0.png[scaledwidth=100%,사용자 관리 메뉴화면]

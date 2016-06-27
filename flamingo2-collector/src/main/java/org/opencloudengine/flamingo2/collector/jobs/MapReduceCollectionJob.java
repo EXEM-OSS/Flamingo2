@@ -79,16 +79,26 @@ public class MapReduceCollectionJob extends RemoteInvocation {
                             }
 
                             try {
-                                Map job = (Map) obj;
-                                String jobId = (String) job.get("id");
-                                Map<String, Object> attempts = historyServerRemoteService.getAttempts(config.getHistoryServerUrl(), jobId);
-                                Map<String, Object> counters = historyServerRemoteService.getCounters(config.getHistoryServerUrl(), jobId);
-                                Map<String, Object> jobConf = historyServerRemoteService.getJobConf(config.getHistoryServerUrl(), jobId);
+                                String jobId = (String) ((Map) obj).get("id");
 
                                 if (!mapReduceJobService.exist(config.getId(), jobId)) {
+                                    Map<String, Object> mrJob = historyServerRemoteService.getJob(config.getHistoryServerUrl(), jobId);
+                                    Map<String, Object> job = (Map<String, Object>) mrJob.get("job");
+                                    logger.info("MapReduce History Job :: {}", job);
+
+//                                    Map<String, Object> attempts = historyServerRemoteService.getAttempts(config.getHistoryServerUrl(), jobId);
+//                                    logger.info("attempts {}", attempts);
+
+                                    Map<String, Object> tasksMap = historyServerRemoteService.getTasks(config.getHistoryServerUrl(), jobId);
+                                    Map<String, Object> taskMap = (Map<String, Object>) tasksMap.get("tasks");
+                                    logger.info("taskMap {}", taskMap);
+
+                                    Map<String, Object> counters = historyServerRemoteService.getCounters(config.getHistoryServerUrl(), jobId);
+                                    Map<String, Object> jobConf = historyServerRemoteService.getJobConf(config.getHistoryServerUrl(), jobId);
+
                                     count++;
                                     logger.info("MapReduce Job :: {} at {}", jobId, DateUtils.parseDate(new Date((Long) job.get("submitTime")), "yyyy-MM-dd HH:mm:ss"));
-                                    mapReduceJobService.confirm(config.getId(), jobId, job, jobConf, attempts, counters);
+                                    mapReduceJobService.confirm(config.getId(), jobId, job, jobConf, taskMap, counters);
                                 }
                             } catch (Exception ex) {
                                 logger.warn("MapReduce Job 정보를 수집하고 저장할 수 없습니다.", ex);

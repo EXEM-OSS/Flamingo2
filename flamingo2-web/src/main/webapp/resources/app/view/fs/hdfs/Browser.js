@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 Ext.define('Flamingo2.view.fs.hdfs.Browser', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Flamingo2.panel.Panel',
     alias: 'widget.browser',
 
     requires: [
         'Flamingo2.view.fs.hdfs.BrowserController',
         'Flamingo2.view.fs.hdfs.BrowserModel',
-        'Flamingo2.view.fs.hdfs.summary.HdfsSumChart',
+        'Flamingo2.view.fs.hdfs.information.HdfsInformation',
         'Flamingo2.view.fs.hdfs.Directory',
         'Flamingo2.view.fs.hdfs.File',
         'Flamingo2.view.component._StatusBar'
@@ -34,51 +34,47 @@ Ext.define('Flamingo2.view.fs.hdfs.Browser', {
     },
 
     layout: {
-        type: 'border'
+        type: 'vbox',
+        align: 'stretch'
     },
+    flex: 1,
     margin: '0 5',
     bodyStyle: {
         background: '#ffffff'
     },
-    flex: 1,
     items: [
         {
-            xtype: 'container',
-            itemId: 'title',
-            region: 'north',
-            height: 45,
-            margin: '0 0 10 0',
-            cls: 'page-header',
-            bind: {
-                html: '<h1>{title}</h1>'
-            }
-        },
-        {
-            xtype: 'hdfsSumChartPanel',
-            itemId: 'sumChart',
-            region: 'north',
+            xtype: 'hdfsInformationPanel',
             height: 190
         },
         {
-            xtype: 'hdfsDirectoryPanel',
-            region: 'west',
-            collapsible: true,
-            collapsed: false,
-            border: true,
-            split: true,
-            title: message.msg('fs.hdfs.browser.directory'),
-            width: 260,
-            layout: 'fit'
-        },
-        {
-            xtype: 'hdfsFilePanel',
-            region: 'center',
-            title: message.msg('fs.hdfs.browser.file'),
-            border: true
+            xtype: 'panel',
+            minHeight: 400,
+            flex: 1,
+            layout: 'border',
+            items: [
+                {
+                    xtype: 'hdfsDirectoryPanel',
+                    region: 'west',
+                    collapsible: true,
+                    collapsed: false,
+                    split: true,
+                    border: true,
+                    title: message.msg('fs.hdfs.browser.directory'),
+                    width: 260
+                },
+                {
+                    xtype: 'hdfsFilePanel',
+                    region: 'center',
+                    flex: 1,
+                    title: message.msg('fs.hdfs.browser.file'),
+                    border: true
+                }
+            ]
         },
         {
             xtype: '_statusBar',
-            region: 'south',
+            itemId: 'browserStatusBar',
             defaultText: '',
             cls: 'monospace-text',
             text: message.msg('common.path'),

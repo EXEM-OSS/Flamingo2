@@ -16,10 +16,10 @@
  */
 package org.opencloudengine.flamingo2.web.security;
 
-import org.opencloudengine.flamingo2.agent.system.SystemUserService;
 import org.opencloudengine.flamingo2.core.rest.Response;
 import org.opencloudengine.flamingo2.core.security.SessionUtils;
 import org.opencloudengine.flamingo2.engine.remote.EngineService;
+import org.opencloudengine.flamingo2.engine.system.UserRemoteService;
 import org.opencloudengine.flamingo2.util.EscapeUtils;
 import org.opencloudengine.flamingo2.web.configuration.DefaultController;
 import org.opencloudengine.flamingo2.web.system.UserService;
@@ -50,6 +50,9 @@ public class AuthController extends DefaultController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRemoteService userRemoteService;
 
     @Autowired
     @Qualifier("passwordEncoder")
@@ -111,7 +114,7 @@ public class AuthController extends DefaultController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public Response changePassword(@RequestBody Map userMap) {
         EngineService engineService = this.getEngineService((String) userMap.get("clusterName"));
-        SystemUserService systemUserService = engineService.getSystemUserService();
+        userRemoteService = engineService.getUserRemoteService();
         String username = SessionUtils.getUsername();
         String newPassword = EscapeUtils.unescape((String) userMap.get("password"));
         Map map = new HashMap();
@@ -121,7 +124,7 @@ public class AuthController extends DefaultController {
         boolean changed = false;
 
         if (systemAgentApply) {
-            systemAgentResult = systemUserService.changeUser(username, newPassword);
+            systemAgentResult = userRemoteService.updatePassword(username, newPassword);
         }
 
         if (!systemAgentApply || systemAgentResult) {

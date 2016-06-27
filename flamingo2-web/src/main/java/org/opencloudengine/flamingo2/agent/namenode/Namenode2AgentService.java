@@ -16,6 +16,7 @@
  */
 package org.opencloudengine.flamingo2.agent.namenode;
 
+import org.apache.hadoop.fs.ContentSummary;
 import org.opencloudengine.flamingo2.engine.fs.hdfs.HdfsFileInfo;
 import org.opencloudengine.flamingo2.model.rest.FileInfo;
 
@@ -67,10 +68,10 @@ public interface Namenode2AgentService {
     boolean copy(String srcPath, String dstPath, String username);
 
     /**
-     * 지정한 디렉토리 또는 파일을 선택한 경로로 복사한다.
+     * 지정한 디렉토리 또는 파일을 선택한 경로로 이동한다.
      *
-     * @param srcPath 이동할 디렉토리 또는 파일(멀티파일 포함)
-     * @param dstPath 이동될 경로
+     * @param srcPath           이동할 디렉토리 또는 파일(멀티파일 포함)
+     * @param dstPath           이동될 경로
      * @return 정상적으로 복사한 경우 <tt>true</tt>
      */
     boolean move(String srcPath, String dstPath);
@@ -78,11 +79,11 @@ public interface Namenode2AgentService {
     /**
      * 지정한 디렉토리 또는 파일명을 변경한다.
      *
-     * @param srcPath  원본 디렉토리 또는 파일의 전체 경로
-     * @param filename 변경될 디렉토리명 또는 파일명
+     * @param srcPath           원본 디렉토리 또는 파일의 전체 경로
+     * @param name              변경될 디렉토리명 또는 파일명
      * @return 정상적으로 변경된 경우 <tt>true</tt>
      */
-    boolean rename(String srcPath, String filename);
+    boolean rename(String srcPath, String name);
 
     /**
      * 지정한 디렉토리 또는 파일(멀티파일 포함)을 삭제한다.
@@ -160,4 +161,36 @@ public interface Namenode2AgentService {
      * @return true or false
      */
     boolean deleteUserHome(String hdfsUserHomePath);
+
+    /**
+     * HDFS 경로에 파일 목록을 페이징 처리 하여 가져온다..
+     *
+     * @param path HDFS 렉토리 경로
+     * @param page 페이지 번호
+     * @param start 시작 번호
+     * @param limit 목록 제한 갯수
+     * @return List<FileInfo>
+     */
+    Map getFilesPage(String path, int page, int start, int limit) throws IOException;
+
+    /**
+     * HDFS 경로에 파일, 디렉토리 갯수를 반환한다..
+     *
+     * @param path HDFS 디렉토리 경로
+     * @return ContentSummary
+     */
+    ContentSummary getContentSummary(String path) throws IOException;
+
+    /**
+     * HDFS 경로의 파일을 리눅스 사용자 홈 디렉토리로 복사한다.
+     *
+     * @param srcFullyQualifiedPath     복사할 파일의 전체 경로
+     * @param dstFullyQualifiedPath     파일이 복사될 전체 경로
+     * @param linuxUserHome             사용자 리눅스 홈 디렉토리
+     * @param username                  사용자명
+     * @return true or false
+     */
+    boolean copyToLocal(String srcFullyQualifiedPath, String dstFullyQualifiedPath, String linuxUserHome, String username);
+
+    boolean getNamenodeStatus();
 }

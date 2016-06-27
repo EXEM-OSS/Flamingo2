@@ -17,7 +17,7 @@
 /**
  * HAWQ > Browser > Connection Manager > Database Menu > create menu click
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  * @see Flamingo2.view.hawq.browser._DatabaseCreateController
  * @see Flamingo2.view.hawq.browser._DatabaseCreateModel

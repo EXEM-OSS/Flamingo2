@@ -43,4 +43,8 @@ public interface HiveMetastoreService {
     public Map getTableInfo(EngineConfig engineConfig, String dbname, String tablename) throws TException;
 
     public void alterTable(EngineConfig engineConfig, Map params) throws TException, IOException;
+
+    public Map getTableScript(EngineConfig engineConfig, Map params) throws TException, IOException;
+
+    public Map getDatabaseScript(EngineConfig engineConfig, Map params) throws TException, IOException;
 }

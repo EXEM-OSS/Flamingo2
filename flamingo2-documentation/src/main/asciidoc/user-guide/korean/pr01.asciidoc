@@ -1,0 +1,85 @@
+[[pre]]
+
+== 서문
+
+본 문서는 Flamingo 2 Big Data Platform에 대한 설치, 사용방법 등의 내용을 포함하고 있습니다.
+
+=== Flamingo란?
+
+Flamingo 2는 Apache Hadoop 2 기반 빅데이터 분석 환경을 구축할 때 다수의 분석가, 개발자, 운영자가 협업하여 업무를 수행할 수 있도록 돕는 플랫폼 소프트웨어 입니다.
+
+image::screenshot1.jpg[scaledwidth=100%,Flamingo 메인 화면]
+
+Flamingo는 다음의 기능을 제공합니다.
+
+* Resource Manager, Namenode 모니터링
+* YARN 애플리케이션, MapReduce Job 모니터링
+* 클러스터 노드 및 데이터 노드 모니터링
+* MapR CLDB 모니터링
+* R/RStudio Server 연계 (RHive, RHadoop 포함)
+* Apache Hive Metastore 관리
+* Apache Hive 쿼리 개발 및 실행
+* Apache Hive Latin Script 개발 및 실행
+* Pivotal HAWQ 관리
+* Pivotal HAWQ 쿼리 개발 및 실행
+* MapR File System 관리
+* HDFS 브라우저를 이용한 관리
+* HDFS Audit 로깅 및 관리
+* 워크플로우 디자이너를 이용한 관리
+* 워크플로우 모니터링
+* 배치 작업 관리
+* 사용자 권한관리
+* 메뉴 관리
+* 기타 등등
+
+=== 아키텍처
+
+Flamingo의 아키텍처는 각 구성요소를 포함하여 다음과 같이 구성되어 있습니다.
+
+image::architecture.png[scaledwidth=100%,Flamingo 아키텍처 화면]
+
+=== 구성요소
+
+[width="100%",cols="10,10,20",options="header"]
+|=======
+|구성요소  |파일명    |역할
+|Flamingo Web | `flamingo2-web-2.0.0.tar.gz` | Flamingo의 메인 웹 애플리케이션.
+|Flamingo System Agent | `flamingo2-system-agent-2.0.0.tar.gz` | Flamingo의 사용자 계정과 리눅스 사용자의 시스템 계정을 상호 연계하기 위한 웹 애플리케이션.
+|Flamingo Resource Manager Agent | `flamingo2-hadoop2-rm-agent-2.0.0.jar` | Hadoop의 Resource Manager가 동작하는 JVM에서 같이 동작하는 Agent로써 Flamingo는 Resource Manager Agent와 통신하며 YARN 애플리케이션 및 정보를 수집한다.
+|Flamingo Namenode Agent for Hadoop 2.0 이상 | `flamingo2-hadoop20-nn-agent-2.0.0.jar` | Hadoop 2.0의 Namemnode가 동작하는 JVM에서 같이 동작하는 Agent로써 Flamingo는 Namenode Agent와 통신하며 HDFS 브라우저의 요청을 처리한다.
+|Flamingo Namenode Agent for Hadoop 2.6 이상 | `flamingo2-hadoop26-nn-agent-2.0.0.jar` | Hadoop 2.6의 Namemnode가 동작하는 JVM에서 같이 동작하는 Agent로써 Flamingo는 Namenode Agent와 통신하며 HDFS 브라우저의 요청을 처리한다.
+|Flamingo Collector | `flamingo2-collector-2.0.0.tar.gz` | Flamingo Resource Manager Agent와 Namenode Agent와 통신하면서 관련 정보를 주기적으로 수집하는 웹 애플리케이션.
+|Flamingo MapReduce Job Agent | `flamingo2-hadoop2-mr-agent-2.0.0.jar` | Hadoop의 MapReduce Job을 실행할 때 MapReduce Job ID와 YARN 애플리케이션 ID를 추출하는 Agent.
+|=======
+
+=== 라이센스
+
+Flamingo의 라이센스 정책은 다음과 같습니다.
+
+[width="80%",options="header"]
+|=======
+|라이센스  |내용
+|GPL v3 |오픈소스 라이센스로써 상업적인 용도로 사용이 불가능한 라이센스입니다.
+|Commercial |상업적인 용도로 사용이 가능한 라이센스입니다.
+|=======
+
+==== OpenSource 라이센스
+
+Flamingo는 GPL v3 라이센스에 따라서 개발이 되었으며 http://www.cloudine.io[Cloudine]이 개발 및 배포하고 있습니다. 기본 라이센스가 GPL v3이므로 GPL v3 라이센스 규정을 따라야 합니다.
+
+* https://www.olis.or.kr/ossw/license/license/detail.do?lid=1072[GNU General Public License (한국어)]
+* https://en.wikipedia.org/wiki/GNU_General_Public_License[GNU General Public License (English)]
+
+Flamingo의 GPL v3 라이센스는 기술지원을 하지 않으며 커뮤니티의 지원을 통해서 이슈를 해결해야 하며, 상업적인 용도(판매, 공급, 타 제품에 포함, Flamingo의 이름 변경 등)로 사용할 수 없습니다.
+
+==== Commercial 라이센스
+
+Cloudine의 기술지원 서비스를 받거나, 상업적인 용도로 사용하고자 하는 경우 사용자는 Commercial 라이센스를 취득해야 합니다. Commercial 라이센스는 다음 두 가지의 라이센스로 구분합니다.
+
+[width="80%",cols="5,20",options="header"]
+|=======
+|유형  |내용
+|Subscription |년단위 라이센스입니다. 라이센스 발급후 1년동안 사용이 가능하며 사용기간이 만료되면 Flamingo는 로그인을 제한합니다. 따라서 라이센스를 갱신하도록 합니다.
+|OEM |Flamingo를 수정하고 추가하여 다른 제품명으로 판매하고자 할때 적용하는 라이센스입니다. 년단위 라이센스이며, 특정 도메인에 한정에서 별도 협의를 통해 OEM 라이센스를 제공합니다. 라이센스에 대한 협의는 sales@cloudine.co.kr 으로 연락주십시오.
+|=======
+

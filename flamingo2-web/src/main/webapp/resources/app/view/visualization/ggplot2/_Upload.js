@@ -151,7 +151,7 @@ Ext.define('Flamingo2.view.visualization.ggplot2._Upload', {
                             items: [
                                 {
                                     xtype: 'combobox',
-                                    fieldLabel: '헤더',
+                                    fieldLabel: message.msg('visual.header'),
                                     margin: '0 5 5 0',
                                     value: false,
                                     reference: 'cbxHeader',

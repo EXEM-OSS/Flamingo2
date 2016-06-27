@@ -17,7 +17,7 @@
 /**
  * HAWQ > Browser > Object Explorer > Table > Grid context menu > Alter click
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  * @see Flamingo2.view.hawq.browser._TableAlterController
  * @see Flamingo2.view.hawq.browser._TableAlterModel

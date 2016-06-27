@@ -39,11 +39,11 @@ Ext.define('Flamingo2.view.fs.hdfs.permission.HdfsPermissionController', {
     /**
      * 선택한 현재 디렉토리 경로만 갱신한다.
      */
-    updateCurrentDirectoryStore: function (parentNode) {
+    updateCurrentDirectoryStore: function (updateNode) {
         var treeItem = query('hdfsDirectoryPanel');
 
-        if (!parentNode.data.expanded) {
-            parentNode.data.expanded = true;
+        if (updateNode.id != 'root' && !updateNode.data.expanded) {
+            updateNode.data.expanded = true;
         }
 
         treeItem.getStore().load({
@@ -82,9 +82,16 @@ Ext.define('Flamingo2.view.fs.hdfs.permission.HdfsPermissionController', {
         var treeItem = query('hdfsDirectoryPanel');
         var selectedNode = treeItem.getSelectionModel().getLastSelected();
         var currentPath = selectedNode.get('id');
+        var parentPath;
         var files = [];
         var file;
         var fileNames = [];
+
+        if (selectedNode.parentNode.id == 'root') {
+            parentPath = '/';
+        } else {
+            parentPath = selectedNode.parentNode.id;
+        }
 
         // 파일만 권한을 변경할 경우
         if (fileStatus) {
@@ -157,9 +164,15 @@ Ext.define('Flamingo2.view.fs.hdfs.permission.HdfsPermissionController', {
                         icon: Ext.MessageBox.WARNING
                     });
 
-                    var parentNode = treeItem.getStore().getNodeById(currentPath);
+                    var updateNode;
 
-                    me.updateCurrentDirectoryStore(parentNode);
+                    if (!fileStatus && parentPath == '/') {
+                        updateNode = treeItem.getStore().getRootNode();
+                    } else if (!fileStatus && parentPath != '/') {
+                        updateNode = treeItem.getStore().getNodeById(parentPath);
+                    }
+
+                    me.updateCurrentDirectoryStore(updateNode);
                     me.updateFileStore(currentPath);
                 } else if (obj.error.cause) {
                     Ext.MessageBox.show({

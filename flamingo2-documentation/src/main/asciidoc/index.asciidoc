@@ -1,0 +1,10 @@
+= Flamingo 2 사용자 가이드
+김병곤 <fharenheit@gmail.com>
+:toc:
+:toc-title: 목차
+:toclevels: 3
+:docinfo:
+:imagesdir: images
+:homepage: http://www.opencloudengine.org
+
+include::user-guide/korean/monitoring-hive.asciidoc[]

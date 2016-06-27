@@ -123,7 +123,7 @@ public class StringUtils {
      * @return 문자열 리스트
      */
     public static List<String> arrayToCollection(String[] values) {
-        List<String> list = new ArrayList<String>(values.length);
+        List<String> list = new ArrayList<>(values.length);
         Collections.addAll(list, values);
         return list;
     }
@@ -182,7 +182,7 @@ public class StringUtils {
     public static String unescape(String string) {
         StringBuilder builder = new StringBuilder();
         builder.ensureCapacity(string.length());
-        int lastPos = 0, pos = 0;
+        int lastPos = 0, pos;
         char ch;
         while (lastPos < string.length()) {
             pos = string.indexOf("%", lastPos);
@@ -242,11 +242,36 @@ public class StringUtils {
     /**
      * apache commons splitPreserveAllTokens 처리한다.
      *
-     * @param string 처리할 문자열
-     * @param delimeter 구분자
+     * @param string    처리할 문자열
+     * @param delimiter 구분자
      * @return escape 처리한 문자열
      */
-    public static String[] splitPreserveAllTokens(String string, String delimeter) {
-        return org.apache.commons.lang.StringUtils.splitPreserveAllTokens(string, delimeter);
+    public static String[] splitPreserveAllTokens(String string, String delimiter) {
+        return org.apache.commons.lang.StringUtils.splitPreserveAllTokens(string, delimiter);
+    }
+
+    /**
+     * 전체 문자열에서 마지막 Separator를 기준으로 좌측 문자열을 반환한다.
+     *
+     * @param variable  Variable : ex) localhost:hostname
+     * @param separator Separater
+     * @return 마지막 Separator를 기준으로 좌측 문자열
+     */
+    public static String getVariableKey(String variable, String separator) {
+        int sep = variable.lastIndexOf(separator);
+        return variable.substring(0, sep);
+    }
+
+    /**
+     * 전체 문자열에서 마지막 Separator를 기준으로 우측 문자열을 반환한다.
+     *
+     * @param variable  Variable : ex) address:port
+     * @param separator Separator
+     * @return 마지막 Separator를 기준으로 우측 문자열
+     */
+    public static String getVariableValue(String variable, String separator) {
+        int sep = variable.lastIndexOf(separator);
+        int length = variable.getBytes().length;
+        return variable.substring(sep + 1, length);
     }
 }

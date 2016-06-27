@@ -115,7 +115,7 @@ public class DesignerServiceImpl implements DesignerService {
 
     @Override
     public void killProccess(String logDirectory) {
-        Expect expect = null;
+        Expect expect;
         try {
             Process process = Runtime.getRuntime().exec("/bin/sh");
             expect = new ExpectBuilder()
@@ -132,15 +132,22 @@ public class DesignerServiceImpl implements DesignerService {
     }
 
     @Override
-    public boolean rename(long treeId, String workflowName) {
-        WorkflowService workflowService = ApplicationContextRegistry.getApplicationContext().getBean(WorkflowService.class);
-        TreeService treeService = ApplicationContextRegistry.getApplicationContext().getBean(TreeService.class);
-        Map map = new HashMap();
-        map.put("treeId", treeId);
-        map.put("workflowName", workflowName);
+    public void rename(long treeId, String workflowName) {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("treeId", treeId);
+            map.put("workflowName", workflowName);
 
-        Tree tree = treeService.get(treeId);
-        tree.setName(workflowName);
-        return workflowService.rename(map) && treeService.rename(tree) > 0;
+            WorkflowService workflowService = ApplicationContextRegistry.getApplicationContext().getBean(WorkflowService.class);
+            workflowService.rename(map);
+
+            TreeService treeService = ApplicationContextRegistry.getApplicationContext().getBean(TreeService.class);
+            Tree tree = treeService.get(treeId);
+            tree.setName(workflowName);
+            treeService.rename(tree);
+        } catch (Exception e) {
+            exceptionLogger.warn("Unable to rename a workflow.", e);
+        }
+
     }
 }

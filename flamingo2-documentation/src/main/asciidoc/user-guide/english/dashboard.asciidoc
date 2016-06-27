@@ -1,0 +1,328 @@
+[[dashboard]]
+
+== Workflow Monitor
+
+The Workflow Monitor supervises all workflows executed by the Workflow Designer.
+
+image::dashboard/dashboard1.png[scaledwidth=100%,워크플로우 모니터링]
+
+The available features are:
+
+* Workflow Summary
+* Workflow Status and Processing Time
+* Status of Each Step in A Workflow and Log
+* Script and Log of Each Step
+* MapReduce Job ID and YARN Application ID of Each Step
+* Workflow History
+
+[NOTE]
+The MapReduce-based modules such as Pig, Hive, and MapReduce require Flamingo MapReduce Job Agent to retrieve MapReduce Job IDs and YARN Application IDs.
+
+=== Workflow History Graph
+
+The chart is drawn based on the workflow history. Statical data are gathered every hour for a week.
+
+image::dashboard/dashboard2.png[scaledwidth=100%,워크플로우 실행 이력의 추이 그래프]
+
+=== Workflow History
+
+Workflow history is displayed with the most recent job at top. A user can see only his/her history. The system administrator has the privileges to view all.
+
+image::dashboard/dashboard3.png[scaledwidth=100%,워크플로우 실행 이력 조회]
+
+The following table explains each field in the panel.
+
+[width="80%",cols="5,20",options="header"]
+|=======
+|Label  |Description
+|Start Date |The beginning of a search date range.
+|End Date |The end of a search date range.
+|Status | The status of searched workflows.
+|Workflow Name |A name to search history by.
+|Search |Begin searching with the entered conditions.
+|Clear |Clear all fields. In order to search all, clear all fields and then search.
+|Refresh |Updates the list with entered values.
+|=======
+
+=== 워크플로우 실행 이력 보기
+
+Double click on a workflow you wish to see detail. Each module in the workflow shows its status and processing time. To see more details, click on a module, and its log will be displayed.
+
+image::dashboard/dashboard4.png[scaledwidth=70%,워크플로우 실행 이력 보기]
+
+The second tab shows the modules command line parameters.
+
+image::dashboard/dashboard5.png[scaledwidth=70%,워크플로우 실행 이력 보기]
+
+The third tab show a script. If it's a Hive module, Hive QL will be displayed. If Pig, Pig Latin Script. Bash, R, and Python modules also display their scripts.
+
+image::dashboard/dashboard6.png[scaledwidth=70%,워크플로우 실행 이력 보기]
+
+The fourth tab is for error messages.
+
+image::dashboard/dashboard7.png[scaledwidth=70%,워크플로우 실행 이력 보기]
+
+The fifth tab is for YARN and MapReduce Job IDs.
+
+image::dashboard/dashboard8.png[scaledwidth=70%,워크플로우 실행 이력 보기]
+
+An entire workflow status is also availabe.
+
+image::dashboard/dashboard9.png[scaledwidth=70%,워크플로우 실행 이력 보기]
+
+=== YARN Application ID and MapReduce Job ID Monitor
+
+Flamingo MapReduce Job Agent collects YARN application and MapReduce job IDs.
+By collecting YARN application and MapReduce Job IDs from a client,
+MapReduce jobs become traceable. Flamingo utilizes this feature to get information associated with the workflow and MapReduce jobs.
+Flamingo MapReduce Job Agent works on the followings:
+
+* MapReduce Job
+* Pig Latin
+* Hive QL
+
+When users execute MapReduce jobs, Pig Latin scripts, or Hive QL, application IDs are assigned by the ResourceManager.
+Flamingo MapReduce Job Agent keeps track of these application IDs, and knows which YARN applications or MapReduce jobs are associated.
+This only works when MapReduce jobs, Pig Latin Scripts, and Hive QL are executed from the Workflow Designer.
+
+In order to retrieve MapReduce Job IDs and YARN application IDs, set Flamingo MapReduce Job Agent to `HADOOP_CLIENT_OPTS`.
+This saves the job ID to a file in the current directory.
+
+[source]
+----
+export HADOOP_CLIENT_OPTS=-javaagent:flamingo2-hadoop2-mr-agent-2.0.0.jar=resourcescript:mr2.bm
+----
+
+If you would like to set this globally, add this to `~/.profile` or  `~/.bashrc`, or modify `<HADOOP_HOME>/bin/hadoop`.
+
+This applies to Cloudera CDH, and it can be verified by running the following command.
+
+[source]
+----
+# hadoop jar hadoop-mapreduce-examples-2.5.0.jar wordcount /input.txt /output
+15/02/15 13:18:02 INFO client.RMProxy: Connecting to ResourceManager at exo1.cdh.local/192.168.100.71:8032
+15/02/15 13:18:09 INFO input.FileInputFormat: Total input paths to process : 1
+15/02/15 13:18:09 INFO mapreduce.JobSubmitter: number of splits:1
+15/02/15 13:18:09 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1423442407955_0150
+15/02/15 13:18:10 INFO impl.YarnClientImpl: Submitted application application_1423442407955_0150
+15/02/15 13:18:10 INFO mapreduce.Job: The url to track the job: http://exo1.cdh.local:8088/proxy/application_1423442407955_0150/
+15/02/15 13:18:10 INFO mapreduce.Job: Running job: job_1423442407955_0150
+15/02/15 13:19:09 INFO mapreduce.Job: Job job_1423442407955_0150 running in uber mode : false
+15/02/15 13:19:09 INFO mapreduce.Job:  map 0% reduce 0%
+15/02/15 13:20:30 INFO mapreduce.Job:  map 100% reduce 0%
+15/02/15 13:20:42 INFO mapreduce.Job:  map 100% reduce 2%
+15/02/15 13:20:43 INFO mapreduce.Job:  map 100% reduce 4%
+15/02/15 13:20:44 INFO mapreduce.Job:  map 100% reduce 8%
+15/02/15 13:20:45 INFO mapreduce.Job:  map 100% reduce 10%
+15/02/15 13:20:48 INFO mapreduce.Job:  map 100% reduce 23%
+15/02/15 13:20:49 INFO mapreduce.Job:  map 100% reduce 29%
+15/02/15 13:20:50 INFO mapreduce.Job:  map 100% reduce 31%
+15/02/15 13:20:51 INFO mapreduce.Job:  map 100% reduce 40%
+15/02/15 13:20:52 INFO mapreduce.Job:  map 100% reduce 46%
+15/02/15 13:20:53 INFO mapreduce.Job:  map 100% reduce 50%
+15/02/15 13:20:54 INFO mapreduce.Job:  map 100% reduce 52%
+15/02/15 13:20:58 INFO mapreduce.Job:  map 100% reduce 58%
+15/02/15 13:20:59 INFO mapreduce.Job:  map 100% reduce 60%
+15/02/15 13:21:00 INFO mapreduce.Job:  map 100% reduce 67%
+15/02/15 13:21:01 INFO mapreduce.Job:  map 100% reduce 69%
+15/02/15 13:21:02 INFO mapreduce.Job:  map 100% reduce 73%
+15/02/15 13:21:03 INFO mapreduce.Job:  map 100% reduce 77%
+15/02/15 13:21:04 INFO mapreduce.Job:  map 100% reduce 83%
+15/02/15 13:21:05 INFO mapreduce.Job:  map 100% reduce 88%
+15/02/15 13:21:06 INFO mapreduce.Job:  map 100% reduce 96%
+15/02/15 13:21:14 INFO mapreduce.Job:  map 100% reduce 98%
+15/02/15 13:21:17 INFO mapreduce.Job:  map 100% reduce 100%
+15/02/15 13:21:18 INFO mapreduce.Job: Job job_1423442407955_0150 completed successfully
+15/02/15 13:21:18 INFO mapreduce.Job: Counters: 49
+        File System Counters
+                FILE: Number of bytes read=3179874
+                FILE: Number of bytes written=11566880
+                FILE: Number of read operations=0
+                FILE: Number of large read operations=0
+                FILE: Number of write operations=0
+                HDFS: Number of bytes read=4067777
+                HDFS: Number of bytes written=4422649
+                HDFS: Number of read operations=147
+                HDFS: Number of large read operations=0
+                HDFS: Number of write operations=96
+        Job Counters
+                Launched map tasks=1
+                Launched reduce tasks=48
+                Data-local map tasks=1
+                Total time spent by all maps in occupied slots (ms)=77777
+                Total time spent by all reduces in occupied slots (ms)=620248
+                Total time spent by all map tasks (ms)=77777
+                Total time spent by all reduce tasks (ms)=620248
+                Total vcore-seconds taken by all map tasks=77777
+                Total vcore-seconds taken by all reduce tasks=620248
+                Total megabyte-seconds taken by all map tasks=79643648
+                Total megabyte-seconds taken by all reduce tasks=635133952
+        Map-Reduce Framework
+                Map input records=354984
+                Map output records=354984
+                Map output bytes=5132627
+                Map output materialized bytes=3179682
+                Input split bytes=102
+                Combine input records=354984
+                Combine output records=354983
+                Reduce input groups=354983
+                Reduce shuffle bytes=3179682
+                Reduce input records=354983
+                Reduce output records=354983
+                Spilled Records=709966
+                Shuffled Maps =48
+                Failed Shuffles=0
+                Merged Map outputs=48
+                GC time elapsed (ms)=40837
+                CPU time spent (ms)=334420
+                Physical memory (bytes) snapshot=14881824768
+                Virtual memory (bytes) snapshot=69589762048
+                Total committed heap usage (bytes)=38817759232
+        Shuffle Errors
+                BAD_ID=0
+                CONNECTION=0
+                IO_ERROR=0
+                WRONG_LENGTH=0
+                WRONG_MAP=0
+                WRONG_REDUCE=0
+        File Input Format Counters
+                Bytes Read=4067675
+        File Output Format Counters
+                Bytes Written=4422649
+----
+
+Add `-Dflamingo.debug=true` to `HADOOP_CLIENT_OPTS` for additional loggings. This is for debugging purpose.
+
+====
+[source]
+----
+# hadoop jar hadoop-mapreduce-examples-2.5.0.jar wordcount /input.txt /output
+15/02/15 13:18:02 INFO client.RMProxy: Connecting to ResourceManager at exo1.cdh.local/192.168.100.71:8032
+15/02/15 13:18:09 INFO input.FileInputFormat: Total input paths to process : 1
+15/02/15 13:18:09 INFO mapreduce.JobSubmitter: number of splits:1
+15/02/15 13:18:09 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1423442407955_0150
+************************************************************************************ # <1>
+** YARN App instrumented By Flamingo 2 >> Path : /root
+** YARN App instrumented By Flamingo 2 >> Application ID : application_1423442407955_0150
+************************************************************************************
+15/02/15 13:18:10 INFO impl.YarnClientImpl: Submitted application application_1423442407955_0150
+15/02/15 13:18:10 INFO mapreduce.Job: The url to track the job: http://exo1.cdh.local:8088/proxy/application_1423442407955_0150/
+************************************************************************************ # <2>
+** MR instrumented By Flamingo 2 >> Path : /root
+** MR instrumented By Flamingo 2 >> Job ID : job_1423442407955_0150
+************************************************************************************
+15/02/15 13:18:10 INFO mapreduce.Job: Running job: job_1423442407955_0150
+15/02/15 13:19:09 INFO mapreduce.Job: Job job_1423442407955_0150 running in uber mode : false
+15/02/15 13:19:09 INFO mapreduce.Job:  map 0% reduce 0%
+15/02/15 13:20:30 INFO mapreduce.Job:  map 100% reduce 0%
+15/02/15 13:20:42 INFO mapreduce.Job:  map 100% reduce 2%
+15/02/15 13:20:43 INFO mapreduce.Job:  map 100% reduce 4%
+15/02/15 13:20:44 INFO mapreduce.Job:  map 100% reduce 8%
+15/02/15 13:20:45 INFO mapreduce.Job:  map 100% reduce 10%
+15/02/15 13:20:48 INFO mapreduce.Job:  map 100% reduce 23%
+15/02/15 13:20:49 INFO mapreduce.Job:  map 100% reduce 29%
+15/02/15 13:20:50 INFO mapreduce.Job:  map 100% reduce 31%
+15/02/15 13:20:51 INFO mapreduce.Job:  map 100% reduce 40%
+15/02/15 13:20:52 INFO mapreduce.Job:  map 100% reduce 46%
+15/02/15 13:20:53 INFO mapreduce.Job:  map 100% reduce 50%
+15/02/15 13:20:54 INFO mapreduce.Job:  map 100% reduce 52%
+15/02/15 13:20:58 INFO mapreduce.Job:  map 100% reduce 58%
+15/02/15 13:20:59 INFO mapreduce.Job:  map 100% reduce 60%
+15/02/15 13:21:00 INFO mapreduce.Job:  map 100% reduce 67%
+15/02/15 13:21:01 INFO mapreduce.Job:  map 100% reduce 69%
+15/02/15 13:21:02 INFO mapreduce.Job:  map 100% reduce 73%
+15/02/15 13:21:03 INFO mapreduce.Job:  map 100% reduce 77%
+15/02/15 13:21:04 INFO mapreduce.Job:  map 100% reduce 83%
+15/02/15 13:21:05 INFO mapreduce.Job:  map 100% reduce 88%
+15/02/15 13:21:06 INFO mapreduce.Job:  map 100% reduce 96%
+15/02/15 13:21:14 INFO mapreduce.Job:  map 100% reduce 98%
+15/02/15 13:21:17 INFO mapreduce.Job:  map 100% reduce 100%
+15/02/15 13:21:18 INFO mapreduce.Job: Job job_1423442407955_0150 completed successfully
+15/02/15 13:21:18 INFO mapreduce.Job: Counters: 49
+        File System Counters
+                FILE: Number of bytes read=3179874
+                FILE: Number of bytes written=11566880
+                FILE: Number of read operations=0
+                FILE: Number of large read operations=0
+                FILE: Number of write operations=0
+                HDFS: Number of bytes read=4067777
+                HDFS: Number of bytes written=4422649
+                HDFS: Number of read operations=147
+                HDFS: Number of large read operations=0
+                HDFS: Number of write operations=96
+        Job Counters
+                Launched map tasks=1
+                Launched reduce tasks=48
+                Data-local map tasks=1
+                Total time spent by all maps in occupied slots (ms)=77777
+                Total time spent by all reduces in occupied slots (ms)=620248
+                Total time spent by all map tasks (ms)=77777
+                Total time spent by all reduce tasks (ms)=620248
+                Total vcore-seconds taken by all map tasks=77777
+                Total vcore-seconds taken by all reduce tasks=620248
+                Total megabyte-seconds taken by all map tasks=79643648
+                Total megabyte-seconds taken by all reduce tasks=635133952
+        Map-Reduce Framework
+                Map input records=354984
+                Map output records=354984
+                Map output bytes=5132627
+                Map output materialized bytes=3179682
+                Input split bytes=102
+                Combine input records=354984
+                Combine output records=354983
+                Reduce input groups=354983
+                Reduce shuffle bytes=3179682
+                Reduce input records=354983
+                Reduce output records=354983
+                Spilled Records=709966
+                Shuffled Maps =48
+                Failed Shuffles=0
+                Merged Map outputs=48
+                GC time elapsed (ms)=40837
+                CPU time spent (ms)=334420
+                Physical memory (bytes) snapshot=14881824768
+                Virtual memory (bytes) snapshot=69589762048
+                Total committed heap usage (bytes)=38817759232
+        Shuffle Errors
+                BAD_ID=0
+                CONNECTION=0
+                IO_ERROR=0
+                WRONG_LENGTH=0
+                WRONG_MAP=0
+                WRONG_REDUCE=0
+        File Input Format Counters
+                Bytes Read=4067675
+        File Output Format Counters
+                Bytes Written=4422649
+----
+<1> Retrieving YARN Application ID
+<2> Retrieving MapReduce Job ID
+====
+
+Once Flamingo MapReduce Job Agent is up and running, it gathers metrics from MapReduce jobs and write them to a file.
+This file is used when a job is killed in the Monitor.
+
+[source,xml]
+----
+# cat app.application_1423442407955_0150
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment/>
+<entry key="queue">default</entry>
+<entry key="applicationName">word count</entry>
+<entry key="applicationId">application_1423442407955_0150</entry>
+</properties>
+
+# cat hadoop.job_1423442407955_0150
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment/>
+<entry key="jobId">job_1423442407955_0150</entry>
+<entry key="queue">default</entry>
+<entry key="trackingUrl">http://exo1.cdh.local:8088/proxy/application_1423442407955_0150/</entry>
+<entry key="user">root</entry>
+<entry key="jobName">word count</entry>
+</properties>
+----

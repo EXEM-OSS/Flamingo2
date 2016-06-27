@@ -1,3 +1,4 @@
+/* ======================== ETC ======================== */
 /* including package ext-theme-base */
 /**
  * Creates a background gradient.
@@ -104,6 +105,7 @@
 /* including package ext-theme-classic */
 /* including package ext-theme-gray */
 /* including package flamingo2-theme */
+/* ======================== VAR ======================== */
 /* including package flamingo2-theme */
 /* including package ext-theme-gray */
 /** @class Global_CSS */
@@ -7559,6 +7561,7 @@
  * Flag to ensure GridField rules only get set once
  */
 /* including package sencha-charts */
+/* ======================== RULE ======================== */
 /* including package ext-theme-base */
 /* line 1, ../../../../../ext/packages/ext-theme-base/sass/src/scroll/TouchScroller.scss */
 .x-scroll-container {

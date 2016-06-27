@@ -49,7 +49,7 @@ public class YarnApplicationRepositoryImpl implements YarnApplicationRepository 
 
     @Override
     public void insertApplicationInfo(String systemId, String applicationId, String applicationType, Map application, String log) {
-        jdbcTemplate.update("INSERT INTO FL_CL_YARN_DUMP (system, applicationId, applicationType, progress, queue, memorySeconds, rpcPort, amHost, usedResourcesMemory, startTime, reservedResourcesVcores, reservedResourcesMemory, trackingUrl, yarnApplicationState, neededResourcesVcores, name, numReservedContainers, usedResourcesVcores, finishTime, numUsedContainers, finalApplicationStatus, user, neededResourcesMemory, vcoreSeconds, diagnostics, log) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
+        jdbcTemplate.update("INSERT INTO FL_CL_YARN_DUMP (SYSTEM, APPLICATION_ID, APPLICATION_TYPE, PROGRESS, QUEUE, MEMORY_SECONDS, RPC_PORT, AM_HOST, USED_RESOURCES_MEMORY, START_TIME, RESERVED_RESOURCES_VCORES, RESERVED_RESOURCES_MEMORY, TRACKING_URL, YARN_APPLICATION_STATE, NEEDED_RESOURCES_VCORES, NAME, NUM_RESERVED_CONTAINERS, USED_RESOURCES_VCORES, FINISH_TIME, NUM_USED_CONTAINERS, FINAL_APPLICATION_STATUS, USER, NEEDED_RESOURCES_MEMORY, VCORE_SECONDS, DIAGNOSTICS, LOG) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
                 systemId,
                 application.get("applicationId"),
                 application.get("applicationType"),

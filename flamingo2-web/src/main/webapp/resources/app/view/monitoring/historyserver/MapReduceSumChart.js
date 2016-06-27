@@ -18,34 +18,14 @@ Ext.define('Flamingo2.view.monitoring.historyserver.MapReduceSumChart', {
     extend: 'Ext.Panel',
     alias: 'widget.mapReduceSumChart',
 
-    initComponent: function () {
-        var me = this;
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['time', 'sum'],
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: '/monitoring/application/history/jobs/timeseries.json',
-                extraParams: {
-                    clusterName: ENGINE.id
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'total'
-                }
-            },
-            remoteSort: true,
-            sorters: [{
-                property: 'num',
-                direction: 'ASC'
-            }]
-        });
-
-        me.items = {
+    items: [
+        {
             xtype: 'cartesian',
+            itemId: 'mrSumChart',
             height: 160,
-            store: store,
+            bind: {
+                store: '{mrJobSumChartStore}'
+            },
             interactions: 'itemhighlight',
             axes: [
                 {
@@ -102,7 +82,8 @@ Ext.define('Flamingo2.view.monitoring.historyserver.MapReduceSumChart', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml(storeItem.get('time') + ' : <font color="#CC2900"><b>' + storeItem.get('sum') + message.msg('monitoring.yarn.tip.count') + '</b></font>');
+                            this.setHtml(storeItem.get('time') + ' : <span style="color: #CC2900; "><b>'
+                                + storeItem.get('sum') + message.msg('monitoring.yarn.tip.count') + '</b></font>');
                         }
                     },
                     label: {
@@ -113,9 +94,17 @@ Ext.define('Flamingo2.view.monitoring.historyserver.MapReduceSumChart', {
                         }
                     }
                 }
-            ]
-        };
-
-        me.callParent(arguments);
-    }
+            ],
+            listeners: {
+                afterrender: 'onMapReduceSumChartAfterRender'
+            }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onMRJobSumChartRefreshClick'
+        }
+    ]
 });

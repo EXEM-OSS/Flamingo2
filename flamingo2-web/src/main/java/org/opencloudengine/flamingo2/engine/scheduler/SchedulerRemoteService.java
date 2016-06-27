@@ -23,10 +23,7 @@ public interface SchedulerRemoteService {
 
     List getRecentMetrics(String clusterName);
 
-    /**
-     * 워크플로우 디자이너를 이용하여 워크플로우를 즉시 실행한다.
-     */
     void runImmediatly(Map<String, Object> params);
 
-    boolean prepareRun(Map params);
+    void prepareRun(Map params);
 }

@@ -1,0 +1,114 @@
+[[rstudio]]
+
+== R/RStudio
+
+Flamingo 2 works with RStudio Server. Flamingo only supports the open source version of RStudio. R and RStudio need to be installed.
+
+image::r/rstudio.png[scaledwidth=100%,RStudio Server 연동]
+
+=== RStudio Server
+
+RStudio has the server and desktop versions. Based on the availability of technical support, RStudio also has the OpenSource and Professional versions. RStudio Server Professional provides more features than OpenSource as below.
+
+* Load Balance on Multi-nodes
+* Resource and Session Management
+* LDAP, Active Directory, and Google Account Management
+* Kerberos Authentication
+* Client IP Address Blocking and Traffic Encryption using SSL
+* System Monitoring
+* Improved Resource Management (User or Group Based Restrictions on Resources)
+
+This document is based on RStudio Server OpenSource.
+Cloudine does *NOT* provide technical support and maintenance for R and RStudio Server. Receive technical support for RStudio Server Professional from RStudio. From more help about RStudio Server, go to the link, http://www.rstudio.com/products/rstudio/[rstudio.com].
+
+=== Integrating with Flamingo
+
+The following is the list of things that RStudio Server integrate with Flamingo.
+
+* Management of Flamingo user accouts and Linux user accounts where RStudio Server is installed.
+* Automatic log in
+
+[[userintegration]]
+==== User Account Integration
+
+When open `RStudio` in Flamingo, Flamingo will attempt to log in to RStuiod Server.
+This only works when same user accounts exist in both Flamingo and RStudio Server.
+Flamingo can synchronize the user accounts in RStudio Server and Flamingo through the System Agent.
+System Agent activates when Flamingo's system administrator approve, add, delete or alter user accounts, and when a user changes the password.
+
+There is a property in `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` for synchronizing user accounts through the system agent.
+Set `user.system.agent.apply` to `true`, and the system agent in `user.system.agent.urls` will synchronize the user accounts.
+
+[source]
+----
+user.system.agent.urls=http://192.168.1.1:7070/remote/agent/system
+
+user.system.agent.apply=true
+----
+
+[WARNING]
+In order to use the web terminal in Flamingo, install the remote web terminal server in RStudio Server.
+
+==== Automatic Log In
+
+The user accounts of R and RStudio Server(OpenSource) are the same accounts in Linux.
+Basically the user account of Flamingo and RStudio Server exist separately. In order to integrate them, the user accounts of Flamingo must exist in Linux where RStudio Server is installed.
+Assuming the same user accounts in both system, when you open `RStudio` in Flamingo, Flamingo will attempt to log in to RStudio Server configured in `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties`.
+
+[source,properties]
+----
+rserver.auth.url=http://192.168.1.1:8787/auth-public-key
+rserver.signin.url=http://192.168.1.1:8787/auth-do-sign-in
+----
+
+Flamingo users might not abe able to log in to RStudio Server.
+In such a case, specify the IP addresses for both Flamingo and RStudio Server or access through a domain name.
+Even if the FQDNs of Flamingo and RStudio Server are defined in `/etc/hosts `, Flamingo might not be able to log in to RStudio Server.
+Also RStudio Server may be behind the firewall, and this prevents the automatic log in.
+
+image::r/rstudio1.png[scaledwidth=100%,RStudio Server 자동 로그인이 되지 않는 경우]
+
+The R session timeout and the Flamingo session timeout are different from each other. Usually when you set the Flamingo session timeout longer than R session timeout, it would work fine.
+
+==== Flamingo Session Timeout
+
+To configure Flamingo session timeout, edit the following properties in  `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/web.xml`.
+
+[source,xml]
+----
+<web-app>
+  <session-config>
+    <session-timeout>3000</session-timeout>
+    <cookie-config>
+      <path>/</path>
+    </cookie-config>
+  </session-config>
+</web-app>
+----
+
+Java EE defines `session-timeout` as below.
+
+* Set in minutes
+* If less than or equal to 0 the container ignores the session timeout
+* If not specified, use the default value.
+
+==== RStudio Server Session Timeout
+
+In order to set RStudio Server session timeout, fix the following properties in `/etc/rstudio/rsession.conf`. Set it in minutes and if it is less than or equal to 0, the session timeout is set to infinity.
+
+[source,properties]
+----
+session-timeout-minutes=30
+----
+
+After configured, you need to restart RStudio Server. Run the following command.
+
+[source,bash]
+----
+# sudo rstudio-server restart
+----
+
+For more detail on RStudio Server, go to the link, https://support.rstudio.com/hc/en-us/articles/200552316-Configuring-the-Server[Configuring the Server].
+
+[WARNING]
+RStudio Server OpenSource and Professional can set the limit on connections based on the performance of server and the number of users. In case of using low-spec servers with a lot of users, install RStudio Server in many servers, and load balance using RStudio Server Professional.

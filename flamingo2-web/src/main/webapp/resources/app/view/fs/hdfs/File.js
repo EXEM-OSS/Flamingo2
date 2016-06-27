@@ -22,13 +22,6 @@ Ext.define('Flamingo2.view.fs.hdfs.File', {
     bind: {
         store: '{fileStore}'
     },
-    plugins: [
-        {
-            ptype: 'bufferedrenderer',
-            leadingBufferZone: 50,
-            trailingBufferZone: 20
-        }
-    ],
     selModel: {
         selType: 'checkboxmodel'
     },
@@ -165,6 +158,20 @@ Ext.define('Flamingo2.view.fs.hdfs.File', {
             tooltip: message.msg('fs.hdfs.file.panel.tip.permission'),
             handler: 'onClickFilePermission'
         },
+        {
+            text: message.msg('fs.hdfs.common.copyToLocal'),
+            iconCls: 'common-file-copy',
+            itemId: 'copyToLocal',
+            tooltip: message.msg('fs.hdfs.file.panel.tip.copyToLocal'),
+            handler: 'onClickCopyToLocal'
+        },
+        {
+            text: message.msg('fs.hdfs.common.realTimeStreaming'),
+            iconCls: 'fa fa-line-chart',
+            itemId: 'realTimeStreaming',
+            tooltip: message.msg('fs.hdfs.file.panel.tip.realTimeStreaming'),
+            handler: 'onClickRealTimeStreaming'
+        },
         '->',
         {
             text: message.msg('common.refresh'),
@@ -174,6 +181,14 @@ Ext.define('Flamingo2.view.fs.hdfs.File', {
             handler: 'onFileRefreshBtn'
         }
     ],
+
+    bbar: {
+        xtype: 'pagingtoolbar',
+        bind: {
+            store: '{fileStore}'
+        },
+        displayInfo: true
+    },
 
     listeners: {
         itemclick: 'onFileItemClick',

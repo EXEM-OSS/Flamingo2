@@ -31,16 +31,19 @@ Ext.define('Flamingo2.view.main.MainController', {
         }
     },
 
-    onAfterrender: function () {
+    onAfterRender: function () {
         Ext.defer(function () {
-            invokeGet('/system/license/valid', {
-                    clusterName: ENGINE.id
-                },
+            var url = CONSTANTS.SYSTEM.LICENSE.VALID;
+            var param = {
+                clusterName: ENGINE.id
+            };
+
+            invokeGet(url, param,
                 function (response) {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
                         if (!res.map.isValid) {
-                            Ext.Msg.alert(message.msg('common.warn'), '하둡 노드가 라이센스 승인된 노드 수 보다 많습니다.<br>라이센스를 갱신해야 합니다.<br>라이센스 노드 수: ' + res.map.maxNode, function () {
+                            Ext.Msg.alert(message.msg('common.warn'), message.msg('license.msg.node_warn') + res.map.maxNode, function () {
                                 window.location.href = CONSTANTS.USER.LOGOUT;
                             });
                         }
@@ -53,7 +56,7 @@ Ext.define('Flamingo2.view.main.MainController', {
                         });
                     }
                 },
-                function (response) {
+                function () {
                     Ext.MessageBox.show({
                         title: message.msg('common.warn'),
                         message: format(message.msg('common.msg.server_error'), config['system.admin.email']),
@@ -65,12 +68,15 @@ Ext.define('Flamingo2.view.main.MainController', {
         }, 5000);
     },
 
-    onNotiAfterrender: function () {
+    onNotiAfterRender: function () {
         var me = this;
+        var url = CONSTANTS.MAIN.NOTIFICATION.GET_ALARM;
+        var param = {
+            clusterName: ENGINE.id
+        };
+
         Ext.defer(function () {
-            invokeGet('/monitoring/alarm/getAlarm', {
-                    clusterName: ENGINE.id
-                },
+            invokeGet(url, param,
                 function (response) {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
@@ -79,7 +85,7 @@ Ext.define('Flamingo2.view.main.MainController', {
 
                     }
                 },
-                function (response) {
+                function () {
                     Ext.MessageBox.show({
                         title: message.msg('common.warn'),
                         message: format(message.msg('common.msg.server_error'), config['system.admin.email']),
@@ -91,20 +97,12 @@ Ext.define('Flamingo2.view.main.MainController', {
         }, 500);
     },
 
-    send: function (command, param) {
-        param.command = command;
-        param.username = SESSION.USERNAME;
-        this.ws.send(JSON.stringify(param));
-    },
-
-    onMenuViewready: function (view) {
-        var me = this;
-
+    onHeaderAfterRender: function () {
         Ext.create('Flamingo2.view.component.Notification', {
             renderTo: 'notification-grid',
             width: 270,
             listeners: {
-                afterrender: 'onNotiAfterrender'
+                afterrender: 'onNotiAfterRender'
             }
         });
 
@@ -113,6 +111,13 @@ Ext.define('Flamingo2.view.main.MainController', {
          Flamingo2.progress.update();
          }, parseInt(config['notification.update']));
          }*/
+    },
+
+
+    send: function (command, param) {
+        param.command = command;
+        param.username = SESSION.USERNAME;
+        this.ws.send(JSON.stringify(param));
     },
 
     /**
@@ -134,7 +139,7 @@ Ext.define('Flamingo2.view.main.MainController', {
 
     /**
      * Engine Combo Store Load 이벤트 처리
-     * **/
+     */
     onEngineStoreLoad: function (store, records, success, eOpts) {
         var me = this;
         var i, element = '';
@@ -159,12 +164,12 @@ Ext.define('Flamingo2.view.main.MainController', {
         $('.chosen-select').trigger('chosen:updated');
         me.onEngineComboChange(null, {selected: $('.chosen-select').val()});
         me.getViewModel().setData({engineLoaded: true});
-        me.mainPageLoad();
+        //me.mainPageLoad();
     },
 
     /**
      * MenuStore Load 이벤트 처리
-     * */
+     */
     onMenuStoreLoad: function (store, records, success, eOpts) {
         var me = this;
         me.getViewModel().setData({menuLoaded: true});
@@ -173,7 +178,7 @@ Ext.define('Flamingo2.view.main.MainController', {
 
     /**
      * 메인 페이지 로드
-     * */
+     */
     mainPageLoad: function () {
         var me = this;
         var data = me.getViewModel().getData();
@@ -185,10 +190,9 @@ Ext.define('Flamingo2.view.main.MainController', {
                 refs.pnlCenter.add(Ext.create(config['start.page']));
                 if (LICENSE.DAYS < 15) {
                     Ext.toast({
-                        title: 'Flamingo License',
-                        html: format('Flamingo License 기간이 {0}일 남았습니다.', LICENSE.DAYS),
+                        title: 'License',
+                        html: format(message.msg('license.msg.remain_license'), LICENSE.DAYS),
                         autoClose: false,
-                        align: 't',
                         iconCls: 'fa fa-info-circle fa-lg',
                         minWidth: 150,
                         align: 't'
@@ -200,7 +204,6 @@ Ext.define('Flamingo2.view.main.MainController', {
 
     onAlarmMessage: function (msg) {
         var me = this;
-        var refs = this.getReferences();
         var body = Ext.decode(msg.body);
 
         me.makeAlarm(body);
@@ -221,7 +224,7 @@ Ext.define('Flamingo2.view.main.MainController', {
     },
 
     alarmMessage: {
-        DATANODE: '데이터노드 장애 발생',
-        NODEMANAGER: '노드메니저 장애 발생'
+        DATANODE: message.msg('alarm.datanode'),
+        NODEMANAGER: message.msg('alarm.nodemanager')
     }
 });

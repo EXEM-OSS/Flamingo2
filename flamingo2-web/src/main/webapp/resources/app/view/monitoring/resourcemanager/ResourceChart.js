@@ -19,66 +19,66 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ResourceChart', {
     alias: 'widget.resourceChart',
 
     requires: [
-        'Flamingo2.view.monitoring.resourcemanager.JvmHeapUsage',
         'Flamingo2.view.monitoring.resourcemanager.NodeStatus',
         'Flamingo2.view.monitoring.resourcemanager.ContainerStatus',
-        'Flamingo2.view.monitoring.resourcemanager.ApplicationStatus'
+        'Flamingo2.view.monitoring.resourcemanager.ApplicationStatus',
+        'Flamingo2.view.monitoring.resourcemanager.JvmHeapUsage'
     ],
-
-    listeners: {
-        afterrender: function (view) {
-            setTableLayoutFixed(view);
-        }
-    },
 
     layout: {
         type: 'vbox'
     },
-
-    items: [{
-        xtype: 'container',
-        layout: 'hbox',
-        width: '100%',
-        items: [
-            {
-                title: message.msg('monitoring.clusternode.nodes.node_status'),
-                iconCls: 'fa fa-server fa-fw',
-                xtype: 'nodeStatus',
-                margin: '5 0 0 0',
-                flex: 1,
-                border: 1
-            },
-            {
-                title: message.msg('monitoring.rm.app_status'),
-                iconCls: 'fa fa-server fa-fw',
-                xtype: 'applicationStatus',
-                margin: '5 0 0 5',
-                flex: 1,
-                border: 1
-            }
-        ]
-    }, {
-        xtype: 'container',
-        layout: 'hbox',
-        width: '100%',
-        items: [
-            {
-                title: message.msg('monitoring.rm.container_status'),
-                iconCls: 'fa fa-server fa-fw',
-                xtype: 'containerStatus',
-                margin: '5 0 0 0',
-                flex: 1,
-                border: 1
-            },
-            {
-                title: message.msg('batch.jvm_heap_usage'),
-                iconCls: 'fa fa-server fa-fw',
-                xtype: 'rmJvmHeapUsage',
-                margin: '5 0 0 5',
-                flex: 1,
-                border: 1
-            }
-        ]
+    items: [
+        {
+            xtype: 'container',
+            layout: 'hbox',
+            width: '100%',
+            items: [
+                {
+                    title: message.msg('monitoring.clusternode.nodes.node_status'),
+                    iconCls: 'fa fa-server fa-fw',
+                    xtype: 'nodeStatus',
+                    margin: '5 0 0 0',
+                    flex: 1,
+                    border: 1
+                },
+                {
+                    title: message.msg('monitoring.rm.app_status'),
+                    iconCls: 'fa fa-server fa-fw',
+                    xtype: 'applicationStatus',
+                    margin: '5 0 0 5',
+                    flex: 1,
+                    border: 1
+                }
+            ]
+        },
+        {
+            xtype: 'container',
+            layout: 'hbox',
+            width: '100%',
+            items: [
+                {
+                    title: message.msg('monitoring.rm.container_status'),
+                    iconCls: 'fa fa-server fa-fw',
+                    xtype: 'containerStatus',
+                    margin: '5 0 0 0',
+                    flex: 1,
+                    border: 1
+                },
+                {
+                    title: message.msg('batch.jvm_heap_usage'),
+                    iconCls: 'fa fa-server fa-fw',
+                    xtype: 'rmJvmHeapUsage',
+                    margin: '5 0 0 5',
+                    flex: 1,
+                    border: 1
+                }
+            ]
+        }
+    ],
+    listeners: {
+        afterrender: function (view) {
+            setTableLayoutFixed(view);
+        }
     }
-    ]
 });

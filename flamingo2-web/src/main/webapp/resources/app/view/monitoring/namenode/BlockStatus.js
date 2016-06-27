@@ -20,35 +20,18 @@ Ext.define('Flamingo2.view.monitoring.namenode.BlockStatus', {
 
     border: false,
 
-    initComponent: function () {
-        var me = this;
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['num', 'corruptReplicaBlocks', 'pendingReplicationBlocks', 'scheduledReplicationBlocks', 'underReplicatedBlocks', 'missingBlocks', 'reg_dt'],
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
-                extraParams: {
-                    clusterName: ENGINE.id
-                },
-                remoteSort: true,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'total'
-                }
-            }
-        });
-
-        me.items = {
+    items: [
+        {
             xtype: 'cartesian',
-            border: false,
-            store: store,
+            itemId: 'blockStatusChart',
+            bind: {
+                store: '{blockStatusStore}'
+            },
+            height: 250,
             insetPadding: 20,
             interactions: 'itemhighlight',
             legend: { // TODO Multiline
-                docked: 'bottom',
-                border: false
+                docked: 'bottom'
             },
             axes: [
                 {
@@ -99,7 +82,8 @@ Ext.define('Flamingo2.view.monitoring.namenode.BlockStatus', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml('Corrupt Replication Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + toCommaNumber(storeItem.get('corruptReplicaBlocks')) + '</b></font>');
+                            this.setHtml('Corrupt Replication Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt'))
+                                + ' : <span style="color: #CC2900; "><b>' + toCommaNumber(storeItem.get('corruptReplicaBlocks')) + '</b></font>');
                         }
                     }
                 },
@@ -131,7 +115,8 @@ Ext.define('Flamingo2.view.monitoring.namenode.BlockStatus', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml('Pending Replication Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + toCommaNumber(storeItem.get('pendingReplicationBlocks')) + '</b></font>');
+                            this.setHtml('Pending Replication Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt'))
+                                + ' : <span style="color: #CC2900; "><b>' + toCommaNumber(storeItem.get('pendingReplicationBlocks')) + '</b></font>');
                         }
                     }
                 },
@@ -163,7 +148,8 @@ Ext.define('Flamingo2.view.monitoring.namenode.BlockStatus', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml('Scheduled Replication Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + toCommaNumber(storeItem.get('scheduledReplicationBlocks')) + '</b></font>');
+                            this.setHtml('Scheduled Replication Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt'))
+                                + ' : <span style="color: #CC2900; "><b>' + toCommaNumber(storeItem.get('scheduledReplicationBlocks')) + '</b></font>');
                         }
                     }
                 },
@@ -195,7 +181,8 @@ Ext.define('Flamingo2.view.monitoring.namenode.BlockStatus', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml('Under Replicated Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + toCommaNumber(storeItem.get('underReplicatedBlocks')) + '</b></font>');
+                            this.setHtml('Under Replicated Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt'))
+                                + ' : <span style="color: #CC2900; "><b>' + toCommaNumber(storeItem.get('underReplicatedBlocks')) + '</b></font>');
                         }
                     }
                 },
@@ -227,13 +214,19 @@ Ext.define('Flamingo2.view.monitoring.namenode.BlockStatus', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml('Missing Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + toCommaNumber(storeItem.get('missingBlocks')) + '</b></font>');
+                            this.setHtml('Missing Blocks' + '<br/>' + dateFormat2(storeItem.get('reg_dt'))
+                                + ' : <span style="color: #CC2900; "><b>' + toCommaNumber(storeItem.get('missingBlocks')) + '</b></font>');
                         }
                     }
                 }
             ]
-        };
-
-        me.callParent(arguments);
-    }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onBlockStatusRefreshClick'
+        }
+    ]
 });

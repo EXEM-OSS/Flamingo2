@@ -1,0 +1,392 @@
+[[hdfs]]
+
+== HDFS 브라우저
+
+HDFS 브라우저는 HDFS 상에 저장되어 있는 파일 및 디렉토리를 관하는 기능을 제공합니다.
+
+image::fs/hdfs/hdfs-browser.png[scaledwidth=100%,Apache Hadoop HDFS 브라우저 메인 화면]
+
+제공하는 기능은 다음과 같습니다.
+
+* 파일 관리
+* 디렉토리 관리
+* 파일 내용보기
+* 파일 업로드 및 다운로드
+* 권한 변경
+* Hive 데이터베이스 및 테이블 생성
+
+=== HDFS 요약
+
+다음의 화면은 HDFS의 요약 정보를 표시하는 화면으로 Namenode의 각종 정보를 확인할 수 있도록 제공합니다.
+
+image::fs/hdfs/hdfs-info.png[scaledwidth=100%,HDFS 요약 화면]
+
+=== HDFS 사용량
+
+HDFS에 할당된 용량 중 DFS로 사용 중인 것과 Non-DFS로 사용 중인 정보를 제공합니다.
+
+image::fs/hdfs/hdfs-usage.png[scaledwidth=100%,HDFS 사용량 화면]
+
+=== HDFS 상위 5 디렉토리
+
+HDFS에 존재하는 디렉토리의 용량을 루트(/) 기준으로 5개의 목록을 제공합니다.
+
+image::fs/hdfs/hdfs-top5.png[scaledwidth=100%,HDFS 상위 5 디렉토리 화면]
+
+=== 디렉토리 관리
+
+==== 디렉토리 생성
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 생성 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-create0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+생성할 디렉토리 명을 입력한 후 확인 버튼을 누르면 선택한 디렉토리에 디렉토리가 생성됩니다.
+
+image::fs/hdfs/hdfs-directory-create1.png[scaledwidth=35%]
+
+==== 디렉토리 복사
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 복사 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-copy0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+복사할 디렉토리를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-copy1.png[scaledwidth=40%,디렉토리 복사 화면]
+
+확인 버튼을 누르면 선택한 디렉토리에 복사됩니다.
+
+image::fs/hdfs/hdfs-directory-copy2.png[scaledwidth=40%,디렉토리 복사 화면]
+
+==== 디렉토리 이동
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 이동 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-move0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+이동할 디렉토리를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-move1.png[scaledwidth=40%,디렉토리 이동 화면]
+
+확인 버튼을 누르면 선택한 디렉토리에 디렉토리가 이동됩니다.
+
+image::fs/hdfs/hdfs-directory-move2.png[scaledwidth=40%,디렉토리 이동 화면]
+
+==== 디렉토리 이름변경
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 이름변경 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-rename0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+확인 버튼을 누르면 입력한 디렉토리명으로 이름이 변경됩니다.
+
+image::fs/hdfs/hdfs-directory-rename1.png[scaledwidth=35%,디렉토리 이름변경 화면]
+
+==== 디렉토리 삭제
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 삭제 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-delete0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+확인 버튼을 누르면 디렉토리가 삭제됩니다.
+
+image::fs/hdfs/hdfs-directory-delete1.png[scaledwidth=35%,디렉토리 삭제 화면]
+
+[[upload]]
+==== 파일 업로드
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 업로드 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-upload0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+[NOTE]
+단일 파일 기준 업로드 가능한 최대 용량은 기본값으로 100MB 이내로 정해져 있습니다.
+이 값을 변경하기 위해서는 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일의 `file.upload.max.size` 값을 변경하십시오.
+
+업로드 방법은 두 가지 방식을 제공합니다.
+
+* 파일을 직접 선택하는 방식
+* 드래그 앤 드롭 방식
+
+===== 파일을 직접 선택하는 방식
+
+찾기 버튼을 선택 후 업로드 할 파일을 선택합니다.
+
+image::fs/hdfs/hdfs-directory-upload1.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+업로드 할 파일 목록을 확인 후 업로드 버튼을 선택합니다.
+
+image::fs/hdfs/hdfs-directory-upload3.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+업로드가 완료되면 상태 메시지가 완료로 변경됩니다.
+
+image::fs/hdfs/hdfs-directory-upload4.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+업로드 창을 닫으면 선택한 디렉토리가 갱신되고 업로드한 파일 목록이 표시됩니다.
+
+image::fs/hdfs/hdfs-directory-upload5.png[scaledwidth=100%,디렉토리 업로드 화면]
+
+===== 드래그 앤 드롭
+
+직접 파일을 드래그 앤 드롭하여 업로드 창에 추가합니다.
+
+image::fs/hdfs/hdfs-directory-upload2.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+업로드 할 파일 목록을 확인 후 업로드 버튼을 선택합니다.
+
+image::fs/hdfs/hdfs-directory-upload3.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+업로드가 완료되면 상태 메시지가 완료로 변경됩니다.
+
+image::fs/hdfs/hdfs-directory-upload4.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+업로드 창을 닫으면 선택한 디렉토리가 갱신되고 업로드한 파일 목록이 표시됩니다.
+
+image::fs/hdfs/hdfs-directory-upload5.png[scaledwidth=100%,디렉토리 업로드 화면]
+
+==== 파일 병합
+
+파일 병합은 MapReduce Job이 완료된 후 출력 디렉토리에 parts 파일이 생성되는 경우 이 파일들을 하나의 파일로 합치는 기능입니다.
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 병합 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-merge0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+병합할 기본 파일명은 트리에서 선택한 디렉토리명으로 지정되어 있기 때문에 반드시 파일명을 변경해야 합니다.
+
+image::fs/hdfs/hdfs-directory-merge1.png[scaledwidth=100%,디렉토리 병합 화면]
+
+병합할 새로운 파일명을 입력합니다.
+
+image::fs/hdfs/hdfs-directory-merge2.png[scaledwidth=35%,디렉토리 병합 화면]
+
+병합할 파일의 저장 위치는 선택한 디렉토리의 상위 디렉토리에 저장됩니다.
+만약 루트 디렉토리에 있는 파일 들을 병합할 경우 병합된 파일의 저장위치는 루트 디렉토리에 저장됩니다.
+
+image::fs/hdfs/hdfs-directory-merge3.png[scaledwidth=100%,디렉토리 병합 화면]
+
+상위 디렉토리로 이동 후 병합된 파일을 확인합니다.
+
+image::fs/hdfs/hdfs-directory-merge4.png[scaledwidth=100%,디렉토리 병합 화면]
+
+병합된 파일을 더블클릭하면 파일 속성 정보 창을 통해 파일 정보를 확인할 수 있습니다.
+
+image::fs/hdfs/hdfs-directory-merge5.png[scaledwidth=70%,디렉토리 병합 화면]
+
+==== 디렉토리 속성
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 디렉토리 속성을 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-info0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+디레토리 속성 정보 창에 선택한 디렉토리 정보가 표시됩니다.
+
+image::fs/hdfs/hdfs-directory-info1.png[scaledwidth=70%,디렉토리 속성 화면]
+
+==== 디렉토리 갱신
+
+디렉토리를 갱신은 두 가지 방식을 제공합니다.
+
+* 선택한 디렉토리 및 파일 목록 갱신
+* 루트(/) 노드 기준 디렉토리 및 파일 목록 갱신
+
+===== 선택한 디렉토리 및 파일 목록 갱신
+
+선택한 디렉토리 기준으로 디렉토리 및 파일 목록이 갱신됩니다.
+
+image::fs/hdfs/hdfs-directory-refresh0.png[scaledwidth=100%,디렉토리 갱신 화면]
+
+===== 루트(/) 노드 기준 디렉토리 및 파일 목록 갱신
+
+루트(/) 디렉토리를 기준으로 디렉토리 및 파일 목록이 갱신됩니다.
+
+image::fs/hdfs/hdfs-directory-refresh1.png[scaledwidth=100%,디렉토리 갱신 화면]
+
+==== 디렉토리 권한 설정
+
+디렉토리 권한 설정은 디렉토리 및 파일의 소유권, 접근 권한을 변경할 수 있는 기능입니다.
+
+image::fs/hdfs/hdfs-directory-permission0.png[scaledwidth=100%,디렉토리 권한 설정 화면]
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 디렉토리 권한 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-permission1.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+변경 버튼을 클릭하면 수정한 접근 권한 정보가 변경됩니다. 만약 선택한 디렉토리 및 하위 디렉토리, 피일까지 모두 변경할 경우 모두 적용 옵션을 선택하십시오.
+
+image::fs/hdfs/hdfs-directory-permission2.png[scaledwidth=40%,디렉토리 권한 설정 화면]
+
+[NOTE]
+모두 적용 옵션 사용시 주의해야 합니다. 하위 디렉토리 및 파일의 모든 권한이 일괄적으로 변경되기 때문에
+Hadoop EcoSystem에서 사용하는 HDFS의 중요한 경로, `/tmp` `/user` 등등의 디렉토리를 잘못 설정하는 경우 비정상적으로 동작할 수 있으므로 각별히 주의해야 합니다.
+또한 모두 적용 옵션 선택 시 하위 디렉토리 및 파일이 많을 경우 접근 권한 변경에 다소 시간이 소요될 수 있습니다.
+
+==== 디렉토리 Hive DB 생성
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 하이브 DB 생성 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-hiveDB0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+선택한 디렉토리 명 또는 새로운 이름으로 데이터베이스를 생성할 수 있으며, 생성 버튼을 클릭하면 하이브 메타스토어에 HDFS 디렉토리에 생성한 하이브 DB의 디렉토리 정보가 저장됩니다. 생성된 데이터베이스 정보는 Apache Hive 메뉴에서 확인할 수 있습니다.
+
+image::fs/hdfs/hdfs-directory-hiveDB1.png[scaledwidth=50%,디렉토리 하이브 DB 생성 화면]
+
+==== 디렉토리 Hive Table 생성
+
+왼쪽에 있는 디렉토리 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 하이브 Table 생성 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-directory-hiveTable0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+테이블 생성 창에서 테이블 생성에 필요한 정보를 입력합니다.
+
+image::fs/hdfs/hdfs-directory-hiveTable1.png[scaledwidth=60%,디렉토리 하이브 Table 생성 화면]
+
+생성 버튼을 클릭하면 하이브 메타스토어에 HDFS 디렉토리에 생성된 하이브 테이블 디렉토리 정보가 저장됩니다. 생성된 테이블은 Apache Hive 메뉴에서 확인할 수 있습니다. 
+
+image::fs/hdfs/hdfs-directory-hiveTable2.png[scaledwidth=60%,디렉토리 하이브 Table 생성 화면]
+
+[NOTE]
+사용자가 직접 커스터마이징한 파일 형식을 사용하고자 할 경우 해당 라이브러리의 클래스를 입/출력 파일 형식 필드에 추가하십시오.
+
+=== 파일 관리
+
+==== 파일 복사
+
+디렉토리 선택 후 오른쪽에 있는 파일 목록에서 파일을 선택합니다. 상단의 복사 버튼을 선택합니다.
+
+image::fs/hdfs/hdfs-file-copy0.png[scaledwidth=100%,파일 메뉴 화면]
+
+디렉토리를 선택하고, 확인 버튼을 누르면 파일이 복사됩니다.
+
+image::fs/hdfs/hdfs-file-copy1.png[scaledwidth=40%,파일 복사 화면]
+
+복사할 파일과 대상 디렉토리를 확인합니다.
+
+image::fs/hdfs/hdfs-file-copy2.png[scaledwidth=50%,파일 복사 화면]
+
+선택한 디렉토리에 복사한 파일이 표시됩니다.
+
+image::fs/hdfs/hdfs-file-copy3.png[scaledwidth=100%,파일 복사 화면]
+
+[NOTE]
+복사할 파일이 많을 경우 파일 복사를 완료하는데 다소 시간이 소요될 수 있습니다.
+
+==== 파일 이동
+
+디렉토리 선택 후 오른쪽에 있는 파일 목록에서 파일을 선택합니다. 상단의 이동 버튼을 선택합니다.
+
+image::fs/hdfs/hdfs-file-move0.png[scaledwidth=100%,파일 메뉴 화면]
+
+디렉토리를 선택하고, 확인 버튼을 누릅니다.
+
+image::fs/hdfs/hdfs-file-move1.png[scaledwidth=40%,파일 이동 화면]
+
+이동할 파일과 대상 디렉토리를 확인합니다.
+
+image::fs/hdfs/hdfs-file-move2.png[scaledwidth=50%,파일 이동 화면]
+
+선택한 디렉토리에 파일이 이동된 파일이 표시됩니다.
+
+image::fs/hdfs/hdfs-file-move3.png[scaledwidth=100%,파일 이동 화면]
+
+[NOTE]
+이동할 파일의 개수가 많을 경우 처리 시간이 다소 소요될 수 있습니다.
+
+==== 파일 이름변경
+
+디렉토리 선택 후 오른쪽에 있는 파일 목록에서 파일을 선택합니다. 상단의 이름변경 버튼을 선택합니다.
+
+image::fs/hdfs/hdfs-file-rename0.png[scaledwidth=100%,파일 메뉴 화면]
+
+확인 버튼을 누르면 입력한 파일명으로 이름이 변경됩니다.
+
+image::fs/hdfs/hdfs-file-rename1.png[scaledwidth=30%,파일 이름변경 화면]
+
+==== 파일 삭제
+
+디렉토리 선택 후 오른쪽에 있는 파일 목록에서 파일을 선택합니다. 상단의 삭제 버튼을 선택합니다.
+
+image::fs/hdfs/hdfs-file-delete0.png[scaledwidth=100%,파일 메뉴 화면]
+
+예 버튼을 누르면 선택한 파일이 삭제됩니다.
+
+image::fs/hdfs/hdfs-file-delete1.png[scaledwidth=30%,파일 메뉴 화면]
+
+==== 파일 업로드
+
+디렉토리 선택 후 오른쪽 상단의 업로드 버튼을 선택합니다.
+
+image::fs/hdfs/hdfs-file-upload0.png[scaledwidth=100%,파일 메뉴 화면]
+
+디렉토리 메뉴의 업로드와 동일한 방식으로 업로드 할 파일을 선택해서 추가합니다.
+
+image::fs/hdfs/hdfs-file-upload1.png[scaledwidth=90%,파일 업로드 화면]
+
+업로드 버튼을 선택하면 파일이 업로드 됩니다.
+
+image::fs/hdfs/hdfs-file-upload2.png[scaledwidth=90%,파일 업로드 화면]
+
+선택한 디렉토리에 업로드된 파일이 표시됩니다.
+
+image::fs/hdfs/hdfs-file-upload3.png[scaledwidth=100%,파일 업로드 화면]
+
+[NOTE]
+업로드 가능한 용량을 초과한 파일은 용량 초과로 업로드할 수 없습니다.
+
+[[download]]
+==== 파일 다운로드
+
+디렉토리 선택 후 오른쪽에 있는 파일 목록에서 파일을 선택합니다. 상단의 다운로드 버튼을 선택합니다.
+
+image::fs/hdfs/hdfs-file-download0.png[scaledwidth=100%,파일 메뉴 화면]
+
+선택한 파일이 로컬 저장소로 다운로드 됩니다.
+
+[NOTE]
+파일 다운로드는 한 번에 하나의 파일만 지원합니다. 단일 파일 기준 다운로드 가능한 용량은 정해져 있습니다. 이 값을 변경하기 위해서는 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일의 `file.download.max.size` 값을 변경하십시오.
+
+[[view]]
+==== 파일 내용보기
+
+파일 내용보기는 두 가지 방법으로 사용할 수 있습니다.
+
+* 내용보기 버튼 선택
+* 내용보기 메뉴 선택
+
+===== 내용보기 버튼 선택
+
+디렉토리 선택 후 오른쪽에 있는 파일 목록에서 파일을 선택합니다. 상단의 내용보기 버튼을 선택합니다.
+
+image::fs/hdfs/hdfs-file-view0.png[scaledwidth=100%,파일 메뉴 화면]
+
+선택한 파일의 내용 일부가 팡리 내용 보기 창에 보여집니다.
+하단의 페이징 버튼 및 페이지 입력 필드를 통해 페이징 기능을 사용할 수 있습니다.
+
+image::fs/hdfs/hdfs-file-view1.png[scaledwidth=90%,파일 내용보기 화면]
+
+===== 내용보기 메뉴 선택
+
+디렉토리 선택 후 오른쪽에 있는 파일 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 내용보기 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-file-view2.png[scaledwidth=100%,파일 내용보기 화면]
+
+선택한 파일의 내용 일부가 팡리 내용 보기 창에 보여집니다.
+하단의 페이징 버튼 및 페이지 입력 필드를 통해 페이징 기능을 사용할 수 있습니다.
+
+image::fs/hdfs/hdfs-file-view3.png[scaledwidth=90%,파일 내용보기 화면]
+
+[NOTE]
+파일 내용 보기는 파일 형식이 압축, 이미지, 음악, 동영상 등의 포맷 형식은 지원하지 않습니다.
+파일 크기는 1GB 이상의 대용량 파일도 파일 내용 보기 기능을 사용할 수 있습니다.
+서버 및 네트워크 상태에 따라서 페이징 처리 시 지연이 발생할 수 있습니다.
+
+==== 파일 속성
+
+디렉토리 선택 후 오른쪽에 있는 파일 목록에서 마우스 우클릭 시 메뉴가 나타납니다. 이때 파일 속성 메뉴를 선택합니다.
+
+image::fs/hdfs/hdfs-file-info0.png[scaledwidth=100%,파일 메뉴 화면]
+
+선택한 파일의 정보가 표시됩니다.
+
+image::fs/hdfs/hdfs-file-info1.png[scaledwidth=70%,파일 메뉴 화면]
+

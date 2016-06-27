@@ -1,0 +1,1346 @@
+[[install]]
+
+== 설치
+
+설치에서는 Cloudera CDH, Pivotal HD, Hortonworks HDP를 제외하고 순수 Apache Hadoop 배포판에 대해서 설치를 설명합니다.
+Cloudera CDH, Pivotal HD, Hortonworks HDP의 경우 프로비저닝을 담당하는 Cloudera Manager, Ambari, Command Center가 제공되므로 본 문서에서는 별도로 논하지 않습니다.
+
+=== 시스템 요구사항
+
+[width="80%",cols="10,10,20",options="header"]
+|=======
+|구분  |내용    |비고
+|OS | Linux Kernel 2.6 이상 |
+|Database | MySQL Server 5.1 이상 | UTF-8 Character Set
+|Memory | 4G 이상 |
+|Java | JDK 1.7 이상 |
+|Hadoop | Apache Hadoop 2.0 이상 |
+|Apache Hive | Apache Hive 0.13 이상 |
+|Apache Pig | Apache Pig 0.12 이상 |
+|Pivotal HAWQ | Pivotal HAWQ 1.2 이상 |
+|R | R 3.0 이상 |
+|node.js | node.js 3.0 이상 |
+|Web Browser | Internet Explorer 10+, Google Chrome, Safari, Firefox |
+|=======
+
+=== 설치 절차
+
+Flamingo의 설치는 다음의 순서대로 진행하도록 합니다.
+
+1. JDK 1.7 설치
+2. MySQL Server 설치
+3. MySQL Server 설정(UTF-8) 및 재시작
+4. Flamingo 데이터베이스 스키마 import
+5. Flamingo Web의 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일 수정
+6. Flamingo Web의 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/hadoop.properties` 파일 수정
+7. Flamingo Collector 설치
+8. Flamingo Collector의 `<FLAMINGO_CL_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일 수정
+9. Flamingo Collector의 `<FLAMINGO_CL_HOME>/webapps/ROOT/WEB-INF/hadoop.properties` 파일 수정
+10. Flamingo Resource Manager Agent 설치
+11. Flamingo Namenode Agent 설치
+12. Hadoop Resource Manager 재시작
+13. Hadoop Namenode 재시작
+14. R/RStudio Server 설치 및 시작
+15. node.js 설치
+16. Flamingo 리모트 웹 터미널 서버 설치
+17. Flamingo 리모트 웹 터미널 서버 시작
+18. Flamingo Collector 시작
+19. Flamingo Web 시작
+
+=== Flamingo 설치
+
+Flamingo가 동작하기 위해서는 아래의 컴포넌트가 설치되어야 합니다. Apache Hadoop의 경우 Cloudera CDH, Pivotal HD, Hortonworks HDP에서 자동으로
+구성되므로 여기에서는 순수 Apache Hadoop 배포판을 제외하고는 설명하지 않습니다.
+
+* Internet Explorer 10+, Google Chrome, Safari, Firefox
+* Apache Hadoop 2.0 이상 (Apache Hive 0.14/1.0 권장함. 로그 표시가 0.14/1.0 이상 부터 지원)
+* JDK 1.7 이상
+* MySQL Server 5.x 이상 (MySQL 5.1 권장)
+* Flamingo Web Application
+* Flamingo MapReduce Job Agent
+* Flamingo Namenode Agent
+* Flamingo Resource Manager Agent
+* Flamingo Collector
+* Flamingo System Agent
+* node.js
+* R & RStudio Server (선택사항)
+* Pivotal HAWQ (선택사항)
+
+[NOTE]
+상기 버전 이외에 환경에서 Flamingo를 동작시키거나 사용해야 하는 경우 기술지원(support@cloudine.co.kr)을 요청하십시오.
+
+==== JDK 설치
+
+Flamingo는 JDK 1.7을 기반으로 개발되어 있으므로 Linux 에서 JDK 1.7 설치는 필수 사항입니다.
+CentOS의 패키지 관리자인 YUM을 사용하지 않고 직접 설치하고자 하는 경우 http://java.oracle.com 에서 JDK 1.7을 다운로드하여 다음과 같이 설치할 수 있습니다.
+
+[source,bash]
+----
+# cd /usr/local
+# tar zxvf jdk-7u51-linux-x64.gz
+----
+
+JDK 1.7을 다운로드 및 압축 출기를 한 후 다음과 같이 사용자 환경에서 JDK를 사용할 수 있도록 설정합니다.
+전체 사용자에 적용하지 않고 해당 사용자에게만 적용하고자 하는 경우 `~/.profile` 또는 `~/.bashrc` 파일에 다음을 설정하도록 합니다.
+
+[source,bash]
+----
+# vi /etc/profile
+export JAVA_HOME=/usr/local/jdk1.7
+export PATH=$JAVA_HOME/bin:$PATH
+
+# source /etc/profile
+----
+
+==== MySQL Server 5 설치
+
+Flamingo가 동작하기 위해서 필요한 데이터베이스는 MySQL이며 MySQL 5.x 이상 버전을 충족해야 합니다.
+root 권한으로 다음의 커맨드를 실행하여 MySQL Server를 설치합니다.
+
+[source,bash]
+----
+# yum -y install mysql-server mysql-client
+----
+
+==== MySQL Server UTF-8 설정
+
+Flamingo는 multi-bytes로 구성된 언어(예; CJK)를 저장하므로 MySQL은 기본으로 UTF-8을 지원해야 합니다.
+하지만 CentOS에서 기본으로 설치되는 MySQL은 Latin 1으로 설정이 됩니다.
+다음의 커맨드를 통해서 MySQL Server의 character set을 확인할 수 있습니다.
+
+====
+[source]
+----
+# mysql -uroot -p  # <1>
+Enter password:  # <2>
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 33819
+Server version: 5.5.43
+
+Copyright (c) 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show variables like 'c%';  # <3>
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | utf8                       |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | utf8                       |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
+| collation_connection     | utf8_general_ci            |
+| collation_database       | utf8_unicode_ci            |
+| collation_server         | utf8_unicode_ci            |
+| completion_type          | NO_CHAIN                   |
+| concurrent_insert        | AUTO                       |
+| connect_timeout          | 10                         |
++--------------------------+----------------------------+
+14 rows in set (0.00 sec)
+----
+<1> MySQL 서버에 로그인
+<2> MySQL 로그인 패스워드 입력
+<3> 데이터베이스의 character set 확인
+====
+
+만약 character set이 latin1으로 설정되어 있다면 `/etc/my.cnf` 파일에 다음을 추가하도록 합니다.
+
+[source]
+----
+[client]
+default-character-set = utf8
+
+[mysqld]
+character-set-server = utf8
+init_connect="SET collation_connection = utf8_general_ci"
+init_connect="SET NAMES utf8"
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+[mysqldump]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+----
+
+[WARNING]
+CentOS, Ubuntu 및 MySQL 버전에 따라서 일부 옵션이 동작하지 않을 수 있습니다. 이 경우 MySQL Server를 재시작하면 정상적으로 동작하지 않으므로 `[mysqld]` 항목에 들어가는 옵션을 먼저 조정하면서 재시작을 해보시기 바랍니다.
+
+==== MySQL Server 서비스 재시작
+
+MySQL Server를 UTF-8로 변경한 후 root로 로그인하여 아래의 커맨드로 MySQL Server를 재시작합니다.
+보통 설정에서 오류가 발생하면 MySQL Server를 재시작할 수 없습니다.
+
+[source,bash]
+----
+# service mysqld restart
+----
+
+==== Flamingo 데이터베이스 스키마 import
+
+Flamingo의 데이터베이스 스키마는 크게 세 종류로 구분되어 있습니다.
+
+* Flamingo Web
+* Flamingo Collector
+* Quartz Job Scheduler
+
+===== Flaming Web & Collector
+
+Flamingo는 Web과 Collector가 MySQL을 사용하며 동작을 위해서 우선 데이터베이스를 생성하도록 합니다.
+
+[source,sql]
+----
+CREATE DATABASE flamingo2 CHARACTER SET UTF8 COLLATE UTF8_GENERAL_CI;
+----
+
+만약에 flamingo 사용자를 새로 생성하여 사용하고 싶다면 다음의 쿼리를 추가로 실행할 수 있습니다.
+
+[source,sql]
+----
+CREATE USER 'flamingo'@'localhost' IDENTIFIED BY 'flamingo';
+GRANT ALL PRIVILEGES ON *.* TO 'flamingo'@'localhost';
+FLUSH PRIVILEGES;
+----
+
+Flamingo가 동작하기 위한 테이블 및 샘플 데이터를 생성하기 위해서 다음의 커맨드를 실행하도록 합니다.
+
+[source,sql]
+----
+mysql -uroot -p flamingo2 < <FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/classes/import.sql
+----
+
+===== Quartz Job Scheduler
+
+배치작업을 실행하기 위해서는 Quartz Job Scheduler 관련 테이블을 생성해야 합니다. 다음의 커맨드를 이용하여 Quartz Job Scheduler 테이블을 생성하도록 합니다.
+
+[source,sql]
+----
+mysql -uroot -p flamingo2 < <FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/classes/quartz/tables_mysql_innodb.sql
+----
+
+Flamingo에서 사용하는 Quartz Job Scheduler는 primary key로 두개 이상의 컬럼을 조합해서 사용합니다.
+따라서 이 길이가 MySQL에서 정하는 primary key의 길이를 초과하면 `Specified key was too long` 에러가 발생합니다.
+이 경우 Quartz Job Scheduler용 MySQL 데이터베이스를 Latin 1으로 분리해서 사용하거나 또는 Quartz Job Scheduler의 테이블에서 primary key의 길이를 최대 길이 이내로 수동 조정하도록 합니다.
+
+==== Flamingo Web 설정하기
+
+Flamingo Web의 설정 파일은 다음 2개의 파일로 구분되어 있습니다.
+
+* `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일 - Flamingo Web의 자체 설정
+* `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/hadoop.properties` 파일 - Hadoop Cluster 설정
+
+===== 기본언어 설정하기
+
+Flamingo의 기본 언어를 설정하는 옵션입니다. 2.0.0 버전에서는 한글만 지원합니다.
+
+[source,properties]
+----
+default.locale=ko_KR
+----
+
+===== 홈 디렉토리 설정하기
+
+Flamingo의 기본 웹 컨테이너는 Apache Tomcat 7입니다. 따라서 기본 홈 디렉토리도 Apache Tomcat의 설치 디렉토리를 사용하고 있습니다.
+
+[source,properties]
+----
+flamingo.home=${catalina.home}
+----
+
+===== 기본 Hadoop Cluster 지정하기
+
+`<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/hadoop.properties` 파일에는 기본으로 사용할 Hadoop Cluster 정보가 있습니다.
+`<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/hadoop.properties` 파일의 `cluster.qualifiers`에 접두사를 나열합니다. Delimiter 는 쉼표(,) 사용.
+
+[source,properties
+----
+system.qualifier=default
+----
+
+===== 터미널 서버 설정하기
+
+<<installterm, 리모트 웹 터미널 설치>> 부분을 참고하십시오.
+
+일단 리모트 웹 터미널 서버가 설치되면 Flamingo에서 터미널 서버를 통해서 리모트 웹 터미널을 사용할 수 있도록 설정해야 합니다. `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일에서 다음의 설정 정보를 변경하도록 합니다.
+
+====
+[source,properties]
+----
+terminal.server.ip=192.168.1.2 # <1>
+terminal.server.port=9191 # <2>
+terminal.max.session=4 # <3>
+----
+<1> 터미널 서버의 IP 주소
+<2> 터미널 서버의 포트
+<3> 사용자당 열 수 있는 최대 터미널 세션의 개수
+====
+
+[NOTE]
+Flamingo의 리모트 웹 터미널은 node.js를 기반으로 동작하므로 관련 패키지가 설치되어 있지 않으면 사용할 수 없습니다. 또한 리모트 웹 터미널은 root로 동작해야 합니다.
+
+===== YARN Application Master 설정하기
+
+<<appmaster, 애플리케이션 마스터>> 부분을 참고하십시오.
+
+===== 외부 링크 설정
+
+Flamingo에 로그인 후 가장 우측 상단에 다음과 같이 아이콘이 있습니다. 이 아이콘은 외부 링크를 추가로 사용할 수 있도록 구성한 것으로 다음과 같이 표시됩니다.
+
+image::install/external.png[scaledwidth=45%,External]
+
+이것에 대한 설정은 다음과 같습니다.
+
+====
+[source,properties]
+----
+external.enabled=true # <1>
+external.name=Cloudera Manager # <2>
+external.url=http://192.168.1.3:7180 # <3>
+----
+<1> 외부 링크 기능을 사용하는 경우 true
+<2> 외부 링크의 명칭
+<3> 접속 URL
+====
+
+===== 라이센스 파일 설정하기
+
+Flamingo의 라이센스 파일을 설정하는 기능으로 아래의 내용은 Flamingo를 지원하는 엔지니어가 아닌 이상 수정하지 않도록 합니다.
+
+[source,properties]
+----
+license.file.path=${flamingo.home}/license
+licence.encoder.secret1=8ce2f043da98b4ae
+licence.encoder.secret2=1a632ae94d9748cc
+license.filename=license
+----
+
+===== 패스워드 암호화 설정하기
+
+Flamingo의 사용자 정보는 데이터베이스 테이블에 저장되어 있습니다. 이 테이블에는 사용자의 패스워드가 저장되어 있으며 보안을 위해서 암호화 되어 있습니다. 다음의 설정은 암호화시 사용하는 정보입니다.
+이 정보를 변경하면 모든 사용자의 패스워드를 다시 생성해야 합니다.
+
+[source,properties]
+----
+security.password.encoder.secret1=Bar12345Bar12345
+security.password.encoder.secret2=ThisIsASecretKet
+----
+
+===== 사용자의 리눅스 홈 디렉토리 설정하기
+
+Flamingo의 새로운 사용자를 등록하는 경우 `user.system.agent.apply` 설정값이 `true` 로 설정되어 있는 경우 Flamingo System Agent는 새로운 리눅스 사용자를 생성합니다.
+이때 사용자를 생성하는 경우 다음의 설정값을 기준으로 사용자 디렉토리를 생성합니다.
+
+[source,properties]
+----
+user.home.linux.path=/data1
+----
+
+===== 사용자의 HDFS 홈 디렉토리 설정하기
+
+Flamingo의 새로운 사용자를 등록를 등록하는 경우 HDFS 디렉토리에 사용자의 홈 디렉토리를 생성합니다.
+홈 디렉토리를 생성하기 위한 기준 디렉토리를 다음과 같이 설정할 수 있습니다.
+
+[source,properties]
+----
+user.home.hdfs.path=/user
+----
+
+===== 시스템 관리자 정보 설정하기
+
+Flamingo 사용중 에러가 발생하는 경우 경고창에 표시할 정보를 설정합니다.
+
+[source,properties]
+----
+system.admin.name=Administrator
+system.admin.email=admin@yourdomain.com
+----
+
+===== MySQL JDBC Driver 설정하기
+
+Flamingo가 사용하는 MySQL Server에 대한 접속 설정입니다.
+
+[source,properties]
+----
+jdbc.driver= com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/flamingo2?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true
+jdbc.username=root
+jdbc.password=
+jdbc.min.pool=3
+jdbc.max.pool=30
+----
+
+===== R/RStudio 설정하기
+
+<<rstudio, R/RStudio>>를 참고하십시오.
+
+===== Flamingo System Agent 설정하기
+
+<<userintegration, 사용자 계정 연동>>을 참고하십시오.
+
+===== 파일 업로드 및 다운로드 설정하기
+
+Flamingo의 <<hdfs, HDFS 브라우저>>에서 <<upload, 업로드>> 및 <<download, 다운로드>>에 대한 설정은 다음과 같습니다.
+
+====
+[source,properties]
+----
+file.upload.max.size=100000000 # <1>
+file.upload.default.encoding=UTF-8
+file.download.max.size=100000000 # <2>
+----
+<1> 업로드시 허용하는 최대 파일의 크기
+<2> 다운로드시 허용하는 최대 파일의 크기
+====
+
+===== HDFS의 삭제 금지 경로 설정하기
+
+Flamingo의 <<hdfs, HDFS 브라우저>>에서 파일 및 디렉토리를 삭제하는 경우 명시적으로 삭제를 금지시켜야 하는 경우 다음과 같이 설정할 수 있습니다.
+경로 패턴은 Apache Ant Path Pattern을 하며 복수개의 디렉토리는 콤마(,)로 구분하여 입력하도록 합니다.
+
+[source,properties]
+----
+hdfs.delete.forbidden.paths=/tmp/**/*,/tmp,/hbase/**/*,/user/hive/**/*,/usr/hive,/lib/**/*,/lib,/samples/**/*,/samples,/user,/user/admin,/user/hdfs,/user/history,/user/hive,/user/hue,/user/impala/,/user/oozie,/user/spark,/user/sqoop2,/user/gpadmin,/yarn,/yarn/**/*,/apps,/apps/**/*,/hawq_data,/hawq_data/**/*,/mapred,/mapred/**/*,/hive,/hive/**/*
+----
+
+===== HDFS의 파일 내용보기 설정하기
+
+Flamingo의 HDFS 브라우저에서 <<view, 파일 내용보기>> 사용시 한번에 화면에 표시하는 파일의 내용을 지정하는 옵션입니다.
+
+[source,properties]
+----
+hdfs.viewFile.default.chunkSize=10000
+----
+
+또한 파일 내용보기시 바이너리 파일의 경우 화면에 내용을 표시할 수 없으므로 다음과 같은 형식으로 파일의 유형을 제한할 수 있습니다.
+
+[source,properties]
+----
+hdfs.viewFile.limit.type=.gz|.tar|.jar|.zip|.rar|.alz|.lzo|.snappy|.gif|.jpg|.png|.mp3|.mp4|.xls|.doc|.ppt|.xlsx|.docx|.pptx
+----
+
+===== MapR 배포판 사용여부 설정하기
+
+MapR 배포판을 Flamingo에서 지원하는지 여부를 설정하는 것으로 기본값은 `false` 입니다. 향후 MapR을 지원하고자 할 때 사용할 옵션으로 Flamingo 2.0.0 버전에서는 변경하지 않도록 합니다.
+
+[source,properties]
+----
+mapr.enabled=false
+----
+
+===== Maven Repository 설정하기
+
+워크플로우 디자이너에서 MapReduce, Java 등의 모듈을 실행할 때 Dependency를 지정할 수 있습니다. 이때 경로가 아닌 Maven 형식(GROUP:ARTIFACT:VERSION)으로 지정하는 경우 Maven Repository에서 다운로드를 시도합니다. 이때 지정하는 설정입니다.
+
+[source,properties]
+----
+maven.repository.url=http://maven.opencloudengine.org/content/groups/public
+----
+
+===== Dependency 캐슁하기
+
+워크플로우 디자이너에서 MapReduce, Java 등의 모듈을 실행할 때 Dependency를 지정할 수 있습니다.
+HDFS에 Dependency가 있는 경우 Flamingo는 다운로드를 하여 캐슁 디렉토리에 저장하게 됩니다.
+만약 동일한 Dependency를 다시 사용하는 경우 `artifact.caching` 설정값이 `true` 로 설정되어 있다면 다시 다운로드하지 않고 캐슁된 것을 사용합니다.
+따라서 자주 변경되는 Dependency는 캐슁 기능을 활성화 하는 경우 반영이 되지 않으므로 주의가 필요합니다.
+
+[source,properties]
+----
+artifact.caching=true
+----
+
+캐슁 디렉토리는 다음과 같이 설정할 수 있습니다. 해당 디렉토리에 캐슁된 JAR 파일을 삭제하면 다시 다운로드하여 캐슁합니다.
+
+[source,properties]
+----
+artifact.cache.path=${flamingo.home}/working/cache
+----
+
+===== 각종 홈 디렉토리 설정하기
+
+Flamingo의 워크플로우 디자이너가 동작하는데 필요한 각종 프로그램의 경로를 다음과 같이 설정할 수 있습니다.
+
+====
+[source,properties]
+----
+java.home=/usr/local/java/jdk7
+
+hadoop.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/hadoop # <1>
+hive.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/hive
+pig.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/pig
+sqoop.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/sqoop
+spark.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/spark
+mahout.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/mahout
+
+hadoop.hdfs.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/hadoop-hdfs # <2>
+
+hadoop.mapred.home=/opt/cloudera/parcels/CDH-5.4.0-1.cdh5.4.0.p0.27/lib/hadoop-mapreduce # <3>
+
+r.home=/usr/bin # <4>
+----
+<1> hadoop.home의 경우 hadoop 커맨드가 있는 디렉토리가 <PARENT>/bin 인 경우 <PARENT>를 지정합니다.
+<2> `HADOOP_HDFS_HOME` 환경변수 경로
+<3> `HADOOP_MAPRED_HOME` 환경변수 경로
+<4>  `R` 프로그램이 존재하는 경로
+====
+
+===== `HADOOP_USER_NAME` 변수 설정하기
+
+Hadoop은 `HADOOP_USER_NAME` 환경변수를 설정하여 명시적으로 해당 사용자 권한을 얻도록 할 수 있습니다. 이때 사용하는 옵션으로 빈 값으로 설정하면 적용하지 않습니다.
+이 기능은 배포판에 따라서, 동작 환경에 따라서 적용되지 않을 수 있습니다.
+이 값을 비워두면 Flamingo는 워크플로우 디자이너에서 MapReduce, Hive, Pig 등을 실행할 때 로그인한 사용자 계정을 사용합니다.
+
+[source,properties]
+----
+hadoop.user.name=yarn
+----
+
+===== Spark Master for Standalone Mode 설정하기
+
+Flamingo의 워크플로우 디자이너에서 Spark을 사용하는 경우 설정하는 설정값으로, Spark의 Standalone Mode를 사용하도록 설정하면 아래의 값을 사용합니다.
+
+[source,properties]
+----
+spark.master.url=spark://192.168.1.4:7077
+----
+
+===== Flamingo 로깅 디렉토리 설정하기
+
+Flamingo의 워크플로우 디자이너에서 각종 모듈을 실행하는 경우 로깅 디렉토리에 로그를 기록합니다. 이때 설정하는 설정값으로 <<dashboard, 워크플로우 모니터링>> 기능에서 이 디렉토리의 로그를 사용합니다.
+
+[source,properties]
+----
+flamingo.workflow.logging.dir=${flamingo.home}/working/logs
+----
+
+이 로깅 디렉토리는 오래된 로그를 주기적으로 삭제할 수 있으며 삭제시 과거의 워크플로우의 각 단계별 로그를 확인할 수 없습니다.
+
+===== Flamingo MapReduce Job Agent 설정하기
+
+자세한 내용은 <<mragent, MapReduce Job Agent>> 부분을 참고하십시오.
+
+===== Flamingo 로깅 디렉토리 설정하기
+
+Flamingo의 워크플로우 디자이너에 포함되어 있는 Mahout MapReduce에 대한 HDFS 경로입니다.
+
+[source,properties]
+----
+mahout.mapreduce.jar.path=/sample/mrlib/mahout-examples-0.10.1-job.jar
+----
+
+===== Flamingo MapReduce 경로 설정하기
+
+Flamingo의 워크플로우 디자이너에 포함되어 있는 Flamingo MapReduce에 대한 HDFS 경로입니다.
+
+[source,properties]
+----
+flamingo.mapreduce.jar.path=/sample/mrlib/flamingo-mapreduce-hadoop2-1.2-job.jar
+----
+
+==== Hadoop Cluster 설정하기
+
+Flamingo에서 Hadoop Cluster 관련 정보를 설정하기 위해서 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/hadoop.properties` 파일을 설정할 수 있습니다.
+Flamingo에 포함되어 있는 Workflow Engine이 사용하는 설정은 다음과 같습니다.
+
+====
+[source,properties]
+----
+###########################################
+## Hadoop Cluster Configuration
+###########################################
+
+cluster.names=테스트 클러스터    # <1>
+cluster.qualifiers=default   # <2>
+
+###########################################
+## MapReduce Configuration
+###########################################
+
+# History Server
+default.hs.address=exo2.cdh.local  # <3>
+default.hs.port=19888
+
+###########################################
+## File System Configuration
+###########################################
+
+# MapR File System
+# See : /opt/mapr/conf/mapr-clusters.conf
+defualt.mapr.fs=maprfs:///   # <4>
+
+###########################################
+## Namenode Configuration
+###########################################
+
+# Namenode
+default.nn.scheme=hdfs
+default.nn.address=exo2.cdh.local   # <5>
+default.nn.port=8020
+
+###########################################
+## Flamingo Agent Configuration
+###########################################
+
+# Resource Manager Agent
+default.rm.agent.address=exo2.cdh.local   # <6>
+default.rm.agent.port=18032
+
+# Namenode Agent
+default.nn.agent.address=exo2.cdh.local   # <7>
+default.nn.agent.port=10070
+
+###########################################
+## Hive Configuration
+###########################################
+
+default.hive.metastore.address=exo2.cdh.local   # <8>
+default.hive.metastore.port=9083
+
+default.hive.server2.url=jdbc:hive2://exo2.cdh.local:10000   # <9>
+default.hive.server2.username=hive
+
+default.hive.apply.flamingo.username=true   # <10>
+
+default.hive.username=yarn   # <11>
+
+default.hive.legacy=false   # <12>
+
+###########################################
+## Pivotal HAWQ Configuration
+## hawq.jdbc.type={greenplum|postgresql}
+###########################################
+
+default.hawq.jdbc.type=greenplum
+default.hawq.greenplum.connectionUrl=jdbc:pivotal:greenplum://
+default.hawq.postgresql.connectionUrl=jdbc:postgresql://
+default.hawq.host=27.1.244.223
+default.hawq.port=5432
+default.hawq.databaseName=gpadmin
+default.hawq.user=gpadmin
+default.hawq.password=
+default.hawq.autoCommit=false
+default.hawq.driver=com.pivotal.jdbc.GreenplumDriver
+default.hawq.postgresql.driver=org.postgresql.Driver
+----
+<1> Hadoop Cluster를 구분하기 위한 클러스터명. Flamingo 로그인시 화면에 표시되는 클러스터명 (예; 테스트 클러스터)
+<2> Hadoop Cluster를 구분하기 위한 식별자명. 영어로만 표시하고 모두 소문자만 사용하도록 한다.
+<3> History Server 정보. MapReduce Job을 모니터링하기 위해서 필요하다.
+<4> MapR을 사용하는 경우 MapR의 기본 파일 시스템 URL.
+<5> Namenode의 IP와 Port
+<6> Flamingo Resource Manager Agent의 IP와 Port
+<7> Flamingo Namenode Agent의 IP와 Port
+<8> Hive Metastore의 IP와 Port. 제대로 설정하지 않으면 Hive 관련 기능을 사용할 수 없다.
+<9> Hive Server 2의 IP와 Port. 제대로 설정하지 않으면 Hive 관련 기능을 사용할 수 없다.
+<10> 워크플로우 디자이너의 Hive 실행시 Flamingo 사용자를 적용할지 여부
+<11> 워크플로우 디자이너의 Hive 실행시 적용할 사용자명. `hive.apply.flamingo.username` 설정값이 `false` 인 경우 적용된다.
+<12> Hive 0.13 버전을 사용하는 경우 이 설정값을 `true` 로 설정한다.
+====
+
+==== Flamingo Collector 설치하기
+
+Flamingo Collector는 Resource Manager Agent, Namenode Agent, Flamingo Web 등으로 부터 정보를 수집하여 저장하는 역할을 합니다. 모니터링 용으로 사용하며 `.war` 형식으로 구성되어 있습니다.
+또한 외부에서 호출을 할 필요가 없으므로 Apache Tomcat의 `server.xml` 파일에 AJP, HTTP Connector를 비활성화 하더라도 상관없습니다.
+
+Flamingo Collector를 설치하기 위해서 우선 바이너리를 uncompress합니다.
+
+[source,bash]
+----
+# tar xvfz flamingo-collector-2.0.0.tar.gz
+----
+
+다음은 `<FLAMINGO_CL_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일로써 Flamingo Collector가 수집한 정보를 저장할 때 사용할 MySQL JDBC 정보입니다. Flamingo Web과 같은 데이터베이스를 사용하므로 같은 정보를 입력하도록 합니다.
+
+[source,properties]
+----
+jdbc.driver= com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/flamingo2?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull
+jdbc.username=root
+jdbc.password=
+jdbc.min.pool=3
+jdbc.max.pool=10
+----
+
+다음은 `<FLAMINGO_CL_HOME>/webapps/ROOT/WEB-INF/hadoop.properties` 파일로써 Flamingo Collector가 수집할 대상 시스템을 지정하는 옵션입니다.
+
+====
+[source,properties]
+----
+###########################################
+## Hadoop Cluster Configuration
+###########################################
+
+cluster.names=테스트 클러스터
+cluster.qualifiers=default
+
+default.web.address=192.168.221.155  # <1>
+default.web.port=18080
+
+###########################################
+## MapReduce Configuration
+###########################################
+
+# History Server
+default.hs.address=192.168.221.155
+default.hs.port=19888
+
+###########################################
+## Resource Manager Configuration
+###########################################
+
+# Resource Manager
+default.rm.address=192.168.221.155
+default.rm.port=8032
+
+# Web Application Proxy
+default.wap.address=192.168.221.155
+default.wap.port=8088
+
+###########################################
+## Namenode Configuration
+###########################################
+
+# Namenode
+default.nn.scheme=hdfs
+default.nn.address=192.168.221.155
+default.nn.port=8020
+
+###########################################
+## Agent Configuration
+###########################################
+
+# Resource Manager Agent
+default.rm.agent.address=192.168.221.155
+default.rm.agent.port=18032
+
+# Namenode Agent
+default.nn.agent.address=192.168.221.155
+default.nn.agent.port=10070
+
+# Hive Metastore Agent
+default.hive.metastore.agent.address=192.168.221.155
+default.hive.metastore.agent.port=19083
+
+# Hive Server 2 Agent
+default.hive.server2.agent.address=192.168.221.155
+default.hive.server2.agent.port=10001
+
+###########################################
+## Hive Configuration
+###########################################
+
+default.hive.metastore.address=192.168.221.155
+default.hive.metastore.port=9083
+
+default.hive.server2.url=jdbc:hive2://192.168.221.155:10000
+default.hive.server2.username=hive
+----
+<1> Flamingo Web의 IP와 Port
+====
+
+==== Flamingo Agent 설치하기
+
+Flamingo에는 Hadoop EcoSystem을 구성하는 각종 컴포넌트를 모니터링하고 고급 기능을 제공하기 위해서 JVM 상에서 동작하는 Agent를 각 컴포넌트에 설치합니다.
+Flamingo Engine은 각각의 Agent와 통신하며 관련 기능을 처리하고, Collector는 각각의 Agent와 통신하여 모니터링 메트릭스를 수집합니다.
+본 내용에서는 Flamingo에서 제공하는 각종 Agent의 설치 방법을 알아봅니다.
+
+[IMPORTANT]
+Flamingo의 분산 파일 시스템 브라우저, 모니터링 부분은 기능은 특허가 적용되어 있습니다.
+따라서 Flamingo의 소스코드 레파지토리에 제공하는 소스코드에서 Flamingo Agent는 소스코드를 제공하지 않으며 바이너리만 제공하고 있습니다.
+또한 제공한 Flamingo Agent의 decompile, modification 등은 특허에 위반될 수 있음을 알립니다.
+
+===== Resource Manager Agent 설치하기
+
+Hadoop 2에서 추가된 Resource Manager 정보를 모니터링하고 YARN 애플리케이션을 관리하기 위해서는 YARN Resource Manager용
+Flamingo Agent를 설치해야 합니다. Cloudera CDH 배포판이 아닌 경우 `YARN_OPTS` 환경변수에 아래의 옵션을 추가해야 합니다.
+
+[source,bash]
+----
+-javaagent:<FLAMINGO_WEB_HOME>/agents/flamingo2-hadoop2-rm-agent-2.0.0.jar=resourcescript:resourcemanager.bm
+----
+
+Cloudera CDH 배포판인 경우 Cloudera Manager에 로그안하여 Resource Manager 설정에서 `ResourceManager의 Java 구성 옵션` 에 아래와 같이 정보를 추가합니다.
+
+image::install/cdh-rm-agent.png[scaledwidth=100%,Cloudera CDH 5의 Resource Manager Agent 설정]
+
+JAR 파일의 경로는 반드시 절대 경로로 입력하도록 합니다.
+
+[source,bash]
+----
+-javaagent:<FLAMINGO_WEB_HOME>/agents/flamingo2-hadoop2-rm-agent-2.0.0.jar=resourcescript:resourcemanager.bm
+-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:-CMSConcurrentMTEnabled
+-XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled
+----
+
+Apache Hadoop 의 경우 Resource Manager 가 설치된 곳의 $HADOOP_HOME/etc/hadoop/yarn-env.sh 파일 마지막에 YARN_OPTS 에 -javaagent:<FLAMINGO_WEB_HOME>/agents/flamingo2-hadoop2-rm-agent-2.0.0.jar=resourcescript:resourcemanager.bm 추가
+
+PHD 3.0 의 경우 Resource Manager 가 설치된 곳의 /usr/phd/current/hadoop-yarn-resourcemanager/bin/yarn.distro 파일의 같은 부분에 -javaagent:<FLAMINGO_WEB_HOME>/agents/flamingo2-hadoop2-rm-agent-2.0.0.jar=resourcescript:resourcemanager.bm 추가
+
+[WARNING]
+종종 JAR 파일에 접근할 수 있는 권한이 없는 경우 JVM이 정상적으로 동작하지 못하므로 만약 Resource Manager가 정상적으로 시작하지 않는다면 JAR 파일의 경로가 Resource Manager가 접근할 수 있는 권한을 가지고 있는지 확인하도록 합니다.
+Cloudera CDH, Pivotal HD, Hortonworks HDP 배포판은 Resource Manager의 시스템 계정은 `yarn` 이므로 Flamingo Resource Manager Agent JAR 파일이 `yarn` 계정으로 접근이 가능한 디렉토리에 있는지 확인하도록 합니다.
+어떤 경우는 JAR 파일에 있는 `MANIFEST.MF` 파일에 접근할 수 없다는 메시지를 출력할 수도 있습니다. 이러한 경우에도 Resource Manager의 리눅스 계정을 확인한 후 접근이 가능한지 확인해주십시오.
+
+====== Cloudera CDH 문제 해결하기
+
+Cloudera CDH의 경우 `ResourceManager의 Java 구성 옵션` 의 경로가 잘못된 경우 Resource Manager가 정상적으로 동작하지 않습니다. Flamingo Reesource Manager Agent를 `ResourceManager의 Java 구성 옵션` 에 설정한 후 다음과 같이 "yarn > 인스턴스"를 선택합니다. 그러면 다음과 같이 ResourceManager 항목을 확인할 수 있습니다.
+
+image::install/cdh-rm-restart-1.png[scaledwidth=100%,Resource Manager 관리 화면]
+
+ResourceManager 항목을 선택하면 Resource Manager에 대한 상세한 정보가 표시가 됩니다. 그러면 우측 메뉴에서 재시작을 선택합니다.
+
+image::install/cdh-rm-restart-2.png[scaledwidth=100%,Resource Manager 재시작 메뉴]
+
+그러면 Resource Manager 프로세스만 재시작이 진행되며 약간의 시간이 소요됩니다. 만약 재시작중 실패하면 다음과 같이 실패 상태로 변경됩니다. 여기에서 원인을 찾기 위해서 Stdout을 선택합니다.
+
+image::install/cdh-rm-restart-3.png[scaledwidth=100%,Resource Manager 재시작]
+
+Resource Manager 구동 스크립트의 표준 출력이 로그 파일에 기록되어 나타나며 하단에 JVM을 초기화할 수 없다는 에러 문구를 확인할 수 있습니다.
+
+image::install/cdh-rm-restart-4.png[scaledwidth=100%,Stdout 로그 확인]
+
+이제 Stderr 로그를 확인해봅니다. 그러면 JAR, Zip 파일을 열 수 없다는 문구가 나타납니다. 보통 이 경우는 파일명 오류, 권한 오류, 파일 깨짐 등으로 인하여 파일을 열 수 없는 경우에 해당합니다. 따라서 이것을 점검하려면 `yarn` 계정으로 로그인하여 해당 파일이 정상적으로 접근이 되는지, 파일이 제대로 압축이 풀리는지 `jar tvf <JAR 파일>` 커맨드로 확인을 해야 합니다.
+
+image::install/cdh-rm-restart-5.png[scaledwidth=100%,Stderr 로그 확인]
+
+설정이 정상적으로 되었다면 Resource Manager를 재시작하면 다음의 화면을 확인할 수 있습니다.
+
+image::install/cdh-rm-restart-6.png[scaledwidth=100%,정상 동작]
+
+===== Namenode Agent 설치하기
+
+Flamingo Namenode Agent는 Namenode를 모니터링하여 HDFS 정보 수집 및 HDFS 관리 등을 수행하기 위한 JVM Agent입니다. Resource Manager를 설치한 방식과 동일하게 Namenode도 아래와 같이 추가합니다.
+아래 설정은 Hadoop 2.0~Hadoop 2.5까지 버전에 대한 Namenode Agent의 설정 방법입니다.
+
+[source,bash]
+----
+-javaagent:<FLAMINGO_WEB_HOME>/agents/flamingo2-hadoop20-nn-agent-2.0.0.jar=resourcescript:namenode2.bm
+-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:-CMSConcurrentMTEnabled
+-XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled
+----
+
+아래 설정은 Hadoop 2.6+ 버전에 대한 Namenode Agent의 설정 방법입니다.
+
+[source,bash]
+----
+-javaagent:<FLAMINGO_WEB_HOME>/agents/flamingo2-hadoop26-nn-agent-2.0.0.jar=resourcescript:namenode2.bm
+-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:-CMSConcurrentMTEnabled
+-XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled
+----
+
+Apache Hadoop 의 경우 Namenode 가 설치된 곳의 $HADOOP_HOME/bin/hdfs 파일의 if [ "$COMMAND" = "namenode" ] 부분 HADOOP_OPTS 에 -javaagent:<FLAMINGO_WEB_HOME>/agents/flamingo2-hadoop26-nn-agent-2.0.0.jar=resourcescript:namenode2.bm 추가
+
+PHD 3.0 의 경우 Namenode 가 설치된 곳의 /usr/phd/current/hadoop-hdfs-namenode/bin/hdfs.distro 파일의 같은 부분에 -javaagent:<FLAMINGO_WEB_HOME>/agents/flamingo2-hadoop26-nn-agent-2.0.0.jar=resourcescript:namenode2.bm 추가
+
+[WARNING]
+종종 JAR 파일에 접근할 수 있는 권한이 없는 경우 JVM이 정상적으로 동작하지 못하므로 만약 Namenode가 정상적으로 시작하지 않는다면 JAR 파일의 경로가 Namenode가 접근할 수 있는 권한을 가지고 있는지 확인하도록 합니다.
+Cloudera CDH, Pivotal HD, Hortonworks HDP 배포판은 Namenode의 시스템 계정은 `hdfs` 이므로 Flamingo Agent JAR 파일이 `hdfs` 계정으로 접근이 가능한 디렉토리에 있는지 확인하도록 합니다.
+어떤 경우는 JAR 파일에 있는 `MANIFEST.MF` 파일에 접근할 수 없다는 메시지를 출력할 수도 있습니다. 이러한 경우에도 Namenode의 리눅스 계정을 확인한 후 접근이 가능한지 확인해주십시오.
+
+[[mragent]]
+===== MapReduce Job Agent
+
+MapReduce Job Agent는 MapReduce, Hive, Pig Job 실행시 동작하는 MapReduce Job ID 및 YARN 애플리케이션 ID를 추출하고 ID를 저장하는 기능을 수행하는 Agent입니다.
+설정은 Flamingo의 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일의 다음 위치에서 지정할 수 있습니다.
+
+[source,properties]
+----
+flamingo.mr.agent.jar.path=<FLAMINGO_WEB_HOME>/agents/flamingo2-hadoop2-mr-agent-2.0.0.jar
+----
+
+MapReduce Agent는 워크플로우 디자이너에서 MapReduce, Hive, Pig를 실행하는 경우 ID를 추출하여 향후 모니터링 기능과 연계시 동작합니다.
+MapReduce Agent를 통해 제공하는 기능은 다음과 같습니다.
+
+* MapReduce Job의 관련 정보 수집 및 저장
+* 워크플로우와 YARN 애플리케이션, MapReduce와 연결 고리 파악
+* 워크플로우 강제 종료시 YARN 애플리케이션, MapReduce 강제 종료
+* 기타 관련 정보 수집
+
+=== Pivotal HAWQ 설정하기
+
+https://network.pivotal.io/products/pivotal-hawq[Pivotal HAWQ]는 PHD(Pivotal Hadoop Distribution)과 HDP(Hortonworks Hadoop Distribution)과 함께 동작하는 SQL on Hadoop을 구현하는 Query Engine입니다.
+Pivotal HAWQ는 강력한 고성능 SQL on Hadoop으로써 ANSI SQL을 100% 지원하고 MADlib, PL/Java, Pivotal R과 함께 연동하여 다양한 분석 작업을 할 수 있습니다.
+
+Flamingo는 Pivotal HAWQ 1.2.1.0을 기준으로 개발이 되었으며 본 문서를 작성하는 시점에서는 HAWQ 1.3.0.1 버전이 릴리즈되었습니다.
+
+Pivotal HAWQ 1.3은 다음의 하둡 배포판에서 동작할 수 있습니다.
+
+* Pivotal - PHD 3.0
+* Hortonworks - HDP 2.2.4
+
+Pivotal HAWQ는 JDBC 기반으로만 외부 연동을 지원하며 현재 Flamingo 또한 JDBC를 통해서 HAWQ를 지원합니다. 이런 이유로 JDBC에서 구현할 수 있는 기능들만 제공하게 되며, 또한 기술적 제약사항도 발생하게 됩니다.
+
+Flamingo에서 지원하는 Pivotal HAWQ Editor를 사용하기 위해서는 Pivotal HAWQ JDBC Driver가 필요합니다. Pivotal HAWQ JDBC Driver는 Pivotal license 정책을 따르므로 Flamingo 사용자가 직접 다운로드하여 설치하도록 합니다. 다운로드를 하기 위해서는 Pivotal Network에 접속하여 회원가입후 가능합니다.
+
+* Pivotal HAWQ JDBC Driver : https://network.pivotal.io/products/pivotal-hawq[다운로드]
+
+상기 사이트에서 Pivotal HAWQ JDBC Driver를 다운로드한 후 `greenplum.jar` 파일을 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/lib` 디렉토리에 복사한 후 Flamingo를 재시작합니다.
+
+[[installterm]]
+=== 리모트 웹 터미널 설치하기
+
+Flamingo 2.0.0부터 제공하는 리모트 웹 터미널은 nodejs를 기반으로 동작하며 리모트 웹 터미널로 접속하고자 하는 서버에 nodejs를 포함한 관련 모듈을 설치해야 합니다.
+
+==== nodejs 설치하기
+
+리모트 웹 터미널을 설치하기 위해서 OS에 따라서 다음을 참고하여 nodejs를 설치하도록 합니다.
+
+* CentOS : https://www.digitalocean.com/community/tutorials/how-to-install-and-run-a-node-js-app-on-centos-6-4-64bit[How To Install And Run A Node.js App On Centos 6.4 64bit]
+* Ubuntu : https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-an-ubuntu-14-04-server[How To Install Node.js on an Ubuntu 14.04 server]
+
+Ubuntu의 경우 다음의 커맨드로 설치할 수 있습니다.
+
+[source,bash]
+----
+# apt-get install nodejs npm
+----
+
+Ubuntu의 경우 `/usr/bin/nodejs` 로 설치가 되지만 `/usr/bin/node` 로 링크를 생성해야 합니다.
+
+[source,bash]
+----
+# ln -s /usr/bin/nodejs /usr/bin/node
+----
+
+Ubuntu 계열은 다음의 패키지를 추가설치합니다.
+
+[source,bash]
+----
+# apt-get install nodejs-legacy
+# apt-get install npm
+# apt-get install g++
+----
+
+==== npm 패키지 설치하기
+
+의존하는 패키지를 설치하기 위해서 `node_modules` 디렉토리를 찾습니다.
+이때 `node_modules` 디렉토리는 `{prefix}/lib/node_modules` 입니다.
+`{prefix}` 는 보통 `/usr/local/` 또는 사용자 환경에 따라 결정됩니다.
+그리고 다음의 순서대로 설치를 진행합니다.
+
+[source,bash]
+----
+# npm install npm@2.12.1 -g
+npm@2.12.1 /usr/local/lib/node_modules/npm
+
+# npm install async@0.9.0 -g
+async@0.9.0 /usr/local/lib/node_modules/async
+
+# npm install term.js@0.0.4 -g
+term.js@0.0.4 /usr/local/lib/node_modules/term.js
+
+# npm install express@3.20.2 -g
+express@3.20.2 /usr/local/lib/node_modules/express
+├── basic-auth@1.0.0
+├── merge-descriptors@1.0.0
+├── utils-merge@1.0.0
+├── cookie-signature@1.0.6
+├── methods@1.1.1
+├── cookie@0.1.2
+├── fresh@0.2.4
+├── escape-html@1.0.1
+├── range-parser@1.0.2
+├── content-type@1.0.1
+├── vary@1.0.0
+├── parseurl@1.3.0
+├── content-disposition@0.5.0
+├── commander@2.6.0
+├── depd@1.0.1
+├── etag@1.5.1 (crc@3.2.1)
+├── mkdirp@0.5.0 (minimist@0.0.8)
+├── proxy-addr@1.0.7 (forwarded@0.1.0, ipaddr.js@0.1.9)
+├── debug@2.1.3 (ms@0.7.0)
+├── connect@2.29.1 (pause@0.0.1, response-time@2.3.0, vhost@3.0.0, on-headers@1.0.0, basic-auth-connect@1.0.0, bytes@1.0.0, cookie-parser@1.3.4, method-override@2.3.2, serve-static@1.9.2, connect-timeout@1.6.1, qs@2.4.1, serve-favicon@2.2.0, http-errors@1.3.1, finalhandler@0.3.4, morgan@1.5.2, type-is@1.6.1, errorhandler@1.3.5, body-parser@1.12.3, compression@1.4.3, serve-index@1.6.3, express-session@1.10.4, csurf@1.7.0, multiparty@3.3.2)
+└── send@0.12.2 (destroy@1.0.3, ms@0.7.0, mime@1.3.4, on-finished@2.2.1)
+
+# npm install socket.io@1.3.5 -g
+socket.io@1.3.5 /usr/local/lib/node_modules/socket.io
+├── has-binary-data@0.1.3 (isarray@0.0.1)
+├── debug@2.1.0 (ms@0.6.2)
+├── socket.io-parser@2.2.4 (isarray@0.0.1, debug@0.7.4, component-emitter@1.1.2, benchmark@1.0.0, json3@3.2.6)
+├── socket.io-adapter@0.3.1 (object-keys@1.0.1, debug@1.0.2, socket.io-parser@2.2.2)
+├── socket.io-client@1.3.5 (to-array@0.1.3, indexof@0.0.1, component-bind@1.0.0, debug@0.7.4, backo2@1.0.2, object-component@0.0.3, component-emitter@1.1.2, has-binary@0.1.6, parseuri@0.0.2, engine.io-client@1.5.1)
+└── engine.io@1.5.1 (base64id@0.1.0, debug@1.0.3, engine.io-parser@1.2.1, ws@0.5.0)
+
+# npm install pty.js@0.2.7-1 -g
+pty.js@0.2.7-1 /usr/local/lib/node_modules/pty.js
+├── extend@1.2.1
+└── nan@1.7.0
+
+# npm install forever@0.14.1 -g
+forever@0.14.1 /usr/local/lib/node_modules/forever
+├── colors@0.6.2
+├── timespan@2.3.0
+├── optimist@0.6.1 (wordwrap@0.0.2, minimist@0.0.10)
+├── nssocket@0.5.3 (eventemitter2@0.4.14, lazy@1.0.11)
+├── winston@0.8.3 (cycle@1.0.3, stack-trace@0.0.9, eyes@0.1.8, isstream@0.1.2, async@0.2.10, pkginfo@0.3.0)
+├── cliff@0.1.10 (eyes@0.1.8, colors@1.0.3)
+├── nconf@0.6.9 (ini@1.3.3, async@0.2.9, optimist@0.6.0)
+├── forever-monitor@1.5.2 (watch@0.13.0, minimatch@1.0.0, ps-tree@0.0.3, broadway@0.3.6)
+├── flatiron@0.4.3 (optimist@0.6.0, director@1.2.7, broadway@0.3.6, prompt@0.2.14)
+└── utile@0.2.1 (deep-equal@1.0.0, ncp@0.4.2, async@0.2.10, i@0.3.3, mkdirp@0.5.0, rimraf@2.3.3)
+----
+
+==== 리모트 웹 터미널 설치하기
+
+`/usr/local/lib/node_modules/webterminal` 디렉토리를 생성하고 Flamingo의 `flamingo2-terminal-nodejs/terminal-server` 의 `.js` 파일을 모두 복사합니다.
+그리고 터미널 서버가 `root` 권한으로 실행할 수 있도록 터미널 서버를 동작시키기 위해서 `root` 로 로그인후 터미널 서버를 실행시킬 계정에 sudo 권한을 부여합니다.
+
+[source,bash]
+----
+# vi /etc/sudoers
+cloudine        ALL=(ALL)       NOPASSWD: ALL
+----
+
+만약 특정 프로세스만 sudo 권한을 부여하겠다면 다음과 같이 추가하도록 합니다.
+
+[source,bash]
+----
+# vi /etc/sudoers
+cloudine        ALL=(ALL)       NOPASSWD:/usr/bin/nodejs, /usr/local/bin/forever
+----
+
+이제 다음의 커맨드를 실행하여 서버를 시작합니다. 실행시 리눅스 시스템의 멀티 유저에 대해서 터미널을 제공하려면 `root` 로 실행하도록 합니다.
+
+[source,bash]
+----
+# sudo forever start /usr/local/lib/node_modules/webterminal/server.js
+# ps -ef | grep forever
+root      7207     1  2 09:34 ?        00:00:00 /usr/local/bin/node /usr/local/lib/node_modules/forever/bin/monitor /usr/local/lib/node_modules/webterminal/server.js
+# netstat -an | grep 9191
+----
+
+로그 파일을 남기고자 할 경우 다음의 명령어를 사용합니다.
+
+[source,bash]
+----
+# sudo forever start -o /usr/local/lib/node_modules/webterminal/out.log -e /usr/local/lib/node_modules/webterminal/err.log /usr/local/lib/node_modules/webterminal/server.js
+----
+
+종료하고자 할 경우 다음의 명령어를 사용합니다.
+
+[source,bash]
+----
+# sudo forever stop /usr/local/lib/node_modules/webterminal/server.js
+----
+
+=== R 연동
+
+Flamingo는 Flamingo 2.0.0부터 R과 함께 연동하여 사용할 수 있습니다. 연동을 위해서 R, RStudio, RHadoop, RHive와 같은 오픈소스가 필요하게 됩니다.
+Flamingo는 RStudio Server와 연동하여 Flamingo를 로그인한 상태에서 RStudio Server와 연계하여 사용할 수 있습니다.
+이렇게 되면 Flamingo에 로그인한 사용자가 Flamingo 내에서 R로 작업을 할 수 있게 됩니다.
+R은 대용량 분석은 아니지만 분석 알고리즘이 많고, 시각화 기능이 Hadoop에 비해서 상대적으로 매우 강력하기 때문에 R을 빅데이터 분석에서 같이 활용하는 것은
+편의성과 생산성 등을 확보해주고 특히 분석 방법을 다양화시킬 수 있다는 장점을 얻게 됩니다.
+
+==== R 설치
+
+R을 Flamingo와 통합하기 위해서 우선 R을 사용할 수 있도록 제공하려는 서버에 R 패키지를 설치하는 과정이 우선적으로 필요합니다. 여기에서 Flamingo와 R을 같은 서버에서 제공하는 방법이 있겠지만
+R을 이용하여 분석하는 경우 CPU, Memory, HDD를 소비하므로 원칙적으로 분리할 것을 권고합니다. 따라서 R을 설치한 서버, Flamingo를 설치한 서버 이렇게 두 대의 서버가 필요하게 됩니다.
+R은 Flamingo를 설치한 서버가 아닌 R을 이용하여 분석하는 서버에 설치를 해야 합니다.
+만약에 워크플로우 디자이너에서 R을 실행하는 경우 Flamingo를 설치한 서버도 R 및 R 패키지를 동일하게 설치해야합니다.
+
+R을 서버에 설치하기 위해서 `root` 로 로그인한 후 다음의 커맨드를 실행하여 R을 설치합니다(CentOS의 경우).
+
+====
+[source,bash]
+----
+# yum install R # <1> <2>
+----
+<1> `No package R available.` 이라는 오류가 난다면 아래와 같이 실행합니다. 자세한 설명은 https://fedoraproject.org/wiki/EPEL/FAQ#How_can_I_install_the_packages_from_the_EPEL_software_repository.3F[링크]를 확인하시기 바랍니다.
+
+[source,bash]
+----
+# cd ~
+# su -c 'rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
+# yum repolist
+# yum install R
+----
+
+<2> `Error: Package: R-core-devel-3.2.2-1.el6.x86_64 (epel) +
+           Requires: blas-devel >= 3.0 +
+Error: Package: R-core-devel-3.2.2-1.el6.x86_64 (epel) +
+           Requires: libicu-devel +
+Error: Package: R-core-devel-3.2.2-1.el6.x86_64 (epel) +
+           Requires: texinfo-tex +
+Error: Package: R-core-devel-3.2.2-1.el6.x86_64 (epel) +
+           Requires: lapack-devel` +
+이라는 오류가 난다면 아래와 같이 실행합니다.
+
+[source,bash]
+----
+# wget http://mirror.centos.org/centos/6/os/x86_64/Packages/blas-3.2.1-4.el6.x86_64.rpm
+# rpm -Uvh blas-3.2.1-4.el6.x86_64.rpm
+# wget http://mirror.centos.org/centos/6/os/x86_64/Packages/blas-devel-3.2.1-4.el6.x86_64.rpm
+# rpm -Uvh blas-devel-3.2.1-4.el6.x86_64.rpm
+# wget http://mirror.centos.org/centos/6/os/x86_64/Packages/libicu-4.2.1-12.el6.x86_64.rpm
+# rpm -Uvh libicu-4.2.1-12.el6.x86_64.rpm
+# wget http://mirror.centos.org/centos/6/os/x86_64/Packages/libicu-devel-4.2.1-12.el6.x86_64.rpm
+# rpm -Uvh libicu-devel-4.2.1-12.el6.x86_64.rpm
+# wget http://mirror.centos.org/centos/6/os/x86_64/Packages/lapack-3.2.1-4.el6.x86_64.rpm
+# rpm -Uvh lapack-3.2.1-4.el6.x86_64.rpm
+# wget http://mirror.centos.org/centos/6/os/x86_64/Packages/lapack-devel-3.2.1-4.el6.x86_64.rpm
+# rpm -Uvh lapack-devel-3.2.1-4.el6.x86_64.rpm
+# wget http://mirror.centos.org/centos/6/os/x86_64/Packages/texinfo-tex-4.13a-8.el6.x86_64.rpm
+# yum -y install texinfo-tex-4.13a-8.el6.x86_64.rpm
+----
+
+====
+
+Ubuntu에서는 다음의 커맨드로 R을 설치할 수 있습니다.
+
+[source,bash]
+----
+# apt-get install r-base gdebi-core libapparmor1
+----
+
+[NOTE]
+R은 R 패키지를 인터넷을 통해서 다운로드하여 설치하도록 되어 있습니다. 따라서 별도 R 패키지 레파지토리를 구성하거나, R이 설치되어 있는 서버에 패키지를 설치 또는 구성해두지 않으면 인터넷 접속이 허용되지 않는 경우 R 패키지를 다운로드할 수 없습니다.
+
+==== RStudio Server 설치
+
+Flamingo는 RStudio Server와 연동하여 동작하도록 구현되어 있습니다. RStudio가 아닌 RStudio Server는 웹 브라우저를 통해서 R을 접근하여 사용할 수 있도록 해줍니다.
+특히 Flamingo는 Flamingo의 사용자 계정과 RStudio Server의 사용자 계정을 통합할 수 있도록 해주어 하나의 사용자 체계를 가질 수 있도록 해줍니다.
+다만 RStudio Server의 사용자 계정은 Linux 서버의 계정이며, Flamingo의 계정은 서비스 계정의 개념이므로 이를 통합하기 위해서는 조직내에서 몇 가지 고려해야할 점이 있습니다.
+RStudio Server를 통해서 접근하는 서버의 Linux 계정에 대한 생성의 권한을 부여할 것이냐 입니다. 여하튼 이 부분은 Flamingo와 RStudio Server를 통합하는 조직의 보안 정책이므로
+이 문서에서는 다루지 않겠습니다.
+
+우선 RStudio Server는 R을 설치한 서버에 설치해야 합니다. 이를 위해서 http://www.rstudio.com/products/rstudio/download-server[RStudio Server 다운로드]를 합니다.
+다운로드시 OS에 맞는 버전을 다운로드해야 합니다. 아래 설치 내용은 CentOS의 경우로 `root` 로 로그인하여 순서대로 진행합니다.
+
+[source,bash]
+----
+# yum install openssl098e # Required only for RedHat/CentOS 6 and 7
+# wget http://download2.rstudio.org/rstudio-server-0.98.1103-x86_64.rpm
+# yum install --nogpgcheck rstudio-server-0.98.1103-x86_64.rpm
+----
+
+R 3.2 설치시에는 아래를 실행합니다.
+
+[source,bash]
+----
+# yum install openssl098e # Required only for RedHat/CentOS 6 and 7
+# wget https://download2.rstudio.org/rstudio-server-rhel-0.99.486-x86_64.rpm
+# yum install --nogpgcheck rstudio-server-rhel-0.99.486-x86_64.rpm
+---
+
+Ubuntu에서는 `apt-get` 대신 `gdebi` 커맨드로 설치를 합니다. 아래 커맨드는 64비트 Ubuntu의 경우에 해당합니다.
+
+[source,bash]
+----
+# wget http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
+# gdebi rstudio-server-0.98.1103-amd64.deb
+----
+
+==== RStudio Server 환경설정
+
+RStudio Server는 기본으로 8787 포트를 사용합니다. 하지만 웹 브라우저에서 접근시 `connection refused` 가 발생하면 RStudio Server가 설치되어 있는 다음의 설정 파일을 확인하도록 합니다.
+
+* `/etc/rstudio/rserver.conf` 파일
+* `/etc/rstudio/rsession.conf` 파일
+
+특히 RStudio Server의 포트 및 IP 주소는 `/etc/rstudio/rserver.conf` 파일에서 관리합니다. 네트워크 설정을 하기 위해서 이 파일에 다음을 추가합니다.
+
+[source,properties]
+----
+www-port=8787
+www-address=192.168.1.1
+----
+
+이제 `root` 로 다음의 커맨드를 실행하여 RStudio Server를 재시작합니다.
+
+[source,bash]
+----
+# rstudio-server restart
+----
+
+정상적으로 포트가 열려있는지 확인하려면 다음의 커맨드를 실행하여 확인하도록 합니다.
+
+[source,bash]
+----
+# netstat -an | grep 8787
+tcp        0      0 0.0.0.0:8787                0.0.0.0:*                   LISTEN
+----
+
+[NOTE]
+정책상 RStudio Server를 직접 외부로 포트를 개방할 수 없는 상황이지만 포워딩을 할 수 있는 상황이라면 `rinetd` 를 이용하여 포트를 포워딩하도록 시스템을 구축할 수 있습니다.
+
+==== Flamingo의 RStudio Server 연동 설정
+
+연동 설정에 대한 부분은 <<rstudio, R/RStudio>>를 참고하시기 바랍니다.
+
+==== RHive와 RHadoop 설치 참고사항
+
+Hadoop의 HDFS에 저장되어 있는 파일을 R에서 로딩하여 분석하려면 HDFS와 연동하는 연동모듈 등이 필요합니다. RHive와 RHadoop은 연동을 위한 모듈로써 별도로 R, RStudio Server에 설치해야 합니다.
+RHive는 R에서 Hive QL을 실행하여 데이터를 R에서 사용할 수 있도록 하며, RHadoop의 rhdfs는 HDFS의 파일을 R에서 로딩할 수 있게 해줍니다.
+
+* https://github.com/nexr/RHive[RHive]
+* https://github.com/RevolutionAnalytics/rhdfs[RHadoop rhdfs]
+
+[NOTE]
+종종 많은 사용자들이 RHive, RHadoop(rhdfs)을 빅데이터 분석이 가능한 것으로 이해하고 있습니다. RHive, RHadoop(rhdfs)은 R 사용자를 위해서 Hadoop의 HDFS의 파일을 로딩할 수 있도록 하는 것이지 R을 고속 병렬 처리하는 개념이 아님을 알려드립니다.
+또한 본 문서에서는 관련 내용만 전달하며 RHive, RHadoop을 Flamingo와 같이 사용하자고 하는 경우 별도 설치를 하거나 또는 기술지원(support@cloudine.co.kr)을 요청하시기 바랍니다.
+
+=== Flamingo 기타 구성 관련 정보
+
+==== Web Application Server 선택하기
+
+Flamingo 부터는 WebSocket을 사용하므로 다음의 버전에 충족하도록 Web Application Server를 사용해야 합니다. 특히 Flamingo는 Apache Tomcat을 기반으로 개발이 되어 있으므로 Apache Tomcat을 사용하면 쉽게 구성할 수 있습니다. 다음은 Flamingo를 사용하기 위한 최소 요구조건에 충족하는 Web Application Server입니다.
+
+* Tomcat 7.0.47+
+* Jetty 9.1+
+* GlassFish 4.1+
+* WebLogic 12.1.3+
+* Undertow 1.0+ (WildFly 8.0+)
+
+==== 웹 다운로드 성능 향상 시키기
+
+Flamingo를 사용하는 사용자의 웹 브라우저에서 다운로드하는 Tomcat의 `<FLAMINGO_WEB_HOME>/conf/server.xml` 파일을 수정하여 사용자의 웹 브라우저에서 다운로드하는 스크립트의 용량을 줄일 수 있습니다. Tomcat의 Connector 부분을 찾아서 다음과 같이 압축 관련 옵션을 추가합니다.
+
+[source,xml]
+----
+<Connector port="18080" protocol="HTTP/1.1"
+           connectionTimeout="20000"
+           compression="on" 
+           compressionMinSize="2048" 
+           noCompressionUserAgents="gozilla, traviata" 
+           compressableMimeType="text/css,text/html,text/xml,application/json,application/javascript,application/x-javascript,text/javascript,text/x-javascript,text/x-json"
+           redirectPort="8443"/>
+----
+
+[NOTE]
+이 설정은 Apache Tomcat과 관련된 설정으로 다른 Web Application Server를 사용하는 경우 해당 벤더에 문의 하십시오.
+
+==== UTF-8 설정하기
+
+Flamingo는 UTF-8을 지원해야만 multi-bytes character를 정상적으로 처리할 수 있습니다.
+이를 위해서 Tomcat의 커넥터에서 URI Encoding을 UTF-8을 사용하도록 설정해야 합니다.
+Tomcat의 `<FLAMINGO_WEB_HOME>/conf/server.xml` 파일에서 다음과 같이 `URIEncoding` 옵션을 추가하도록 합니다.
+
+====
+[source,xml]
+----
+<Connector port="18080" protocol="HTTP/1.1"
+           connectionTimeout="20000"
+           redirectPort="18443"
+           URIEncoding="UTF-8"/>  # <1>
+----
+<1> UTF-8 설정
+====
+
+==== JVM Heap 조정하기
+
+Flamingo를 사용하는 서버는 MapReduce Job, Hive QL, Pig Latin 등을 실행하기 위해서 충분히 메모리를 확보해야 합니다.
+하지만 Flamingo를 실행하는 Tomcat의 JVM Heap이 부족하게 설정이 되어 있다면 큰 의미가 없습니다.
+Flamingo의 JVM Heap을 설정하기 위해서 `<FLAMINGO_WEB_HOME>/bin/catalina.sh` 파일의 앞쪽에 `CATALINA_OPTS` 변수 설정을 추가하도록 합니다.
+
+====
+[source,bash]
+----
+#   LOGGING_MANAGER (Optional) Override Tomcat's logging manager
+#                   Example (all one line)
+#                   LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+# -----------------------------------------------------------------------------
+
+CATALINA_OPTS="-Dflamingoweb -Xms4G -Xmx4G -XX:PermSize=512m -XX:MaxPermSize=512m"  # <1>
+
+# OS specific support.  $var _must_ be set to either true or false.
+cygwin=false
+darwin=false
+os400=false
+case "`uname`" in
+CYGWIN*) cygwin=true;;
+Darwin*) darwin=true;;
+OS400*) os400=true;;
+esac
+----
+<1> JVM Heap 설정
+====
+
+=== Flamingo Web의 WebSocket과 Apache HTTP Server 연동하기
+
+Flamingo Web이 WebSocket을 사용하므로 Apache HTTP Server 연동시 mod_proxy와 mod_proxy_wstunnel을 설치하여 연동해야 합니다.
+Apache HTTP Server의 설정 파일에서 다음과 같이 WebSocket을 설정하도록 합니다.
+
+[NOTE]
+mod_proxy_wstunnel을 사용하기 위해서는 Apache HTTP Server 2.4.5 이상이 필요합니다.
+
+====
+[source,bash]
+----
+ProxyRequests Off
+ProxyPreserveHost On
+
+<Proxy *>
+    Order deny,allow
+    Allow from all
+</Proxy>
+
+ProxyPass /websocket ws://<FLAMINGO_WEB_IP>:18080/websocket/  # <1>
+
+ProxyPass / http://<FLAMINGO_WEB_IP>:18080/
+ProxyPassReverse / http://<FLAMINGO_WEB_IP>:18080/
+<Location />
+    Order allow,deny
+    Allow from all
+</Location>
+----
+<1> WebSocket 설정
+====
+
+mod_proxy_wstunnel는 Apache HTTP Server 2.4.5 이상 버전에서 제공하지만 가장 많이 사용하는 버전인 2.2 버전에서는 기본으로 포함되어 있지 않습니다.
+Apache HTTP Server 2.2에서 사용하기 위해서는 https://gist.github.com/vitkin/6661683[Backport WebSocket to Apache 2.2]를 참고하십시오.
+
+=== Flamingo Logging 설정하기
+
+==== Flamingo Web
+
+Flamingo Web의 로깅 설정은 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/logback-<PROFILE>.xml` 파일을 통해서 가능합니다. 로그 파일의 종류는 다음 세 종류입니다.
+
+[width="80%",cols="10,20",options="header"]
+|=======
+|파일  |설명
+|`<FLAMINGO_WEB_HOME>/logs/app.log` | Flamingo에서 출력하는 로그 파일
+|`<FLAMINGO_WEB_HOME>/logs/exception.log` | Exception 발생시 기록하는 로그 파일
+|`<FLAMINGO_WEB_HOME>/logs/pool.log` | JDBC Connection Pool 모니터링용 로그 파일
+|=======
+
+Flamingo는 디버그 용도의 Deveopment 모드와 Production 모드 두 가지로 구분되어 있어 이때 파일명은 다음 두 가지입니다.
+
+[width="80%",cols="10,20",options="header"]
+|=======
+|파일  |설명
+|`<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/logback-dev.xml` | Development
+|`<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/logback-prd.xml` | Production
+|=======
+
+Flamingo의 로깅을 Production 모드로 변경하기 위해서 `<FLAMINGO_WEB_HOME>/bin/catalina.sh` 파일의 앞쪽에 `CATALINA_OPTS` 변수 설정을 추가하고 실행 모드를 추가하도록 합니다.
+
+====
+[source,bash]
+----
+#   LOGGING_MANAGER (Optional) Override Tomcat's logging manager
+#                   Example (all one line)
+#                   LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+# -----------------------------------------------------------------------------
+
+CATALINA_OPTS="-Dflamingoweb -Dspring.profiles.active=prd -Xms4G -Xmx4G"  # <1>
+
+# OS specific support.  $var _must_ be set to either true or false.
+cygwin=false
+darwin=false
+os400=false
+case "`uname`" in
+CYGWIN*) cygwin=true;;
+Darwin*) darwin=true;;
+OS400*) os400=true;;
+esac
+----
+<1> Production 모드로 로깅 설정
+====

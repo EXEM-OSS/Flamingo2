@@ -59,23 +59,28 @@ public class UserRepositoryImpl extends PersistentRepositoryImpl<String, Object>
     }
 
     @Override
-    public int insertByUser(Map userMap) {
-        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertByUser", userMap);
+    public boolean insertByUser(Map userMap) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertByUser", userMap) > 0;
     }
 
     @Override
-    public int insertByManager(Map userMap) {
-        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertByManager", userMap);
+    public boolean insertByManager(Map userMap) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertByManager", userMap) > 0;
     }
 
     @Override
-    public int insertByAuth(Long userId) {
-        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertByAuth", userId);
+    public boolean insertByAuth(Long userId) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertByAuth", userId) > 0;
     }
 
     @Override
-    public int updateByAck(Map userMap) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateByAck", userMap);
+    public boolean insertWorkflowDesignerUser(String username) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertWorkflowDesignerUser", username) > 0;
+    }
+
+    @Override
+    public boolean updateByAck(Map userMap) {
+        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateByAck", userMap) > 0;
     }
 
     @Override
@@ -89,37 +94,52 @@ public class UserRepositoryImpl extends PersistentRepositoryImpl<String, Object>
     }
 
     @Override
-    public int exist(String username) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".exist", username);
+    public boolean exist(String username) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".exist", username).size() > 0;
     }
 
     @Override
-    public int updatePassword(Map userMap) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updatePassword", userMap);
+    public boolean updatePassword(Map userMap) {
+        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updatePassword", userMap) > 0;
     }
 
     @Override
-    public int deleteByUsername(String username) {
-        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteByUsername", username);
+    public boolean deleteByUsername(String username) {
+        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteByUsername", username) > 0;
     }
 
     @Override
-    public int updateUserInfo(Map userMap) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateUserInfo", userMap);
+    public boolean deleteWorkflowDesignerUser(String username) {
+        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteWorkflowDesigner", username) > 0;
     }
 
     @Override
-    public int updateById(Map orgMap) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateById", orgMap);
+    public boolean updateUserInfo(Map userMap) {
+        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateUserInfo", userMap) > 0;
     }
 
     @Override
-    public int updateUserHomeInfo(Map userMap) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateUserHomeInfo", userMap);
+    public boolean updateById(Map orgMap) {
+        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateById", orgMap) > 0;
     }
 
     @Override
-    public int selectUserByOrgId(long orgId) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectUserByOrgId", orgId);
+    public boolean updateUserHomeInfo(Map userMap) {
+        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateUserHomeInfo", userMap) > 0;
+    }
+
+    @Override
+    public boolean selectUserByOrgId(long orgId) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectUserByOrgId", orgId).size() > 0;
+    }
+
+    @Override
+    public boolean insertUserAuth(Map userMap) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertUserAuth", userMap) > 0;
+    }
+
+    @Override
+    public boolean deleteUserAuth(Map userMap) {
+        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteUserAuth", userMap) > 0;
     }
 }

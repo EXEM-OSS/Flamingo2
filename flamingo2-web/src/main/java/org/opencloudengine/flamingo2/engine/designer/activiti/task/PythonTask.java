@@ -51,19 +51,13 @@ public class PythonTask extends InterceptorAbstractTask {
      */
     private Logger logger = LoggerFactory.getLogger(PythonTask.class);
 
-    /**
-     * Default HDFS File System URL
-     */
-    private String fsDefaultFS;
-
     @Override
     public void runTask(ProcessInstance instance) throws Exception {
-        fsDefaultFS = String.format("hdfs://%s:%s", getHelper().get(clusterName + ".nn.address"), getHelper().get(clusterName + ".nn.port"));
-
         FileUtils.forceMkdir(new File(working));
 
         // Python Script를 저장한다.
-        savePythonScript(unescape(resolve(variable.get("script").toString())), working);
+        String changeDir = StringUtils.isEmpty(variable.get("workingDir").toString()) ? "" : "cd " + unescape(resolve(variable.get("workingDir").toString())) + ";";
+        savePythonScript(changeDir + unescape(resolve(variable.get("script").toString())), working);
 
         String cli = MessageFormatter.arrayFormat("python {}/script.py " + getParameters(), new Object[]{working}).getMessage();
         saveCommand(cli, working);
@@ -77,7 +71,7 @@ public class PythonTask extends InterceptorAbstractTask {
         socketParams.put("type", "workflow");
         socketParams.put("user", this.getUser());
 
-        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(working), working, logger, fileWriter);
+        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(), working, logger, fileWriter);
         managedProcess.setSocketParams(socketParams);
         managedProcess.run();
     }
@@ -85,17 +79,14 @@ public class PythonTask extends InterceptorAbstractTask {
     /**
      * 커맨드 라인 파라미터를 처리함.
      *
-     * @return
+     * @return commandLineValues를 커맨드라인 문자열로 변환
      */
     private String getParameters() {
         List<String> command = new LinkedList<>();
-        if (variable.get("commandlineValues") != null && !StringUtils.isEmpty(variable.get("commandlineValues").toString())) {
+        if (variable.get("commandlineValues") != null && !isEmpty(variable.get("commandlineValues").toString())) {
             String[] args = variable.get("commandlineValues").toString().trim().split(",");
             for (String arg : args) {
-                String unescape = unescape(arg);
-                String resolve = resolve(unescape);
-                String e = encloseSpace(resolve);
-                command.add(e);
+                command.add(encloseSpace(unescape(resolve(arg))));
             }
         }
         return listToDelimitedString(command, " ");
@@ -134,7 +125,7 @@ public class PythonTask extends InterceptorAbstractTask {
      *
      * @return 환경변수
      */
-    public Map<String, String> getDefaultEnvs(String working) {
+    public Map<String, String> getDefaultEnvs() {
         Map<String, String> envs = new HashMap<>();
 
         envs.put("PATH", "/bin:/usr/bin:/usr/local/bin" + ":" + getHelper().get("hadoop.home") + "/bin" + ":" + getHelper().get("hive.home") + "/bin" + ":" + getHelper().get("pig.home") + "/bin");
@@ -156,7 +147,7 @@ public class PythonTask extends InterceptorAbstractTask {
 
         if (environmentKeys != null) {
             for (int i = 0; i < environmentKeys.length; i++) {
-                envs.put(environmentKeys[i], environmentValues[i]);
+                envs.put(environmentKeys[i], unescape(environmentValues[i]));
             }
         }
 

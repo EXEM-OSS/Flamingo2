@@ -23,6 +23,7 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ContainerStatus', {
     items: [
         {
             xtype: 'cartesian',
+            itemId: 'containerStatusChart',
             height: 300,
             insetPadding: 40,
             interactions: 'itemhighlight',
@@ -80,11 +81,19 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ContainerStatus', {
                 label: {
                     field: 'value',
                     display: 'insideEnd',
+                    orientation: 'horizontal',
                     renderer: function (value) {
                         return value;
                     }
                 }
             }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onRMContainerStatusRefreshClick'
         }
     ]
 });

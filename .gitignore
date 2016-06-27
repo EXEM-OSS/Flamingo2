@@ -4,7 +4,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.war
 *.ear
 
 # IntelliJ
@@ -14,3 +13,9 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+flamingo2-web/src/main/webapp/resources/build/.sass-cache
+flamingo2-web/src/main/webapp/resources/build/.sass-cache/
+
+flamingo2-web/src/main/webapp/resources/build/temp/production/Flamingo2/slicer-temp/.sass-cache
+flamingo2-web/src/main/webapp/resources/build/temp/production/Flamingo2/slicer-temp/.sass-cache/

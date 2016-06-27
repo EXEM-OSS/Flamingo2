@@ -57,7 +57,7 @@ public class AuditController extends DefaultController {
                                       @RequestParam(defaultValue = "") String endDate,
                                       @RequestParam(defaultValue = "") String path,
                                       @RequestParam(defaultValue = "ALL") String auditType,
-                                      @RequestParam(defaultValue = "0") int nextPage,
+                                      @RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int limit) {
 
         EngineService engineService = this.getEngineService(clusterName);
@@ -74,7 +74,7 @@ public class AuditController extends DefaultController {
         auditConditionMap.put("endDate", endDate);
         auditConditionMap.put("path", path);
         auditConditionMap.put("auditType", auditType);
-        auditConditionMap.put("nextPage", nextPage);
+        auditConditionMap.put("page", page);
         auditConditionMap.put("limit", limit);
 
         List<AuditHistory> auditHistories = service.getAuditHistories(auditConditionMap);

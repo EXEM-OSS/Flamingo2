@@ -26,7 +26,6 @@ Ext.define('Flamingo2.view.system.menu.Menu', {
     requires: [
         'Flamingo2.view.system.menu.MenuController',
         'Flamingo2.view.system.menu.MenuModel',
-
         'Flamingo2.model.system.Menu',
         'Flamingo2.model.system.MenuNode'
     ],

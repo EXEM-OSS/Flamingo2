@@ -38,8 +38,15 @@ Ext.define('Flamingo2.view.dashboard.DashboardController', {
             'workflowHistory #clearWorkflowButton': {
                 click: this.onClearClick
             },
-            'workflowHistory #jobKillButton': {
-                click: this.onJobKillClick
+            'workflowHistory #refreshWorkflowButton': {
+                click: this.onRefreshClick
+            },
+            'workflowHistory #killWorkflowButton': {
+                click: this.onKillClick
+            },
+            'workflowHistory': {
+                afterrender: this.onAfterRender,
+                itemdblclick: this.onItemDoubleClick
             }
         });
     },
@@ -49,6 +56,24 @@ Ext.define('Flamingo2.view.dashboard.DashboardController', {
      */
     onAfterRender: function () {
         this.getViewModel().getStore('workflowHistoryStore').load();
+        this.onWorkflowHistoryChartRefreshClick();
+    },
+
+    /**
+     * 워크플로우 실행 통계 정보를 업데이트한다.
+     */
+    onWorkflowHistoryChartRefreshClick: function () {
+        var dashboardSumChart = query('dashboardSumChart #workflowHistoryChart');
+        var status = query('workflowHistory #status');
+
+        setTimeout(function() {
+            dashboardSumChart.getStore().load({
+                params: {
+                    clusterName: ENGINE.id,
+                    status: status.getValue()
+                }
+            })
+        }, 10)
     },
 
     /**
@@ -120,7 +145,7 @@ Ext.define('Flamingo2.view.dashboard.DashboardController', {
                     message: message.msg('workflow.msg_enter_dates'),
                     buttons: Ext.MessageBox.OK,
                     icon: Ext.MessageBox.WARNING,
-                    fn: function (e) {
+                    fn: function () {
                         return false;
                     }
                 });
@@ -134,7 +159,7 @@ Ext.define('Flamingo2.view.dashboard.DashboardController', {
                         message: message.msg('workflow.msg_enter_exact'),
                         buttons: Ext.MessageBox.OK,
                         icon: Ext.MessageBox.WARNING,
-                        fn: function (e) {
+                        fn: function () {
                             return false;
                         }
                     });
@@ -146,7 +171,7 @@ Ext.define('Flamingo2.view.dashboard.DashboardController', {
                         message: message.msg('workflow.msg_enter_exact'),
                         buttons: Ext.MessageBox.OK,
                         icon: Ext.MessageBox.WARNING,
-                        fn: function (e) {
+                        fn: function () {
                             return false;
                         }
                     });
@@ -176,7 +201,7 @@ Ext.define('Flamingo2.view.dashboard.DashboardController', {
                 buttons: Ext.MessageBox.OK,
                 icon: Ext.MessageBox.WARNING,
                 scope: this,
-                fn: function (btn, text, eOpts) {
+                fn: function () {
                     return false;
                 }
             });
@@ -186,7 +211,7 @@ Ext.define('Flamingo2.view.dashboard.DashboardController', {
     /**
      * 현재 입력한 조건으로 워크플로우 실행 이력 창 목록을 갱신한다.
      */
-    onClickRefreshWorkflowButton: function () {
+    onRefreshClick: function () {
         var me = this;
         var refs = me.getReferences();
         var startDate = refs.startDate.getValue();
@@ -227,44 +252,19 @@ Ext.define('Flamingo2.view.dashboard.DashboardController', {
     /**
      * 워크플로우 실행 이력 창에서 실행 중인 잡을 종료한다.
      */
-    onJobKillClick: function () {
+    onKillClick: function () {
+        var me = this;
         var workflowHistoryTreePanel = query('workflowHistory');
         var params = {
             clusterName: ENGINE.id,
             identifier: workflowHistoryTreePanel.getSelectionModel().getSelection()[0].get('identifier'),
+            taskId: workflowHistoryTreePanel.getSelectionModel().getSelection()[0].get('taskId'),
             type: workflowHistoryTreePanel.getSelectionModel().getSelection()[0].get('type')
         };
 
-        invokePostByXML(CONSTANTS.DASHBOARD.KILL, params,
-            function (response) {
-                var obj = Ext.decode(response.responseText);
-                if (obj.success) {
-                    /* FIXME 무슨 알람 창이 떠야하지 않을까?
-                     Ext.create('Flamingo2.view.designer.Toast', {
-                     title: obj.map.name,
-                     position: 'tr',
-                     width: 250,
-                     jobId: obj.map.jobId,
-                     slideInDelay: 600,
-                     autoClose: false,
-                     slideDownAnimation: 'easeIn'
-                     }).show();
-                     */
-                } else {
-                    /*
-                     Ext.create('widget.uxNotification', {
-                     title: message.msg('workflow.msg_fail_run'),
-                     position: 'br',
-                     paddingX: 50,
-                     paddingY: 50,
-                     width: 200,
-                     autoCloseDelay: 1000,
-                     slideInDelay: 100,
-                     slideDownAnimation: 'easeIn',
-                     html: '<div style="font-size:12px;">' + obj.error.cause + '</div>'
-                     }).show();
-                     */
-                }
+        invokeGet(CONSTANTS.DASHBOARD.KILL, params,
+            function () {
+                me.onRefreshClick();
             },
             function (response) {
                 /*
@@ -290,5 +290,24 @@ Ext.define('Flamingo2.view.dashboard.DashboardController', {
             progrese.destroy();
         });
         $("[name=taskProgress]").remove();
+    },
+
+    onBeforechange: function (toolbar, nextPage) {
+        var workflowHistory = query('workflowHistory');
+        var startDateFields = query('workflowHistory #startDate');
+        var endDateFields = query('workflowHistory #endDate');
+        var status = query('workflowHistory #status');
+        var workflowName = query('workflowHistory #workflowName');
+
+        workflowHistory.getStore().getProxy().extraParams.clusterName = ENGINE.id;
+        workflowHistory.getStore().getProxy().extraParams.startDate = startDateFields.getValue();
+        workflowHistory.getStore().getProxy().extraParams.endDate = endDateFields.getValue();
+        workflowHistory.getStore().getProxy().extraParams.status = status.getValue();
+        workflowHistory.getStore().getProxy().extraParams.workflowName = workflowName.getValue();
+        workflowHistory.getStore().getProxy().extraParams.nextPage = nextPage;
+    },
+
+    onRenderer: function (value, item, record) {
+        return record.data.type != 'workflow' ? '' : value;
     }
 });

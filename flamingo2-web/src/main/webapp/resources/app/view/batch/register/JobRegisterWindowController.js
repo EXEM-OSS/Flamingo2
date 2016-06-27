@@ -40,17 +40,17 @@ Ext.define('Flamingo2.view.batch.register.JobRegisterWindowController', {
         var vars = [];
 
         if (Ext.isEmpty(workflowId)) {
-            Ext.Msg.alert(message.msg('common.warn'), '워크플로우 ID가 없습니다.<br>워크플로우 목록을 선택하시오.');
+            Ext.Msg.alert(message.msg('common.warn'), message.msg('batch.msg.workflow_select'));
             return;
         }
 
         if (Ext.isEmpty(jobName)) {
-            Ext.Msg.alert(message.msg('common.warn'), '작업명을 입력하시오.');
+            Ext.Msg.alert(message.msg('common.warn'), message.msg('batch.msg.input_workflow_name'));
             return;
         }
 
         if (!refs.triggerCronExpression.isValid()) {
-            Ext.Msg.alert(message.msg('common.warn'), 'Cron형식이 올바르지 않습니다.');
+            Ext.Msg.alert(message.msg('common.warn'), message.msg('batch.msg.quartz_cron_express'));
             return;
         }
 

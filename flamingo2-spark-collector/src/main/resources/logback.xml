@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <jmxConfigurator/>
+
+    <property name="CONSOLE_LOG_PATTERN_DEBUG" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%c:%L]){cyan} %clr(:){faint} %m%n%wex"/>
+    <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%c:%L]){cyan} %clr(:){faint} %m%n%wex"/>
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%c:%L] : %m%n%wex"/>
+    <property name="MONITORING_LOG_PATTERN" value="[${PID:- }] [%d{yyyyMMdd-HHmmssSSS}] %m%n%wex"/>
+
+    <property name="LAUNCHER_LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${java.io.tmpdir:-.}}${LOG_DATE}-spring-batch.log}"/>
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN_DEBUG}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DEBUG_LEVEL_REMAPPER" class="org.springframework.boot.logging.logback.LevelRemappingAppender">
+        <destinationLogger>org.springframework.boot</destinationLogger>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LAUNCHER_LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LAUNCHER_LOG_FILE}.%i</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <logger name="org.opencloudengine.flamingo2.spark.collector" level="INFO"/>
+
+    <logger name="org.apache.hadoop" level="INFO"/>
+    <logger name="org.eclipse.jetty" level="WARN"/>
+    <logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
+    <logger name="org.crsh.plugin" level="WARN"/>
+    <logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
+    <logger name="org.apache.catalina.startup.DigesterFactory" level="ERROR"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.batch" level="DEBUG"/>
+    <logger name="org.springframework.batch.core.step.item.FaultTolerantChunkProcessor" level="INFO"/>
+    <logger name="org.springframework.batch.repeat.support.RepeatTemplate" level="INFO"/>
+    <logger name="org.hibernate" level="INFO"/>
+    <logger name="com.mchange" level="INFO"/>
+
+    <logger name="jdbc.sqlonly" level="DEBUG"/>
+    <logger name="jdbc.sqltiming" level="DEBUG"/>
+    <logger name="jdbc.resultset" level="DEBUG"/>
+    <logger name="jdbc.audit" level="WARN"/>
+    <logger name="jdbc.connection" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <logger name="log4jdbc.debug" level="WARN"/>
+    <logger name="org.mybatis.spring" level="INFO"/>
+    <logger name="org.quartz.simpl" level="INFO" />
+
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

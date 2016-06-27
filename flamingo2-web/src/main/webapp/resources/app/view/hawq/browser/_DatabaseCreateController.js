@@ -17,7 +17,7 @@
 /**
  * ViewController for Flamingo2.view.hawq.browser._DatabaseCreate
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  * @see Flamingo2.view.hawq.browser._DatabaseCreate
  */

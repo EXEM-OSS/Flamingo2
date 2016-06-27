@@ -21,12 +21,11 @@ Ext.define('Flamingo2.view.monitoring.applications.YarnApplication', {
     requires: [
         'Flamingo2.view.monitoring.applications.YarnApplicationController',
         'Flamingo2.view.monitoring.applications.YarnApplicationModel',
-
         'Flamingo2.view.monitoring.applications.AllApplications',
         'Flamingo2.view.monitoring.applications.ApplicationSummary',
         'Flamingo2.view.monitoring.applications.ApplicationSumChart',
-        'Flamingo2.view.monitoring.applications.Queue',
-        'Flamingo2.view.hive.editor.QueryEditor'
+        //'Flamingo2.view.monitoring.applications.Queue',
+        'Flamingo2.view.component.editor.AbstractEditor'
     ],
 
     controller: 'yarnApplicationController',
@@ -39,6 +38,8 @@ Ext.define('Flamingo2.view.monitoring.applications.YarnApplication', {
         type: 'vbox',
         align: 'stretch'
     },
+    flex: 1,
+    scrollable: true,
 
     items: [
         {
@@ -50,7 +51,8 @@ Ext.define('Flamingo2.view.monitoring.applications.YarnApplication', {
         {
             iconCls: 'common-view',
             margin: '5 0 0 0',
-            height: 210,
+            flex: 1,
+            minHeight: 210,
             border: true,
             xtype: 'allApplications'
         },
@@ -71,7 +73,7 @@ Ext.define('Flamingo2.view.monitoring.applications.YarnApplication', {
                     iconCls: 'common-view',
                     layout: 'fit',
                     itemId: 'logviewer',
-                    xtype: 'queryEditor',
+                    xtype: 'abstractEditor',
                     parser: 'plain_text',
                     highlightActiveLine: false,
                     highlightGutterLine: false,
@@ -135,7 +137,6 @@ Ext.define('Flamingo2.view.monitoring.applications.YarnApplication', {
             }
         }
     ],
-
     listeners: {
         engineChanged: 'onEngineChanged'
     }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- ================ Scheduler ================ -->
+
+    <bean id="quartzJobScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="autoStartup" value="true"/>
+        <property name="beanName" value="scheduler"/>
+        <property name="applicationContextSchedulerContextKey" value="CTX"/>
+        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
+        <property name="configLocation" value="classpath:/quartz.properties"/>
+
+        <property name="triggers">
+            <list>
+                <ref bean="sparkCollectTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="sparkCollectTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+                <property name="jobClass" value="org.opencloudengine.flamingo2.spark.collector.jobs.SparkCollectJob"/>
+            </bean>
+        </property>
+        <property name="repeatInterval" value="60000"/>
+        <property name="startDelay" value="5000"/>
+    </bean>
+
+</beans>

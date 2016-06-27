@@ -126,9 +126,6 @@
         {
             "path": "app.js",
             "bundle": true
-        },
-        {
-            "path": "resources/js/locale/Locale.js"
         }
     ],
 

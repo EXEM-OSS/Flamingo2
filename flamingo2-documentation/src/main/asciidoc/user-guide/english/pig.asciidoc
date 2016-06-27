@@ -1,0 +1,31 @@
+[[pig]]
+
+== Apache Pig
+
+Apache Pig is a script engine that handles files in HDFS through the Pig Latin scripts.
+The Pig Latin scripts get translated into MapReduce jobs.
+Flamingo provides the Pig Latin script editor to enhance the convenience.
+
+* Pig Latin Script Editor
+* Pig Log Check
+* HDFS Browser
+
+=== Introduction
+
+The Apache Pig Latin script editor is composed of two parts. First, you can edit your scripts in the editor.
+Second, You can check logs in the log panel.
+
+image::pig/pig-01.jpg[scaledwidth=100%,Apache Pig 메인 화면]
+
+=== How to Use
+
+Write a script in the Pig Latin Script editor, and click `Run` to execute the script.
+While the script is being processed the logs are sent to Flamingo in real-time through WebSocket.
+
+image::pig/pig-02.jpg[scaledwidth=100%,Apache Pig 메인 화면]
+
+Once the processing is completed, you can see the result file in the HDFS browser.
+
+[WARNING]
+Dumping a large file in the Log panel can cause disconnection with the server, since the logs are transmitted to the web browser through WebSocket.
+So it is recommended not to dump a large file.

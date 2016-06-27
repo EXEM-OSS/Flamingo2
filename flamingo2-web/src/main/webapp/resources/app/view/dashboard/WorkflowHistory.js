@@ -33,50 +33,29 @@ Ext.define('Flamingo2.view.dashboard.WorkflowHistory', {
     columns: [
         {
             text: message.msg('dashboard.wh.column.text'),
+            dataIndex: 'text',
             width: 220,
-            sortable: false,
             align: 'center',
-            dataIndex: 'text'
+            sortable: false
         },
         {
-            width: 100,
             dataIndex: 'id',
-            text: message.msg('dashboard.wh.column.id'),
-            align: 'center',
             hidden: true
         },
         {
-            width: 100,
-            dataIndex: 'rowid', // Action ID
-            text: message.msg('dashboard.wh.column.actionid'),
-            align: 'center',
+            dataIndex: 'rowid',
             hidden: true
         },
         {
-            text: message.msg('dashboard.wh.column.jobstringid'),
-            width: 200,
-            sortable: false,
-            align: 'center',
-            hidden: true,
             dataIndex: 'jobStringId',
-            renderer: function (value, item, record) {
-                if (record.data.type != "workflow")
-                    return "";
-                return value;
-            }
-        },
-        {
-            text: message.msg('dashboard.common.workflowId'),
-            width: 160,
-            dataIndex: 'workflowId',
-            align: 'center',
             hidden: true,
             sortable: false,
-            renderer: function (value, item, record) {
-                if (record.data.type != "workflow")
-                    return "";
-                return value;
-            }
+            renderer: 'onRenderer'
+        },
+        {
+            dataIndex: 'workflowId',
+            hidden: true,
+            renderer: 'onRenderer'
         },
         {
             text: message.msg('dashboard.wh.column.currentaction'),
@@ -84,43 +63,35 @@ Ext.define('Flamingo2.view.dashboard.WorkflowHistory', {
             dataIndex: 'currentAction',
             align: 'center',
             sortable: false,
-            renderer: function (value, item, record) {
-                if (record.data.type != "workflow")
-                    return "";
-                return value;
-            }
+            renderer: 'onRenderer'
         },
         {
             text: message.msg('dashboard.wh.column.username'),
             width: 80,
             dataIndex: 'username',
             align: 'center',
-            renderer: function (value, meta, record) {
-                if (record.data.type != "workflow")
-                    return "";
-                return value;
-            }
+            renderer: 'onRenderer'
         },
         {
             text: message.msg('dashboard.wh.column.elapsed'),
             width: 60,
             dataIndex: 'elapsed',
             align: 'center',
-            renderer: function (value, item, record) {
+            renderer: function (value, metaData, record) {
                 var diff;
 
-                if (record.data.type != "workflow")
+                if (record.get('type') != "workflow")
                     return "";
 
-                if (item.record.data.status == 'RUNNING') {
-                    var start = new Date(item.record.data.startDate);
-                    var end = new Date(item.record.data.endDate);
-                    diff = (end.getTime() - start.getTime()) / 1000;
-                    return App.Util.Date.toHumanReadableTime(Math.floor(diff));
+                if (record.get('status') == 'RUNNING') {
+                    var start = new Date(record.get('startDate'));
+                    var now = new Date();
+                    diff = (now.getTime() - start.getTime()) / 1000;
                 } else {
                     diff = value / 1000;
-                    return App.Util.Date.toHumanReadableTime(Math.floor(diff));
                 }
+
+                return App.Util.Date.toHumanReadableTime(Math.floor(diff));
             }
         },
         /*
@@ -151,25 +122,17 @@ Ext.define('Flamingo2.view.dashboard.WorkflowHistory', {
         {
             text: message.msg('dashboard.wh.column.startdate'),
             width: 140,
-            align: 'center',
             dataIndex: 'startDate',
-            renderer: function (value, item, record) {
-                if (record.data.type != "workflow")
-                    return "";
-                return value;
-
-            }
+            align: 'center',
+            renderer: 'onRenderer'
         },
         {
             text: message.msg('dashboard.wh.column.enddate'),
             width: 140,
-            align: 'center',
             dataIndex: 'endDate',
-            renderer: function (value, item, record) {
-                if (record.data.type != "workflow")
-                    return "";
-                return (item.record.data.status == 'RUNNING') ? '' : value;
-
+            align: 'center',
+            renderer: function (value, metaData, record) {
+                return (record.get('type') != 'workflow' || record.get('status') == 'RUNNING') ? '' : value;
             }
         }
     ],
@@ -182,20 +145,7 @@ Ext.define('Flamingo2.view.dashboard.WorkflowHistory', {
             },
             displayInfo: true,
             listeners: {
-                beforechange: function (toolbar, nextPage, eOpts) {
-                    var workflowHistory = query('workflowHistory');
-                    var startDateFields = query('workflowHistory #startDate');
-                    var endDateFields = query('workflowHistory #endDate');
-                    var status = query('workflowHistory #status');
-                    var workflowName = query('workflowHistory #workflowName');
-
-                    workflowHistory.getStore().getProxy().extraParams.clusterName = ENGINE.id;
-                    workflowHistory.getStore().getProxy().extraParams.nextPage = nextPage;
-                    workflowHistory.getStore().getProxy().extraParams.startDate = startDateFields.getValue();
-                    workflowHistory.getStore().getProxy().extraParams.endDate = endDateFields.getValue();
-                    workflowHistory.getStore().getProxy().extraParams.status = status.getValue();
-                    workflowHistory.getStore().getProxy().extraParams.workflowName = workflowName.getValue();
-                }
+                beforechange: 'onBeforechange'
             }
         }
     ],
@@ -211,6 +161,7 @@ Ext.define('Flamingo2.view.dashboard.WorkflowHistory', {
             vtype: 'dateRange',
             width: 100,
             endDateField: 'endDate',
+            editable: false,
             format: 'Y-m-d'
         },
         {
@@ -224,6 +175,7 @@ Ext.define('Flamingo2.view.dashboard.WorkflowHistory', {
             vtype: 'dateRange',
             width: 100,
             startDateField: 'startDate',
+            editable: false,
             format: 'Y-m-d'
         },
         {
@@ -236,10 +188,8 @@ Ext.define('Flamingo2.view.dashboard.WorkflowHistory', {
             reference: 'status',
             width: 80,
             name: 'status',
-            editable: true,
+            editable: false,
             queryMode: 'local',
-            typeAhead: true,
-            selectOnFocus: true,
             displayField: 'name',
             valueField: 'value',
             value: 'ALL',
@@ -275,7 +225,6 @@ Ext.define('Flamingo2.view.dashboard.WorkflowHistory', {
         {
             xtype: 'button',
             itemId: 'clearWorkflowButton',
-            formBind: true,
             text: message.msg('dashboard.wh.tbar.clear'),
             iconCls: 'common-search-clear',
             labelWidth: 50
@@ -284,26 +233,17 @@ Ext.define('Flamingo2.view.dashboard.WorkflowHistory', {
         {
             xtype: 'button',
             itemId: 'refreshWorkflowButton',
-            //formBind: true,
             text: message.msg('common.refresh'),
             iconCls: 'common-refresh',
-            labelWidth: 50,
-            handler: 'onClickRefreshWorkflowButton'
+            labelWidth: 50
+        },
+        '|',
+        {
+            xtype: 'button',
+            itemId: 'killWorkflowButton',
+            text: message.msg('dashboard.wh.tbar.status.kill'),
+            iconCls: 'workflow-kill',
+            labelWidth: 50
         }
-        /*
-         ,
-         '|',
-         {
-         itemId: 'jobKillButton',
-         xtype: 'button',
-         formBind: true,
-         text: message.msg('dashboard.wh.tbar.status.kill'),
-         labelWidth: 50
-         }
-         */
-    ],
-    listeners: {
-        afterrender: 'onAfterRender',
-        itemdblclick: 'onItemDoubleClick'
-    }
+    ]
 });

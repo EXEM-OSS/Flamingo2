@@ -75,4 +75,12 @@ public interface ResourceManagerRemoteService {
     void moveApplicationAcrossQueues(String applicationId, String queue, EngineConfig engineConfig);
 
     List getRunningApplications(EngineConfig engineConfig);
+
+    List<Map> getRunningMRJobs(EngineConfig engineConfig);
+
+    String getJobStatus(String jobId, EngineConfig engineConfig) throws Exception;
+
+    Map getRunningMRJobReport(String jobId, EngineConfig engineConfig) throws Exception;
+
+    List<Map> getRunningMRTasks(String jobId, EngineConfig engineConfig) throws Exception;
 }

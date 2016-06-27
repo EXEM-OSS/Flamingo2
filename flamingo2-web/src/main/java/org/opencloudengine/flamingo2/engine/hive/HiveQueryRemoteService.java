@@ -19,6 +19,7 @@ package org.opencloudengine.flamingo2.engine.hive;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public interface HiveQueryRemoteService {
     /**
      * Hive Query를 실행한다.
      */
-    void execute(Map params);
+    void execute(Map params) throws Exception;
 
     void executeAsync(Map params);
 
@@ -43,7 +44,7 @@ public interface HiveQueryRemoteService {
 
     void getLogAsync(Map params);
 
-    Map[] getResults(String uuid);
+    LinkedHashMap[] getResults(String uuid);
 
     void removeAll(List hiveIds);
 
@@ -60,4 +61,6 @@ public interface HiveQueryRemoteService {
     Map[] getPage(Map params);
 
     byte[] getResultToCsv(String uuid) throws IOException;
+
+    Map<String, HiveThrift2Client> getClientMap();
 }

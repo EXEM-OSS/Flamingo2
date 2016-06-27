@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 /**
  * HAWQ query 실행시 ResultSet 하나씩 비동기로 query 결과를 보내주는 Service.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 @Service

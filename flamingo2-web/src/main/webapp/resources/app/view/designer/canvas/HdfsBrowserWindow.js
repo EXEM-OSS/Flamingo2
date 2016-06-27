@@ -30,7 +30,7 @@ Ext.define('Flamingo2.view.designer.canvas.HdfsBrowserWindow', {
     title: 'HDFS',
     titleCollapse: false,
     modal: true,
-    closeAction: 'close',
+    closeAction: 'destroy',
     layout: 'fit',
 
     items: [
@@ -40,8 +40,7 @@ Ext.define('Flamingo2.view.designer.canvas.HdfsBrowserWindow', {
     ],
     listeners: {
         afterrender: function (comp) {
-            comp.down('browser #title').setHidden(true);
-            comp.down('browser #sumChart').setHidden(true);
+            //comp.down('browser #title').setHidden(true);
         }
     }
 });

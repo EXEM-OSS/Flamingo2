@@ -49,27 +49,35 @@ public class MapReduceJobRepositoryImpl implements MapReduceJobRepository {
 
     @Override
     public void insertMapReduceJobInfo(String systemId, String jobId, Map job, String jobConf, String attempts, String counters, String jobType, String username) {
-        jdbcTemplate.update("INSERT INTO FL_CL_MR_DUMP (system, jobId, name, queue, state, mapsTotal, mapsCompleted, reducesTotal, reducesCompleted, submitTime, startTime, finishTime, counters, configuration, tasks, type, user, username) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
+        jdbcTemplate.update("INSERT INTO FL_CL_MR_DUMP (SYSTEM, JOB_ID, NAME, QUEUE, USER, STATE, USERNAME, TYPE, MAPS_TOTAL, MAPS_COMPLETED, REDUCES_TOTAL, REDUCES_COMPLETED, FAILED_MAP_ATTEMPTS, KILLED_MAP_ATTEMPTS, FAILED_REDUCE_ATTEMPTS, KILLED_REDUCE_ATTEMPTS, AVG_MAP_TIME, AVG_SHUFFLE_TIME, AVG_MERGE_TIME, AVG_REDUCE_TIME, SUBMIT_TIME, START_TIME, FINISH_TIME, COUNTERS, CONFIGURATION, TASKS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
                 systemId,
                 jobId,
                 job.get("name"),
                 job.get("queue"),
+                job.get("user"),
                 job.get("state"),
+                username,
+                jobType,
                 job.get("mapsTotal"),
                 job.get("mapsCompleted"),
                 job.get("reducesTotal"),
                 job.get("reducesCompleted"),
+                job.get("failedMapAttempts"),
+                job.get("killedMapAttempts"),
+                job.get("failedReduceAttempts"),
+                job.get("killedReduceAttempts"),
+                job.get("avgMapTime"),
+                job.get("avgShuffleTime"),
+                job.get("avgMergeTime"),
+                job.get("avgReduceTime"),
                 new Date((Long) job.get("submitTime")),
                 new Date((Long) job.get("startTime")),
                 new Date((Long) job.get("finishTime")),
                 counters,
                 jobConf,
-                attempts,
-                jobType,
-                job.get("user"),
-                username
+                attempts
         });
     }
-
-
 }
+
+

@@ -36,4 +36,6 @@ public interface WorkflowHistoryRepository extends PersistentRepository<Workflow
     void updateStatus(WorkflowHistory workflowHistory);
 
     int selectTotalCountByUsername(String startDate, String endDate, int start, int limit, String username, String workflowName, String status, String sf_parentIdentifier);
+
+    List<WorkflowHistory> selectRunning();
 }

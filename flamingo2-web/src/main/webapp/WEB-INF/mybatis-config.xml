@@ -17,6 +17,7 @@
         <typeAlias type="org.opencloudengine.flamingo2.model.rest.WorkflowHistory" alias="workflowHistory"/>
         <typeAlias type="org.opencloudengine.flamingo2.model.rest.ActionHistory" alias="actionHistory"/>
         <typeAlias type="org.opencloudengine.flamingo2.model.rest.Tree" alias="tree"/>
+        <typeAlias type="org.opencloudengine.flamingo2.model.rest.Uima" alias="uima"/>
     </typeAliases>
 
 </configuration>

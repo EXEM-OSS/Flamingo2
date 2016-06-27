@@ -23,6 +23,7 @@ import org.opencloudengine.flamingo2.engine.designer.activiti.task.Transformer;
 import org.opencloudengine.flamingo2.engine.history.TaskHistoryRepository;
 import org.opencloudengine.flamingo2.engine.history.WorkflowHistoryRepository;
 import org.opencloudengine.flamingo2.util.ApplicationContextRegistry;
+import org.opencloudengine.flamingo2.web.system.UserRepository;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -48,6 +49,10 @@ public abstract class DefaultQuartzJob implements Job, WorkflowJob {
 
     Transformer transformer;
 
+    SchedulerRemoteService schedulerRemoteService;
+
+    UserRepository userRepository;
+
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         ApplicationContext context = ApplicationContextRegistry.getApplicationContext();
@@ -60,6 +65,8 @@ public abstract class DefaultQuartzJob implements Job, WorkflowJob {
         this.transformer = context.getBean(Transformer.class);
         this.taskHistoryRepository = context.getBean(TaskHistoryRepository.class);
         this.eventRepository = context.getBean(UserEventRepository.class);
+        this.userRepository = context.getBean(UserRepository.class);
+        this.schedulerRemoteService = context.getBean(SchedulerRemoteService.class);
 
         executeInternal();
     }

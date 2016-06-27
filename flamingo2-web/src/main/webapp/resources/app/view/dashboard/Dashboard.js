@@ -24,6 +24,8 @@ Ext.define('Flamingo2.view.dashboard.Dashboard', {
         'Flamingo2.view.dashboard.WorkflowHistory'
     ],
 
+    flex: 1,
+    scrollable: true,
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -46,7 +48,8 @@ Ext.define('Flamingo2.view.dashboard.Dashboard', {
         {
             title: message.msg('dashboard.wh.title'),
             margin: '5 0 0 0',
-            height: 480,
+            minHeight: 480,
+            flex: 1,
             border: true,
             xtype: 'workflowHistory'
         }

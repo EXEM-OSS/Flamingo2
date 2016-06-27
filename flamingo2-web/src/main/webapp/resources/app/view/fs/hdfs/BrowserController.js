@@ -30,7 +30,8 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
     },
 
     /**
-     * EngineComboBox Change Event
+     * EngineComboBox Change Event1845
+     *
      */
     onEngineChanged: function () {
         var me = this;
@@ -47,7 +48,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
      * @param tree 디렉토리 목록 Tree
      */
     onDirectoryAfterRender: function (tree) {
-        var statusBar = query('browser > _statusBar');
+        var browserStatusBar = query('browser #browserStatusBar');
 
         setTimeout(function () {
             tree.getStore().proxy.extraParams.clusterName = ENGINE.id;
@@ -60,7 +61,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
             });
         }, 500);
 
-        statusBar.setStatus(message.msg('common.path') + ' : ' + '/');
+        browserStatusBar.setStatus(message.msg('common.path') + ' : ' + '/');
     },
 
     /**
@@ -70,6 +71,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
      */
     onFileAfterRender: function (grid) {
         setTimeout(function () {
+            grid.getStore().getProxy().extraParams.clusterName = ENGINE.id;
             grid.getStore().load({
                 params: {
                     clusterName: ENGINE.id
@@ -83,13 +85,12 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
      */
     onDirectoryRefreshClick: function () {
         var me = this;
-        var treeItem = query('hdfsDirectoryPanel');
-        var statusBar = query('browser > _statusBar');
+        var browserStatusBar = query('browser #browserStatusBar');
 
         me.updateDirectoryStore('/');
         me.updateFileStore('/');
 
-        statusBar.setStatus(message.msg('common.path') + ' : ' + '/');
+        browserStatusBar.setStatus(message.msg('common.path') + ' : ' + '/');
     },
 
     /**
@@ -137,6 +138,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
     onClickDirectoryItem: function (view, node) {
         var fileStore = query('hdfsFilePanel').getStore();
 
+        fileStore.getProxy().extraParams.node = node.data.id == 'root' ? '/' : node.data.id;
         fileStore.load({
             params: {
                 node: node.data.id == 'root' ? '/' : node.data.id,
@@ -144,12 +146,12 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
             }
         });
 
-        var statusBar = query('browser > _statusBar');
+        var browserStatusBar = query('browser #browserStatusBar');
 
         if (node.data.id == 'root') {
-            statusBar.setStatus(message.msg('common.path') + ' : ' + '/');
+            browserStatusBar.setStatus(message.msg('common.path') + ' : ' + '/');
         } else {
-            statusBar.setStatus(message.msg('common.path') + ' : ' + node.data.fullyQualifiedPath);
+            browserStatusBar.setStatus(message.msg('common.path') + ' : ' + node.data.fullyQualifiedPath);
         }
     },
 
@@ -321,12 +323,12 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
         }
         me.contextDirectoryMenu.showAt(event.pageX - 5, event.pageY - 5);
 
-        var statusBar = query('browser > _statusBar');
+        var browserStatusBar = query('browser #browserStatusBar');
 
         if (record.data.id == 'root' || record.data.id == '/') {
-            statusBar.setStatus(message.msg('common.path') + ' : ' + '/');
+            browserStatusBar.setStatus(message.msg('common.path') + ' : ' + '/');
         } else {
-            statusBar.setStatus(message.msg('common.path') + ' : ' + record.data.fullyQualifiedPath);
+            browserStatusBar.setStatus(message.msg('common.path') + ' : ' + record.data.fullyQualifiedPath);
         }
     },
 
@@ -1086,12 +1088,12 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
             }
         });
 
-        var statusBar = query('browser > _statusBar');
+        var browserStatusBar = query('browser #browserStatusBar');
 
         if (node.data.id == 'root') {
-            statusBar.setStatus(message.msg('common.path') + ' : ' + '/');
+            browserStatusBar.setStatus(message.msg('common.path') + ' : ' + '/');
         } else {
-            statusBar.setStatus(message.msg('common.path') + ' : ' + node.data.fullyQualifiedPath);
+            browserStatusBar.setStatus(message.msg('common.path') + ' : ' + node.data.fullyQualifiedPath);
         }
     },
 
@@ -1571,16 +1573,16 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
                     var url = CONSTANTS.FS.HDFS_RENAME_FILE;
                     var params = {
                         clusterName: ENGINE.id,
-                        srcPath: selectedFile.get('id'),
-                        dirPath: selectedFile.get('path'), // 현재 경로에 대한 권한 검사에 사용
-                        filename: text
+                        srcPath: selectedFile.get('path'), // 현재 경로에 대한 권한 검사에 사용,
+                        fullyQualifiedPath: selectedFile.get('id'), // 변경전 파일명 포함 전체 경로
+                        filename: text //변경할 파일명
                     };
 
                     invokePostByMap(url, params, function (response) {
                         var obj = Ext.decode(response.responseText);
 
                         if (obj.success) {
-                            me.updateFileStore(params.dirPath);
+                            me.updateFileStore(params.srcPath);
                         } else if (obj.error.cause) {
                             Ext.MessageBox.show({
                                 title: message.msg('common.notice'),
@@ -1653,7 +1655,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
                     var url = CONSTANTS.FS.HDFS_DELETE_FILE;
                     var params = {
                         clusterName: ENGINE.id,
-                        srcPath: selectedFiles[0].path,
+                        currentPath: selectedFiles[0].path,
                         files: fromItems.join()
                     };
 
@@ -1663,7 +1665,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
 
                             if (obj.success) {
                                 Ext.MessageBox.hide();
-                                me.updateFileStore(params.srcPath);
+                                me.updateFileStore(params.currentPath);
                             } else if (obj.error.cause) {
                                 Ext.MessageBox.show({
                                     title: message.msg('common.notice'),
@@ -1784,12 +1786,12 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
     },
 
     /**
-     * File Grid Panel에서 선택한 파일을 로컬로 다운로드한다.
+     * File Grid Panel에서 선택한 파일을 로컬로 다운로드한다(단일 파일만 가능).
      */
     onClickDownloadFile: function () {
         var selectedFiles = this.getSelectedItemIds();
 
-        if (!selectedFiles) {
+        if (Ext.isEmpty(selectedFiles)) {
             Ext.MessageBox.show({
                 title: message.msg('common.notice'),
                 message: message.msg('fs.hdfs.file.msg.select'),
@@ -1809,7 +1811,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
             return false;
         }
 
-        if (selectedFiles[0].length > config['file.download.max.size']) {
+        if (selectedFiles.length > config['file.download.max.size']) {
             Ext.MessageBox.show({
                 title: message.msg('common.check'),
                 message: format(message.msg('fs.hdfs.file.msg.download.max'), Ext.util.Format.fileSize(config['file.download.max.size'])),
@@ -1840,6 +1842,19 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
                 height: 0
             }
         );
+
+        Ext.get(dom).on('load', function (e, t, o) {
+            var response = Ext.decode(e.target.contentDocument.activeElement.innerText);
+
+            if (!response.success) {
+                Ext.MessageBox.show({
+                    title: message.msg('common.notice'),
+                    message: response.error.message,
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+            }
+        });
     },
 
     /**
@@ -1868,8 +1883,20 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
 
         var currentPath = selectedFiles[0].path;
         var filePath = selectedFiles[0].id;
+        var fileSize = selectedFiles[0].length;
+        var blockSize = selectedFiles[0].blockSize;
         var fileExtension = config['hdfs.viewFile.limit.type'];
         var extensionPattern = new RegExp(fileExtension, 'g');
+
+        if (fileSize < 1) {
+            Ext.MessageBox.show({
+                title: message.msg('common.notice'),
+                message: message.msg('fs.hdfs.file.msg.zeroFileSize'),
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.WARNING
+            });
+            return false;
+        }
 
         if (filePath.match(extensionPattern)) {
             Ext.MessageBox.show({
@@ -1886,11 +1913,15 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
             clusterName: ENGINE.id,
             currentPath: currentPath, // 파일이 위치한 경로
             filePath: filePath, // 파일이 위치한 경로 (파일명 포함)
+            fileSize: fileSize, // 파일 크기
+            dfsBlockSize: blockSize, // DFS Block Size
+            currentContentsBlockSize: 0, // DFS Block Size
             chunkSizeToView: config['hdfs.viewFile.default.chunkSize'], // DEFAULT_CHUNK_SIZE = 10000
             startOffset: 0,
+            totalPage: 0,
+            dfsBlockStartOffset: 0,
             currentPage: 0,
-            buttonType: 'defaultPage',
-            bestNode: ''
+            buttonType: 'defaultPage'
         };
 
         Ext.MessageBox.show({
@@ -1898,7 +1929,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
             message: message.msg('fs.hdfs.file.msg.view'),
             width: 300,
             wait: true,
-            waitConfig: {interval: 200},
+            waitConfig: {interval: 50},
             progress: true,
             closable: true
         });
@@ -2050,6 +2081,134 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
     },
 
     /**
+     *  선택한 HDFS의 파일을 리눅스 서버의 사용자 홈 디렉토리로 복사한다.
+     */
+    onClickCopyToLocal: function () {
+        var me = this;
+        var selectedFiles = this.getSelectedItemIds();
+
+        if (selectedFiles.length < 1) {
+            Ext.MessageBox.show({
+                title: message.msg('common.notice'),
+                message: message.msg('fs.hdfs.file.msg.select'),
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.WARNING
+            });
+            return false;
+        }
+
+        if (selectedFiles.length > 1) {
+            Ext.MessageBox.show({
+                title: message.msg('common.notice'),
+                message: message.msg('fs.hdfs.common.file.limit'),
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.WARNING
+            });
+            return false;
+        }
+
+        Ext.MessageBox.show({
+            title: message.msg('fs.hdfs.file.title.copyToLocal'),
+            message: format(message.msg('fs.hdfs.file.msg.copyToLocal'), selectedFiles[0].id),
+            buttons: Ext.MessageBox.YESNO,
+            icon: Ext.MessageBox.WARNING,
+            fn: function handler(btn) {
+                if (btn == 'yes') {
+/*                    Ext.MessageBox.show({
+                        title: message.msg('common.notice'),
+                        message: message.msg('fs.hdfs.file.msg.deleting'),
+                        width: 300,
+                        wait: true,
+                        waitConfig: {interval: 200},
+                        progress: true,
+                        closable: true
+                    });*/
+
+                    var url = CONSTANTS.FS.HDFS_COPY_TO_LOCAL;
+                    var params = {
+                        clusterName: ENGINE.id,
+                        srcFullyQualifiedPath: selectedFiles[0].id
+                    };
+
+                    invokeGet(url, params,
+                        function (response) {
+                            var obj = Ext.decode(response.responseText);
+
+                            if (obj.success) {
+                                Ext.MessageBox.hide();
+                                me.updateFileStore(selectedFiles[0].path);
+                            } else if (obj.error.cause) {
+                                Ext.MessageBox.show({
+                                    title: message.msg('common.notice'),
+                                    message: obj.error.cause,
+                                    buttons: Ext.MessageBox.OK,
+                                    icon: Ext.MessageBox.WARNING
+                                });
+                            } else {
+                                Ext.MessageBox.show({
+                                    title: message.msg('common.notice'),
+                                    message: obj.error.message,
+                                    buttons: Ext.MessageBox.OK,
+                                    icon: Ext.MessageBox.WARNING
+                                });
+                            }
+                        },
+                        function () {
+                            Ext.MessageBox.show({
+                                title: message.msg('common.warning'),
+                                message: format(message.msg('common.failure'), config['system.admin.email']),
+                                buttons: Ext.MessageBox.OK,
+                                icon: Ext.MessageBox.WARNING
+                            });
+                        }
+                    );
+                }
+            }
+        });
+    },
+
+    /**
+     * 선택한 파일에 대해 실시간 스트리밍 요청을 한다.
+     */
+    onClickRealTimeStreaming: function () {
+        var selectedFiles = this.getSelectedItemIds();
+
+        if (selectedFiles.length < 1) {
+            Ext.MessageBox.show({
+                title: message.msg('common.notice'),
+                message: message.msg('fs.hdfs.file.msg.select'),
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.WARNING
+            });
+            return false;
+        }
+
+        if (selectedFiles.length > 1) {
+            Ext.MessageBox.show({
+                title: message.msg('common.notice'),
+                message: message.msg('fs.hdfs.common.file.limit'),
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.WARNING
+            });
+            return false;
+        }
+
+        Ext.create('Flamingo2.view.fs.hdfs.streaming.RealTimeStreamingWindow', {
+            listeners: {
+                beforerender: function () {
+                    var me = this;
+                    var refs = me.getReferences();
+                    var params = {
+                        filePath: selectedFiles[0].id
+                    };
+console.log(params.filePath);
+                    refs.realTimeStreamingForm.getForm().setValues(params);
+                }
+            }
+        }).show();
+    },
+
+    /**
      * File 목록에서 파일을 마우스 우클릭 한 경우 Context Menu를 표시한다.
      */
     onFileItemContextMenu: function (grid, record, item, index, event) {
@@ -2091,7 +2250,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
      */
     onFileItemClick: function (view, record) {
         var fullyQualifiedFilename = '';
-        var statusBar = query('browser > _statusBar');
+        var browserStatusBar = query('browser #browserStatusBar');
 
         if (record.get('path') == '/') {
             fullyQualifiedFilename = message.msg('common.path') + ' : /' + record.get('filename');
@@ -2099,7 +2258,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
             fullyQualifiedFilename = message.msg('common.path') + ' : ' + record.get('path') + '/' + record.get('filename');
         }
 
-        statusBar.setStatus(fullyQualifiedFilename);
+        browserStatusBar.setStatus(fullyQualifiedFilename);
     },
 
     /**
@@ -2116,6 +2275,8 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserController', {
             file.path = checkedFiles[i].get('path');
             file.name = checkedFiles[i].get('filename');
             file.length = checkedFiles[i].get('length');
+            file.length = checkedFiles[i].get('length');
+            file.blockSize = checkedFiles[i].get('blockSize');
 
             list.push(file);
         }

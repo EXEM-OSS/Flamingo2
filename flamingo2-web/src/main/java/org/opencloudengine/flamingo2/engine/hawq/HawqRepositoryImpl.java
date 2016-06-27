@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * Pivotal HAWQ Repository Implements.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 @Repository

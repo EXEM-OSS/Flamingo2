@@ -18,18 +18,11 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServer', {
     extend: 'Flamingo2.panel.Panel',
     alias: 'widget.historyServer',
 
-    controller: 'historyServerController',
-
-    viewModel: {
-        type: 'historyServerModel'
-    },
-
     requires: [
         'Flamingo2.view.monitoring.historyserver.HistoryServerController',
         'Flamingo2.view.monitoring.historyserver.HistoryServerModel',
-
-        'Flamingo2.view.monitoring.historyserver.MapReduceJobs',
         'Flamingo2.view.monitoring.historyserver.MapReduceSumChart',
+        'Flamingo2.view.monitoring.historyserver.MapReduceJobs',
         'Flamingo2.view.monitoring.historyserver.JobSummary',
         'Flamingo2.view.monitoring.historyserver.Configuration',
         'Flamingo2.view.monitoring.historyserver.JobCounters',
@@ -37,10 +30,18 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServer', {
         'Flamingo2.view.monitoring.historyserver.TaskCounters'
     ],
 
+    controller: 'historyServerController',
+
+    viewModel: {
+        type: 'historyServerModel'
+    },
+
     layout: {
         type: 'vbox',
         align: 'stretch'
     },
+    flex: 1,
+    scrollable: true,
 
     items: [
         {
@@ -53,7 +54,8 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServer', {
             iconCls: 'common-view',
             border: true,
             margin: '5 0 0 0',
-            height: 210,
+            flex: 1,
+            minHeight: 210,
             xtype: 'mapReduceJobs',
             reference: 'mapReduceJobs'
         },
@@ -73,10 +75,12 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServer', {
                     iconCls: 'common-view',
                     xtype: 'panel',
                     layout: 'fit',
-                    items: [{
-                        xtype: 'jobCounters',
-                        reference: 'jobCounters'
-                    }]
+                    items: [
+                        {
+                            xtype: 'jobCounters',
+                            reference: 'jobCounters'
+                        }
+                    ]
                 },
                 {
                     title: message.msg('monitoring.history.msg.mr_job_cofig'),
@@ -94,9 +98,7 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServer', {
             }
         }
     ],
-
     listeners: {
         engineChanged: 'onEngineChanged'
     }
-
 });

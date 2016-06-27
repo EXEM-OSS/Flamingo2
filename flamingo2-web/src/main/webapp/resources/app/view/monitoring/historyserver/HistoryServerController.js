@@ -18,28 +18,85 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.historyServerController',
 
-    onAfterrender: function (grid, opts) {
+    /**
+     * Engine Combobox Changed Event
+     */
+    onEngineChanged: function (engine) {
+        var grid = query('mapReduceJobs');
+        var chart = query('mapReduceSumChart > cartesian');
+        grid.getStore().load({
+            callback: function (records, operation, success) {
+                grid.setTitle(format(message.msg('monitoring.history.msg.finished_total'), this.getCount()));
+            }
+        });
+
+        chart.getStore().load();
+    },
+
+    /**
+     * 완료된 MapReduce Job Summary Chart 정보를 가져온다.
+     */
+    onMapReduceSumChartAfterRender: function () {
+        var mapReduceSumChart = query('mapReduceSumChart #mrSumChart');
+
+        setTimeout(function () {
+            mapReduceSumChart.getStore().getProxy().extraParams.clusterName = ENGINE.id;
+            mapReduceSumChart.getStore().load();
+        }, 10);
+    },
+
+    /**
+     * 완료된 MapReduce Job 정보를 가져온다.
+     *
+     * @param grid
+     * @param opts
+     */
+    onCompletedMRJobAfterRender: function (grid, opts) {
+        grid.setLoading(true);
+
         setTimeout(function () {
             grid.getStore().getProxy().extraParams.clusterName = ENGINE.id;
             grid.getStore().load({
                 callback: function (records, operation, success) {
-                    grid.setTitle(format(message.msg('monitoring.history.msg.finished_total'), this.getCount()));
+                    if (success) {
+                        grid.setLoading(false);
+                        grid.setTitle(format(message.msg('monitoring.history.msg.finished_total'), this.getCount()));
+                    } else {
+                        grid.setLoading(false);
+                    }
                 }
             });
         }, 10);
     },
 
+    /**
+     * 실행이 완료된 MapReduce Job 통계 정보를 업데이트한다.
+     */
+    onMRJobSumChartRefreshClick: function () {
+        var me = this;
+
+        me.onMapReduceSumChartAfterRender();
+    },
+
+    /**
+     * MapReduce에서 선택한 각 탭의 정보를 가져온다.
+     *
+     * @param tabPanel
+     * @param tab
+     */
     onTabChanged: function (tabPanel, tab) {
         var grid = query('mapReduceJobs');
         var selection = grid.getSelectionModel().getSelection()[0];
+
         if (selection) {
             var jobId = selection.get('id');
+            var state = selection.get('state');
             var activeTab = tabPanel.getActiveTab();
             var activeTabIndex = tabPanel.items.findIndex('id', activeTab.id);
 
             switch (activeTabIndex) {
                 case 0:
-                    invokeGet(CONSTANTS.MONITORING.HS.JOB, {jobId: jobId, clusterName: ENGINE.id},
+                    invokeGet(CONSTANTS.MONITORING.HS.JOB, {jobId: jobId, state: state, clusterName: ENGINE.id},
                         function (response) {
                             var obj = Ext.decode(response.responseText);
                             if (obj.success) {
@@ -77,7 +134,7 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerController', {
                                 });
                             }
                         },
-                        function (response) {
+                        function () {
                             Ext.MessageBox.show({
                                 title: message.msg('common.warn'),
                                 message: format(message.msg('common.msg.server_error'), config['system.admin.email']),
@@ -93,6 +150,7 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerController', {
                         counterGrid.getStore().load({
                             params: {
                                 jobId: jobId,
+                                state: state,
                                 clusterName: ENGINE.id
                             }
                         });
@@ -103,6 +161,7 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerController', {
                     configurationGrid.store.load({
                         params: {
                             jobId: jobId,
+                            state: state,
                             clusterName: ENGINE.id
                         }
                     });
@@ -112,6 +171,7 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerController', {
                     tasksGrid.store.load({
                         params: {
                             jobId: jobId,
+                            state: state,
                             clusterName: ENGINE.id
                         }
                     });
@@ -120,39 +180,41 @@ Ext.define('Flamingo2.view.monitoring.historyserver.HistoryServerController', {
         }
     },
 
-    onItemClick: function (view, record, item, index, e, opts) {
-        var tabpanel = query('historyServer > tabpanel');
-        this.onTabChanged(tabpanel, null);
-    },
+    /**
+     * 완료된 MapReduce Job 그리드에서 선택한 아이템의 상세 정보를 활성화된 탭 필드에 보여준다.
+     */
+    onMRJobGridItemClick: function () {
+        var me = this;
+        var tabPanel = query('historyServer > tabpanel');
 
-    onRefreshClick: function (event, toolEl, panel) {
-        var grid = query('mapReduceJobs');
-        var chart = query('mapReduceSumChart > cartesian');
-        grid.getStore().load({
-            callback: function (records, operation, success) {
-                grid.setTitle(format(message.msg('monitoring.history.msg.finished_total'), this.getCount()));
-            }
-        });
-
-        chart.getStore().load();
+        me.onTabChanged(tabPanel, null);
     },
 
     /**
-     * Engine Combobox Changed Event
+     * 완료된 MapReduce Job 정보를 업데이트한다.
      */
-    onEngineChanged: function (engine) {
-        var grid = query('mapReduceJobs');
-        var chart = query('mapReduceSumChart > cartesian');
-        grid.getStore().load({
+    onCompletedMRJobRefreshClick: function () {
+        var mapReduceJobsGrid = query('mapReduceJobs');
+
+        mapReduceJobsGrid.setLoading(true);
+        mapReduceJobsGrid.getStore().load({
             callback: function (records, operation, success) {
-                grid.setTitle(format(message.msg('monitoring.history.msg.finished_total'), this.getCount()));
+                if (success) {
+                    mapReduceJobsGrid.setLoading(false);
+                    mapReduceJobsGrid.setTitle(format(message.msg('monitoring.history.msg.finished_total'), this.getCount()));
+                } else {
+                    mapReduceJobsGrid.setLoading(false);
+                }
             }
         });
-
-        chart.getStore().load();
     },
 
-    onJobSummaryAfterrender: function (view) {
+    /**
+     * MapReduce Job 요약 탭의 레이아웃 조정.
+     *
+     * @param view
+     */
+    onJobSummaryAfterRender: function (view) {
         // Table Layout의 colspan 적용시 cell간 간격 조정이되지 않는 문제를 해결하기 위해서 적용함
         setTableLayoutFixed(view);
     }

@@ -42,7 +42,7 @@ Ext.define('Flamingo2.view.pig.Pig', {
                     handler: 'onNewClick'
                 }, '-',
                 {
-                    text: message.msg('hive.execute'),
+                    text: message.msg('pig.execute'),
                     reference: 'btnExecute',
                     itemId: 'executeButton',
                     handler: 'onExecuteClick',

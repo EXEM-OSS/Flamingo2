@@ -27,17 +27,16 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ResourceManager', {
         'Flamingo2.view.monitoring.resourcemanager.Configuration'
     ],
 
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
-
     controller: 'resourcemanagerController',
 
     viewModel: {
         type: 'resourceManagerModel'
     },
 
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
     items: [
         {
             title: message.msg('monitoring.rm.rm_summary'),
@@ -65,7 +64,6 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ResourceManager', {
             xtype: 'resourceManagerConfiguration'
         }
     ],
-
     listeners: {
         engineChanged: 'onEngineChanged'
     }

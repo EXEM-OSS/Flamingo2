@@ -60,12 +60,13 @@
                             </div>
                             <div class="widget-body">
                                 <div class="widget-main padding-6 no-padding-left no-padding-right">
-                                    <textarea class="form-control" id="form-field-license" placeholder="Flamingo License Key를 입력하시오."></textarea>
+                                    <textarea class="form-control" id="form-field-license" placeholder="Enter issued license key here."></textarea>
                                 </div>
                             </div>
                         </div>
                         <div id="div-confirm">
                             <button id="btn-confirm" class="btn btn-sm btn-primary">OK</button>
+                            <button id="btn-trial" class="btn btn-sm btn-danger">Trial</button>
                         </div>
                         <div class="space"></div>
                         <div class="widget-box transparent license-info">
@@ -130,7 +131,7 @@
                 <h5 class="modal-title">Warning</h5>
             </div>
             <div class="modal-body">
-                Please, Select License Key
+                Enter issued license key.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">OK</button>

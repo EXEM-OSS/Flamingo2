@@ -91,7 +91,7 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserModel', {
         fileStore: {
             autoLoad: false,
             model: 'Flamingo2.model.fs.hdfs.File',
-            pageSize: 10000,
+            pageSize: 1000,
             proxy: {
                 type: 'ajax',
                 url: CONSTANTS.FS.HDFS_GET_FILE,
@@ -101,10 +101,14 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserModel', {
                     totalProperty: 'total'
                 },
                 extraParams: {
-                    clusterName: ENGINE.id
+                    clusterName: ENGINE.id,
+                    node: ''
                 },
                 timeout: 120000
             }
-        }
+        }/*,
+        realTimeStreamingStore: {
+
+        }*/
     }
 });

@@ -83,13 +83,18 @@ public class HdfsBrowserAuthRepositoryImpl extends PersistentRepositoryImpl<Stri
     }
 
     @Override
+    public int insertHdfsBrowserAuthAll(Map hdfsBrowserAuthMap) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertHdfsBrowserAuthAll", hdfsBrowserAuthMap);
+    }
+
+    @Override
     public int deleteHdfsBrowserAuth(Map hdfsBrowserAuthMap) {
         return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteHdfsBrowserAuth", hdfsBrowserAuthMap);
     }
 
     @Override
-    public int exist(Map hdfsBrowserAuthMap) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".exist", hdfsBrowserAuthMap);
+    public boolean exist(Map hdfsBrowserAuthMap) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".exist", hdfsBrowserAuthMap).size() > 0;
     }
 
     @Override

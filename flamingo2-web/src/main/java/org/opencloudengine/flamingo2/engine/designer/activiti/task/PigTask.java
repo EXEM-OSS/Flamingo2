@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.opencloudengine.flamingo2.util.StringUtils.unescape;
 import static org.opencloudengine.flamingo2.web.configuration.ConfigurationHelper.getHelper;
 
 /**
@@ -99,7 +100,7 @@ public class PigTask extends InterceptorAbstractTask {
         Map<String, String> defaultEnvs = getDefaultEnvs();
         Set<String> keys = defaultEnvs.keySet();
         for (String key : keys) {
-            if (!StringUtils.isEmpty(defaultEnvs.get(key))) {
+            if (!isEmpty(defaultEnvs.get(key))) {
                 command.add(MessageFormatter.arrayFormat("export {}={}\n", new Object[]{
                         key, defaultEnvs.get(key)
                 }).getMessage());
@@ -139,12 +140,12 @@ public class PigTask extends InterceptorAbstractTask {
         props.put("mapred.job.name", this.getTaskHistory().getName());
         props.put("fs.defaultFS", fsDefaultFS);
 
-        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !StringUtils.isEmpty(variable.get("hadoopKeys").toString()) && !StringUtils.isEmpty(variable.get("hadoopValues").toString())) {
+        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !isEmpty(variable.get("hadoopKeys").toString()) && !isEmpty(variable.get("hadoopValues").toString())) {
             String[] hadoopKeys = (variable.get("hadoopKeys").toString()).split(",");
             String[] hadoopValues = (variable.get("hadoopValues").toString()).split(",");
 
             for (int i = 0; i < hadoopKeys.length; i++) {
-                props.put(StringUtils.unescape(hadoopKeys[i]), StringUtils.unescape(hadoopValues[i]));
+                props.put(unescape(hadoopKeys[i]), unescape(hadoopValues[i]));
             }
         }
 
@@ -208,7 +209,7 @@ public class PigTask extends InterceptorAbstractTask {
 
         if (environmentKeys != null) {
             for (int i = 0; i < environmentKeys.length; i++) {
-                envs.put(environmentKeys[i], environmentValues[i]);
+                envs.put(environmentKeys[i], unescape(environmentValues[i]));
             }
         }
 

@@ -24,6 +24,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.opencloudengine.flamingo2.core.exception.ServiceException;
 import org.opencloudengine.flamingo2.core.exception.WholeBodyException;
 import org.opencloudengine.flamingo2.core.rest.Response;
 import org.opencloudengine.flamingo2.core.security.SessionUtils;
@@ -32,9 +33,8 @@ import org.opencloudengine.flamingo2.engine.fs.hdfs.HdfsFileInfo;
 import org.opencloudengine.flamingo2.engine.remote.EngineService;
 import org.opencloudengine.flamingo2.model.rest.FileInfo;
 import org.opencloudengine.flamingo2.util.FileUtils;
-import org.opencloudengine.flamingo2.web.configuration.ConfigurationHolder;
+import org.opencloudengine.flamingo2.web.configuration.DefaultController;
 import org.opencloudengine.flamingo2.web.configuration.EngineConfig;
-import org.opencloudengine.flamingo2.web.remote.EngineLookupService;
 import org.opencloudengine.flamingo2.web.system.HdfsBrowserAuthService;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ import static org.opencloudengine.flamingo2.logging.StringUtils.isEmpty;
  */
 @RestController
 @RequestMapping("/fs/hdfs")
-public class HdfsBrowserController {
+public class HdfsBrowserController extends DefaultController {
 
     @Autowired
     HttpClient httpClient;
@@ -75,6 +75,12 @@ public class HdfsBrowserController {
 
     @Value("#{config['user.home.hdfs.path']}")
     private String hadoopUserHome;
+
+    @Value("#{config['user.home.linux.path']}")
+    private String defaultLinuxUserHome;
+
+/*    @Value("#{config['namenode.high.availability']}")
+    private boolean namenodeHa;*/
 
     private String isRemote = "false";
 
@@ -88,13 +94,16 @@ public class HdfsBrowserController {
     @RequestMapping(value = "directory", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Response directory(@RequestParam String clusterName, @RequestParam(defaultValue = "/") String node) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(clusterName);
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
+
+/*        if (namenodeHa) {
+            boolean status = fsrs.getNamenodeStatus();
+        }*/
 
         String username = getSessionUsername();
         String path = getPathFilter(node);
-        List<FileInfo> directories = fsrs.getDirectories(engineConfig, path, true);
+        List<FileInfo> directories = fsrs.getDirectories(this.getEngineConfig(clusterName), path, true);
         Response response = new Response();
 
         if (path.equalsIgnoreCase(hadoopUserHome) && getSessionUserLevel() != 1) {
@@ -124,18 +133,28 @@ public class HdfsBrowserController {
      */
     @RequestMapping(value = "file", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Response file(@RequestParam String clusterName, @RequestParam(defaultValue = "/") String node) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(clusterName);
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
-        FileSystemRemoteService fsrs = engineService.getFileSystemService();
-
-        String path = getPathFilter(node);
-        List<FileInfo> files = fsrs.getFiles(engineConfig, path);
-
+    public Response file(@RequestParam String clusterName,
+                         @RequestParam(defaultValue = "/") String node,
+                         @RequestParam int page,
+                         @RequestParam int start,
+                         @RequestParam int limit) {
         Response response = new Response();
-        response.setSuccess(true);
-        response.getList().addAll(files);
-        return response;
+        try {
+            EngineService engineService = this.getEngineService(clusterName);
+            FileSystemRemoteService fsrs = engineService.getFileSystemService();
+
+            String path = getPathFilter(node);
+            //List<FileInfo> files = fsrs.getFiles(engineConfig, path);
+            Map filesMap = fsrs.getFilesPage(this.getEngineConfig(clusterName), path, page, start, limit);
+            List<FileInfo> files = (List<FileInfo>) filesMap.get("fileInfoList");
+
+            response.setSuccess(true);
+            response.getList().addAll(files);
+            response.setTotal(Long.parseLong(filesMap.get("total").toString()));
+            return response;
+        } catch (Exception ex) {
+            throw new ServiceException(ex);
+        }
     }
 
     /**
@@ -147,8 +166,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "createDirectory", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response createDirectory(@RequestBody Map<String, String> dirMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(dirMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = dirMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -170,7 +189,7 @@ public class HdfsBrowserController {
         dirMap.put("condition", "createDir");
 
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(dirMap);
-        boolean created = fsrs.createDirectory(engineConfig, dirDstPath, username);
+        boolean created = fsrs.createDirectory(this.getEngineConfig(clusterName), dirDstPath, username);
 
         Response response = new Response();
         response.setSuccess(created);
@@ -186,8 +205,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "copyDirectory", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response copyDirectory(@RequestBody Map<String, String> dirMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(dirMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = dirMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -213,7 +232,7 @@ public class HdfsBrowserController {
         dirMap.put("condition", "copyDir");
 
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(dirMap);
-        boolean copied = fsrs.copyDirectory(engineConfig, currentPath, dirDstPath, username);
+        boolean copied = fsrs.copyDirectory(this.getEngineConfig(clusterName), currentPath, dirDstPath, username);
 
         Response response = new Response();
         response.setSuccess(copied);
@@ -229,8 +248,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "moveDirectory", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response moveDirectory(@RequestBody Map<String, String> dirMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(dirMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = dirMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -256,7 +275,7 @@ public class HdfsBrowserController {
         dirMap.put("condition", "moveDir");
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(dirMap);
 
-        boolean moved = fsrs.moveDirectory(engineConfig, currentPath, dirDstPath, username);
+        boolean moved = fsrs.moveDirectory(this.getEngineConfig(clusterName), currentPath, dirDstPath, username);
 
         Response response = new Response();
         response.setSuccess(moved);
@@ -272,8 +291,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "renameDirectory", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response renameDirectory(@RequestBody Map<String, String> dirMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(dirMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = dirMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -291,7 +310,7 @@ public class HdfsBrowserController {
         dirMap.put("condition", "renameDir");
 
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(dirMap);
-        boolean renamed = fsrs.renameDirectory(engineConfig, currentPath, directoryName, username);
+        boolean renamed = fsrs.renameDirectory(this.getEngineConfig(clusterName), currentPath, directoryName, username);
 
         Response response = new Response();
         response.setSuccess(renamed);
@@ -307,8 +326,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "deleteDirectory", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response deleteDirectory(@RequestBody Map<String, String> dirMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(dirMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = dirMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -325,7 +344,7 @@ public class HdfsBrowserController {
         dirMap.put("condition", "deleteDir");
 
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(dirMap);
-        boolean deleted = fsrs.deleteDirectory(engineConfig, currentPath, username);
+        boolean deleted = fsrs.deleteDirectory(this.getEngineConfig(clusterName), currentPath, username);
 
         Response response = new Response();
         response.setSuccess(deleted);
@@ -341,8 +360,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "mergeFiles", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response mergeFiles(@RequestBody Map<String, String> dirMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(dirMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = dirMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -357,7 +376,7 @@ public class HdfsBrowserController {
         dirMap.put("condition", "mergeDir");
 
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(dirMap);
-        boolean merged = fsrs.mergeFiles(engineConfig, currentPath, dstPath, username);
+        boolean merged = fsrs.mergeFiles(this.getEngineConfig(clusterName), currentPath, dstPath, username);
 
         Response response = new Response();
         response.setSuccess(merged);
@@ -374,12 +393,11 @@ public class HdfsBrowserController {
     @RequestMapping(value = "getDirectoryInfo", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Response getDirectoryInfo(@RequestParam String clusterName, @RequestParam String currentPath) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(clusterName);
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String currentDirPath = getPathFilter(currentPath);
-        HdfsFileInfo fileInfo = fsrs.getFileInfo(engineConfig, currentDirPath);
+        HdfsFileInfo fileInfo = fsrs.getFileInfo(this.getEngineConfig(clusterName), currentDirPath);
         Map infoMap = new HashMap();
         // Basic
         infoMap.put("name", fileInfo.getFilename());
@@ -426,8 +444,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "setPermission", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response setPermission(@RequestBody Map permissionMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine((String) permissionMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = (String) permissionMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -449,7 +467,7 @@ public class HdfsBrowserController {
         permissionMap.put("currentPath", currentPath); // 권한을 변경할 디렉토리 또는 파일의 경로 업데이트
 
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(permissionMap);
-        boolean changed = fsrs.setPermission(engineConfig, permissionMap, username);
+        boolean changed = fsrs.setPermission(this.getEngineConfig(clusterName), permissionMap, username);
 
         Response response = new Response();
         response.setSuccess(changed);
@@ -465,8 +483,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "copyFiles", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response copyFiles(@RequestBody Map<String, String> fileMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(fileMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = fileMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -485,7 +503,7 @@ public class HdfsBrowserController {
         fileMap.put("condition", "copyFile");
 
         hdfsBrowserAuthService.getHdfsBrowserUserFileAuth(fileMap);
-        List<String> copiedFiles = fsrs.copyFiles(engineConfig, srcFileList, dstPath, username);
+        List<String> copiedFiles = fsrs.copyFiles(this.getEngineConfig(clusterName), srcFileList, dstPath, username);
 
         Response response = new Response();
         response.getList().addAll(copiedFiles);
@@ -502,8 +520,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "moveFiles", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response moveFiles(@RequestBody Map<String, String> fileMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(fileMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = fileMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -522,7 +540,7 @@ public class HdfsBrowserController {
         fileMap.put("condition", "moveFile");
 
         hdfsBrowserAuthService.getHdfsBrowserUserFileAuth(fileMap);
-        List<String> movedFiles = fsrs.moveFiles(engineConfig, srcFileList, dstPath, username);
+        List<String> movedFiles = fsrs.moveFiles(this.getEngineConfig(clusterName), srcFileList, dstPath, username);
         Response response = new Response();
         response.getList().addAll(movedFiles);
         response.setSuccess(true);
@@ -538,23 +556,24 @@ public class HdfsBrowserController {
     @RequestMapping(value = "renameFile", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response renameFile(@RequestBody Map<String, String> fileMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(fileMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = fileMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
-        String currentPath = getPathFilter(fileMap.get("currentPath"));
+        String srcPath = getPathFilter(fileMap.get("srcPath"));
+        String fullyQualifiedPath = getPathFilter(fileMap.get("fullyQualifiedPath"));
         String fileName = fileMap.get("filename");
 
         List<String> paths = hdfsBrowserAuthService.getHdfsBrowserPatternAll(username);
-        String hdfsPathPattern = hdfsBrowserAuthService.validateHdfsPathPattern(currentPath, paths);
+        String hdfsPathPattern = hdfsBrowserAuthService.validateHdfsPathPattern(srcPath, paths);
 
         fileMap.put("username", username);
         fileMap.put("hdfsPathPattern", hdfsPathPattern);
         fileMap.put("condition", "renameFile");
 
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(fileMap);
-        boolean copied = fsrs.renameFile(engineConfig, currentPath, fileName, username);
+        boolean copied = fsrs.renameFile(this.getEngineConfig(clusterName), fullyQualifiedPath, srcPath, fileName, username);
 
         Response response = new Response();
         response.setSuccess(copied);
@@ -570,14 +589,13 @@ public class HdfsBrowserController {
     @RequestMapping(value = "deleteFiles", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response deleteFile(@RequestBody Map<String, String> fileMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(fileMap.get("clusterName"));
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = fileMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
-        int userLevel = getSessionUserLevel();
         String currentPath = getPathFilter(fileMap.get("currentPath"));
-        String fullyQualifiedPath = fileMap.get("files");
+        String files = fileMap.get("files");
 
         List<String> paths = hdfsBrowserAuthService.getHdfsBrowserPatternAll(username);
         String hdfsPathPattern = hdfsBrowserAuthService.validateHdfsPathPattern(currentPath, paths);
@@ -586,7 +604,7 @@ public class HdfsBrowserController {
         fileMap.put("condition", "deleteFile");
 
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(fileMap);
-        List<String> deletedFiles = fsrs.deleteFiles(engineConfig, currentPath, fullyQualifiedPath, username, userLevel);
+        List<String> deletedFiles = fsrs.deleteFiles(this.getEngineConfig(clusterName), currentPath, files, username);
 
         Response response = new Response();
         response.getList().addAll(deletedFiles);
@@ -604,11 +622,10 @@ public class HdfsBrowserController {
     @RequestMapping(value = "getFileInfo", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Response getFileInfo(@RequestParam String clusterName, @RequestParam String filePath) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(clusterName);
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
-        HdfsFileInfo fileInfo = fsrs.getFileInfo(engineConfig, filePath);
+        HdfsFileInfo fileInfo = fsrs.getFileInfo(this.getEngineConfig(clusterName), filePath);
         Map infoMap = new HashMap();
 
         // Basic
@@ -656,8 +673,7 @@ public class HdfsBrowserController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> upload(HttpServletRequest req) throws IOException {
         String clusterName = req.getParameter("clusterName");
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(clusterName);
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         Response response = new Response();
@@ -683,7 +699,6 @@ public class HdfsBrowserController {
 
         inputStream = uploadedFile.getInputStream();
 
-
         List<String> paths = hdfsBrowserAuthService.getHdfsBrowserPatternAll(username);
         String hdfsPathPattern = hdfsBrowserAuthService.validateHdfsPathPattern(pathToUpload, paths);
 
@@ -695,6 +710,8 @@ public class HdfsBrowserController {
 
         // Engine이 Remote에 있는지 확인한다.
         boolean isRemoteEngine = Boolean.parseBoolean(isRemote);
+
+        EngineConfig engineConfig = this.getEngineConfig(clusterName);
 
         // Remote가 아니라면 직접 전송을, Remote라면 Store and Forward로 전송
         if (!isRemoteEngine) {
@@ -722,6 +739,7 @@ public class HdfsBrowserController {
             } else {
                 response.setSuccess(true);
             }
+
             inputStream.close();
             httpPost.releaseConnection();
         } else {
@@ -751,8 +769,7 @@ public class HdfsBrowserController {
                                    @RequestParam String username,
                                    @RequestParam String srcPath,
                                    @RequestParam String fullyQualifiedPath) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(clusterName);
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
         String srcFilePath = getPathFilter(srcPath);
 
@@ -773,10 +790,13 @@ public class HdfsBrowserController {
 
         hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(fileMap);
         boolean isRemoteEngine = Boolean.parseBoolean(isRemote);
+        EngineConfig engineConfig = this.getEngineConfig(clusterName);
 
         // Remote가 아니라면 직접 전송을, Remote라면 Store and Forward로 전송
         if (!isRemoteEngine) {
             String nnAgentAddress = engineConfig.getNnAgentAddress();
+            String filSplit[] = fullyQualifiedPath.split("/");
+            String filename = filSplit[filSplit.length - 1];
             int nnAgentPort = engineConfig.getNnAgentPort();
 
             fsrs.validatePath(srcFilePath);
@@ -800,8 +820,8 @@ public class HdfsBrowserController {
                     res.setHeader("Content-Length", "" + execute.getEntity().getContentLength());
                     res.setHeader("Content-Transfer-Encoding", "binary");
                     res.setHeader("Content-Type", "application/force-download");
-                    res.setHeader("Content-Disposition", MessageFormatter.format("attachment; fullyQualifiedPath={};",
-                            URLEncoder.encode(fullyQualifiedPath, "UTF-8")).getMessage());
+                    res.setHeader("Content-Disposition", MessageFormatter.format("attachment; fullyQualifiedPath={}; filename={};",
+                            URLEncoder.encode(fullyQualifiedPath, "UTF-8"), filename).getMessage());
                     res.setStatus(200);
 
                     FileCopyUtils.copy(is, res.getOutputStream());
@@ -843,8 +863,8 @@ public class HdfsBrowserController {
     @RequestMapping(value = "initViewFileContents", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response initViewFileContents(@RequestBody Map fileMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(fileMap.get("clusterName").toString());
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = (String) fileMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
@@ -859,16 +879,29 @@ public class HdfsBrowserController {
         fileMap.put("auditLogKey", true);
 
         hdfsBrowserAuthService.getHdfsBrowserUserFileAuth(fileMap);
-        Map fileContestsMap = fsrs.viewFileContents(engineConfig, fileMap, username);
+        Map fileContestsMap = fsrs.viewFileContents(this.getEngineConfig(clusterName), fileMap, username);
 
         Map map = new HashMap();
         map.put("filePath", fileContestsMap.get("filePath"));
         map.put("chunkSizeToView", fileContestsMap.get("chunkSizeToView"));
         map.put("startOffset", fileContestsMap.get("startOffset"));
+        map.put("dfsBlockStartOffset", fileContestsMap.get("dfsBlockStartOffset"));
         map.put("totalPage", fileContestsMap.get("totalPage"));
         map.put("currentPage", fileContestsMap.get("currentPage"));
         map.put("contents", fileContestsMap.get("contents"));
         map.put("bestNode", fileContestsMap.get("bestNode"));
+        map.put("fileSize", fileContestsMap.get("fileSize"));
+        map.put("totalPage", fileContestsMap.get("totalPage"));
+        map.put("lastPageChunkSizeToView", fileContestsMap.get("lastPageChunkSizeToView"));
+        map.put("dfsBlockSize", fileContestsMap.get("dfsBlockSize"));
+        map.put("currentContentsBlockSize", fileContestsMap.get("currentContentsBlockSize"));
+        map.put("startOffsetPerDfsBlocks", fileContestsMap.get("startOffsetPerDfsBlocks"));
+        map.put("accumulatedStartOffsetPerDfsBlocks", fileContestsMap.get("accumulatedStartOffsetPerDfsBlocks"));
+        map.put("lastStartOffsetPerDfsBlocks", fileContestsMap.get("lastStartOffsetPerDfsBlocks"));
+        map.put("lastChunkSizePerDfsBlocks", fileContestsMap.get("lastChunkSizePerDfsBlocks"));
+        map.put("pageCheckPoints", fileContestsMap.get("pageCheckPoints"));
+        map.put("offsetRange", fileContestsMap.get("offsetRange"));
+        map.put("lastDfsBlockSize", fileContestsMap.get("lastDfsBlockSize"));
 
         Response response = new Response();
         response.getMap().putAll(map);
@@ -885,27 +918,64 @@ public class HdfsBrowserController {
     @RequestMapping(value = "viewFileContents", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public Response viewFileContents(@RequestBody Map fileMap) {
-        EngineConfig engineConfig = ConfigurationHolder.getEngine(fileMap.get("clusterName").toString());
-        EngineService engineService = EngineLookupService.lookup(engineConfig);
+        String clusterName = (String) fileMap.get("clusterName");
+        EngineService engineService = this.getEngineService(clusterName);
         FileSystemRemoteService fsrs = engineService.getFileSystemService();
 
         String username = getSessionUsername();
         fileMap.put("auditLogKey", false);
 
-        Map fileContestsMap = fsrs.viewFileContents(engineConfig, fileMap, username);
+        Map fileContestsMap = fsrs.viewFileContents(this.getEngineConfig(clusterName), fileMap, username);
 
         Map map = new HashMap();
         map.put("filePath", fileContestsMap.get("filePath"));
         map.put("chunkSizeToView", fileContestsMap.get("chunkSizeToView"));
         map.put("startOffset", fileContestsMap.get("startOffset"));
+        map.put("dfsBlockStartOffset", fileContestsMap.get("dfsBlockStartOffset"));
         map.put("totalPage", fileContestsMap.get("totalPage"));
         map.put("currentPage", fileContestsMap.get("currentPage"));
         map.put("contents", fileContestsMap.get("contents"));
         map.put("bestNode", fileContestsMap.get("bestNode"));
+        map.put("fileSize", fileContestsMap.get("fileSize"));
+        map.put("totalPage", fileContestsMap.get("totalPage"));
+        map.put("dfsBlockSize", fileContestsMap.get("dfsBlockSize"));
+        map.put("lastPageChunkSizeToView", fileContestsMap.get("lastPageChunkSizeToView"));
+        map.put("currentContentsBlockSize", fileContestsMap.get("currentContentsBlockSize"));
+        map.put("startOffsetPerDfsBlocks", fileContestsMap.get("startOffsetPerDfsBlocks"));
+        map.put("accumulatedStartOffsetPerDfsBlocks", fileContestsMap.get("accumulatedStartOffsetPerDfsBlocks"));
+        map.put("lastStartOffsetPerDfsBlocks", fileContestsMap.get("lastStartOffsetPerDfsBlocks"));
+        map.put("lastChunkSizePerDfsBlocks", fileContestsMap.get("lastChunkSizePerDfsBlocks"));
+        map.put("pageCheckPoints", fileContestsMap.get("pageCheckPoints"));
+        map.put("offsetRange", fileContestsMap.get("offsetRange"));
+        map.put("lastDfsBlockSize", fileContestsMap.get("lastDfsBlockSize"));
 
         Response response = new Response();
         response.getMap().putAll(map);
         response.setSuccess(true);
+        return response;
+    }
+
+    @RequestMapping(value = "copyToLocal", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Response copyToLocal(@RequestParam String clusterName, @RequestParam String srcFullyQualifiedPath) {
+        EngineService engineService = this.getEngineService(clusterName);
+        FileSystemRemoteService fsrs = engineService.getFileSystemService();
+
+        String username = getSessionUsername();
+        Long orgId = getOrgId();
+        String linuxUserHome = defaultLinuxUserHome + SystemUtils.FILE_SEPARATOR + username;
+        boolean result = false;
+
+        Response response = new Response();
+
+        if (getSessionUserLevel() == 1) {
+            result = fsrs.copyToLocal(this.getEngineConfig(clusterName), srcFullyQualifiedPath, linuxUserHome, username);
+        } else {
+            response.setSuccess(false);
+            response.getError().setMessage("사용 권한이 없는 그룹에 속해 있습니다.");
+        }
+
+        response.setSuccess(result);
         return response;
     }
 
@@ -935,5 +1005,14 @@ public class HdfsBrowserController {
      */
     private int getSessionUserLevel() {
         return SessionUtils.getLevel();
+    }
+
+    /**
+     * 현재 세션의 사용자가 소속된 조직의 ID를 가져온다.
+     *
+     * @return orgId
+     */
+    private Long getOrgId() {
+        return SessionUtils.getOrgId();
     }
 }

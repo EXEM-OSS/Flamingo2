@@ -1,0 +1,391 @@
+[[hdfs]]
+
+== HDFS Browser
+
+The HDFS browser manages files and directories in HDFS.
+
+image::fs/hdfs/hdfs-browser.png[scaledwidth=100%,Apache Hadoop HDFS 브라우저 메인 화면]
+
+The provided features are as below.
+
+* File Management
+* Directory Management
+* File Preview
+* File Upload and Download
+* Alter Authorization
+* Create Hive Database and Table
+
+=== HDFS Summary
+
+The following screenshot shows a summary of HDFS. It provides the current status of Namenode.
+
+image::fs/hdfs/hdfs-info.png[scaledwidth=100%,HDFS 요약 화면]
+
+=== HDFS Usage
+
+Shows DFS and non-DFS usages in HDFS.
+
+image::fs/hdfs/hdfs-usage.png[scaledwidth=100%,HDFS 사용량 화면]
+
+=== Top 5 Directories in HDFS
+
+Shows the top 5 storage consuming directories under the root(/) directory.
+
+image::fs/hdfs/hdfs-top5.png[scaledwidth=100%,HDFS 상위 5 디렉토리 화면]
+
+=== Managing Directories
+
+==== Creating a Directory
+
+Right click on the directory list, and select `Create`.
+
+image::fs/hdfs/hdfs-directory-create0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+Enter a directory name and click `OK`. Now the directory is created.
+
+image::fs/hdfs/hdfs-directory-create1.png[scaledwidth=35%]
+
+==== Copying a Directory
+
+Right click on a source directory and select `Copy`.
+
+image::fs/hdfs/hdfs-directory-copy0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+Select a destination directory.
+
+image::fs/hdfs/hdfs-directory-copy1.png[scaledwidth=40%,디렉토리 복사 화면]
+
+Click `OK` and the directory is copied.
+
+image::fs/hdfs/hdfs-directory-copy2.png[scaledwidth=40%,디렉토리 복사 화면]
+
+==== Moving a Directory
+
+Right click on a source directory, and select `Move`.
+
+image::fs/hdfs/hdfs-directory-move0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+Select a destination directory.
+
+image::fs/hdfs/hdfs-directory-move1.png[scaledwidth=40%,디렉토리 이동 화면]
+
+Click `OK` and the directory is moved.
+
+image::fs/hdfs/hdfs-directory-move2.png[scaledwidth=40%,디렉토리 이동 화면]
+
+==== Renaming a Directory
+
+Right click on a directory to rename. Select `Rename` on the menu.
+
+image::fs/hdfs/hdfs-directory-rename0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+Enter a new name and click `OK`.
+
+image::fs/hdfs/hdfs-directory-rename1.png[scaledwidth=35%,디렉토리 이름변경 화면]
+
+==== Deleting a Directory
+
+Right click on a directory to delete and select `Delete` from the menu.
+
+image::fs/hdfs/hdfs-directory-delete0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+Click `OK` to delete the directory.
+
+image::fs/hdfs/hdfs-directory-delete1.png[scaledwidth=35%,디렉토리 삭제 화면]
+
+[[upload]]
+==== File Upload
+
+Right click on the directory list and select `Upload` on the menu.
+
+image::fs/hdfs/hdfs-directory-upload0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+[NOTE]
+Maximum allowed size to download per file is set to 100MB by default.
+In order to configure this setting, modify `file.upload.max.size` in `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties`.
+
+Flamingo provides two ways to upload files.
+
+* Select a file from a browser.
+* Drag and drop.
+
+===== Selecting a file from a browser.
+
+Click `Browse` and select a file (or files) to upload.
+
+image::fs/hdfs/hdfs-directory-upload1.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+Click `Upload`.
+
+image::fs/hdfs/hdfs-directory-upload3.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+When the upload is complete, the progress bar indicates 100%.
+
+image::fs/hdfs/hdfs-directory-upload4.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+Close the upload window, and the file list gets updated.
+
+image::fs/hdfs/hdfs-directory-upload5.png[scaledwidth=100%,디렉토리 업로드 화면]
+
+===== Drag and drop
+
+Drag and drop a file (or files) to the upload window.
+
+image::fs/hdfs/hdfs-directory-upload2.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+Click `Upload`.
+
+image::fs/hdfs/hdfs-directory-upload3.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+When the upload is complete, the progress bar indicates 100%.
+
+image::fs/hdfs/hdfs-directory-upload4.png[scaledwidth=90%,디렉토리 업로드 화면]
+
+Close the upload window, and the file list gets updated.
+
+image::fs/hdfs/hdfs-directory-upload5.png[scaledwidth=100%,디렉토리 업로드 화면]
+
+==== Merging Files
+
+File merging allows you to put all output files in result of a MapReduce job to a single file.
+Right click on the directory list and select `Merge` on the menu.
+
+image::fs/hdfs/hdfs-directory-merge0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+By default, the directory name will be assigned as a name of the file.
+
+image::fs/hdfs/hdfs-directory-merge1.png[scaledwidth=100%,디렉토리 병합 화면]
+
+Enter a name for the result file.
+
+image::fs/hdfs/hdfs-directory-merge2.png[scaledwidth=35%,디렉토리 병합 화면]
+
+A destination of the merged file is the parent directory of the selected directory.
+If files in the root directory are mergend, the file will be saved in the root directory.
+
+image::fs/hdfs/hdfs-directory-merge3.png[scaledwidth=100%,디렉토리 병합 화면]
+
+Go up one directory, and check the merged file.
+
+image::fs/hdfs/hdfs-directory-merge4.png[scaledwidth=100%,디렉토리 병합 화면]
+
+Double click on the merged file and you can see its file property.
+
+image::fs/hdfs/hdfs-directory-merge5.png[scaledwidth=70%,디렉토리 병합 화면]
+
+==== Directory Property
+
+Right click on the directory list and select 'Property`.
+
+image::fs/hdfs/hdfs-directory-info0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+The property window will pop up.
+
+image::fs/hdfs/hdfs-directory-info1.png[scaledwidth=70%,디렉토리 속성 화면]
+
+==== Refresh a Directory
+
+Flamingo provides two ways to refresh a directory.
+
+* Refresh selected directories and files.
+* Refresh all under the root directory.
+
+===== Refresh a selected directory or file
+
+Refresh selected directories and files.
+
+image::fs/hdfs/hdfs-directory-refresh0.png[scaledwidth=100%,디렉토리 갱신 화면]
+
+===== Refresh All
+
+Refresh all directories and files under the root directory.
+
+image::fs/hdfs/hdfs-directory-refresh1.png[scaledwidth=100%,디렉토리 갱신 화면]
+
+==== Setting Authorization on Directories
+
+This sets ownership and access permission to directories and files.
+
+image::fs/hdfs/hdfs-directory-permission0.png[scaledwidth=100%,디렉토리 권한 설정 화면]
+
+Right click on the directory list, and select `Authorization`.
+
+image::fs/hdfs/hdfs-directory-permission1.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+Click `Modify` to configure the authorization. To apply the rule to all files and directories underneath, select `Apply To All`.
+
+image::fs/hdfs/hdfs-directory-permission2.png[scaledwidth=40%,디렉토리 권한 설정 화면]
+
+[NOTE]
+Before you apply the rule to all, take precautions. The changed authorization is applied to all files and directories. If the authority of directories in HDFS such `/tmp` and `/user` is altered, Hadoop EcoSystem could malfunction.
+Also applying the new rule may take some time.
+
+==== Creating a Hive Database from a Directory
+
+Right click on a directory and select `Create Hive DB`.
+
+image::fs/hdfs/hdfs-directory-hiveDB0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+Enter a new for the database, and click `Create`. The newly created database can be verified in *Apach Hive*.
+
+image::fs/hdfs/hdfs-directory-hiveDB1.png[scaledwidth=50%,디렉토리 하이브 DB 생성 화면]
+
+==== Creating a Hive Table from a Directory
+
+Right click on a directory and select `Create Hive Table`.
+
+image::fs/hdfs/hdfs-directory-hiveTable0.png[scaledwidth=100%,디렉토리 메뉴 화면]
+
+Enter all necessary values in the Table Configuration window.
+
+image::fs/hdfs/hdfs-directory-hiveTable1.png[scaledwidth=60%,디렉토리 하이브 Table 생성 화면]
+
+Click `Create`. The newly created table can be viwed in *Apache Hive*.
+
+image::fs/hdfs/hdfs-directory-hiveTable2.png[scaledwidth=60%,디렉토리 하이브 Table 생성 화면]
+
+[NOTE]
+If a custom file format is used, enter the fully qualified class name in the Input/Output File Format.
+
+=== Managing Files
+
+==== Copying Files
+
+Select a directory first and then files in the file list. Click `Copy` in the toolbar.
+
+image::fs/hdfs/hdfs-file-copy0.png[scaledwidth=100%,파일 메뉴 화면]
+
+Select a destination folder, and click `OK`.
+
+image::fs/hdfs/hdfs-file-copy1.png[scaledwidth=40%,파일 복사 화면]
+
+Click `OK`.
+
+image::fs/hdfs/hdfs-file-copy2.png[scaledwidth=50%,파일 복사 화면]
+
+Now the file is copied to the destination.
+
+image::fs/hdfs/hdfs-file-copy3.png[scaledwidth=100%,파일 복사 화면]
+
+[NOTE]
+Copying multiple files may take some time.
+
+==== Moving Files
+
+Select a directory first and then files to move. Click `Move` in the toolbar.
+
+image::fs/hdfs/hdfs-file-move0.png[scaledwidth=100%,파일 메뉴 화면]
+
+Select a destination folder, and click `OK`.
+
+image::fs/hdfs/hdfs-file-move1.png[scaledwidth=40%,파일 이동 화면]
+
+Click `OK` to confirm.
+
+image::fs/hdfs/hdfs-file-move2.png[scaledwidth=50%,파일 이동 화면]
+
+Now the files are moved to the destination.
+
+image::fs/hdfs/hdfs-file-move3.png[scaledwidth=100%,파일 이동 화면]
+
+[NOTE]
+Moving multiple files may take some time.
+
+==== Renaming a File
+
+Select a file in the file list. Click `Rename`.
+
+image::fs/hdfs/hdfs-file-rename0.png[scaledwidth=100%,파일 메뉴 화면]
+
+Enter a new name and click `OK`.
+
+image::fs/hdfs/hdfs-file-rename1.png[scaledwidth=30%,파일 이름변경 화면]
+
+==== Deleting Files
+
+Select a file or files in the file list to delete. Click `Delete`.
+
+image::fs/hdfs/hdfs-file-delete0.png[scaledwidth=100%,파일 메뉴 화면]
+
+Click `Yes` on the confirmation.
+
+image::fs/hdfs/hdfs-file-delete1.png[scaledwidth=30%,파일 메뉴 화면]
+
+==== Uploading Files
+
+Right click on a directory and select `Upload`.
+
+image::fs/hdfs/hdfs-file-upload0.png[scaledwidth=100%,파일 메뉴 화면]
+
+Select a file or files to upload.
+
+image::fs/hdfs/hdfs-file-upload1.png[scaledwidth=90%,파일 업로드 화면]
+
+Click `Upload` to begin uploading files.
+
+image::fs/hdfs/hdfs-file-upload2.png[scaledwidth=90%,파일 업로드 화면]
+
+The files are uploaded to the selected folder.
+
+image::fs/hdfs/hdfs-file-upload3.png[scaledwidth=100%,파일 업로드 화면]
+
+[NOTE]
+Make a file size is smaller than the maximum allowed size to upload.
+
+[[download]]
+==== Downloading a File
+
+Select a directory first and then a file in the file list. Click `Download`.
+
+image::fs/hdfs/hdfs-file-download0.png[scaledwidth=100%,파일 메뉴 화면]
+
+The file is download to your local storage.
+
+[NOTE]
+You can download only one file at a time. There is a restriction on a file size to download. In order to modify this property, change the value of `file.download.max.size` in `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties`.
+
+[[view]]
+==== File Preview
+
+You can preview a file as below.
+
+* Click the `Preview` button
+* Select `Preview` from the menu
+
+===== Preview Button
+
+Select a directory and a file. Click `Preview`.
+
+image::fs/hdfs/hdfs-file-view0.png[scaledwidth=100%,파일 메뉴 화면]
+
+You can preview the contents of the file on the preview window.
+Browse the file by clicking the paging buttons.
+
+image::fs/hdfs/hdfs-file-view1.png[scaledwidth=90%,파일 내용보기 화면]
+
+===== Preview Menu
+
+Select a directory and right click on file. Select `Preview` from the menu.
+
+image::fs/hdfs/hdfs-file-view2.png[scaledwidth=100%,파일 내용보기 화면]
+
+You can preview the contents of the file on the preview window.
+Browse the file by clicking the paging buttons
+
+image::fs/hdfs/hdfs-file-view3.png[scaledwidth=90%,파일 내용보기 화면]
+
+[NOTE]
+Preview doesn't support compression, image, music, video files.
+Files over 1GB also can be previewed.
+It may take some time due to errors or unstable network status.
+
+==== File Property
+
+Select a directory first and right click on a file. Select `Property` from the menu.
+
+image::fs/hdfs/hdfs-file-info0.png[scaledwidth=100%,파일 메뉴 화면]
+
+Now you can see the property of the file.
+
+image::fs/hdfs/hdfs-file-info1.png[scaledwidth=70%,파일 메뉴 화면]
+

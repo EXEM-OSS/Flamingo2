@@ -31,7 +31,7 @@ Ext.define('Flamingo2.view.main.MainModel', {
                 var html = '';
 
                 if (LICENSE.DAYS < 15) {
-                    html += format('<div style="float: right;color: red;margin-right: 10px;">Flamingo License 기간이 {0}일 남았습니다.</div>', LICENSE.DAYS);
+                    html += format('<div style="float: right;color: red;margin-right: 10px;">' + message.msg('license.msg.remain_license') + '</div>', LICENSE.DAYS);
                 }
 
                 if (LICENSE.TRIAL == 'true') {
@@ -46,13 +46,10 @@ Ext.define('Flamingo2.view.main.MainModel', {
     stores: {
         menu: {
             autoLoad: true,
-
             fields: ['menu_id', 'menu_ns', 'menu_nm', 'icon_css_nm', 'leaf', 'children'],
-
             proxy: {
                 type: 'ajax',
                 url: CONSTANTS.SYSTEM.MENU.SELECT,
-                headers: {'Accept': 'application/json'},
                 reader: {
                     type: 'json',
                     rootProperty: 'data'

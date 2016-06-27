@@ -19,7 +19,7 @@ package org.opencloudengine.flamingo2.engine.hawq.externaltable;
 /**
  * HAWQ External Table Format Type.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 public enum Type {

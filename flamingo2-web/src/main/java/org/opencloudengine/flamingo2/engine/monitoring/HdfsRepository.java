@@ -21,7 +21,7 @@ import java.util.Map;
 
 public interface HdfsRepository {
 
-    public static final String NAMESPACE = HdfsRepository.class.getName();
+    String NAMESPACE = HdfsRepository.class.getName();
 
     List selectNamenodeMetrics(Map params);
 }

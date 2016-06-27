@@ -19,82 +19,74 @@ Ext.define('Flamingo2.view.monitoring.namenode.NamenodeChart', {
     alias: 'widget.namenodeChart',
 
     requires: [
-        'Flamingo2.view.monitoring.namenode.BlockStatus',
-        'Flamingo2.view.monitoring.namenode.DatanodeStatus',
-        'Flamingo2.view.monitoring.namenode.CldbUsage',
+        'Flamingo2.view.monitoring.namenode.HdfsUsage',
         'Flamingo2.view.monitoring.namenode.JvmHeapUsage',
+        'Flamingo2.view.monitoring.namenode.BlockStatus',
         'Flamingo2.view.monitoring.namenode.FileCount',
-        'Flamingo2.view.monitoring.namenode.BlockCount'
+        'Flamingo2.view.monitoring.namenode.BlockCount',
+        'Flamingo2.view.monitoring.namenode.DatanodeStatus'
     ],
-
-    layout: {
-        type: 'table',
-        columns: 2,
-        tableAttrs: {
-            style: {
-                width: '100%'
-            }
-        }
-    },
 
     border: false,
 
     items: [
         {
-            title: message.msg('monitoring.namenode.usage'),
-            iconCls: 'common-view',
-            height: 250,
-            margin: '5 5 0 0',
-            layout: 'fit',
-            border: 1,
-            xtype: 'hdfsUsage'
+            xtype: 'container',
+            margin: '5 0 0 0',
+            flex: 2,
+            layout: {
+                type: 'hbox',
+                align: 'stretch'
+            },
+            items: [
+                {
+                    xtype: 'hdfsUsage',
+                    title: message.msg('monitoring.namenode.usage'),
+                    iconCls: 'common-view',
+                    margin: '0 5 0 0',
+                    flex: 1,
+                    border: true
+                },
+                {
+                    xtype: 'jvmHeapUsage',
+                    title: message.msg('monitoring.namenode.jvm_heap'),
+                    iconCls: 'common-view',
+                    margin: '0 0 0 5',
+                    flex: 1,
+                    border: true
+                }
+            ]
         },
         {
-            title: message.msg('monitoring.namenode.jvm_heap'),
-            iconCls: 'common-view',
-            height: 250,
-            margin: '5 0 0 5',
-            layout: 'fit',
-            border: 1,
-            xtype: 'jvmHeapUsage'
-        },
-        {
+            xtype: 'blockStatus',
             title: message.msg('monitoring.namenode.block_status'),
             iconCls: 'common-view',
-            height: 250,
             margin: '5 0 0 0',
-            layout: 'fit',
-            border: 1,
-            colspan: 2,
-            xtype: 'blockStatus'
+            border: true
         },
         {
+            xtype: 'fileCount',
             title: message.msg('monitoring.namenode.total_file_count'),
             iconCls: 'common-view',
-            height: 250,
-            margin: '5 5 0 0',
-            layout: 'fit',
-            border: 1,
-            xtype: 'fileCount'
+            margin: '5 0 0 0',
+            border: true
         },
         {
+            xtype: 'blockCount',
             title: message.msg('monitoring.namenode.total_block_count'),
             iconCls: 'common-view',
-            margin: '5 0 0 5',
-            height: 250,
-            layout: 'fit',
-            border: 1,
-            xtype: 'blockCount'
+            margin: '5 0 0 0',
+            border: true
         },
         {
+            xtype: 'datanodeStatus',
             title: message.msg('monitoring.namenode.datanode'),
             iconCls: 'common-view',
-            height: 250,
             margin: '5 0 0 0',
-            layout: 'fit',
-            border: 1,
-            colspan: 2,
-            xtype: 'datanodeStatus'
+            border: true
         }
-    ]
+    ],
+    listeners: {
+        afterrender: 'onNamenodeChartAfterRender'
+    }
 });

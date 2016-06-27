@@ -23,28 +23,9 @@ Ext.define('Flamingo2.view.monitoring.datanode.Livenodes', {
         'Flamingo2.view.monitoring.datanode.DatanodeModel'
     ],
 
-    listeners: {
-        afterrender: 'onLiveNodesAfterrender'
-    },
-
     bind: {
         store: '{liveNodesStore}'
     },
-
-    tools: [
-        {
-            type: 'refresh',
-            handler: function (event, toolEl, panel) {
-                var grid = query('liveNodes');
-                grid.getStore().getProxy().extraParams.clusterName = ENGINE.id;
-                grid.getStore().load({
-                    callback: function (records, operation, success) {
-                        grid.setTitle(format(message.msg('monitoring.datanode.msg.live_datanode'), this.getCount()))
-                    }
-                });
-            }
-        }
-    ],
 
     columns: [
         {
@@ -147,5 +128,15 @@ Ext.define('Flamingo2.view.monitoring.datanode.Livenodes', {
         getRowClass: function (b, e, d, c) {
             return 'cell-height-30';
         }
+    },
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onLiveNodesRefreshClick'
+        }
+    ],
+    listeners: {
+        afterrender: 'onLiveNodesAfterRender'
     }
 });

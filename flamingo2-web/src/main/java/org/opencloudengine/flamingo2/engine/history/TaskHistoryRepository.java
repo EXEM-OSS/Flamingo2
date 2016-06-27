@@ -30,4 +30,5 @@ public interface TaskHistoryRepository extends PersistentRepository<TaskHistory,
 
     void updateByTaskIdAndIdentifier(TaskHistory taskHistory);
 
+    List<TaskHistory> selectRunning();
 }

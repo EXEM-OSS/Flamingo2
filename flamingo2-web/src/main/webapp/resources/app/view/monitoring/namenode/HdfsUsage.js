@@ -14,42 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-Ext.define('Flamingo2.view.monitoring.namenode.CldbUsage', {
+Ext.define('Flamingo2.view.monitoring.namenode.HdfsUsage', {
     extend: 'Ext.Panel',
     alias: 'widget.hdfsUsage',
 
     border: false,
 
-    initComponent: function () {
-        var me = this;
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['num', 'total', 'used', 'free', 'reg_dt'],
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: CONSTANTS.MONITORING.NAMENODE.DFS_USAGE,
-                extraParams: {
-                    clusterName: ENGINE.id
-                },
-                remoteSort: true,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'total'
-                }
-            }
-        });
-
-        me.items = {
+    items: [
+        {
             xtype: 'cartesian',
-            border: false,
-            store: store,
+            itemId: 'hdfsUsageChart',
+            height: 250,
+            bind: {
+                store: '{hdfsUsageStore}'
+            },
             insetPadding: 20,
             interactions: 'itemhighlight',
             legend: {
                 docked: 'bottom',
-                border: false,
-                style: {borderColor: 'red'}
+                style: {
+                    borderColor: 'red'
+                }
             },
             axes: [
                 {
@@ -72,40 +57,6 @@ Ext.define('Flamingo2.view.monitoring.namenode.CldbUsage', {
                 duration: 500
             },
             series: [
-                /*
-                 {
-                 type: 'area',
-                 axis: 'left',
-                 title: '총 크기',
-                 xField: 'num',
-                 yField: 'total',
-                 style: {
-                 opacity: 0.50,
-                 minGapWidth: 20,
-                 fill: '#DB4D4D', // background color
-                 stroke: 'black' // line color
-                 },
-                 marker: {
-                 opacity: 0,
-                 scaling: 0.01,
-                 fx: {
-                 duration: 200,
-                 easing: 'easeOut'
-                 }
-                 },
-                 highlightCfg: {
-                 opacity: 1,
-                 scaling: 1.5
-                 },
-                 tooltip: {
-                 trackMouse: true,
-                 style: 'background: #fff',
-                 renderer: function (storeItem, item) {
-                 this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + fileSize(storeItem.get('total')) + '</b></font>');
-                 }
-                 }
-                 },
-                 */
                 {
                     type: 'area',
                     axis: 'left',
@@ -133,13 +84,19 @@ Ext.define('Flamingo2.view.monitoring.namenode.CldbUsage', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <font color="#CC2900"><b>' + fileSize(storeItem.get('used')) + ' / ' + fileSize(storeItem.get('total')) + '</b></font>');
+                            this.setHtml(dateFormat2(storeItem.get('reg_dt')) + ' : <span style="color: #CC2900; "><b>'
+                                + fileSize(storeItem.get('used')) + ' / ' + fileSize(storeItem.get('total')) + '</b></font>');
                         }
                     }
                 }
             ]
-        };
-
-        me.callParent(arguments);
-    }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onHdfsUsageRefreshClick'
+        }
+    ]
 });

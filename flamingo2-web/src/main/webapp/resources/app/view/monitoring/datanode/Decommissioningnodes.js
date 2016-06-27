@@ -23,29 +23,9 @@ Ext.define('Flamingo2.view.monitoring.datanode.Decommissioningnodes', {
         'Flamingo2.view.monitoring.datanode.DatanodeModel'
     ],
 
-    listeners: {
-        afterrender: 'onDecommisioningNodesAfterrender'
-    },
-
     bind: {
-        store: '{decommisioningNodesStore}'
+        store: '{decommissionedNodesStore}'
     },
-
-    tools: [
-        {
-            type: 'refresh',
-            handler: function (event, toolEl, panel) {
-                var grid = query('decommissioningNodes');
-                grid.getStore().getProxy().extraParams.clusterName = ENGINE.id;
-                grid.getStore().load({
-                    callback: function (records, operation, success) {
-                        grid.setTitle(format(message.msg('monitoring.datanode.msg.decommissioning_datanode'), this.getCount()))
-                    }
-                });
-            }
-        }
-    ],
-
     columns: [
         {
             text: message.msg('monitoring.datanode.host'), flex: 1, dataIndex: 'hostname', align: 'center'
@@ -78,5 +58,15 @@ Ext.define('Flamingo2.view.monitoring.datanode.Decommissioningnodes', {
         getRowClass: function (b, e, d, c) {
             return 'cell-height-30';
         }
+    },
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onDecommissionedNodesRefreshClick'
+        }
+    ],
+    listeners: {
+        afterrender: 'onDecommissionedNodesAfterRender'
     }
 });

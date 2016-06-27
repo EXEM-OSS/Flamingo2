@@ -5,14 +5,14 @@
     <parent>
         <groupId>org.opencloudengine.flamingo2</groupId>
         <artifactId>flamingo2</artifactId>
-        <version>2.0.0</version>
+        <version>2.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>flamingo2-system-agent</artifactId>
     <packaging>war</packaging>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <name>Flamingo 2 - System Agent</name>
     <url>http://www.cloudine.io</url>
 
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.opencloudengine.flamingo2</groupId>
             <artifactId>flamingo2-common</artifactId>
-            <version>2.0.0</version>
+            <version>2.1.0</version>
         </dependency>
 
         <!-- ================== -->

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.opencloudengine.flamingo2</groupId>
+        <artifactId>flamingo2</artifactId>
+        <version>2.1.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>flamingo2-documentation</artifactId>
+    <packaging>jar</packaging>
+    <version>2.1.0</version>
+    <name>Flamingo 2 - Documentation</name>
+    <url>http://www.cloudine.io</url>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <id>output-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>html</backend>
+                            <sourceDirectory>${basedir}/src/main/asciidoc/user-guide/english</sourceDirectory>
+                            <sourceDocumentName>index.asciidoc</sourceDocumentName>
+                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <outputDirectory>${basedir}/target/manual</outputDirectory>
+                            <doctype>book</doctype>
+                            <attributes>
+                                <stylesheet>style.css</stylesheet>
+                                <flamingo2Version>${project.version}</flamingo2Version>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                    <!--
+                       <execution>
+                           <id>output-pdf</id>
+                           <phase>generate-resources</phase>
+                           <goals>
+                               <goal>process-asciidoc</goal>
+                           </goals>
+                           <configuration>
+                               <backend>pdf</backend>
+                               <sourceHighlighter>coderay</sourceHighlighter>
+                               <attributes>
+                                   <pagenums/>
+                                   <toc/>
+                                   <idprefix/>
+                                   <idseparator>-</idseparator>
+                               </attributes>
+                           </configuration>
+                       </execution>
+                       -->
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-pdf</artifactId>
+                        <version>1.5.0-alpha.6</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-asciidoc images</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/manual/images</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/flamingo2-documentation/korean/user-guide/images</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

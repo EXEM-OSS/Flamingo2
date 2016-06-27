@@ -50,4 +50,9 @@ public class TaskHistoryRepositoryImpl extends PersistentRepositoryImpl<TaskHist
     public void updateByTaskIdAndIdentifier(TaskHistory taskHistory) {
         this.getSqlSessionTemplate().update(this.NAMESPACE + ".updateByTaskIdAndIdentifier", taskHistory);
     }
+
+    @Override
+    public List<TaskHistory> selectRunning() {
+        return this.getSqlSessionTemplate().selectList(this.NAMESPACE + ".selectRunning");
+    }
 }

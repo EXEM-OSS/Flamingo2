@@ -1,0 +1,124 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<project name="flamingo2-javadoc-api" default="javadoc" basedir=".">
+
+	<!-- Change maven repository directory -->
+	<property name="maven.repository" value="${user.home}/.m2/repository"/>
+
+	<property name="ydoc.home" value="${basedir}/tools/yworks-uml-doclet-3.0_02-jdk1.5"/>
+	<property name="DFH" value="${basedir}/tools/docflex-doclet-1.6.1"/>
+
+	<property name="encoding" value="UTF-8"/>
+
+	<property name="javadoc.title" value="Flamingo 2 API Reference"/>
+
+	<condition property="javadoc.version" value="1.7">
+		<not>
+			<isset property="javadoc.version"/>
+		</not>
+	</condition>
+
+	<path id="libpath">
+		<fileset dir="${basedir}/target/dependencies">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${basedir}">
+			<include name="flamingo*/target/classes/**/*.class"/>
+		</fileset>
+	</path>
+
+        <path id="srcpath">
+                <dirset dir="${basedir}">
+                        <include name="flamingo*/src/main/java"/>
+                </dirset>
+        </path>
+
+	<target name="javadoc-rtf">
+		<javadoc maxmemory="512m"
+		         encoding="${encoding}"
+		         locale="ko_KR"
+		         useexternalfile="true"
+		         classpathref="libpath"
+			 sourcepathref="srcpath"
+		         destdir="${basedir}/target">
+
+			<doclet name="com.docflex.javadoc.Doclet" path="${DFH}/lib/docflex-doclet.jar">
+				<param name="-template" value="${DFH}/templates/javadoc/PlainDoc.tpl"/>
+				<param name="-p:windowTitle" value="Flamingo API"/>
+				<param name="-p:docTitle" value="Flamingo API"/>
+				<param name="-format" value="RTF"/>
+				<param name="-nodialog"/>
+				<param name="-launchviewer=false"/>
+			</doclet>
+
+			<package name="org.opencloudengine.flamingo2"/>
+		</javadoc>
+		<move file="${basedir}/target/PlainDoc.rtf" tofile="${basedir}/target/javadoc.doc"/>
+	</target>
+
+	<target name="javadoc-1.7-html">
+		<property name="ps" value="${path.separator}"/>
+
+		<delete dir="${basedir}/target/javadoc"/>
+		<javadoc
+			source="${javadoc.version}"
+			classpathref="libpath"
+			sourcepathref="srcpath"
+			overview="${basedir}/tools/javadoc/1.7/overview.html"
+			stylesheetfile="${basedir}/tools/javadoc/1.7/stylesheet.css"
+			destdir="${basedir}/target/javadoc"
+			encoding="${encoding}"
+			locale="ko_KR"
+			useexternalfile="true"
+			docencoding="${encoding}"
+			charset="${encoding}"
+			author="true"
+			docfilessubdirs="true"
+			version="true"
+			use="true"
+			failonerror="false"
+			additionalparam="-breakiterator"
+			windowtitle="${javadoc.title}"
+			doctitle="${javadoc.title}">
+
+			<link href="http://docs.oracle.com/javase/7/docs/api"/>
+			<link href="http://commons.apache.org/lang/api-2.6"/>
+			<link href="http://commons.apache.org/cli/api-release"/>
+			<link href="http://commons.apache.org/sandbox/cli2/apidocs"/>
+			<link href="http://www.slf4j.org/apidocs"/>
+			<link href="http://commons.apache.org/logging/commons-logging-1.1.1/apidocs"/>
+			<link href="http://logging.apache.org/log4j/1.2/apidocs"/>
+			<link href="http://commons.apache.org/io/apidocs"/>
+			<link href="http://junit.sourceforge.net/javadoc"/>
+			<link href="http://hadoop.apache.org/docs/r1.2.1/api"/>
+			<link href="http://pig.apache.org/docs/r0.10.0/api"/>
+			<link href="http://docs.spring.io/spring/docs/4.0.1.RELEASE/javadoc-api"/>
+			<link href="http://mybatis.github.io/mybatis-3/apidocs/reference"/>
+
+			<doctitle>${javadoc.title}</doctitle>
+			<bottom><![CDATA[<i>Copyright &#169; 2011 Flamingo Community in Open Cloud Engine</i>]]></bottom>
+			<doclet
+				name="ydoc.doclets.YStandard"
+				path="${ydoc.home}/lib/ydoc.jar${ps}${ydoc.home}/resources${ps}${ydoc.home}/doc">
+				<param name="-author"/>
+				<param name="-generic"/>
+				<param name="-umlautogen"/>
+				<param name="-filterpath" value="${ydoc.home}/lib/ydoc.jar"/>
+				<param name="-filter" value="ydoc.filters.ExcludeFilter"/>
+				<param name="-tag" value="y.precondition"/>
+				<param name="-tag" value="y.postcondition"/>
+				<param name="-tag" value="y.complexity"/>
+				<param name="-tag" value="param"/>
+				<param name="-tag" value="return"/>
+				<param name="-tag" value="see"/>
+				<param name="-tag" value="y.uml"/>
+			</doclet>
+		</javadoc>
+	</target>
+
+	<target name="javadoc-zip">
+		<zip destfile="${basedir}/target/javadoc.zip"
+		     basedir="${basedir}/target/javadoc"/>
+	</target>
+
+	<target name="javadoc" depends="javadoc-1.7-html,javadoc-zip,javadoc-rtf"/>
+</project>

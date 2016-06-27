@@ -77,7 +77,7 @@ Ext.define('Flamingo2.view.designer.property.HADOOP_SHELL', {
                 {
                     xtype: 'textfield',
                     fieldLabel: message.msg('workflow.common.shell.workingpath'),
-                    name: 'working',
+                    name: 'workingDir',
                     value: '',
                     padding: '2 5 0 5',   // Same as CSS ordering (top, right, bottom, left)
                     allowBlank: true,

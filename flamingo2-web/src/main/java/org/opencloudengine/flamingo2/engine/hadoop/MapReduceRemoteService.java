@@ -24,13 +24,13 @@ public interface MapReduceRemoteService {
 
     public Map<String, Object> getJobInfo(String jobId);
 
-    public Map<String, Object> getJobConf(String JobID);
+    public Map<String, Object> getJobConf(String proxyServerUrl, String jobId);
 
     public Map<String, Object> getJob(String jobId);
 
     public Map<String, Object> getAttempts(String jobId);
 
-    public Map<String, Object> getCounters(String jobId);
+    public Map<String, Object> getCounters(String proxyServerUrl, String jobId);
 
     public Map<String, Object> getTasks(String jobId);
 

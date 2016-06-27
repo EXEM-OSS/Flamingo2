@@ -1,0 +1,119 @@
+[[archive-yarn]]
+
+== 아카이브 Yarn 애플리케이션
+
+Flamingo는 사용자가 Yarn 애플리케이션을 수행한 로그 정보를 관리하기 위해 다음의 기능 들을 제공합니다.
+
+image::archive/yarn/archive-yarn.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 메인 화면]
+
+=== 통계 조건
+
+통계 조건은 조회유형, 시작일 및 종료일 조건을 통해 Yarn 애플리케이션을 실행한 로그 정보를 확인할 수 있습니다. 각 조회조건을 입력 후 조회 버튼을 클릭하면 해당 결과가 차트 정보로 표시됩니다. 입력한 조회조건을 모두 삭제하려면 초기화 버튼을 선택하십시오.
+
+image::archive/yarn/archive-yarn-statistics0.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 통계 조건 화면]
+
+조회조건은 다음의 두 가지 조건을 제공합니다.
+
+* 시작일/종료일
+* 조회유형
+
+==== 시작일/종료일
+
+시작일 및 종료일은 기본적으로 로컬 DB에 저장된 모든 정보를 가져옵니다. 또한 사용자가 직접 날짜를 지정해서 해당 기간의 로그 정보를 확인할 수 있습니다.
+
+image::archive/yarn/archive-yarn-statistics1.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 조회유형 화면]
+
+==== 조회유형
+
+조회유형은 All, Finished, Failed, Killed 조건으로 로그 정보를 조회할 수 있습니다.
+
+image::archive/yarn/archive-yarn-statistics2.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 조회유형 화면]
+
+=== 모든 YARN 애플리케이션
+
+모든 YARN 애플리케이션은 로컬 DB에 저장된 모든 정보를 표시합니다. 기본값은 모든 기간에 해당되는 로그 정보를 가져오며, 조회조건을 통해 특정 기간 또는 조회유형, 애플리케이션명으로 로그 정보를 조회할 수 있습니다. 입력한 조회조건은 초기화 버튼을 선택 시 모두 삭제됩니다.
+
+조회조건은 다음과 같은 조건을 제공합니다.
+
+* 시작일/종료일
+* 조회유형
+* 애플리케이션명
+* 페이징
+
+시작일 및 종료일을 입력 후 조회 버튼을 클릭하면 가장 최근에 저장된 로그 정보부터 정렬되어 표시됩니다.
+
+image::archive/yarn/archive-yarn-list0.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 목록 화면]
+
+==== 시작일/종료일
+
+특정 시작일 및 종료일로 로그 정보를 조회하기 위해서는 값을 모두 선택해야 하며, 선택한 날짜 기간에 해당되는 로그 정보가 최근 정보 순서대로 정렬되어 표시됩니다.
+
+image::archive/yarn/archive-yarn-list1.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 목록 화면]
+
+==== 조회유형
+
+조회유형은 All, Finished, Failed, Killed 조건으로 로그 정보를 조회할 수 있습니다.
+
+image::archive/yarn/archive-yarn-list2.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 목록 화면]
+
+==== 애플리케이션명
+
+애플리케이션명을 입력할 경우 입력한 애플리케이션명을 포함하는 로그 정보가 표시됩니다.
+
+image::archive/yarn/archive-yarn-list3.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 목록 화면]
+
+==== 페이징
+
+페이지 버튼 및 입력 필드에 특정 페이지 입력을 통해 전체 목록을 조회 할 수 있습니다.
+
+image::archive/yarn/archive-yarn-list4.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 목록 화면]
+
+갱신 버튼을 선택할 경우 조회조건에서 입력한 조건에 해당하는 결과값으로 첫 페이지로 목록이 업데이트됩니다.
+
+image::archive/yarn/archive-yarn-list5.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 목록 화면]
+
+=== 애플리케이션 요약
+
+애플리케이션 요약 탭에는 모든 YARN 애플리케이션에서 선택한 애플리케이션의 요약 정보가 표시됩니다.
+
+image::archive/yarn/archive-yarn-summary.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 요약탭 화면]
+
+=== 애플리케이션 로그
+
+애플리케이션 로그 탭에는 모든 YARN 애플리케이션에서 선택한 애플리케이션의 실행 로그 정보가 표시됩니다.
+
+image::archive/yarn/archive-yarn-log.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 로그탭 화면]
+
+=== 애플리케이션 마스터
+
+애플리케이션 마스터 탭에는 모든 YARN 애플리케이션에서 선택한 애플리케이션의 마스터 정보가 표시됩니다.
+
+image::archive/yarn/archive-yarn-applicationMaster.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 로그탭 화면]
+
+=== 보기
+
+==== 애플리케이션 로그 다운로드
+
+애플리케이션 로그 다운로드를 선택할 경우 원격지에 저장된 애플리케이션 로그 파일의 정보를 로컬로 다운로드됩니다.
+
+image::archive/yarn/archive-yarn-view-log-down.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 보기탭 로그 다운로드 화면]
+
+==== 애플리케이션 로그를 큰 화면으로 보기
+
+애플리케이션 로그를 큰 화면으로 보기를 선택할 경우 기존 탭 화면과는 별도의 창이 생성됩니다.
+
+image::archive/yarn/archive-yarn-view-large0.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 보기탭 로그 큰 화면 보기 화면]
+
+생성된 창에는 애플리케이션 로그 정보가 더 큰 화면에 표시됩니다.
+
+image::archive/yarn/archive-yarn-view-large1.png[scaledwidth=50%,아카이브 Yarn 애플리케이션 보기탭 로그 큰 화면 보기 화면]
+
+==== 애플리케이션 마스터 정보를 큰 화면으로 보기
+
+애플리케이션 마스터 정보를 큰 화면으로 보기를 선택할 경우 기존 탭 화면과는 별도의 창이 생성됩니다.
+
+image::archive/yarn/archive-yarn-view-am-large0.png[scaledwidth=100%,아카이브 Yarn 애플리케이션 보기탭 마스터 정보 큰 화면 보기 화면]
+
+생성된 창에는 애플리케이션 마스터 정보가 더 큰 화면에 표시됩니다.
+
+image::archive/yarn/archive-yarn-view-am-large1.png[scaledwidth=50%,아카이브 Yarn 애플리케이션 보기탭 마스터 정보 큰 화면 보기 화면]

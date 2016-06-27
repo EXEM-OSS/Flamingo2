@@ -78,7 +78,11 @@ public class IndexController {
     @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.HEAD})
     public ModelAndView main() {
         ModelAndView mav;
-        if (licenseService.isValid(licenseFilename)) {
+        mav = new ModelAndView("/index");
+        mav.addObject("mode", ConfigurationHelper.getHelper().get("application.mode", "development"));
+        mav.addObject("nocache", isHtmlNoCache);
+
+        /*if (licenseService.isValid(licenseFilename)) {
             mav = new ModelAndView("/index");
             mav.addObject("mode", ConfigurationHelper.getHelper().get("application.mode", "development"));
             mav.addObject("nocache", isHtmlNoCache);
@@ -91,7 +95,7 @@ public class IndexController {
         }
 
         mav = new ModelAndView("/license");
-        mav.addObject("serverId", licenseService.getServerId());
+        mav.addObject("serverId", licenseService.getServerId());*/
         return mav;
     }
 
@@ -102,18 +106,46 @@ public class IndexController {
     public ModelAndView main(HttpSession session) throws IOException {
         ModelAndView mav;
 
-        if (licenseService.isValid(licenseFilename)) {
+        org.springframework.security.core.userdetails.User user
+                = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        logger.info("{} user has logged in.", user.getUsername());
+
+        // 로그인한 사용자 정보를 찾아서 패스워드를 decryption한다.
+        User managedUser = userService.getUser(user.getUsername());
+        Organization org = userService.getOrganization(managedUser.getOrgId());
+
+        logger.info("User Information : {}", managedUser);
+
+        managedUser.setPassword(passwordEncoder.decode(managedUser.getPassword()));
+
+        session.setAttribute("user", managedUser);
+        session.setAttribute("organization", org);
+
+        mav = new ModelAndView("/main");
+        mav.addObject("username", managedUser.getUsername());
+        mav.addObject("name", managedUser.getName());
+        mav.addObject("email", managedUser.getEmail());
+        mav.addObject("userGroup", managedUser.getUserGroup());
+        mav.addObject("id", managedUser.getId());
+        mav.addObject("orgCode", org.getOrgCD());
+        mav.addObject("authId", managedUser.getAuthId());
+        mav.addObject("title", ConfigurationHelper.getHelper().get("application.title"));
+        mav.addObject("mode", ConfigurationHelper.getHelper().get("application.mode", "development"));
+        mav.addObject("nocache", isHtmlNoCache);
+
+        /*if (licenseService.isValid(licenseFilename)) {
             org.springframework.security.core.userdetails.User user
                     = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             logger.info("{} user has logged in.", user.getUsername());
 
             // 로그인한 사용자 정보를 찾아서 패스워드를 decryption한다.
             User managedUser = userService.getUser(user.getUsername());
-            logger.info("{} user has logged in.", managedUser);
+            Organization org = userService.getOrganization(managedUser.getOrgId());
+
+            logger.info("User Information : {}", managedUser);
 
             managedUser.setPassword(passwordEncoder.decode(managedUser.getPassword()));
 
-            Organization org = userService.getOrganization(managedUser.getOrgId());
             session.setAttribute("user", managedUser);
             session.setAttribute("organization", org);
 
@@ -123,20 +155,24 @@ public class IndexController {
             mav.addObject("email", managedUser.getEmail());
             mav.addObject("userGroup", managedUser.getUserGroup());
             mav.addObject("id", managedUser.getId());
+            mav.addObject("orgCode", org.getOrgCD());
+            mav.addObject("authId", managedUser.getAuthId());
             mav.addObject("title", ConfigurationHelper.getHelper().get("application.title"));
             mav.addObject("mode", ConfigurationHelper.getHelper().get("application.mode", "development"));
             mav.addObject("nocache", isHtmlNoCache);
+
 
             Map licenseMap = licenseService.getLicenseInfo();
             mav.addObject("isTrial", licenseService.isTrial());
             mav.addObject("expireDate", licenseMap.get("expireDate"));
             mav.addObject("isExpired", licenseMap.get("isExpired"));
             mav.addObject("days", licenseMap.get("days"));
+
             return mav;
         }
 
         mav = new ModelAndView("/license");
-        mav.addObject("serverId", licenseService.getServerId());
+        mav.addObject("serverId", licenseService.getServerId());*/
         return mav;
     }
 
@@ -184,10 +220,18 @@ public class IndexController {
     }
 
     /**
+     * rstudio 페이지로 이동한다.
+     */
+    @RequestMapping(value = "rstudio", method = RequestMethod.GET)
+    public void rstudio() {
+    }
+
+    /**
      * 세션 종료 페이지
      */
     @RequestMapping(value = "/expired", method = RequestMethod.GET)
     public ModelAndView expired() {
         return new ModelAndView("redirect:/index");
     }
+
 }

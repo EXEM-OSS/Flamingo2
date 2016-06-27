@@ -48,18 +48,17 @@ public class OrganizationRepositoryImpl extends PersistentRepositoryImpl<String,
     }
 
     @Override
-    public int insert(Map organizationMap) {
-        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insert", organizationMap);
+    public boolean insert(Map organizationMap) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insert", organizationMap) > 0;
     }
 
     @Override
-    public int delete(Map organizationMap) {
-        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".delete", organizationMap);
+    public boolean delete(Map organizationMap) {
+        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".delete", organizationMap) > 0;
     }
 
     @Override
-    public int update(Map organizationMap) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".update", organizationMap);
+    public boolean update(Map organizationMap) {
+        return this.getSqlSessionTemplate().update(this.getNamespace() + ".update", organizationMap) > 0;
     }
-
 }

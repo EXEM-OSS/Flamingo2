@@ -18,6 +18,9 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.Configuration', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.resourceManagerConfiguration',
 
+    bind: {
+        store: '{configurationStore}'
+    },
     columns: [
         {text: 'Key', width: 450, dataIndex: 'key'},
         {text: 'Value', flex: 1, dataIndex: 'value'}
@@ -36,49 +39,15 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.Configuration', {
      */
 
     multiColumnSort: true,
-
-    initComponent: function () {
-        var me = this;
-
-        me.store = new Ext.data.Store({
-            fields: [
-                {name: 'key'},
-                {name: 'value'}
-            ],
-            proxy: {
-                type: 'ajax',
-                url: CONSTANTS.MONITORING.RM.CONFIGURATION,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'total'
-                }
-            },
-            autoLoad: true,
-            sorters: [
-                {
-                    property: 'file',
-                    direction: 'DESC'
-                },
-                'file'
-            ],
-            listeners: {
-                sort: me.updateSortTitle,
-                scope: me
-            }
-        });
-
-        me.callParent(arguments);
-
-        me.updateSortTitle();
-    },
-
-    updateSortTitle: function () {
-        var sortDetail = [];
-
-        this.store.getSorters().each(function (sorter) {
-            sortDetail.push(sorter.getProperty() + ' ' + sorter.getDirection());
-        });
-//        this.down('#order').update('Sorted By: ' + sortDetail.join(', '));
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onRMConfigurationRefreshClick'
+        }
+    ],
+    listeners: {
+        afterrender: 'onRMConfigurationAfterRender',
+        sort: 'updateSortTitle'
     }
 });

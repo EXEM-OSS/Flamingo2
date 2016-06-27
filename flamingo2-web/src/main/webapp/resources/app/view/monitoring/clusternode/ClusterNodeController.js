@@ -18,13 +18,36 @@ Ext.define('Flamingo2.view.monitoring.clusternode.ClusterNodeController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.clusterNodeController',
 
-    onClusterNodesAfterrender: function (grid, opts) {
-        var update = this.updateAll;
+    /**
+     * Engine Combobox Changed Event
+     */
+    onEngineChanged: function () {
+        var me = this;
+        me.updateAll();
+    },
+
+    /**
+     * 클러스터 노드의 정보를 가져온다.
+     */
+    onClusterNodesAfterrender: function () {
+        var me = this;
+        var update = me.updateAll;
         setTimeout(function () {
             update();
         }, 10);
     },
 
+    /**
+     * 클러스터 노드의 정보를 업데이트한다.
+     */
+    onClusterNodesRefreshClick: function () {
+        var me = this;
+        me.updateAll();
+    },
+
+    /**
+     * 클러스터 노드의 정보를 가져온다.
+     */
     updateAll: function () {
         var grid = query('clusterNodes');
         var params = {
@@ -37,17 +60,5 @@ Ext.define('Flamingo2.view.monitoring.clusternode.ClusterNodeController', {
                 grid.setTitle(message.msg('monitoring.clusternode.title') + ' (' + message.msg('monitoring.clusternode.total') + ' ' + this.getCount() + message.msg('monitoring.clusternode.count') + ')')
             }
         });
-    },
-
-    onClusterNodesRefreshClick: function (event, toolEl, panel) {
-        this.updateAll();
-    },
-
-    /**
-     * Engine Combobox Changed Event
-     */
-    onEngineChanged: function (engine) {
-        this.updateAll();
     }
-
 });

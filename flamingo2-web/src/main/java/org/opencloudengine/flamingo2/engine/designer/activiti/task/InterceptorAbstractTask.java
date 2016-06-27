@@ -25,13 +25,11 @@ import org.opencloudengine.flamingo2.engine.remote.EngineService;
 import org.opencloudengine.flamingo2.model.rest.State;
 import org.opencloudengine.flamingo2.model.rest.Workflow;
 import org.opencloudengine.flamingo2.model.rest.WorkflowHistory;
-import org.opencloudengine.flamingo2.util.ApplicationContextRegistry;
-import org.opencloudengine.flamingo2.util.DateUtils;
-import org.opencloudengine.flamingo2.util.ExceptionUtils;
-import org.opencloudengine.flamingo2.util.StringUtils;
+import org.opencloudengine.flamingo2.util.*;
 import org.opencloudengine.flamingo2.util.el.ELEvaluator;
 import org.opencloudengine.flamingo2.util.el.ELService;
 import org.opencloudengine.flamingo2.util.el.ELUtils;
+import org.opencloudengine.flamingo2.web.configuration.ConfigurationHelper;
 import org.opencloudengine.flamingo2.web.configuration.ConfigurationHolder;
 import org.opencloudengine.flamingo2.web.configuration.EngineConfig;
 import org.opencloudengine.flamingo2.web.remote.EngineLookupService;
@@ -51,17 +49,17 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
      * SLF4J Logging
      */
     private Logger logger = LoggerFactory.getLogger(InterceptorAbstractTask.class);
+    private Logger exceptionLogger = LoggerFactory.getLogger("flamingo.exception");
 
     private static ObjectMapper objectMapper = new ObjectMapper();
-    private Logger exceptionLogger = LoggerFactory.getLogger("flamingo.exception");
     private WorkflowHistoryRepository workflowHistoryRepository;
+    private WorkflowHistory workflowHistory;
     private TaskHistoryRepository taskHistoryRepository;
     private TaskHistory taskHistory;
-    private WorkflowHistory workflowHistory;
     private GlobalAttributes globalAttributes;
+    private ProcessInstance instance;
     private ELService elService;
     private ELEvaluator evaluator;
-    private ProcessInstance instance;
 
     /**
      * 스크립트 변수, 워크플로우 변수, 태스크 변수, 글로벌 변수를 모두 결합한 속성.
@@ -76,15 +74,15 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
         ApplicationContext context = ApplicationContextRegistry.getApplicationContext();
         this.workflowHistoryRepository = context.getBean(WorkflowHistoryRepository.class);
         this.taskHistoryRepository = context.getBean(TaskHistoryRepository.class);
-        this.globalAttributes = context.getBean(GlobalAttributes.class);
         this.elService = context.getBean(ELService.class);
         this.evaluator = getElService().createEvaluator();
+        this.globalAttributes = context.getBean(GlobalAttributes.class);
         this.instance = instance;
         this.variable = getMergedScriptVariables();
 
         this.working = params != null && params.get("working") != null && !StringUtils.isEmpty(resolve(params.get("working").toString())) ? resolve(params.get("working").toString()) : (instance.get("", "logdir").toString() + "/" + getTaskId());
-        this.clusterName = (String) instance.get("clusterName");
-        this.username = (String) instance.get("username");
+        this.clusterName = String.valueOf(instance.get("", "clusterName"));
+        this.username = String.valueOf(instance.get("", "username"));
 
         logger.info("Working Directory : {}", working);
         logger.info("Cluster : {}", clusterName);
@@ -149,7 +147,9 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
         globalAttributes.setTaskStatus(instance, this.getTaskId(), "RUNNING");
 
         // Websocket 이 있다면 타스크가 시작되었음을 알린다.
-        this.updateSocketTaskStatus();
+        if ("designer".equals(instance.get("", "executeFrom").toString())) {
+            this.updateSocketTaskStatus();
+        }
     }
 
     public abstract void runTask(ProcessInstance instance) throws Exception;
@@ -159,14 +159,14 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
     }
 
     private WorkflowHistory updateCurrentStep(ProcessInstance instance) throws Exception {
-        WorkflowHistory history = (WorkflowHistory) instance.get("workflowHistory");
+        WorkflowHistory history = (WorkflowHistory) instance.get("", "workflowHistory");
         history.setCurrentAction(this.getTaskName());
         workflowHistoryRepository.updateCurrentStep(history);
         return history;
     }
 
     private void insertTaskHistory(ProcessInstance instance, WorkflowHistory workflowHistory) throws Exception {
-        Workflow workflow = (Workflow) instance.get("workflow");
+        Workflow workflow = (Workflow) instance.get("", "workflow");
         taskHistory = new TaskHistory(workflow, instance, workflowHistory.getJobStringId(), this.getTaskId(), this.getTaskName());
         taskHistory.setTaskId(this.getTaskId());
         instance.set(this.getTaskId(), taskHistory);
@@ -175,7 +175,7 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
     }
 
     private void updateTaskHistoryAsFinished(ProcessInstance instance) throws Exception {
-        TaskHistory taskHistory = taskHistoryRepository.selectByTaskIdAndIdentifier(new TaskHistory((String) instance.get("identifier"), this.getTaskId()));
+        TaskHistory taskHistory = taskHistoryRepository.selectByTaskIdAndIdentifier(new TaskHistory((String) instance.get("", "identifier"), this.getTaskId()));
         taskHistory.setEndDate(new Timestamp(System.currentTimeMillis()));
         taskHistory.setStatus(State.SUCCEEDED.toString());
         taskHistory.setDuration(DateUtils.getDiff(taskHistory.getEndDate(), taskHistory.getStartDate()));
@@ -185,11 +185,13 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
         globalAttributes.setTaskStatus(instance, this.getTaskId(), State.SUCCEEDED.toString());
 
         // Websocket 이 있다면 타스크가 종료되었음을 알린다.
-        this.updateSocketTaskStatus();
+        if ("designer".equals(instance.get("", "executeFrom").toString())) {
+            this.updateSocketTaskStatus();
+        }
     }
 
     public void updateTaskHistoryAsFailed(ProcessInstance instance) throws Exception {
-        TaskHistory taskHistory = taskHistoryRepository.selectByTaskIdAndIdentifier(new TaskHistory((String) instance.get("identifier"), this.getTaskId()));
+        TaskHistory taskHistory = taskHistoryRepository.selectByTaskIdAndIdentifier(new TaskHistory((String) instance.get("", "identifier"), this.getTaskId()));
         taskHistory.setEndDate(new Timestamp(System.currentTimeMillis()));
         taskHistory.setStatus("FAILED");
         taskHistory.setDuration(DateUtils.getDiff(taskHistory.getEndDate(), taskHistory.getStartDate()));
@@ -199,7 +201,9 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
         globalAttributes.setTaskStatus(instance, this.getTaskId(), State.FAILED.toString());
 
         // Websocket 이 있다면 타스크가 실패하었음을 알린다.
-        this.updateSocketTaskStatus();
+        if ("designer".equals(instance.get("", "executeFrom").toString())) {
+            this.updateSocketTaskStatus();
+        }
     }
 
     public void updateSocketTaskStatus() throws IOException {
@@ -283,8 +287,22 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
         }
 
         try {
-            String resolved = ELUtils.resolve(this.variable, message);
-            return getEvaluator().evaluate(resolved, String.class);
+            Properties properties = new Properties();
+            properties.putAll(getExpressionLanguage());
+            properties.putAll(getMergedScriptVariables());
+            Map iv = (Map) getInstance().get("", "iv");
+            for (Object key : iv.keySet()) {
+                Object value = iv.get(key);
+                if (value != null) {
+                    properties.put(key, value);
+                }
+            }
+
+            if (properties.containsKey("script")) {
+                properties.remove("script");
+            }
+
+            return getEvaluator().evaluate(ELUtils.resolve(properties, message, evaluator), String.class);
         } catch (Exception ex) {
             return message;
         }
@@ -292,7 +310,7 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
 
     /**
      * UI의 스크립트 변수, UI의 워크플로우 변수, 프로세스 엔진의 태스크 변수, 프로세스 엔진의 글로벌 변수를 모두 결합하여 변수 목록을 구성한다.
-     * 이 변수 목록은 expression을 해석할 떄 사용한다.
+     * 이 변수 목록은 expression을 해석할 때 사용한다.
      *
      * @return 변수 목록
      */
@@ -303,16 +321,33 @@ public abstract class InterceptorAbstractTask extends AbstractTask {
         if (mergedParams != null) {
             Set set = mergedParams.keySet();
             for (Object key : set) {
-                Object value = mergedParams.get(key);
-                merged.put(key, value);
+                merged.put(key, mergedParams.get(key));
             }
             merged.putAll(getScriptVariables());
         }
 
-        Map vars = (Map) getInstance().get("iv");
-        merged.putAll(vars);
-
         return merged;
+    }
+
+    /**
+     * 추가적으로 사용자에게 제공하는 expression
+     * 시스템 변수, 사용자 정보 변수, 시간 변수
+     *
+     * @return 변수 목록
+     */
+    public Map<Object, Object> getExpressionLanguage() throws Exception {
+        Map<Object, Object> vars = new HashMap<>();
+        vars.put("USERNAME", String.valueOf(instance.get("", "username")));
+        vars.put("WORKFLOW_NAME", ((Workflow) instance.get("", "workflow")).getWorkflowName());
+        vars.put("RANDOM", JVMIDUtils.generateUUID());
+        vars.put("YYYYMMDD", DateUtils.getCurrentYyyymmdd());
+
+        vars.put("TASKLOG", String.valueOf(instance.get("", "logdir")));
+        vars.put("NAMENODE", "hdfs://" + ConfigurationHelper.getHelper().get("default.nn.address") + ":" + ConfigurationHelper.getHelper().get("default.nn.port"));
+        vars.put("TASKID", this.getElementView().getId());
+        vars.put("WORKFLOW_ID", ((Workflow) instance.get("", "workflow")).getWorkflowId());
+        vars.put("INSTANCE_ID", instance.getInstanceId());
+        return vars;
     }
 
     /**

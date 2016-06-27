@@ -19,7 +19,7 @@ Ext.define('Flamingo2.view.system.license.LicenseModel', {
     alias: 'viewmodel.license',
 
     data: {
-        title: '라이센스'
+        title: message.msg('license.title')
     },
 
     stores: {

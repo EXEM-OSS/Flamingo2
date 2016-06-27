@@ -25,37 +25,37 @@ Ext.define('Flamingo2.view.fs.audit.Audit', {
         'Flamingo2.view.fs.audit.AuditGrid'
     ],
 
-    controller: 'auditController',
+    controller: 'auditViewController',
 
     viewModel: {
         type: 'auditModel'
     },
 
+    flex: 1,
+    scrollable: true,
     layout: {
         type: 'vbox',
         align: 'stretch'
     },
-    bodyPadding: 5,
-    flex: 1,
+
     bodyStyle: {
         background: '#ffffff'
     },
+
     items: [
         {
             xtype: 'auditChart',
             title: message.msg('hdfs.audit.title.stat'),
             iconCls: 'fa fa-server fa-fw',
-            region: 'center',
             height: 250
         },
         {
             xtype: 'auditGrid',
             title: message.msg('hdfs.audit.title.list'),
             iconCls: 'fa fa-server fa-fw',
-            region: 'south',
             margin: '5 0',
-            minHeight: 420,
             flex: 1,
+            minHeight: 410,
             border: true
         }
     ]

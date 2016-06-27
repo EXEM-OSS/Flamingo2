@@ -1,0 +1,32 @@
+[[etc]]
+
+== 기타
+
+=== Flamingo 타이틀 변경하기
+
+Flamingo의 타이틀을 변경하기 위해서는 설정 파일인 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일의 다음 부분을 수정하도록 합니다.
+
+====
+[source,properties]
+----
+application.top=Flamingo 2 Big Data Platform By Cloudine Inc # <1>
+application.title=Flamingo 2 Big Data Platform # <1>
+----
+<1> Commercial License만 변경 가능
+====
+
+종종 환경설정 파일을 수정하지 않고 변경하는 방법은 다음과 같이 System Property를 이용하는 것입니다. 이 방법을 이용하면 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/config.properties` 파일의 수정없이 적용이 가능합니다.
+
+====
+[source,bash]
+----
+#!/bin/sh
+
+JAVA_HOME=/usr/local/java/jdk7
+_RUNJAVA=$JAVA_HOME/bin/java
+CATALINA_OPTS="-Dflamingoweb -Dapplication.top=\"Pelican Big Data Platform\" -Dapplication.title=\"Pelican Big Data Platform by pikdata\" -Xms4G -Xmx4G" # <1>
+----
+<1> Commercial License만 변경 가능
+====
+
+"Flamingo의 타이틀 변경하기" 부분은 Commercial License에 해당합니다. 일단 Flamingo의 커스터마이징 항목을 적용하는 것은 커스터마이징을 간주하며 이 경우 Commercial License가 적용됩니다. 또한 Commercial License에서 OpenSource License License로 전환은 불가능합니다.

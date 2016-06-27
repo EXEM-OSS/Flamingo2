@@ -16,14 +16,21 @@
  */
 package org.opencloudengine.flamingo2.web.monitoring;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.opencloudengine.flamingo2.core.exception.ServiceException;
 import org.opencloudengine.flamingo2.core.rest.Response;
 import org.opencloudengine.flamingo2.engine.hadoop.HistoryServerRemoteService;
+import org.opencloudengine.flamingo2.engine.hadoop.MapReduceRemoteService;
+import org.opencloudengine.flamingo2.engine.hadoop.ResourceManagerRemoteService;
 import org.opencloudengine.flamingo2.engine.remote.EngineService;
 import org.opencloudengine.flamingo2.util.ApplicationContextRegistry;
 import org.opencloudengine.flamingo2.util.DateUtils;
 import org.opencloudengine.flamingo2.web.configuration.DefaultController;
 import org.opencloudengine.flamingo2.web.configuration.EngineConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,6 +44,16 @@ import static org.opencloudengine.flamingo2.logging.StringUtils.isEmpty;
 @RequestMapping(value = "/monitoring/application/history")
 public class HistoryServerController extends DefaultController {
 
+    /**
+     * SLF4J Logging
+     */
+    private Logger logger = LoggerFactory.getLogger(HistoryServerController.class);
+
+    /**
+     * Jackson JSON Object Mapper
+     */
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Map<String, Object> info(@RequestParam String clusterName) {
@@ -49,12 +66,33 @@ public class HistoryServerController extends DefaultController {
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, Object> jobs(@RequestParam String clusterName) {
-        EngineConfig engineConfig = this.getEngineConfig(clusterName);
-        EngineService engineService = this.getEngineService(clusterName);
-        HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
+    public Response jobs(@RequestParam String clusterName) {
+        Response response = new Response();
+        try {
+            EngineConfig engineConfig = this.getEngineConfig(clusterName);
+            EngineService engineService = this.getEngineService(clusterName);
+            HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
+            ResourceManagerRemoteService resourceManagerService = engineService.getResourceManagerRemoteService();
 
-        return service.getJobs(engineConfig.getHistoryServerUrl());
+            Map jobsMap = service.getJobs(engineConfig.getHistoryServerUrl());
+            Map jobMap = (Map) jobsMap.get("jobs");
+            List<Map> jobList = (List) jobMap.get("job");
+
+            List<Map> runningList = resourceManagerService.getRunningMRJobs(engineConfig);
+
+            logger.info(String.valueOf(runningList.size()));
+
+            jobList.addAll(0, runningList);
+
+            response.getList().addAll(jobList);
+            response.setTotal(response.getList().size());
+            response.setSuccess(true);
+
+            return response;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new ServiceException(ex);
+        }
     }
 
     @RequestMapping(value = "/jobs/timeseries", method = RequestMethod.GET)
@@ -64,7 +102,7 @@ public class HistoryServerController extends DefaultController {
         response.setSuccess(true);
         ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
         JdbcTemplate jdbcTemplate = applicationContext.getBean(JdbcTemplate.class);
-        String query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(startTime),'%Y-%m-%d %H') as time, startTime from FL_CL_MR_DUMP, (SELECT @row := 0) r WHERE system ='{}' AND startTime > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(startTime,'%Y-%m-%d %H') ORDER BY startTime asc";
+        String query = "SELECT (@row:=@row+1) as num, COUNT(*) as sum, DATE_FORMAT(MAX(START_TIME),'%Y-%m-%d %H') as time, START_TIME FROM FL_CL_MR_DUMP, (SELECT @row := 0) r WHERE SYSTEM ='{}' AND START_TIME > DATE_ADD(NOW(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_TIME,'%Y-%m-%d %H') ORDER BY START_TIME asc";
         List<Map<String, Object>> list = jdbcTemplate.queryForList(MessageFormatter.format(query, clusterName).getMessage());
         response.getList().addAll(list);
         return response;
@@ -72,19 +110,38 @@ public class HistoryServerController extends DefaultController {
 
     @RequestMapping(value = "/jobs/job", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Response job(@RequestParam String jobId, @RequestParam String clusterName) {
-        EngineConfig engineConfig = this.getEngineConfig(clusterName);
-        EngineService engineService = this.getEngineService(clusterName);
-        HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
-
-        Map<String, Object> results = service.getJob(engineConfig.getHistoryServerUrl(), jobId);
-
+    public Response job(@RequestParam String jobId, @RequestParam String state, @RequestParam String clusterName) {
         Response response = new Response();
-        response.setSuccess(true);
-        Map job = (Map) results.get("job");
-        job.put("duration", getDuration(job));
-        response.getMap().putAll(job);
-        return response;
+
+        try {
+            EngineConfig engineConfig = this.getEngineConfig(clusterName);
+            EngineService engineService = this.getEngineService(clusterName);
+            HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
+            ResourceManagerRemoteService resourceManagerService = engineService.getResourceManagerRemoteService();
+
+            Map<String, Object> results = new HashMap<>();
+            if (state.equals("RUNNING") && resourceManagerService.getJobStatus(jobId, engineConfig).equals("RUNNING")) {
+                results = resourceManagerService.getRunningMRJobReport(jobId, engineConfig);
+                results.put("duration", getDuration(results));
+                results.put("avgReduceTime", 0);
+                results.put("avgMergeTime", 0);
+                results.put("avgShuffleTime",0 );
+                results.put("avgMapTime", 0);
+                response.getMap().putAll(results);
+            }
+            else {
+                results = service.getJob(engineConfig.getHistoryServerUrl(), jobId);
+                Map job = (Map) results.get("job");
+                job.put("duration", getDuration(job));
+                response.getMap().putAll(job);
+            }
+
+            response.setSuccess(true);
+            return response;
+        } catch (Exception ex) {
+            throw new ServiceException(ex);
+        }
+
     }
 
     private long getDuration(Map job) {
@@ -119,63 +176,116 @@ public class HistoryServerController extends DefaultController {
      */
     @RequestMapping(value = "/jobs/job/counters", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Map> jobCounters(@RequestParam(defaultValue = "") String jobId, @RequestParam(defaultValue = "") String clusterName) {
-        if (isEmpty(jobId) || isEmpty(clusterName)) { // FL2-20-5
-            return new ArrayList();
-        }
-        EngineConfig engineConfig = this.getEngineConfig(clusterName);
-        EngineService engineService = this.getEngineService(clusterName);
-        HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
+    public List<Map> jobCounters(@RequestParam(defaultValue = "") String jobId,
+                                 @RequestParam(defaultValue = "") String state,
+                                 @RequestParam(defaultValue = "") String clusterName) {
 
-        Map counters = service.getCounters(engineConfig.getHistoryServerUrl(), jobId);
-        Map jobCounters = (Map) counters.get("jobCounters");
-        List<Map> counterGroupList = (List<Map>) jobCounters.get("counterGroup");
+        try {
+            if (isEmpty(jobId) || isEmpty(clusterName)) { // FL2-20-5
+                return new ArrayList();
+            }
+            EngineConfig engineConfig = this.getEngineConfig(clusterName);
+            EngineService engineService = this.getEngineService(clusterName);
+            HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
+            ResourceManagerRemoteService resourceManagerService = engineService.getResourceManagerRemoteService();
+            MapReduceRemoteService mapReduceRemoteService = engineService.getMapReduceRemoteService();
 
-        for (Map counterGroup : counterGroupList) {
-            List<Map> counterList = (List<Map>) counterGroup.get("counter");
-            int cgi = counterGroupList.indexOf(counterGroup);
+            Map counters = new HashMap();
 
-            for (Map counter : counterList) {
-                int ci = counterList.indexOf(counter);
-                counter.put("leaf", true);
-                counterList.set(ci, counter);
+            if (state.equals("RUNNING") && resourceManagerService.getJobStatus(jobId, engineConfig).equals("RUNNING")) {
+                counters = mapReduceRemoteService.getCounters(engineConfig.getWapAddress() + ":" + engineConfig.getWapPort(), jobId);
+            }
+            else {
+                counters = service.getCounters(engineConfig.getHistoryServerUrl(), jobId);
             }
 
-            counterGroup.put("name", counterGroup.get("counterGroupName"));
-            counterGroup.put("leaf", false);
-            counterGroup.put("children", counterList);
-            counterGroup.remove("counter");
-            counterGroupList.set(cgi, counterGroup);
-        }
-        jobCounters.put("counterGroup", counterGroupList);
-        counters.put("jobCounters", jobCounters);
+            Map jobCounters = (Map) counters.get("jobCounters");
+            List<Map> counterGroupList = (List<Map>) jobCounters.get("counterGroup");
 
-        return counterGroupList;
+            for (Map counterGroup : counterGroupList) {
+                List<Map> counterList = (List<Map>) counterGroup.get("counter");
+                int cgi = counterGroupList.indexOf(counterGroup);
+
+                for (Map counter : counterList) {
+                    int ci = counterList.indexOf(counter);
+                    counter.put("leaf", true);
+                    counterList.set(ci, counter);
+                }
+
+                counterGroup.put("name", counterGroup.get("counterGroupName"));
+                counterGroup.put("leaf", false);
+                counterGroup.put("children", counterList);
+                counterGroup.remove("counter");
+                counterGroupList.set(cgi, counterGroup);
+            }
+
+            jobCounters.put("counterGroup", counterGroupList);
+            counters.put("jobCounters", jobCounters);
+
+            return counterGroupList;
+        } catch (Exception ex) {
+            throw new ServiceException(ex);
+        }
     }
 
     @RequestMapping(value = "/jobs/job/configuration", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, Object> jobConfiguration(@RequestParam String jobId, @RequestParam String clusterName) {
-        EngineConfig engineConfig = this.getEngineConfig(clusterName);
-        EngineService engineService = this.getEngineService(clusterName);
-        HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
+    public Map<String, Object> jobConfiguration(@RequestParam String jobId,
+                                                @RequestParam String state,
+                                                @RequestParam String clusterName) {
 
-        Map<String, Object> jobConf = service.getJobConf(engineConfig.getHistoryServerUrl(), jobId);
-        SortedMap configuration = new TreeMap();
-        configuration.putAll(jobConf);
+        try {
+            EngineConfig engineConfig = this.getEngineConfig(clusterName);
+            EngineService engineService = this.getEngineService(clusterName);
+            HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
+            ResourceManagerRemoteService resourceManagerService = engineService.getResourceManagerRemoteService();
+            MapReduceRemoteService mapReduceRemoteService = engineService.getMapReduceRemoteService();
 
-        return configuration;
+            Map<String, Object> jobConf = new HashMap<>();
+            if (state.equals("RUNNING") && resourceManagerService.getJobStatus(jobId, engineConfig).equals("RUNNING")) {
+                jobConf = mapReduceRemoteService.getJobConf(engineConfig.getWapAddress() + ":" + engineConfig.getWapPort(), jobId);
+            }
+            else {
+                jobConf = service.getJobConf(engineConfig.getHistoryServerUrl(), jobId);
+            }
+
+            SortedMap configuration = new TreeMap();
+            configuration.putAll(jobConf);
+
+            return configuration;
+        } catch (Exception ex) {
+            throw new ServiceException(ex);
+        }
+
     }
 
     @RequestMapping(value = "/jobs/job/tasks", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Map<String, Object> tasks(@RequestParam String jobId, @RequestParam String clusterName) {
-        EngineConfig engineConfig = this.getEngineConfig(clusterName);
-        EngineService engineService = this.getEngineService(clusterName);
-        HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
+    public Response tasks(@RequestParam String jobId, @RequestParam String state, @RequestParam String clusterName) {
+        Response response = new Response();
+        try {
+            EngineConfig engineConfig = this.getEngineConfig(clusterName);
+            EngineService engineService = this.getEngineService(clusterName);
+            HistoryServerRemoteService service = engineService.getHistoryServerRemoteService();
+            ResourceManagerRemoteService resourceManagerService = engineService.getResourceManagerRemoteService();
 
-        return service.getTasks(engineConfig.getHistoryServerUrl(), jobId);
+            if (state.equals("RUNNING") && resourceManagerService.getJobStatus(jobId, engineConfig).equals("RUNNING") ) {
+                response.getList().addAll(resourceManagerService.getRunningMRTasks(jobId, engineConfig));
+            }
+            else {
+                Map tasksMap = service.getTasks(engineConfig.getHistoryServerUrl(), jobId);
+                Map taskMap = (Map) tasksMap.get("tasks");
+
+                response.getList().addAll((List) taskMap.get("task"));
+            }
+
+            response.setTotal(response.getList().size());
+            response.setSuccess(true);
+            return response;
+        } catch (Exception ex) {
+            throw new ServiceException(ex);
+        }
     }
 
     @RequestMapping(value = "/jobs/job/tasks/task/counters", method = RequestMethod.GET)

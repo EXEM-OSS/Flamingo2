@@ -80,4 +80,12 @@ public interface ResourceManagerAgentService {
     String getApplicationLog(String applicationId, String appOwner) throws IOException;
 
     String getContainersLogs(String appId, String containerId, String nodeId, String jobOwner) throws IOException;
+
+    List<Map> getRunningMRJobs() throws Exception;
+
+    String getJobStatus(String jobId);
+
+    Map getRunningMRJobReport(String jobId) throws Exception;
+
+    List<Map> getRunningMRTasks(String jobId) throws Exception;
 }

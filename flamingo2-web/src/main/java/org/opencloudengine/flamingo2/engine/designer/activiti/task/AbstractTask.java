@@ -96,9 +96,10 @@ public abstract class AbstractTask extends DefaultActivity {
 
         this.instance = instance;
 
-        this.user = (User) instance.get("user");
+        this.user = (User) instance.get("", "user");
 
-        Map variable = (Map) instance.get("variable");
+        Map variable = (Map) instance.get("", "variable");
+        Map jobVariables = (Map) instance.get("", "JOB_VARIABLES");
 
         String taskId = this.getTaskId();
         Map local = (Map) variable.get("local");
@@ -106,15 +107,17 @@ public abstract class AbstractTask extends DefaultActivity {
             this.params = new TypedMap((Map) local.get(taskId));
         }
         Map global = (Map) variable.get("global");
-        List parallelVectors = (List) variable.get("parallelVectors");
 
-        this.parallelVectors = parallelVectors;
+        this.parallelVectors = (List) variable.get("parallelVectors");
 
         this.workflowVariables = new TypedMap(global);
 
         this.mergedParams = new TypedMap();
         this.mergedParams.putAll(this.workflowVariables);
         this.mergedParams.putAll(this.params);
+        if (jobVariables != null) {
+            this.mergedParams.putAll(jobVariables);
+        }
 
 
         //게이트웨이 벡터일람으로부터 자신이 Async 인지 Sync 인지 판별한다.
@@ -127,8 +130,7 @@ public abstract class AbstractTask extends DefaultActivity {
         Activity sourceActivity = transition.getSourceActivity();
         String sourceId = sourceActivity.getTracingTag();
 
-        for (int i = 0; i < parallelVectors.size(); i++) {
-            Map parallelVector = (Map) parallelVectors.get(i);
+        for (Map parallelVector : parallelVectors) {
             String fromNode = parallelVector.get("fromNode").toString();
             String toNode = parallelVector.get("toNode").toString();
             boolean parallel = (boolean) parallelVector.get("parallel");
@@ -238,14 +240,14 @@ public abstract class AbstractTask extends DefaultActivity {
 
     private Map getSubWorkflowVariables(Workflow wf) {
         try {
-            return JsonUtils.unmarshal((StringUtils.unescape((String) wf.getVariable())));
+            return JsonUtils.unmarshal((StringUtils.unescape(wf.getVariable())));
         } catch (Exception ex) {
             throw new ServiceException("Unable to parse the workflow variables.", ex);
         }
     }
 
     private Map getGridSubflowVariables() {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         List<String> keys = new ArrayList<>();
         List<String> values = new ArrayList<>();
         if (getParams().getString("keys") != null) {

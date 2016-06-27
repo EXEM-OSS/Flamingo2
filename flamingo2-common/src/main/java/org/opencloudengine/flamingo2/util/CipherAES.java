@@ -1,5 +1,20 @@
+/**
+ * Copyright (C) 2011 Flamingo Project (http://www.cloudine.io).
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.opencloudengine.flamingo2.util;
-
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -18,7 +33,15 @@ public class CipherAES {
         return encrypt(plainText, this.key);
     }
 
-    public String encryptAsHex(String plainText, String key) throws Exception {
+    public String encrypt(String plainText, String key) throws Exception {
+        byte[] raw = key.getBytes();
+        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+        byte[] encrypted = cipher.doFinal(plainText.getBytes());
+        return new String(encrypted);
+    }
+
+    public String encryptAsHex(String plainText) throws Exception {
         byte[] raw = key.getBytes();
         SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
@@ -26,12 +49,12 @@ public class CipherAES {
         return asHex(encrypted);
     }
 
-    public String encrypt(String plainText, String key) throws Exception {
+    public String encryptAsHex(String plainText, String key) throws Exception {
         byte[] raw = key.getBytes();
         SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
         byte[] encrypted = cipher.doFinal(plainText.getBytes());
-        return new String(encrypted);
+        return asHex(encrypted);
     }
 
     public String decrypt(String cipherText) throws Exception {
@@ -49,9 +72,9 @@ public class CipherAES {
 
     private static String asHex(byte buf[]) {
         StringBuilder builder = new StringBuilder(buf.length * 2);
-        for (int i = 0; i < buf.length; i++) {
-            if (((int) buf[i] & 0xff) < 0x10) builder.append("0");
-            builder.append(Long.toString((int) buf[i] & 0xff, 16));
+        for (byte aBuf : buf) {
+            if (((int) aBuf & 0xff) < 0x10) builder.append("0");
+            builder.append(Long.toString((int) aBuf & 0xff, 16));
         }
         return builder.toString();
     }

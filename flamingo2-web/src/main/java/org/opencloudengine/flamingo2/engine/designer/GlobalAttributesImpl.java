@@ -16,30 +16,14 @@
  */
 package org.opencloudengine.flamingo2.engine.designer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.uengine.kernel.ProcessInstance;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 @Service
 public class GlobalAttributesImpl implements GlobalAttributes {
-    /**
-     * SLF4J Logging
-     */
-    private Logger logger = LoggerFactory.getLogger(GlobalAttributes.class);
-
-    @Autowired
-    @Qualifier("config")
-    private Properties config;
-
-    private Map glovalSet = new HashMap();
-
 
     @Override
     public void registJobResultMap(ProcessInstance instance) throws Exception {
@@ -104,7 +88,6 @@ public class GlobalAttributesImpl implements GlobalAttributes {
 
         Map jobMap = this.getJobMap(instance);
 
-        //status 저장소가 없다면 생성
         if (!jobMap.containsKey("status"))
             jobMap.put("status", new HashMap<>());
 

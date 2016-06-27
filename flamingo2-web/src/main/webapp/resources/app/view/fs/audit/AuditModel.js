@@ -77,7 +77,7 @@ Ext.define('Flamingo2.view.fs.audit.AuditModel', {
 
         auditGridStore: {
             autoLoad: false,
-            pageSize: 10,
+            pageSize: 20,
             model: 'Flamingo2.model.fs.audit.AuditList',
             proxy: {
                 type: 'ajax',
@@ -93,8 +93,7 @@ Ext.define('Flamingo2.view.fs.audit.AuditModel', {
                     startDate: '',
                     endDate: '',
                     auditType: '',
-                    path: '',
-                    nextPage: ''
+                    path: ''
                 }
             }
         },
@@ -123,7 +122,8 @@ Ext.define('Flamingo2.view.fs.audit.AuditModel', {
                 {name: message.msg('hdfs.audit.model.permission'), value: 'PERMISSION'},
                 {name: message.msg('hdfs.audit.model.hiveDB'), value: 'HIVE_DB'},
                 {name: message.msg('hdfs.audit.model.hiveTable'), value: 'HIVE_TABLE'},
-                {name: message.msg('hdfs.audit.model.visualization'), value: 'VISUALIZATION'}
+                {name: message.msg('hdfs.audit.model.copyToLocal'), value: 'COPY_TO_LOCAL'}
+                //{name: message.msg('hdfs.audit.model.visualization'), value: 'VISUALIZATION'} // Not support current version
             ]
         }
     }

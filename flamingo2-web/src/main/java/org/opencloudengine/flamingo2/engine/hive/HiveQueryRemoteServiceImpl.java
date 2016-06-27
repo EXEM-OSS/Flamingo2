@@ -73,7 +73,9 @@ public class HiveQueryRemoteServiceImpl implements HiveQueryRemoteService, Initi
     }
 
     @Override
-    public void execute(Map params) {
+    public void execute(Map params) throws Exception {
+        String query = java.net.URLDecoder.decode(params.get("query").toString(), "UTF-8");
+
         try {
             String url = MessageFormatter.arrayFormat("{}/{};user={}", new String[]{
                     params.get("hiveserver2Url").toString(),
@@ -89,10 +91,11 @@ public class HiveQueryRemoteServiceImpl implements HiveQueryRemoteService, Initi
             client.openSession();
 
             client.execute("use " + params.get("database").toString(), false);
-            client.execute(java.net.URLDecoder.decode(params.get("query").toString(), "UTF-8"), true);
+
+            client.execute(query, true);
         } catch (Exception ex) {
-            String message = MessageFormatter.format("Unable to run the Hive Query. [{}]\n{}", params.get("uuid"), params.get("query")).getMessage();
-            throw new ServiceException(message, ex);
+            String message = org.slf4j.helpers.MessageFormatter.arrayFormat("Unable to run the Hive Query. [{}]\n{}", new String[]{params.get("uuid").toString(), ex.getMessage()}).getMessage();
+            throw new ServiceException(message);
         }
     }
 
@@ -112,7 +115,7 @@ public class HiveQueryRemoteServiceImpl implements HiveQueryRemoteService, Initi
     }
 
     @Override
-    public Map[] getResults(String uuid) {
+    public LinkedHashMap[] getResults(String uuid) {
         try {
             return clientMap.get(uuid).getResults(100);
         } catch (Exception ex) {
@@ -247,6 +250,7 @@ public class HiveQueryRemoteServiceImpl implements HiveQueryRemoteService, Initi
         }
     }
 
+    @Override
     public Map<String, HiveThrift2Client> getClientMap() {
         return clientMap;
     }

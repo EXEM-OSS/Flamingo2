@@ -1,0 +1,9 @@
+{
+  "list": [
+    {"name": "TRA_ID", "type": "string", "filtering": false, "masking": false},
+    {"name": "USR_ID1", "type": "string", "filtering": false, "masking": false},
+    {"name": "USR_ID2", "type": "string", "filtering": false, "masking": false},
+    {"name": "CCH_ID1", "type": "string", "filtering": false, "masking": false},
+    {"name": "CCH_ID2", "type": "string", "filtering": false, "masking": false}
+  ]
+}

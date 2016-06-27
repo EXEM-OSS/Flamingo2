@@ -36,6 +36,7 @@ Ext.define('Flamingo2.view.fs.hdfs.simple.SimpleHdfsFileBrowser', {
     width: 800,
     height: 400,
     modal: true,
+    closeAction: 'destroy',
 
     items: [
         {
@@ -144,6 +145,16 @@ Ext.define('Flamingo2.view.fs.hdfs.simple.SimpleHdfsFileBrowser', {
                     renderer: function (value) {
                         return fileSize(value);
                     }
+                }
+            ],
+            dockedItems: [
+                {
+                    xtype: 'pagingtoolbar',
+                    bind: {
+                        store: '{fileStore}'
+                    },
+                    dock: 'bottom',
+                    displayInfo: true
                 }
             ]
         }

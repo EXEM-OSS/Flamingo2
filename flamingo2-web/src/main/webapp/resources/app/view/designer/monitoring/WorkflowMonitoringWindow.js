@@ -19,9 +19,9 @@ Ext.define('Flamingo2.view.designer.monitoring.WorkflowMonitoringWindow', {
     extend: 'Ext.window.Window',
 
     requires: [
+        'Flamingo2.view.designer.monitoring.WorkflowMonitoring',
         'Flamingo2.view.designer.monitoring.WorkflowMonitoringController',
-        'Flamingo2.view.designer.monitoring.WorkflowMonitoringModel',
-        'Flamingo2.view.designer.monitoring.WorkflowMonitoring'
+        'Flamingo2.view.designer.monitoring.WorkflowMonitoringModel'
     ],
 
     controller: 'workflowMonitoringController',

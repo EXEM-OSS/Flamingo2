@@ -23,13 +23,11 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ApplicationStatus', {
     items: [
         {
             xtype: 'cartesian',
+            itemId: 'applicationStatusChart',
             height: 300,
             insetPadding: 40,
             interactions: 'itemhighlight',
             //theme: 'yellow-gradients',
-            listeners: {
-                afterrender: 'onStoreAfterrender'
-            },
             bind: {
                 store: '{applicationStatusStore}'
             },
@@ -86,11 +84,22 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ApplicationStatus', {
                 label: {
                     field: 'value',
                     display: 'insideEnd',
+                    orientation: 'horizontal',
                     renderer: function (value) {
                         return value;
                     }
                 }
+            },
+            listeners: {
+                afterrender: 'onStoreAfterrender'
             }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onRMApplicationStatusRefreshClick'
         }
     ]
 });

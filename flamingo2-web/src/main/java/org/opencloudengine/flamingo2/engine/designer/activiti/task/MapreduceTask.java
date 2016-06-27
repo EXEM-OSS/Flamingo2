@@ -76,7 +76,7 @@ public class MapreduceTask extends InterceptorAbstractTask {
         socketParams.put("type", "workflow");
         socketParams.put("user", getUser());
 
-        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(working), working, logger, fileWriter);
+        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(), working, logger, fileWriter);
         managedProcess.setSocketParams(socketParams);
         managedProcess.run();
     }
@@ -87,10 +87,10 @@ public class MapreduceTask extends InterceptorAbstractTask {
     private String buildCommand(String working) {
         List<String> command = new LinkedList<>();
 
-        Map<String, String> defaultEnvs = getDefaultEnvs(working);
+        Map<String, String> defaultEnvs = getDefaultEnvs();
         Set<String> keys = defaultEnvs.keySet();
         for (String key : keys) {
-            if (!StringUtils.isEmpty(defaultEnvs.get(key))) {
+            if (!isEmpty(defaultEnvs.get(key))) {
                 command.add(MessageFormatter.arrayFormat("export {}={}\n", new Object[]{key, defaultEnvs.get(key)}).getMessage());
             }
         }
@@ -120,7 +120,7 @@ public class MapreduceTask extends InterceptorAbstractTask {
                 for (Object key : variables.keySet()) {
                     if ("params".equals(key)) {
                         for (Object value : (ArrayList) variables.get(key)) {
-                            command.add(value.toString().trim());
+                            command.add(resolve(unescape(value.toString().trim())));
                         }
                     }
                 }
@@ -134,7 +134,7 @@ public class MapreduceTask extends InterceptorAbstractTask {
      * Hadoop 커맨드 라인의 <tt>-libjars</tt> 옵션을 구성한다.
      */
     private void injectLibJars(List<String> command) {
-        if (variable.get("path") != null && !StringUtils.isEmpty(variable.get("path").toString())) {
+        if (variable.get("path") != null && !isEmpty(variable.get("path").toString())) {
             List<String> dependencies = new ArrayList<>();
 
             command.add("-libjars");
@@ -158,12 +158,12 @@ public class MapreduceTask extends InterceptorAbstractTask {
     private void injectKeyValues(List<String> command) {
         List<String> keyvalues = new ArrayList<>();
 
-        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !StringUtils.isEmpty(variable.get("hadoopKeys").toString()) && !StringUtils.isEmpty(variable.get("hadoopValues").toString())) {
-            String[] hadoopKeys = (variable.get("hadoopKeys").toString()).split(",");
-            String[] hadoopValues = (variable.get("hadoopValues").toString()).split(",");
+        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !isEmpty(String.valueOf(variable.get("hadoopKeys"))) && !isEmpty(String.valueOf(variable.get("hadoopValues")))) {
+            String[] hadoopKeys = (String.valueOf(variable.get("hadoopKeys"))).split(",");
+            String[] hadoopValues = (String.valueOf(variable.get("hadoopValues"))).split(",");
 
             for (int i = 0; i < hadoopKeys.length; i++) {
-                keyvalues.add("-D" + StringUtils.unescape(encloseSpace(hadoopKeys[i])) + "=" + StringUtils.unescape(encloseSpace(hadoopValues[i])));
+                keyvalues.add("-D" + unescape(encloseSpace(hadoopKeys[i])) + "=" + unescape(encloseSpace(hadoopValues[i])));
             }
         }
 
@@ -188,13 +188,12 @@ public class MapreduceTask extends InterceptorAbstractTask {
      * Hadoop 커맨드 라인의 <tt>-input</tt> 옵션을 구성한다.
      */
     private void injectInputPath(List<String> command) {
-        if (variable.get("input") != null && !StringUtils.isEmpty(variable.get("input").toString())) {
+        if (variable.get("input") != null && !isEmpty(variable.get("input").toString())) {
             command.add("-input");
             String[] inputs = (variable.get("input").toString()).split(",");
-            ArrayList inputPaths = new ArrayList();
+            ArrayList<String> inputPaths = new ArrayList<>();
             for (String input : inputs) {
-                String resolve = resolve(input);
-                inputPaths.add(resolve);
+                inputPaths.add(unescape(resolve(input)));
             }
             command.add(Joiner.on(",").join(inputPaths));
         }
@@ -204,13 +203,12 @@ public class MapreduceTask extends InterceptorAbstractTask {
      * Hadoop 커맨드 라인의 <tt>-output</tt> 옵션을 구성한다.
      */
     private void injectOutputPath(List<String> command) {
-        if (variable.get("output") != null && !StringUtils.isEmpty(variable.get("output").toString())) {
+        if (variable.get("output") != null && !isEmpty(String.valueOf(variable.get("output")))) {
             command.add("-output");
-            String[] outputs = (variable.get("output").toString()).split(",");
-            ArrayList outputPaths = new ArrayList();
+            String[] outputs = (String.valueOf(variable.get("output"))).split(",");
+            ArrayList<String> outputPaths = new ArrayList<>();
             for (String output : outputs) {
-                String resolve = resolve(output);
-                outputPaths.add(resolve);
+                outputPaths.add(unescape(resolve(output)));
             }
             command.add(Joiner.on(",").join(outputPaths));
         }
@@ -220,14 +218,11 @@ public class MapreduceTask extends InterceptorAbstractTask {
      * Hadoop 커맨드 라인의 <tt>arguments</tt> 옵션을 구성한다.
      */
     private void injectCommandLineParameters(List<String> command) {
-        if (variable.get("commandlineValues") != null && !org.apache.commons.lang.StringUtils.isEmpty(variable.get("commandlineValues").toString())) {
+        if (variable.get("commandlineValues") != null && !isEmpty(variable.get("commandlineValues").toString())) {
             String[] args = variable.get("commandlineValues").toString().trim().split(",");
             StringBuilder builder = new StringBuilder();
             for (String arg : args) {
-                String unescape = unescape(arg);
-                String resolve = resolve(unescape);
-                String e = encloseSpace(resolve);
-                builder.append(" ").append(e);
+                builder.append(" ").append(encloseSpace(unescape(resolve(arg))));
             }
             command.add(builder.toString());
         }
@@ -237,7 +232,7 @@ public class MapreduceTask extends InterceptorAbstractTask {
      * MapReduce JAR 파일을 다운로드한다.
      */
     private String downloadJar(String actionBasePath, String filename) {
-        if (filename != null && !StringUtils.isEmpty(filename)) {
+        if (filename != null && !isEmpty(filename)) {
             ArtifactLoader artifactLoader = ArtifactLoaderFactory.getArtifactLoader(clusterName);
             return artifactLoader.load(actionBasePath, filename);
         } else {
@@ -278,7 +273,7 @@ public class MapreduceTask extends InterceptorAbstractTask {
      *
      * @return 환경변수
      */
-    public Map<String, String> getDefaultEnvs(String working) {
+    public Map<String, String> getDefaultEnvs() {
         Map<String, String> envs = new HashMap<>();
 
         envs.put("PATH", "/bin:/usr/bin:/usr/local/bin" + ":" + getHelper().get("hadoop.home") + "/bin" + ":" + getHelper().get("hive.home") + "/bin" + ":" + getHelper().get("pig.home") + "/bin");
@@ -300,7 +295,7 @@ public class MapreduceTask extends InterceptorAbstractTask {
 
         if (environmentKeys != null) {
             for (int i = 0; i < environmentKeys.length; i++) {
-                envs.put(environmentKeys[i], environmentValues[i]);
+                envs.put(environmentKeys[i], unescape(environmentValues[i]));
             }
         }
 

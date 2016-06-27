@@ -5,17 +5,19 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opencloudengine.flamingo2</groupId>
     <artifactId>flamingo2</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <packaging>pom</packaging>
     <name>Flamingo 2 Project</name>
     <url>http://www.cloudine.io</url>
     <inceptionYear>2011</inceptionYear>
 
     <modules>
+        <module>flamingo2-documentation</module>
         <module>flamingo2-common</module>
         <module>flamingo2-mapreduce-hadoop2</module>
         <module>flamingo2-collector</module>
         <module>flamingo2-system-agent</module>
+        <module>flamingo2-spark-collector</module>
         <module>flamingo2-web</module>
     </modules>
 
@@ -153,6 +155,12 @@
         <expectit.version>0.6.1</expectit.version>
 
         <jsch.version>0.1.52</jsch.version>
+
+        <!-- Apache Tajo -->
+        <tajo.version>0.10.1</tajo.version>
+
+        <!-- Apache Spark -->
+        <spark.version>1.4.1</spark.version>
     </properties>
 
     <build>
@@ -195,6 +203,9 @@
 
     <dependencyManagement>
         <dependencies>
+
+
+
             <!-- ========= -->
             <!--  Ehcache  -->
             <!-- ========= -->
@@ -382,6 +393,12 @@
             <dependency>
                 <groupId>net.nicholaswilliams.java.licensing</groupId>
                 <artifactId>licensing-core</artifactId>
+                <version>${license.manager.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.nicholaswilliams.java.licensing</groupId>
+                <artifactId>licensing-licensor-base</artifactId>
                 <version>${license.manager.version}</version>
             </dependency>
 
@@ -770,6 +787,48 @@
                 <version>${jsch.version}</version>
             </dependency>
 
+            <!-- ============= -->
+            <!--  Apache Tajo  -->
+            <!-- ============= -->
+            <dependency>
+                <groupId>org.apache.tajo</groupId>
+                <artifactId>tajo-common</artifactId>
+                <version>${tajo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tajo</groupId>
+                <artifactId>tajo-client</artifactId>
+                <version>${tajo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tajo</groupId>
+                <artifactId>tajo-algebra</artifactId>
+                <version>${tajo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tajo</groupId>
+                <artifactId>tajo-core</artifactId>
+                <version>${tajo.version}</version>
+            </dependency>
+
+            <!-- ============== -->
+            <!--  Apache Spark  -->
+            <!-- ============== -->
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-core_2.10</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-streaming_2.10</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -826,7 +885,7 @@
     </issueManagement>
 
     <organization>
-        <name>Cloudine Inc</name>
+        <name>Cloudine, Inc.</name>
     </organization>
 
     <licenses>
@@ -912,14 +971,14 @@
             <email>obsecure@cloudine.co.kr</email>
         </developer>
         <developer>
-            <id>kyeongmin</id>
-            <name>Kyeong Min, Choi</name>
+            <id>Gyeongmin</id>
+            <name>Gyeongmin, Choi</name>
             <roles>
                 <role>Committer</role>
             </roles>
             <organization>Cloudine Inc</organization>
             <timezone>Asia/Seoul</timezone>
-            <email>kyeongmin.choi@cloudine.co.kr</email>
+            <email>Gyeongmin.choi@cloudine.co.kr</email>
         </developer>
     </developers>
 </project>

@@ -129,6 +129,34 @@ Ext.define('Flamingo2.view.hive.metastore.MetastoreModel', {
         structType: {
             model: 'Flamingo2.model.hive.StructType'
         },
+        propeties: {
+            type: 'tree',
+            root: {
+                expanded: true,
+                children: [
+                    {
+                        "text": message.msg('common.info'),
+                        "id": "Flamingo.view.hive.browser._PropInfo",
+                        "leaf": true
+                    },
+                    {
+                        "text": message.msg('common.columns'),
+                        "id": "Flamingo.view.hive.browser._PropColumns",
+                        "leaf": true
+                    },
+                    {
+                        "text": message.msg('common.partitions'),
+                        "id": "Flamingo.view.hive.browser._PropPartitions",
+                        "leaf": true
+                    },
+                    {
+                        "text": message.msg('common.script'),
+                        "id": "Flamingo.view.hive.browser._PropScript",
+                        "leaf": true
+                    }
+                ]
+            }
+        },
         delimiter: {
             autoLoad: true,
             fields: ['octal', 'value', 'symbol', 'description'],

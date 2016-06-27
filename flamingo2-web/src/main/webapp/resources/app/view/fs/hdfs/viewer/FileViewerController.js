@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.fileViewerViewController',
@@ -52,8 +51,10 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
             refs.currentPage.width = 40;
         } else if (totalPage > 10000 && totalPage < 100000) {
             refs.currentPage.width = 45;
+        } else if (totalPage > 100000 && totalPage < 1000000) {
+            refs.currentPage.width = 55;
         } else {
-            refs.currentPage.width = 50;
+            refs.currentPage.width = 60;
         }
     },
 
@@ -68,9 +69,15 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
         var params = {
             clusterName: ENGINE.id,
             filePath: contentsFormValues.filePath,
-            chunkSizeToView: contentsFormValues.chunkSizeToView,
+            fileSize: contentsFormValues.fileSize,
+            dfsBlockSize: contentsFormValues.dfsBlockSize,
+            chunkSizeToView: config['hdfs.viewFile.default.chunkSize'],
             startOffset: 0,
+            dfsBlockStartOffset: 0,
+            currentContentsBlockSize: 0,
+            lastDfsBlockSize: 0,
             currentPage: 0,
+            totalPage: contentsFormValues.totalPage,
             buttonType: 'firstButton',
             bestNode: contentsFormValues.bestNode
         };
@@ -120,9 +127,15 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
         var params = {
             clusterName: ENGINE.id,
             filePath: contentsFormValues.filePath,
-            chunkSizeToView: contentsFormValues.chunkSizeToView,
+            fileSize: contentsFormValues.fileSize,
+            dfsBlockSize: contentsFormValues.dfsBlockSize,
+            chunkSizeToView: config['hdfs.viewFile.default.chunkSize'],
             startOffset: contentsFormValues.startOffset,
+            dfsBlockStartOffset: contentsFormValues.dfsBlockStartOffset,
+            currentContentsBlockSize: contentsFormValues.currentContentsBlockSize,
+            lastDfsBlockSize: contentsFormValues.lastDfsBlockSize,
             currentPage: refs.currentPage.getValue(),
+            totalPage: contentsFormValues.totalPage,
             buttonType: 'prevButton',
             bestNode: contentsFormValues.bestNode
         };
@@ -173,15 +186,23 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
     onNextPageButtonClick: function () {
         var me = this;
         var refs = me.getReferences();
-        var viewItems = me.getView();
         var contentsFormValues = refs.fileViewerContentsForm.getForm().getValues();
+        var totalPage = contentsFormValues.totalPage;
         var url = CONSTANTS.FS.HDFS_GET_FILE_CONTENTS;
+
         var params = {
             clusterName: ENGINE.id,
             filePath: contentsFormValues.filePath,
-            chunkSizeToView: contentsFormValues.chunkSizeToView,
+            fileSize: contentsFormValues.fileSize,
+            dfsBlockSize: contentsFormValues.dfsBlockSize,
+            chunkSizeToView: config['hdfs.viewFile.default.chunkSize'],
             startOffset: contentsFormValues.startOffset,
+            dfsBlockStartOffset: contentsFormValues.dfsBlockStartOffset,
+            currentContentsBlockSize: contentsFormValues.currentContentsBlockSize,
+            startOffsetPerDfsBlocks: contentsFormValues.startOffsetPerDfsBlocks,
+            lastDfsBlockSize: contentsFormValues.lastDfsBlockSize,
             currentPage: refs.currentPage.getValue(),
+            totalPage: contentsFormValues.totalPage,
             buttonType: 'nextButton',
             bestNode: contentsFormValues.bestNode
         };
@@ -205,7 +226,7 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
                     }
 
                     // Case 2. 현재 페이지와 전체 페이지 범위가 같을 때 Next & Last Button 비활성화
-                    if (refs.currentPage.getValue() == viewItems.emptyPageData.total) {
+                    if (refs.currentPage.getValue() == totalPage) {
                         refs.nextButton.setDisabled(true);
                         refs.lastButton.setDisabled(true);
                     }
@@ -228,15 +249,21 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
     onLastPageButtonClick: function () {
         var me = this;
         var refs = me.getReferences();
-        var viewItems = me.getView();
         var contentsFormValues = refs.fileViewerContentsForm.getForm().getValues();
         var url = CONSTANTS.FS.HDFS_GET_FILE_CONTENTS;
+        var totalPage = contentsFormValues.totalPage;
         var params = {
             clusterName: ENGINE.id,
             filePath: contentsFormValues.filePath,
-            chunkSizeToView: contentsFormValues.chunkSizeToView,
+            fileSize: contentsFormValues.fileSize,
+            dfsBlockSize: contentsFormValues.dfsBlockSize,
+            chunkSizeToView: config['hdfs.viewFile.default.chunkSize'],
             startOffset: 0,
-            currentPage: viewItems.emptyPageData.total,
+            dfsBlockStartOffset: contentsFormValues.dfsBlockStartOffset,
+            currentContentsBlockSize: contentsFormValues.currentContentsBlockSize,
+            lastDfsBlockSize: contentsFormValues.lastDfsBlockSize,
+            currentPage: refs.currentPage.getValue(),
+            totalPage: totalPage,
             buttonType: 'lastButton',
             bestNode: contentsFormValues.bestNode
         };
@@ -251,7 +278,7 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
                     refs.currentPage.setValue(obj.map['currentPage']);
 
                     // Case 1. 마지막 페이지 일 때 Next & Last Button 비활성화, First & Previous Button 활성화
-                    if (refs.currentPage.getValue() == viewItems.emptyPageData.total) {
+                    if (refs.currentPage.getValue() == totalPage) {
                         refs.firstButton.setDisabled(false);
                         refs.prevButton.setDisabled(false);
                         refs.nextButton.setDisabled(true);
@@ -271,31 +298,38 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
     },
 
     /**
-     * 입력한 페이지로 이동한다.
+     * 입력한 페이지로 이동한다. //NIA
      */
-    onInputCustomPage: function (field, e, eOpts) {
-        if (e.getKey() == e.ENTER) {
+    onEnterCustomPage: function (field, e, eOpts) {
+        if (e.keyCode == 13) {
             var me = this;
             var refs = me.getReferences();
-            var viewItems = me.getView();
             var contentsFormValues = refs.fileViewerContentsForm.getForm().getValues();
-            var inputPage = refs.currentPage.getValue();
+            var totalPage = contentsFormValues.totalPage;
+            var currentPage = refs.currentPage.getValue();
 
-            if (inputPage < 1 || viewItems.emptyPageData.total) {
+            if (currentPage < 1 || currentPage > totalPage) {
                 return false;
             }
 
-            if (inputPage == 1) {
-                inputPage = 0;
+            if (totalPage == 1) {
+                return false;
             }
 
             var url = CONSTANTS.FS.HDFS_GET_FILE_CONTENTS;
             var params = {
                 clusterName: ENGINE.id,
                 filePath: contentsFormValues.filePath,
-                chunkSizeToView: contentsFormValues.chunkSizeToView,
-                startOffset: 0,
-                currentPage: inputPage,
+                fileSize: contentsFormValues.fileSize,
+                dfsBlockSize: contentsFormValues.dfsBlockSize,
+                chunkSizeToView: config['hdfs.viewFile.default.chunkSize'],
+                startOffset: 0, // Service Side에서 Page 정보로 startOffset 결정
+                dfsBlockStartOffset: contentsFormValues.dfsBlockStartOffset,
+                currentContentsBlockSize: contentsFormValues.currentContentsBlockSize,
+                startOffsetPerDfsBlocks: contentsFormValues.startOffsetPerDfsBlocks,
+                lastDfsBlockSize: contentsFormValues.lastDfsBlockSize,
+                currentPage: currentPage,
+                totalPage: contentsFormValues.totalPage,
                 buttonType: 'customPage',
                 bestNode: contentsFormValues.bestNode
             };
@@ -308,16 +342,24 @@ Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerController', {
                         refs.fileViewerContentsForm.getForm().setValues(obj.map);
                         refs.queryEditor.setValue(obj.map.contents);
                         refs.currentPage.setValue(obj.map['currentPage']);
+                        var updatedCurrentPage = refs.currentPage.getValue();
 
                         // Case 1. 현재 페이지가 1보다 클 때 First & Previous Button 활성화
-                        if (refs.currentPage.getValue() == 1) {
-                            refs.firstButton.setDisabled(false);
-                            refs.prevButton.setDisabled(false);
-                        } else if (refs.currentPage.getValue() > 1) {
+                        if (updatedCurrentPage == 1) {
+                            refs.firstButton.setDisabled(true);
+                            refs.prevButton.setDisabled(true);
+                            refs.nextButton.setDisabled(false);
+                            refs.lastButton.setDisabled(false)
+                        } else if (updatedCurrentPage > 1 && updatedCurrentPage != totalPage) {
                             refs.firstButton.setDisabled(false);
                             refs.prevButton.setDisabled(false);
                             refs.nextButton.setDisabled(false);
                             refs.lastButton.setDisabled(false)
+                        } else if (updatedCurrentPage == totalPage) {
+                            refs.firstButton.setDisabled(false);
+                            refs.prevButton.setDisabled(false);
+                            refs.nextButton.setDisabled(true);
+                            refs.lastButton.setDisabled(true)
                         } else {
                             refs.nextButton.setDisabled(true);
                             refs.lastButton.setDisabled(true)

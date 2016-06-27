@@ -1,0 +1,14 @@
+[[batch]]
+
+== Managing Scheduled Batch Jobs
+
+Flamingo 2는 SQL on Hadoop 중에 하나인 Pivotal HAWQ를 지원하여 다음의 기능을 제공합니다.
+
+* 여기에 큰 기능
+** 작은 기능
+
+image::hive/hive-1.png[scaledwidth=100%,Apache Hive 지원 기능의 메인 화면]
+
+=== Cron Expression
+
+=== 배치작업 등록

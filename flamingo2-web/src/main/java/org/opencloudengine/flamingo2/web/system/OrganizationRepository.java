@@ -30,9 +30,9 @@ public interface OrganizationRepository {
 
     List<Map> selectAllOrganization();
 
-    int insert(Map organizationMap);
+    boolean insert(Map organizationMap);
 
-    int delete(Map organizationMap);
+    boolean delete(Map organizationMap);
 
-    int update(Map organizationMap);
+    boolean update(Map organizationMap);
 }

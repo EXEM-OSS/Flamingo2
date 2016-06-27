@@ -54,13 +54,13 @@ Ext.define('Flamingo2.view.visualization.ggplot2._UploadController', {
         refs.btnHdfsBrowse.setDisabled(true);
         refs.btnLocalBrowse.setDisabled(true);
         me.getView().setLoading(true);
+        var options = {
+            dataDelimiter: refs.cbxDelimiter.getValue(),
+            dataHeader: refs.cbxHeader.getValue()
+        }
         if (values.location == 'local') {
             var xhr = new XMLHttpRequest();
             var formData = new FormData();
-            var options = {
-                dataDelimiter: refs.cbxDelimiter.getValue(),
-                dataHeader: refs.cbxHeader.getValue()
-            }
             //formData.append("username", CONSTANTS.SESSION.USERNAME);
             formData.append('file', refs.localfile.file);
             formData.append('clusterName', ENGINE.id);
@@ -79,6 +79,7 @@ Ext.define('Flamingo2.view.visualization.ggplot2._UploadController', {
                 if (response.success) {
                     var r = Ext.decode(response.map.rData);
                     me.getViewModel().setData({dataFile: response.map.filename});
+                    r.output.variableData = Ext.clean(r.output.variableData);
                     me.reconfigureGrid(r.output);
                 } else {
                     Ext.MessageBox.show({
@@ -125,7 +126,10 @@ Ext.define('Flamingo2.view.visualization.ggplot2._UploadController', {
             xhr.send(formData);
         }
         else {
-            var params = Ext.merge(values, {clusterName: ENGINE.id});
+            var params = Ext.merge(values, {
+                clusterName: ENGINE.id,
+                options: Ext.encode(options)
+            });
             invokePostByMap(CONSTANTS.VISUAL.LOAD_HDFS, params,
                 function (response) {
                     var obj = Ext.decode(response.responseText);

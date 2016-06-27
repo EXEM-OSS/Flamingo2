@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,8 +106,15 @@ public class QueryController extends DefaultController {
         hiveQueryRemoteService.remove(uuid);
 
         //hiveQueryRemoteService.executeAsync(params);
-        hiveQueryRemoteService.execute(params);
-        logger.debug("Hive Query : \n{}", query);
+        try {
+            hiveQueryRemoteService.execute(params);
+        } catch (Exception ex) {
+            response.setSuccess(false);
+            response.getError().setMessage("Unable to run the Hive Query.");
+            response.getError().setException(ex.getMessage());
+            return response;
+        }
+
         return response;
     }
 
@@ -176,8 +184,8 @@ public class QueryController extends DefaultController {
         Response response = new Response();
         try {
             HiveQueryRemoteService hiveQueryRemoteService = engineService.getHiveQueryService();
-            Map[] results = hiveQueryRemoteService.getResults(params.get("uuid").toString());
-            List<Map> maps = Arrays.asList(results);
+            LinkedHashMap[] results = hiveQueryRemoteService.getResults(params.get("uuid").toString());
+            List<LinkedHashMap> maps = Arrays.asList(results);
             response.setSuccess(true);
             response.getList().addAll(maps);
         } catch (Exception ex) {

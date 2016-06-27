@@ -35,7 +35,7 @@ Ext.define('Flamingo2.view.system.license.License', {
     items: [
         {
             xtype: 'form',
-            title: '라이센스 요약',
+            title: message.msg('license.summary'),
             reference: 'frmLicense',
             border: true,
             layout: {
@@ -54,31 +54,31 @@ Ext.define('Flamingo2.view.system.license.License', {
                 labelAlign: 'right'
             },
             items: [{
-                fieldLabel: '등록일자',
+                fieldLabel: message.msg('license.reg_dt'),
                 name: 'issueDate'
             }, {
-                fieldLabel: '만료일자',
+                fieldLabel: message.msg('license.expire_dt'),
                 name: 'goodBeforeDate'
             }, {
-                fieldLabel: '제품명',
+                fieldLabel: message.msg('license.product_name'),
                 name: 'PRODUCT_NAME'
             }, {
-                fieldLabel: '버전',
+                fieldLabel: message.msg('license.product_version'),
                 name: 'PRODUCT_VERSION'
             }, {
-                fieldLabel: '라이센스 종류',
+                fieldLabel: message.msg('license.type'),
                 name: 'LICENSE_TYPE'
             }, {
-                fieldLabel: '사용국가',
+                fieldLabel: message.msg('license.country'),
                 name: 'COUNTRY'
             }, {
-                fieldLabel: '최대 노드 수',
+                fieldLabel: message.msg('license.max_node'),
                 name: 'MAX_NODE'
             }]
         },
         {
             xtype: 'panel',
-            title: '라이센스키',
+            title: message.msg('license.key'),
             border: true,
             height: 350,
             layout: {
@@ -98,7 +98,7 @@ Ext.define('Flamingo2.view.system.license.License', {
                 xtype: 'textareafield',
                 reference: 'licenseKey',
                 flex: 1,
-                fieldLabel: '라이센스키',
+                fieldLabel: message.msg('license.key'),
                 labelAlign: 'top'
             }, {
                 xtype: 'container',
@@ -111,7 +111,7 @@ Ext.define('Flamingo2.view.system.license.License', {
                     iconCls: 'common-refresh',
                     scale: 'medium',
                     handler: 'onBtnRefreshClick',
-                    text: '갱신'
+                    text: message.msg('common.refresh')
                 }]
             }]
         }

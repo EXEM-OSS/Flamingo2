@@ -24,7 +24,8 @@ Ext.define('Flamingo2.view.designer.monitoring.WorkflowMonitoringController', {
     listen: {
         controller: {
             websocketController: {
-                workflowMessage: 'onWorkflowMessage'
+                workflowMessage: 'onWorkflowMessage',
+                workflowLogMessage: 'onWorkflowLogMessage'
             }
         }
     },
@@ -61,9 +62,7 @@ Ext.define('Flamingo2.view.designer.monitoring.WorkflowMonitoringController', {
         var refs = me.getReferences();
 
         invokeGet(CONSTANTS.DASHBOARD.TASK.LOG,
-            {
-                id: record.data.id
-            },
+            {id: record.data.id},
             function (response) {
                 var res = Ext.decode(response.responseText);
                 if (res.success) {
@@ -168,6 +167,26 @@ Ext.define('Flamingo2.view.designer.monitoring.WorkflowMonitoringController', {
         if (data.command == 'taskHistories') {
             if (aceEditor.items.length > 0) {
                 me.updatetasks(data.identifier);
+            }
+        }
+    },
+
+    onWorkflowLogMessage: function (wsMessage) {
+        var data = Ext.decode(wsMessage.body),
+            aceEditor = query('workflowMonitoring #aceEditor');
+        if (aceEditor.editor.getValue().indexOf(message.msg('dashboard.wdetail.log.notselect')) > -1) {
+            aceEditor.editor.setValue('');
+        }
+        if (data.identifier && data.taskId) {
+            aceEditor.editor.getSession().insert(// insertLast
+                {row: aceEditor.editor.getSession().getLength() + 1, column: 0},
+                data.data + '\n'
+            );
+
+            var lastVisibleRow = aceEditor.editor.getLastVisibleRow(),
+                length = aceEditor.editor.getSession().getLength();
+            if (length - lastVisibleRow < 5) {
+                aceEditor.editor.scrollToLine(length, false, false, null);
             }
         }
     }

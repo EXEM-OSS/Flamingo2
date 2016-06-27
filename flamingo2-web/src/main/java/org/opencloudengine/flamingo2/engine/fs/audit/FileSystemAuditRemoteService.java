@@ -46,6 +46,7 @@ public interface FileSystemAuditRemoteService {
      * @param path      조회할 경로
      * @param auditType 파일 처리 유형
      * @param username  사용자명
+     *
      * @return 파일 시스템 실행 이력의 개수
      */
     int getTotalCountOfAuditHistories(String startDate, String endDate, String path, String auditType, String username);
@@ -69,6 +70,7 @@ public interface FileSystemAuditRemoteService {
      * @param endDate       종료 날짜
      * @param searchType    조회 유형
      * @param username      사용자명
+     *
      * @return 파일 시스템 처리 이력의 순위
      */
     List<Top10> auditTop10(String startDate, String endDate, String searchType, String username);
@@ -80,6 +82,7 @@ public interface FileSystemAuditRemoteService {
      * @param endDate       종료 날짜
      * @param searchType    조회 유형
      * @param username      사용자명
+     *
      * @return 파일 시스템 처리 이력의 순위
      */
     List<NowStatus> auditNowStatus(String startDate, String endDate, String searchType, String username);
@@ -91,6 +94,7 @@ public interface FileSystemAuditRemoteService {
      * @param endDate       종료 날짜
      * @param searchType    조회 유형
      * @param username      사용자명
+     *
      * @return 파일 시스템 처리 이력의 순위
      */
     List<Trends> auditTrend(String startDate, String endDate, String searchType, String username);

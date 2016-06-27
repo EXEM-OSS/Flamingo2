@@ -18,8 +18,6 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ResourceManagerSummary', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.resourceManagerSummary',
 
-    title: message.msg('monitoring.rm.title'), // FIXME
-
     width: '100%',
 
     layout: {
@@ -136,65 +134,14 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ResourceManagerSummary', {
             ]
         }
     ],
-    listeners: {
-        afterrender: function (comp, opts) {
-            setTableLayoutFixed(comp);
-
-            invokeGet(CONSTANTS.MONITORING.GET_RESOURCEMANAGER_INFO, {clusterName: ENGINE.id},
-                function (response) {
-                    var res = Ext.decode(response.responseText);
-                    if (res) {
-                        try {
-                            query('resourceManagerSummary #ip').setValue(res.metrics['ip']);
-                        } catch (err) {
-                        }
-                        ;
-                        query('resourceManagerSummary #runningStatus').setValue(message.msg('common.running'));
-                        query('resourceManagerSummary #version').setValue(res.version);
-                        query('resourceManagerSummary #runningTime').setValue(dateFormat2(res.startTime));
-                        query('resourceManagerSummary #monitoringInterval').setValue(res.nmHeartbeatInterval / 1000 + ' ' + message.msg('common.sec'));
-                        query('resourceManagerSummary #queue').setValue(Ext.String.format('{0}', res.queue));
-                        query('resourceManagerSummary #jvmMemory').setValue(
-                            Ext.String.format(message.msg('monitoring.rm.total_free'), res.metrics['heap-total'], res.metrics['heap-free'])
-                        );
-                        query('resourceManagerSummary #nodeStatus').setValue(
-                            Ext.String.format(message.msg('monitoring.rm.active_lost_unhealthy_decomm'), res.cluster['activeNodes'], res.cluster['lostNodes'], res.cluster['unhealthyNodes'], res.cluster['decommissionedNodes'], res.cluster['rebootedNodes'])
-                        );
-                        query('resourceManagerSummary #clusterMemory').setValue(
-                            Ext.String.format(message.msg('monitoring.rm.total_allocate_reserve'), res.cluster['totalMB'], res.cluster['allocatedMB'], res.cluster['reservedMB'])
-                        );
-                        query('resourceManagerSummary #containerStatus').setValue(
-                            Ext.String.format(message.msg('monitoring.rm.allocate_reserve_wait'), res.cluster['containersAllocated'], res.cluster['containersReserved'], res.cluster['containersPending'])
-                        );
-                        query('resourceManagerSummary #appsStatus').setValue(
-                            Ext.String.format(message.msg('monitoring.rm.run_submit_complete_kill_fail'), res.cluster['appsRunning'], res.cluster['appsSubmitted'],
-                                res.cluster['appsCompleted'], res.cluster['appsKilled'], res.cluster['appsFailed'])
-                        );
-                        query('resourceManagerSummary #hostname').setValue(res.metrics['hostname']);
-                    } else {
-                        query('resourceManagerSummary #summaryForm1').getForm().reset();
-                        query('resourceManagerSummary #summaryForm2').getForm().reset();
-                        query('resourceManagerSummary #runningStatus').setValue(message.msg('monitoring.rm.can_not_get_status'));
-                        Ext.MessageBox.show({
-                            title: message.msg('common.warn'),
-                            message: message.msg('monitoring.rm.can_not_get_rm_info'),
-                            buttons: Ext.MessageBox.OK,
-                            icon: Ext.MessageBox.WARNING
-                        });
-                    }
-                },
-                function (response) {
-                    query('resourceManagerSummary #summaryForm1').getForm().reset();
-                    query('resourceManagerSummary #summaryForm2').getForm().reset();
-                    query('resourceManagerSummary #runningStatus').setValue(message.msg('monitoring.rm.can_not_get_status'));
-                    Ext.MessageBox.show({
-                        title: message.msg('common.warn'),
-                        message: format(message.msg('common.msg.server_error'), config['system.admin.email']),
-                        buttons: Ext.MessageBox.OK,
-                        icon: Ext.MessageBox.WARNING
-                    });
-                }
-            );
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onRMSummaryRefreshClick'
         }
+    ],
+    listeners: {
+        afterrender: 'onRMSummaryAfterRender'
     }
 });

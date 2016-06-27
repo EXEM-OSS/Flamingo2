@@ -81,8 +81,9 @@ Ext.define('Flamingo2.view.designer.property._Grid', {
                                     text: message.msg('workflow.common.confirm'),
                                     handler: function () {
                                         var selection = Ext.ComponentQuery.query('hdfsFilePanelForDesigner')[0].getSelectionModel().getSelection();
+                                        var selectionDirectory = Ext.ComponentQuery.query('hdfsDirectoryPanelForDesigner')[0].getSelectionModel().getSelection();
                                         if (selection.length > 0) {
-                                            var path = selection[0].get('path') + '/' + selection[0].get('filename');
+                                            var path = selection[0].get('id');
                                             var grid = panel.up('_grid'),
                                                 store = grid.getStore(),
                                                 rowEditor = grid.getPlugin('rowEditorPlugin');
@@ -90,6 +91,17 @@ Ext.define('Flamingo2.view.designer.property._Grid', {
                                             store.insert(store.getCount(), eval("[{" + store.getModel().getFields()[0].getName() + ": '" + path + "'}]"));
                                             rowEditor.startEdit(store.getCount() - 1, 0);
                                             popWindow.close();
+                                        } else if (selectionDirectory.length > 0) {
+                                            var dirPath = selectionDirectory[0].get('id');
+                                            var dirGrid = panel.up('_grid'),
+                                                dirStore = dirGrid.getStore(),
+                                                dirRowEditor = dirGrid.getPlugin('rowEditorPlugin');
+                                            dirRowEditor.cancelEdit();
+                                            dirStore.insert(dirStore.getCount(), eval("[{" + dirStore.getModel().getFields()[0].getName() + ": '" + dirPath + "'}]"));
+                                            dirRowEditor.startEdit(dirStore.getCount() - 1, 0);
+                                            popWindow.close();
+                                        } else {
+                                            error(message.msg('workflow.common.warn'), message.msg('workflow.common.hdfsbrowser.filedir.warn'));
                                         }
                                     }
                                 },

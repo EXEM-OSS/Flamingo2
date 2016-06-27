@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * HAWQ query 실행시 비동기로 HAWQ 의 Message 를 실행중인 tabpanel 에 보내주는 Service.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 @Service

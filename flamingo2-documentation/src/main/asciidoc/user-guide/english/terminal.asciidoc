@@ -1,0 +1,36 @@
+[[terminal]]
+
+== Remote Web Terminal
+
+Flamingo provides the remote web terminal which allows the users to make SSH-less connections to a development server or analysis server.
+
+* SSH-less web terminal
+* Restriction on the number of concurrent open terminals
+* Password-protected terminal
+
+Open `Terminal` in Flamingo, and the terminal connection screen will appear.
+
+image::terminal/terminal1.png[scaledwidth=100%,리모트 웹 터미널]
+
+[NOTE]
+Currently Flamingo supports one remote web terminal, so it is recommend to install the remote web terminal in RStudio Server.
+
+=== How to Use the Web Terminal
+
+Click `Open New` and enter password.
+
+image::terminal/terminal2.png[scaledwidth=100%,리모트 웹 터미널]
+
+[WARNING]
+If Flamingo System Agent is installed, and the Flamingo user who uses the web terminal exists with same password in the server where the remote web terminal is installed, the user will be able to log in without problem.
+If the user does not exist in the remote web terminal server, or enters wrong password, the user won't be able to log in. In such a case, contact your system administrator.
+
+If the password is incorrect or the use does not exists in the remote web terminal server, an error message will appear.
+
+image::terminal/terminal3.png[scaledwidth=20%,리모트 웹 터미널]
+
+If you are logged in, you will be able to use the terminal.
+
+image::terminal/terminal4.png[scaledwidth=100%,리모트 웹 터미널]
+
+[red]#The remote web terminal is provided for your convenience, and it does not replace the SSH-connection terminal. Therefore, there can be restrictions.#

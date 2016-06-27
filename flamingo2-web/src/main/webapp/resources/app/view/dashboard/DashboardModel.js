@@ -23,6 +23,30 @@ Ext.define('Flamingo2.view.dashboard.DashboardModel', {
     },
 
     stores: {
+        workflowHistoryChartStore: {
+            autoLoad: false,
+            fields: ['time', 'sum'],
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.DASHBOARD.WORKFLOW_SUMMARY,
+                extraParams: {
+                    clusterName: ENGINE.id/*,
+                    status: me.status*/
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            },
+            remoteSort: true,
+            sorters: [
+                {
+                    property: 'num',
+                    direction: 'ASC'
+                }
+            ]
+        },
         workflowHistoryStore: {
             autoLoad: false,
             pageSize: 12,

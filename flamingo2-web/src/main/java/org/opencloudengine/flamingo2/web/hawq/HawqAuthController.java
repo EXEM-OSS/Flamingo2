@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Pivotal HAWQ Auth Controller.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 @Controller

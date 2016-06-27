@@ -1,0 +1,778 @@
+[[hawq]]
+
+== Pivotal HAWQ
+
+Flamingo 2는 SQL on Hadoop 중에 하나인 Pivotal HAWQ(HAdoop With Query)를 이용한 개발 및 관리 기능을 제공합니다. 제공하는 기능은 다음과 같습니다.
+
+* 데이터베이스 관리
+* 스키마 관리
+* 테이블 관리
+* 뷰 관리
+* External 테이블 관리
+* 함수 관리
+* 쿼리 실행
+* 실행계획 조회
+* 결과 다운로드
+* 결과 차트
+* 테이블 정보 조회
+* 롤 관리
+* 리소스 큐 관리
+* 세션 관리
+* Lock 테이블 관리
+
+image::hawq/editor/hawqeditor-00.png[scaledwidth=100%,Pivotal HAWQ 지원 기능의 메인 화면]
+
+Pivotal HAWQ 에 대한 자세한 내용은 http://hawq.docs.pivotal.io/index.html[링크]를 확인하시기 바랍니다.
+
+=== HAWQ 설정
+
+HAWQ에 접속하기 위해서는 우선 접속형태, 데이터베이스, 사용자, CIDR-주소, 인증방법을 `$MASTER_DATA_DIRECTORY/pg_hba.conf` 파일 하단부에 추가하도록 합니다.
+
+[subs="verbatim,attributes"]
+----
+$ cd $MASTER_DATA_DIRECTORY
+$ vi pg_hba.conf
+host  all  gpadmin  172.16.213.1/28  trust
+$ gpstop -u <1>
+----
+<1> 시스템에 반영
+
+=== Flamingo 설정
+
+Flamingo에서 HAWQ에 접속하기 위해서  `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/hadoop.properties` 파일의 다음을 찾아서 적당한 값을 입력하도록 합니다.
+
+[source,properties]
+----
+###########################################
+## Pivotal HAWQ Configuration
+## hawq.jdbc.type={greenplum|postgresql}
+###########################################
+
+default.hawq.jdbc.type=greenplum
+default.hawq.greenplum.connectionUrl=jdbc:pivotal:greenplum://
+default.hawq.postgresql.connectionUrl=jdbc:postgresql://
+default.hawq.host=172.16.213.138
+default.hawq.port=5432
+default.hawq.databaseName=gpadmin
+default.hawq.user=gpadmin
+default.hawq.password=
+default.hawq.autoCommit=false
+default.hawq.driver=com.pivotal.jdbc.GreenplumDriver
+default.hawq.postgresql.driver=org.postgresql.Driver
+----
+
+설정항목에서 수정을 해야하는 항목은 다음과 같습니다.
+
+* `default.hawq.jdbc.type`
+* `default.hawq.host`
+* `default.hawq.port`
+* `default.hawq.databaseName`
+* `default.hawq.user`
+* `default.hawq.password`
+
+`default.hawq.jdbc.type` 은 `greenplum` 또는 `postgresql` 으로 설정할 수 있으며 `greenplum` 으로 설정하면 JDBC driver가 greenplum으로 로딩되고 `postgresql` 로 설정하면 JDBC driver 가 postgres 로 로딩됩니다. greenplum 으로 설정시 반드시 `<FLAMINGO_WEB_HOME>/webapps/ROOT/WEB-INF/lib/greenplum.jar` 파일이 있어야 합니다.
+
+Greenplum Database의 JDBC Driver는 https://network.pivotal.io/products/pivotal-gpdb[다운로드] 링크를 참고하시기 바랍니다.
+
+설정이 완료되면 Flamingo를 재시작 하고 HAWQ 에 접속합니다.
+
+=== 커넥션 관리자
+
+데이터베이스와 스키마에 관련된 Pivotal HAWQ의 접속을 관리합니다. 현재 하둡 클러스터당 1개의 HAWQ를 지원합니다.
+
+==== 데이터베이스 선택
+
+원하는 데이터베이스를 선택하면 기본 스키마가 자동으로 선택되며 이때 오브젝트 익스플로러가 갱신됩니다.
+
+image::hawq/editor/hawqeditor-01.png[scaledwidth=35%,데이터베이스 선택]
+
+==== 데이터베이스 목록 갱신
+
+메뉴를 선택하면 데이터베이스 목록이 갱신됩니다.
+
+image::hawq/editor/hawqeditor-02.png[scaledwidth=35%,데이터베이스 갱신]
+
+==== 데이터베이스 생성
+
+데이터베이스를 생성하기 위해서 데이터베이스 생성 메뉴를 선택합니다.
+
+image::hawq/editor/hawqeditor-03.png[scaledwidth=35%,데이터베이스 생성]
+
+==== 데이터베이스 정보 입력
+
+데이터베이스 생성 메뉴를 선택하면 다음과 같이 데이터베이스 생성 화면이 나타납니다.
+
+필수값은 `데이터베이스명`이고 나머지는 옵션입니다.
+소유자는 데이터베이스의 소유자이고 기본값은 기본소유자 입니다.
+템플릿은 생성될 데이터베이스가 사용 할 템플릿이고 기본값은 template1 입니다.
+인코딩은 생성될 데이터베이스가 사용할 인코딩이고 기본값은 기본인코딩 입니다.
+연결제한은 동시에 접속 가능한 커넥션 개수입니다. -1 일 경우 제한이 없습니다.
+
+image::hawq/editor/hawqeditor-04.png[scaledwidth=35%,데이터베이스 생성 화면]
+
+생성하고자 하는 데이터베이스 정보를 입력합니다.
+
+image::hawq/editor/hawqeditor-05.png[scaledwidth=30%,데이터베이스 정보 입력]
+
+모든 정보를 입력한 후에 생성 버튼을 선택하여 데이터베이스를 생성합니다.
+
+image::hawq/editor/hawqeditor-06.png[scaledwidth=35%,데이터베이스 생성 입력정보 확인]
+
+정상적으로 생성된 경우 아래와 같이 나타납니다.
+
+image::hawq/editor/hawqeditor-07.png[scaledwidth=35%,데이터베이스 생성 확인]
+
+이제 생성한 데이터베이스 정보를 아래와 같이 확인할 수 있습니다.
+
+image::hawq/editor/hawqeditor-08.png[scaledwidth=40%,생성된 데이터베이스 목록 확인]
+
+==== 데이터베이스 삭제
+
+메뉴를 선택하면 다음과 같이 데이터베이스 삭제 메뉴를 확인할수 있습니다.
+
+image::hawq/editor/hawqeditor-09.png[scaledwidth=35%,데이터베이스 삭제]
+
+데이터베이스 삭제 메뉴를 선택하면 아래와 같이 삭제 여부를 확인합니다.
+
+image::hawq/editor/hawqeditor-10.png[scaledwidth=30%,데이터베이스 삭제 확인]
+
+Yes를 선택하면 해당 데이터베이스가 삭제되고 다음과 같이 삭제 완료 메시지를 확인할 수 있습니다.
+
+image::hawq/editor/hawqeditor-11.png[scaledwidth=30%,데이터베이스 삭제 완료]
+
+=== 스키마 관리
+
+스키마를 선택하면 선택한 스키마에 해당하는 정보들이 오브젝트 익스플로러에 표시됩니다.
+
+image::hawq/editor/hawqeditor-12.png[scaledwidth=35%,스키마 선택]
+
+==== 스키마 목록 갱신
+
+스키마 목록 갱신 메뉴를 선택하여 스키마 목록을 갱신합니다.
+
+image::hawq/editor/hawqeditor-13.png[scaledwidth=35%,스키마 목록 갱신]
+
+==== 스키마 생성
+
+새로운 스키마를 생성하기 위해서 다음과 같이 스키마 생성 메뉴를 선택합니다.
+
+image::hawq/editor/hawqeditor-14.png[scaledwidth=35%,스키마 생성]
+
+스키마 생성 메뉴를 선택하면 다음과 같이 스키마 생성 화면이 나타납니다.
+
+필수값은 `스키마명` 이고 나머지는 옵션입니다.
+권한은 생성하고자 하는 스키마에 접근 가능한 롤입니다.
+구성요소에는 스키마와 함께 생성될 오브젝트를 정의합니다.
+
+image::hawq/editor/hawqeditor-15.png[scaledwidth=30%,스키마 생성]
+
+==== 스키마 생성 정보 입력
+
+스키마를 생성하기 위해서 다음과 같이 스키마 생성 정보를 입력하도록 합니다.
+
+image::hawq/editor/hawqeditor-16.png[scaledwidth=30%,스키마 생성 정보 입력]
+
+Yes를 선택하면 스키마 생성 확인 메시지가 표시됩니다.
+
+image::hawq/editor/hawqeditor-17.png[scaledwidth=30%,스키마 생성 확인]
+
+스미카를 정상적으로 생성하면 다음과 같이 생성 완료 메시지가 표시됩니다.
+
+image::hawq/editor/hawqeditor-18.png[scaledwidth=30%,스키마 생성 완료]
+
+==== 스키마 삭제
+
+생성된 스키마를 삭제하기 위해서는 스키마 삭제 메뉴를 선택하여 선택한 스키마를 삭제합니다.
+
+image::hawq/editor/hawqeditor-19.png[scaledwidth=35%,스키마 삭제]
+
+Yes를 선택하면 스키마 삭제 확인 메시지가 표시됩니다.
+
+image::hawq/editor/hawqeditor-20.png[scaledwidth=30%,스키마 삭제 확인]
+
+스미카를 정상적으로 삭제하면 다음과 같이 삭제 완료 메시지가 표시됩니다.
+
+image::hawq/editor/hawqeditor-21.png[scaledwidth=30%,스키마 삭제 완료]
+
+NOTE: 스키마에 데이터가 있을 경우 삭제되지 않습니다. 이런 경우 직접 쿼리를 입력하여 삭제합니다.
+
+=== 테이블 관리
+
+==== 테이블 생성
+
+오른쪽 클릭을 하여 메뉴를 띄우고 테이블 생성 메뉴를 선택합니다.
+
+image::hawq/editor/hawqeditor-22.png[scaledwidth=30%,테이블 생성]
+
+필수값은 `테이블명, 데이터베이스명, 스키마명, 컬럼` 이고 나머지는 옵션입니다.
+
+image::hawq/editor/hawqeditor-23.png[scaledwidth=100%,테이블 생성 폼]
+
+추가 버튼을 선택하여 컬럼을 추가할 수 있고, 삭제 버튼을 선택하여 컬럼을 삭제할 수 있습니다.
+
+image::hawq/editor/hawqeditor-24.png[scaledwidth=100%,컬럼 추가]
+
+테이블의 옵션을 설정합니다.
+
+Append only 는 TRUE 로 선택하면 append-only 테이블을 생성합니다.
+블록 크기는 테이블의 각 블록 크기를 지정합니다. 단위는 바이트이고, 8,192~2,097,152 사이의 값을 8,192 의 배수로 지정합니다. 기본값은 32,768 입니다.
+스토리지 유형은 COLUMN, ROW, PARQUET 중에서 선택 가능합니다. HAWQ 1.3 에서 COLUMN 은 지원하지 않습니다. 이 옵션은 Append only 를 TRUE 로 지정한 경우에만 사용 가능합니다.
+압축 유형은 ZLIB, QUICKLZ, SNAPPY, GZIP, NONE 중에서 선택 가능합니다. 이 옵션은 Append only 를 `TRUE` 로 지정한 경우에만 사용 가능합니다.
+압축 수준은 append-only 테이블의 압축을 위해 사용하고 1~9 까지 선택 가능합니다. ZLIB 압축은 1~9 까지 선택 가능하고 QuickLZ 압축은 1 만 가능합니다. 지정하지 않으면 기본값은 1 입니다. 이 옵션은 Append only 를 TRUE 로 지정한 경우에만 사용 가능합니다.
+
+image::hawq/editor/hawqeditor-25.png[scaledwidth=50%,옵션]
+
+테이블의 파티션을 설정합니다.
+
+파티션을 설정할 때 기본값 외에는 모두 필수값입니다. Flamingo에서 HAWQ 파티션은 1 depth 만 지원합니다. 더 세부적인 파티션은 직접 쿼리를 입력하여 설정합니다.
+컬럼명은 파티션을 지정할 컬럼명을 선택합니다. 유형은 Range 와 List 중에서 선택합니다. Range 일 경우에는 시작과 끝 값을 지정하고 옵션을 지정해야 할 경우 + 버튼을 클릭하여 지정합니다.
+시작값은 기본적으로 포함되고 끝값은 기본적으로 포함되지 않습니다. 다르게 설정할 경우 직접 쿼리를 입력하여 설정합니다. List 일 경우에는 이름과 값을 입력합니다.
+
+image::hawq/editor/hawqeditor-26.png[scaledwidth=100%,파티션]
+
+테이블 정보를 조건에 맞게 입력합니다.
+
+image::hawq/editor/hawqeditor-27.png[scaledwidth=100%,테이블 정보 입력]
+
+image::hawq/editor/hawqeditor-28.png[scaledwidth=100%,테이블, 컬럼정보 입력]
+
+image::hawq/editor/hawqeditor-29.png[scaledwidth=100%,옵션 정보 입력]
+
+테이블에 적절한 정보를 입력 후 생성 버튼을 선택하여 테이블을 생성합니다.
+
+image::hawq/editor/hawqeditor-30.png[scaledwidth=30%,테이블 생성 확인]
+
+정상적으로 생성된 경우 아래와 같이 나타납니다.
+
+image::hawq/editor/hawqeditor-31.png[scaledwidth=30%,테이블 생성]
+
+==== 테이블 목록 갱신
+
+테이블이 생성되면 오브젝트 익스플로러 우측 상단에 있는 갱신 버튼을 선택하여 테이블 목록을 갱신합니다.
+
+image::hawq/editor/hawqeditor-31-1.png[scaledwidth=35%,테이블 목록 갱신]
+
+==== 테이블 변경
+
+테이블 목록 위에서 오른쪽 선택을 하여 메뉴를 띄우고 테이블 변경 메뉴를 선택합니다.
+
+image::hawq/editor/hawqeditor-38.png[scaledwidth=35%,테이블 변경]
+
+image::hawq/editor/hawqeditor-39.png[scaledwidth=100%,테이블 변경 폼]
+
+==== 컬럼 변경
+
+===== 컬럼 추가
+
+추가 버튼을 선택하여 컬럼을 추가할 수 있습니다.
+
+image::hawq/editor/hawqeditor-40.png[scaledwidth=100%,컬럼 추가]
+
+===== 컬럼 추가 정보 입력
+
+컬럼에 적절한 정보를 입력합니다.
+
+image::hawq/editor/hawqeditor-41.png[scaledwidth=100%,컬럼 추가 정보 입력]
+
+입력 후 저장 버튼을 선택하여 테이블 변경 내역을 저장합니다.
+
+image::hawq/editor/hawqeditor-42.png[scaledwidth=30%,컬럼 변경내역 저장]
+
+Yes를 선택하면 컬럼 정보를 저장합니다. 저장이 완료되면 컬럼 정보가 갱신됩니다.
+
+image::hawq/editor/hawqeditor-43.png[scaledwidth=30%,컬럼 변경내역 저장 확인]
+
+===== 컬럼 변경내역 조회
+
+추가한 컬럼이 목록에서 추가된 것을 확인할 수 있습니다. 갱신버튼을 누르면 컬럼 목록을 갱신합니다.
+
+image::hawq/editor/hawqeditor-44.png[scaledwidth=100%,컬럼 변경내역 조회]
+
+==== 분산키 변경
+
+분산키 정보를 변경하기 위해서는 분산키로 지정할 컬럼을 선택합니다. 필요에 따라 여러개 지정이 가능합니다.
+
+image::hawq/editor/hawqeditor-46.png[scaledwidth=50%,분산키 변경]
+
+하단의 변경 버튼을 선택하여 테이블 정보를 변경합니다.
+
+image::hawq/editor/hawqeditor-47.png[scaledwidth=35%,분산키 변경 버튼]
+
+Yes를 선택하면 테이블 정보가 갱신되고 변경된 분산키를 확인할 수 있습니다.
+
+image::hawq/editor/hawqeditor-48.png[scaledwidth=30%,분산키 변경 확인]
+
+분산키를 변경한 후 다음의 화면을 통해서 변경된 분산키를 확인할 수 있습니다.
+
+image::hawq/editor/hawqeditor-49.png[scaledwidth=50%,분산키 변경 확인1]
+
+분산키로 선택된 컬럼은 true로 표시됩니다.
+
+image::hawq/editor/hawqeditor-50.png[scaledwidth=100%,분산키 변경 확인2]
+
+==== 테이블명 변경
+
+테이블명 변경 또한 입력 후 변경버튼을 선택하여 가능합니다.
+
+image::hawq/editor/hawqeditor-51.png[scaledwidth=65%,테이블명 변경]
+
+==== 테이블의 옵션과 파티션
+
+다음은 테이블의 옵션 항목입니다.
+
+image::hawq/editor/hawqeditor-53.png[scaledwidth=50%,옵션]
+
+다음은 테이블의 파티션 항목입니다.
+
+image::hawq/editor/hawqeditor-54.png[scaledwidth=100%,파티션]
+
+[WARNING]
+옵션과 파티션은 변경할 수 없습니다. 변경이 필요하다면 직접 쿼리를 입력하여 변경합니다.
+
+==== 제약사항 변경
+
+추가 버튼을 선택하여 제약사항을 추가합니다. 제약사항 이름은 중복될 수 없고 HAWQ에서는 foreign key 제약사항은 지원하지 않습니다.
+또한 키는 입력하지 않습니다. 소스에 제약사항 내용을 입력합니다.
+
+image::hawq/editor/hawqeditor-55.png[scaledwidth=100%,제약사항 추가]
+
+추가할 제약사항의 적절한 값을 입력 후 우측 상단의 저장버튼을 선택하여 제약사항을 변경합니다.
+
+image::hawq/editor/hawqeditor-56.png[scaledwidth=100%,제약사항 입력]
+
+image::hawq/editor/hawqeditor-57.png[scaledwidth=30%,제약사항 변경 확인]
+
+변경이 완료되면 제약사항 목록이 갱신되고 키가 채워집니다.
+
+image::hawq/editor/hawqeditor-58.png[scaledwidth=100%,제약사항 목록 확인]
+
+==== 테이블 삭제
+
+테이블에서 오른쪽 선택하여 메뉴를 표시한 후 테이블 삭제 메뉴를 선택합니다.
+정상적으로 삭제되면 완료 메시지가 뜨고 목록이 갱신됩니다.
+
+image::hawq/editor/hawqeditor-59.png[scaledwidth=50%,테이블 삭제]
+
+[NOTE]
+테이블에 데이터가 있을 경우 삭제되지 않습니다. 이런 경우 직접 쿼리를 입력하여 삭제합니다.
+
+=== 편집기
+
+==== 쿼리 실행
+
+드래그 없이 쿼리 실행 버튼 선택 시 모든 쿼리를 실행합니다. 드래그 후에 쿼리 실행 버튼 선택 시 드래그 된 부분만 실행합니다.
+
+image::hawq/editor/hawqeditor-83.png[scaledwidth=100%,쿼리 실행]
+
+===== SELECT INTO 와 SELECT 외 쿼리 실행
+
+쿼리 입력 후 쿼리실행 버튼을 선택하여 쿼리를 실행합니다.
+
+image::hawq/editor/hawqeditor-61.png[scaledwidth=100%,NOT SELECT 쿼리 입력]
+
+실행성공시 로그에 실행성공 메시지가 출력됩니다.
+
+image::hawq/editor/hawqeditor-62.png[scaledwidth=100%,NOT SELECT 쿼리 로그]
+
+===== SELECT 쿼리 실행
+
+쿼리 입력 후 쿼리실행 버튼을 선택하여 쿼리를 실행합니다. +
+실행성공시 결과가 출력됩니다. +
+결과는 원하는 컬럼만 선택하여 복사도 가능합니다.
+
+WARNING: `헤더`는 복사되지 않습니다.
+
+image::hawq/editor/hawqeditor-63.png[scaledwidth=100%,SELECT 쿼리 입력]
+
+==== 실행계획
+
+SELECT 쿼리 입력 후 상단의 실행 계획 보기 버튼을 선택하면 쿼리 실행 계획을 볼 수 있습니다.
+
+image::hawq/editor/hawqeditor-64.png[scaledwidth=100%,실행 계획 보기 버튼]
+
+NOTE: 기본적으로 EXPLAIN 으로 실행됩니다. +
+EXPLAIN ANALYZE 로 실행을 원할 경우에는 쿼리 앞에 ANALYZE 를 입력 후 버튼을 선택합니다.
+
+image::hawq/editor/hawqeditor-65.png[scaledwidth=100%,쿼리 실행 계획 보기]
+
+==== 결과 다운로드
+
+다운로드 버튼을 선택하여 조회된 결과를 csv 형식으로 다운로드 합니다.
+
+image::hawq/editor/hawqeditor-84.png[scaledwidth=100%,결과 다운로드]
+
+==== 메시지
+
+쿼리 실행시 메시지가 있을 경우 메시지 탭에 표시됩니다.
+
+image::hawq/editor/hawqeditor-85.png[scaledwidth=100%,메시지]
+
+==== 차트
+
+쿼리 결과에서 첫번째 컬럼과 두번째 컬럼을 이용하여 차트를 그립니다. 첫번째 컬럼이 x축이 되고 두번째 컬럼이 y축이 됩니다.
+두번째 컬럼은 숫자 타입이어야 합니다. 우측 상단의 전체화면 버튼을 선택하여 전체화면으로 조회합니다.
+
+다음은 처리 결과를 도넛(Donut) 차트로 표시한 화면입니다.
+
+image::hawq/editor/hawqeditor-donut.png[scaledwidth=100%,도넛 차트]
+
+다음은 처리 결과를 바(Bar) 차트로 표시한 화면입니다.
+
+image::hawq/editor/hawqeditor-bar.png[scaledwidth=100%,바 차트]
+
+다음은 처리 결과를 영역(Area) 차트로 표시한 화면입니다.
+
+image::hawq/editor/hawqeditor-area.png[scaledwidth=100%,영역 차트]
+
+다음은 처리 결과를 라인(Line) 차트로 표시한 화면입니다.
+
+image::hawq/editor/hawqeditor-line.png[scaledwidth=100%,라인 차트]
+
+=== 뷰
+
+==== 뷰 생성
+
+뷰에서 오른쪽 선택하여 메뉴를 표시한 후 뷰 생성 메뉴를 선택합니다.
+
+image::hawq/editor/hawqeditor-66.png[scaledwidth=35%,뷰 생성]
+
+편집기에 뷰 생성 쿼리 틀이 생성됩니다.
+
+image::hawq/editor/hawqeditor-67.png[scaledwidth=35%,뷰 생성 쿼리]
+
+편집기에 생성된 뷰 생성 쿼리를 적절히 입력한 후 쿼리를 실행하여 뷰를 생성합니다.
+
+image::hawq/editor/hawqeditor-68.png[scaledwidth=100%,뷰 생성 쿼리 입력]
+
+==== 뷰 삭제
+
+뷰에서 오른쪽 선택하여 메뉴를 표시한 후 뷰 삭제 메뉴를 선택합니다.
+
+image::hawq/editor/hawqeditor-69.png[scaledwidth=35%,뷰 삭제]
+
+Yes를 선택하여 뷰를 삭제하고 정상적으로 삭제되면 목록이 갱신됩니다.
+
+image::hawq/editor/hawqeditor-70.png[scaledwidth=35%,뷰 삭제 확인]
+
+NOTE: 뷰에 데이터가 있을 경우 삭제되지 않습니다. 이런 경우 직접 쿼리를 입력하여 삭제합니다.
+
+=== External 테이블
+
+==== External 테이블 생성 전 준비
+
+External 테이블 생성 전 데이터를 입력합니다. 여기서는 `gpfdist` 만 다루고 그 외는 HAWQ Documentation의 `CREATE EXTERNAL TABLE` (http://pivotalhd-210.docs.pivotal.io/doc/2100/webhelp/index.html#hawq-topics/CREATE-EXTERNAL-TABLE.html[1.2.1.1], http://hawq.docs.pivotal.io/docs-hawq/topics/CREATE-EXTERNAL-TABLE.html[1.3.0])을 참고합니다.
+
+[source,bash]
+----
+[pivhdsne:~]$ mkdir exttest
+[pivhdsne:~]$ cd exttest
+[pivhdsne:exttest]$ vi test.txt
+[pivhdsne:exttest]$ cat test.txt
+1 a apache
+2 b boolean
+3 c click
+4 d data
+5 e etl
+6 f flamingo
+7 g gpadmin
+8 h hbase
+9 i intel
+10 j java
+[pivhdsne:exttest]$ gpfdist -d . -p 8081 &
+[1] 7404
+[pivhdsne:exttest]$ Serving HTTP on port 8081, directory /home/gpadmin/exttest
+----
+
+==== External 테이블 생성
+
+External 테이블에서 오른쪽 선택하여 메뉴를 표시한 후 External 테이블 생성 메뉴를 선택합니다.
+
+image::hawq/editor/hawqeditor-71.png[scaledwidth=35%,External 테이블 생성]
+
+필수값은 테이블명, 데이터베이스명, 스키마명, 컬럼 또는 컬럼 참조 테이블, 위치, 형식이며 나머지는 옵션입니다.
+Writable 선택시 쓰기만 가능하고 선택해제시 읽기만 가능합니다.
+Web 테이블은 위치에 http를 사용할 경우 선택합니다.
+컬럼은 추가 버튼을 선택하여 컬럼을 추가할 수 있고, 삭제 버튼을 선택하여 컬럼을 삭제할 수 있습니다.
+컬럼 참조 테이블은 지정한 테이블의 컬럼 설정 그대로 생성될 테이블의 컬럼을 설정합니다.
+
+image::hawq/editor/hawqeditor-72.png[scaledwidth=100%,External 테이블 일반]
+
+추가 버튼을 선택하여 위치를 추가할 수 있고, 삭제 버튼을 선택하여 위치를 삭제할 수 있습니다.
+힌트는 위치를 입력하기 위해 필요한 가이드 역할을 위한 값이고, 선택하지 않아도 상관 없습니다.
+위치는 데이터의 위치를 입력합니다.
+
+image::hawq/editor/hawqeditor-73.png[scaledwidth=100%,External 테이블 위치]
+
+파일 유형을 선택 후 각각의 값을 입력하여 설정합니다.
+Fill missing fields 는 데이터의 행 또는 열 끝에 필드가 누락된 경우 지정합니다.
+행에 빈 줄, NOT NULl 제약을 가지는 경우 오류가 발생할 수 있습니다.
+
+image::hawq/editor/hawqeditor-74.png[scaledwidth=100%,External 테이블 형식]
+
+적절한 값을 입력 후 생성 버튼을 선택하여 External 테이블을 생성합니다.
+다음은 External 테이블의 일반 정보를 입력하는 화면입니다.
+
+image::hawq/editor/hawqeditor-75.png[scaledwidth=100%,External 테이블 일반 정보 입력]
+
+다음은 External 테이블의 위치 정보를 입력하는 화면입니다.
+
+image::hawq/editor/hawqeditor-76.png[scaledwidth=100%,External 테이블 위치 정보 입력]
+
+다음은 External 테이블의 형식 정보를 입력하는 화면입니다.
+
+image::hawq/editor/hawqeditor-77.png[scaledwidth=100%,External 테이블 형식 정보 입력]
+
+==== External 테이블 정보 조회
+
+쿼리를 입력하여 External 테이블을 조회합니다.
+
+image::hawq/editor/hawqeditor-78.png[scaledwidth=100%,External 테이블 정보 조회]
+
+==== External 테이블 변경
+
+테이블 변경과 마찬가지로 컬럼 추가, 삭제, 테이블명 변경 등이 가능합니다.
+
+image::hawq/editor/hawqeditor-86.png[scaledwidth=35%,External 테이블 변경]
+
+==== External 테이블 삭제
+
+테이블에서 오른쪽 선택하여 메뉴를 표시한 후 테이블 삭제 메뉴를 선택합니다.
+정상적으로 삭제되면 완료 메시지가 뜨고 목록이 갱신됩니다.
+
+image::hawq/editor/hawqeditor-87.png[scaledwidth=35%,External 테이블 삭제]
+
+NOTE: External 테이블에 데이터가 있을 경우 삭제되지 않습니다.
+이런 경우 직접 쿼리를 입력하여 삭제합니다.
+
+=== 함수
+
+==== 함수 생성
+
+image::hawq/editor/hawqeditor-79.png[scaledwidth=35%,함수 생성]
+
+함수에서 오른쪽 선택하여 메뉴를 표시한 후 함수 생성 메뉴를 선택하면 함수 생성 쿼리 틀이 생성됩니다.
+
+image::hawq/editor/hawqeditor-80.png[scaledwidth=50%,함수 생성 쿼리]
+
+편집기에 생성된 함수 생성 쿼리를 적절히 입력 후 쿼리를 실행하여 함수를 생성합니다.
+
+image::hawq/editor/hawqeditor-81.png[scaledwidth=50%,함수 생성 쿼리 입력]
+
+적절한 쿼리를 입력 후 쿼리를 실행하여 함수를 호출합니다.
+
+image::hawq/editor/hawqeditor-82.png[scaledwidth=100%,함수 사용]
+
+==== 함수 삭제
+
+함수에서 오른쪽 선택하여 메뉴를 표시한 후 함수 삭제 메뉴를 선택합니다.
+
+image::hawq/editor/hawqeditor-88.png[scaledwidth=30%,함수 삭제]
+
+Yes를 선택하면 함수가 삭제되고 정상적으로 삭제되면 목록이 갱신됩니다.
+
+image::hawq/editor/hawqeditor-89.png[scaledwidth=30%,함수 삭제 확인]
+
+[NOTE]
+함수가 다른 오브젝트와 연관되어 있을 경우 삭제되지 않습니다. 이런 경우 직접 쿼리를 입력하여 삭제합니다.
+
+=== 테이블 정보
+
+오브젝트의 정보들을 관리합니다. 오브젝트를 선택하면 컬럼, 메타데이터, 파티션, 생성문 정보가 갱신됩니다.
+
+==== 컬럼
+
+===== 컬럼 목록 조회
+
+컬럼의 목록을 조회할 수 있습니다.
+
+image::hawq/editor/hawqeditor-32.png[scaledwidth=30%,컬럼 목록 조회]
+
+===== 컬럼 상세정보 조회
+
+컬럼을 더블선택하면 컬럼의 상세정보를 조회할 수 있습니다.
+
+image::hawq/editor/hawqeditor-33.png[scaledwidth=30%,컬럼 상세정보]
+
+==== 메타데이터
+
+테이블의 메타데이터 정보를 조회할 수 있습니다.
+
+image::hawq/editor/hawqeditor-34.png[scaledwidth=30%,메타데이터 목록 조회]
+
+==== 파티션
+
+===== 파티션 목록 조회
+
+파티션을 선택하면 파티션의 상세정보를 컬럼탭과 메타데이터 탭에서 다시 조회 가능합니다.
+
+image::hawq/editor/hawqeditor-35.png[scaledwidth=30%,파티션 목록 조회]
+
+===== 파티션 상세정보 조회
+
+파티션을 오른쪽 선택하면 파티션의 상세정보를 조회할 수 있습니다.
+
+image::hawq/editor/hawqeditor-35-1.png[scaledwidth=30%,파티션 상세 조회]
+
+image::hawq/editor/hawqeditor-37.png[scaledwidth=30%,파티션 상세정보]
+
+==== 생성문
+
+생성문을 조회합니다.
+
+image::hawq/editor/hawqeditor-36.png[scaledwidth=30%,생성문 조회]
+
+== Pivotal HAWQ 권한 관리
+
+=== 롤
+
+Pivotal HAWQ의 권한 관리에서 롤 관리는 매우 중요한 기능입니다. 시스템 관리자만 사용할 수 있는 기능으로서
+시스템 관리 메뉴에서 HAWQ 권한 관리 메뉴를 접속하면 다음의 화면이 나타납니다.
+
+image::hawq/auth/hawqauth-00.png[scaledwidth=100%,롤 관리]
+
+==== 롤 추가
+
+롤을 추가하기 위해서 상단의 추가 버튼을 선택합니다. 필수값은 `이름` 이고, 나머지는 옵션입니다. 연결 제한이 -1 일 경우 제한이 없습니다. 상속을 체크할 경우 데이터베이스의 모든 권한을 사용할 수 있습니다. In Role 을 지정하면 지정한 롤의 구성원으로서 새로운 롤을 추가합니다.
+Role을 지정하면 새로운 롤 그룹의 구성원으로 새로운 롤을 추가합니다. Admin 은 Role 과 비슷한데 이 롤의 구성원 자격을 부여하는 권한을 부여하여 ADMIN OPTION이 있는 새로운 역할에 추가합니다.
+
+옵션들에 대한 자세한 내용은 http://pivotalhd-210.docs.pivotal.io/doc/2100/webhelp/index.html#hawq-topics/CREATE-ROLE.html[링크]를 확인하시기 바랍니다.
+
+image::hawq/auth/hawqauth-01.png[scaledwidth=50%,롤 추가 폼]
+
+적절한 값을 입력한 후 하단의 저장 버튼을 선택하여 롤을 생성합니다.
+
+image::hawq/auth/hawqauth-02.png[scaledwidth=50%,룰 정보 입력]
+
+Yes를 선택하면 롤이 생성되고 생성된 롤을 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-03.png[scaledwidth=30%,롤 생성 확인]
+
+생성이 정상적으로 완료되면 아래와 같은 메시지를 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-04.png[scaledwidth=30%,롤 생성]
+
+롤이 추가되었습니다.
+
+image::hawq/auth/hawqauth-05.png[scaledwidth=50%,생성된 롤 확인]
+
+==== 롤 상세정보 확인
+
+목록에서 상세정보를 확인할 롤을 선택하여 상세정보를 조회합니다.
+
+image::hawq/auth/hawqauth-06.png[scaledwidth=100%,롤 상세정보 확인]
+
+==== 롤 수정
+
+수정할 롤을 목록에서 선택 후 적절한 값을 입력한 후 저장 버튼을 선택하여 롤을 수정합니다.
+
+여기서는 연결 제한을 -1 (제한 없음) 에서 5 로 수정합니다.
+
+image::hawq/auth/hawqauth-07.png[scaledwidth=50%,롤 수정 정보 입력]
+
+Yes를 선택하면 롤이 변경되고 변경된 롤을 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-08.png[scaledwidth=30%,롤 변경 확인]
+
+변경이 정상적으로 완료되면 아래와 같은 메시지를 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-09.png[scaledwidth=30%,롤 변경]
+
+변경된 롤을 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-10.png[scaledwidth=100%,변경된 롤 확인]
+
+==== 롤 삭제
+
+롤에서 오른쪽 선택하여 메뉴를 표시한 후 롤 삭제 메뉴를 선택합니다.
+
+image::hawq/auth/hawqauth-11.png[scaledwidth=50%,롤 삭제]
+
+Yes를 선택하면 롤이 삭제됩니다.
+
+image::hawq/auth/hawqauth-12.png[scaledwidth=30%,롤 삭제 확인]
+
+삭제가 정상적으로 완료되면 아래와 같은 메시지를 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-13.png[scaledwidth=30%,롤 삭제]
+
+=== 리소스 큐
+
+==== 리소스 큐 추가
+
+상단의 추가 버튼을 선택합니다.
+
+image::hawq/auth/hawqauth-14.png[scaledwidth=100%,리소스 큐 목록 확인]
+
+필수값은 이름, 개수 또는 최대 비용이고 나머지는 옵션입니다.
+
+image::hawq/auth/hawqauth-15.png[scaledwidth=50%,리소스 큐 추가 폼]
+
+적절한 값을 입력 후 하단의 저장 버튼을 선택하여 리소스 큐를 생성합니다.
+
+image::hawq/auth/hawqauth-16.png[scaledwidth=50%,리소스 큐 정보 입력]
+
+Yes를 선택하면 리소스 큐가 생성되고 생성된 리소스 큐를 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-17.png[scaledwidth=30%,리소스 큐 생성 확인]
+
+생성이 정상적으로 완료되면 아래와 같은 메시지를 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-18.png[scaledwidth=30%,리소스 큐 생성]
+
+생성된 리소스 큐가 추가되었습니다.
+
+image::hawq/auth/hawqauth-19.png[scaledwidth=50%,추가된 리소스 큐 확인]
+
+==== 리소스 큐 상세정보 확인
+
+목록에서 상세정보를 확인할 리소스 큐를 선택하여 상세정보를 조회합니다.
+
+image::hawq/auth/hawqauth-20.png[scaledwidth=100%,리소스 큐 상세정보 확인]
+
+==== 리소스 큐 삭제
+
+리소스 큐에서 오른쪽 선택하여 메뉴를 표시한 후 리소스 큐 삭제 메뉴를 선택합니다.
+
+image::hawq/auth/hawqauth-21.png[scaledwidth=50%,리소스 큐 삭제]
+
+Yes를 선택하면 리소스 큐가 삭제됩니다.
+
+image::hawq/auth/hawqauth-22.png[scaledwidth=30%,리소스 큐 삭제 확인]
+
+삭제가 정상적으로 완료되면 아래와 같은 메시지를 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-23.png[scaledwidth=30%,리소스 큐 삭제]
+
+=== 세션
+
+==== 세션 목록 확인
+
+현재 실행중인 쿼리들의 세션 목록을 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-24.png[scaledwidth=100%,세션 목록]
+
+==== 세션 중지
+
+중지 버튼을 선택하여 쿼리를 중지합니다.
+
+image::hawq/auth/hawqauth-25.png[scaledwidth=50%,세션 중지]
+
+=== Lock 테이블
+
+==== Lock 테이블 목록 확인
+
+Lock 테이블의 목록을 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-26.png[scaledwidth=100%,Lock 테이블 목록]
+
+대기 pid, Other pid 에 마우스를 가져다대면 실행중인 쿼리를 확인할 수 있습니다.
+
+image::hawq/auth/hawqauth-27.png[scaledwidth=100%,실행중 쿼리 확인]
+
+중지 버튼을 선택하여 쿼리를 중지합니다.
+
+image::hawq/auth/hawqauth-28.png[scaledwidth=50%,쿼리 중지]
+
+=== 알려진 문제점
+
+* Pivotal HAWQ의 연결 방식이 JDBC만 지원하는 문제로 인하여 Long Running 쿼리 실행시 커넥션 관리 이슈가 발생할 수 있습니다.

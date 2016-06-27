@@ -18,7 +18,6 @@ package org.opencloudengine.flamingo2.engine.designer.activiti.task;
 
 import org.apache.commons.io.FileUtils;
 import org.opencloudengine.flamingo2.engine.fs.FileSystemUtils;
-import org.opencloudengine.flamingo2.util.StringUtils;
 import org.opencloudengine.flamingo2.util.cli.FileWriter;
 import org.opencloudengine.flamingo2.util.cli.ManagedProcess;
 import org.slf4j.Logger;
@@ -32,6 +31,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.opencloudengine.flamingo2.util.StringUtils.unescape;
 import static org.opencloudengine.flamingo2.web.configuration.ConfigurationHelper.getHelper;
 
 /**
@@ -93,7 +93,7 @@ public class HiveTask extends InterceptorAbstractTask {
         Map<String, String> defaultEnvs = getDefaultEnvs();
         Set<String> keys = defaultEnvs.keySet();
         for (String key : keys) {
-            if (!StringUtils.isEmpty(defaultEnvs.get(key))) {
+            if (!isEmpty(defaultEnvs.get(key))) {
                 command.add(MessageFormatter.arrayFormat("export {}={}\n", new Object[]{
                         key, defaultEnvs.get(key)
                 }).getMessage());
@@ -124,12 +124,12 @@ public class HiveTask extends InterceptorAbstractTask {
         hiveConf.add("--hiveconf " + encloseSpace("flamingo.log.path") + "=" + encloseSpace(this.getTaskHistory().getLogDirectory()));
         hiveConf.add("--hiveconf " + encloseSpace("fs.defaultFS") + "=" + fsDefaultFS);
 
-        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !StringUtils.isEmpty(variable.get("hadoopKeys").toString()) && !StringUtils.isEmpty(variable.get("hadoopValues").toString())) {
+        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !isEmpty(variable.get("hadoopKeys").toString()) && !isEmpty(variable.get("hadoopValues").toString())) {
             String[] hadoopKeys = (variable.get("hadoopKeys").toString()).split(",");
             String[] hadoopValues = (variable.get("hadoopValues").toString()).split(",");
 
             for (int i = 0; i < hadoopKeys.length; i++) {
-                hiveConf.add("--hiveconf " + StringUtils.unescape(encloseSpace(hadoopKeys[i])) + "=" + org.opencloudengine.flamingo2.util.StringUtils.unescape(encloseSpace(hadoopValues[i])));
+                hiveConf.add("--hiveconf " + unescape(encloseSpace(hadoopKeys[i])) + "=" + unescape(encloseSpace(hadoopValues[i])));
             }
         }
     }

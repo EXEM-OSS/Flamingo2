@@ -18,9 +18,7 @@
 Ext.define('Flamingo2.view.fs.hdfs.viewer.FileViewerWindow', {
     extend: 'Ext.window.Window',
     alias: 'widget.fileViewerWindow',
-
     requires: [
-        'Flamingo2.view.hive.editor.QueryEditor',
         'Flamingo2.view.fs.hdfs.viewer.FileViewerController',
         'Flamingo2.view.fs.hdfs.viewer.FileViewerForm'
     ],

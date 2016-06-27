@@ -6,7 +6,7 @@ FLUSH PRIVILEGES;
 USE flamingo2;
 
 CREATE TABLE IF NOT EXISTS flamingo2.FL_AUTHORITIES (
-  ID              BIGINT NOT NULL AUTO_INCREMENT,
+  ID              SMALLINT NOT NULL AUTO_INCREMENT,
   AUTHORITY       VARCHAR(100) NOT NULL,
   AUTHORITY_NM    VARCHAR(100) NOT NULL,
   PRIMARY KEY (ID),
@@ -22,17 +22,20 @@ CREATE TABLE IF NOT EXISTS flamingo2.FL_ORG (
   ORG_CD          VARCHAR(255),
   ORG_NM          VARCHAR(255),
   DESCRIPTION     LONGTEXT,
-  REG_DT          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UPD_DT          TIMESTAMP DEFAULT '0000-00-00 00:00:00',
+  REG_DT          TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Registered Date',
+  UPD_DT          TIMESTAMP     NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Updated Date',
   PRIMARY KEY (ID)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8;
 
 INSERT INTO flamingo2.FL_ORG (ID, ORG_CD, ORG_NM, DESCRIPTION, UPD_DT)
-VALUES (1, 'OCE', 'Cloudine', 'Cloudine', CURRENT_TIMESTAMP);
+VALUES (1, 'EXEM', 'Admin', '시스템 관리자', CURRENT_TIMESTAMP);
 
 INSERT INTO flamingo2.FL_ORG (ID, ORG_CD, ORG_NM, DESCRIPTION, UPD_DT)
-VALUES (2, 'OCE', 'Demo', '데모', CURRENT_TIMESTAMP);
+VALUES (2, 'EXEM', 'Exem', '엑셈', CURRENT_TIMESTAMP);
+
+INSERT INTO flamingo2.FL_ORG (ID, ORG_CD, ORG_NM, DESCRIPTION, UPD_DT)
+VALUES (3, 'EXEM', 'Demo', '데모', CURRENT_TIMESTAMP);
 
 CREATE TABLE IF NOT EXISTS flamingo2.FL_USER_LEVEL (
   LEVEL             SMALLINT NOT NULL,
@@ -48,21 +51,21 @@ INSERT INTO flamingo2.FL_USER_LEVEL (LEVEL, LEVEL_NM) VALUES (4, '4등급');
 INSERT INTO flamingo2.FL_USER_LEVEL (LEVEL, LEVEL_NM) VALUES (5, '5등급');
 
 CREATE TABLE IF NOT EXISTS flamingo2.FL_USER (
-  ID                BIGINT NOT NULL AUTO_INCREMENT,
-  USER_NM           VARCHAR(255),
-  PASSWD            VARCHAR(255),
-  EMAIL             VARCHAR(255),
-  NM                VARCHAR(255),
-  DESCRIPTION       LONGTEXT,
-  LINUX_USER_HOME   VARCHAR(255),
-  HDFS_USER_HOME    VARCHAR(255),
-  USER_GROUP        VARCHAR(255),
-  REG_DT            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UPD_DT            TIMESTAMP DEFAULT '0000-00-00 00:00:00',
-  ENABLED           BOOLEAN NOT NULL DEFAULT FALSE,
-  ORG_ID            BIGINT NOT NULL DEFAULT 1,
-  AUTH_ID           BIGINT NOT NULL DEFAULT 2,
-  LEVEL             SMALLINT NOT NULL DEFAULT 5,
+  ID                BIGINT          NOT NULL AUTO_INCREMENT,
+  USER_NM           VARCHAR(255)    NOT NULL,
+  PASSWD            VARCHAR(255)    NOT NULL,
+  EMAIL             VARCHAR(255)    NOT NULL,
+  NM                VARCHAR(255)    NOT NULL,
+  ORG_ID            BIGINT          NOT NULL DEFAULT 1 COMMENT '소속 ID',
+  AUTH_ID           SMALLINT        NOT NULL DEFAULT 2 COMMENT '권한 ID',
+  LEVEL             SMALLINT        NOT NULL DEFAULT 5 COMMENT '회원 등급',
+  ENABLED           BOOLEAN         NOT NULL DEFAULT FALSE  COMMENT '관리자에 의해 승인 처리된 회원 상태',
+  REG_DT            TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Registered Date',
+  UPD_DT            TIMESTAMP       NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Updated Date',
+  LINUX_USER_HOME   VARCHAR(255)    COMMENT '리눅스 사용자 홈 디렉토리 경로',
+  HDFS_USER_HOME    VARCHAR(255)    COMMENT 'HDFS 사용자 홈 디렉토리 경로',
+  USER_GROUP        VARCHAR(255)    COMMENT '리눅스 및 HDFS에 사용되는 사용자 그룹',
+  DESCRIPTION       LONGTEXT        COMMENT '사용자 계정 설명',
   FOREIGN KEY (ORG_ID) REFERENCES flamingo2.FL_ORG(ID),
   FOREIGN KEY (AUTH_ID) REFERENCES flamingo2.FL_AUTHORITIES(ID),
   FOREIGN KEY (LEVEL) REFERENCES flamingo2.FL_USER_LEVEL(LEVEL),
@@ -72,17 +75,17 @@ CREATE TABLE IF NOT EXISTS flamingo2.FL_USER (
   DEFAULT CHARSET = UTF8;
 
 INSERT INTO flamingo2.FL_USER (ID, USER_NM, PASSWD, EMAIL, NM, DESCRIPTION, LINUX_USER_HOME, HDFS_USER_HOME, USER_GROUP, UPD_DT, ENABLED, ORG_ID, AUTH_ID, LEVEL)
-VALUES (1, 'admin', 'MEVd1+d7s2DoZt8mgx+1kg==', 'admin@cloudine.co.kr', 'System Admin', 'System Admin', '/data1/admin', '/user/admin', 'admin', CURRENT_TIMESTAMP, 1, 1, 1, 1);
+VALUES (1, 'admin', 'MEVd1+d7s2DoZt8mgx+1kg==', 'bigdatabusi@ex-em.com', 'System Admin', 'System Admin', '/home/admin', '/user/admin', 'admin', CURRENT_TIMESTAMP, 1, 1, 1, 1);
 
 INSERT INTO flamingo2.FL_USER (ID, USER_NM, PASSWD, EMAIL, NM, DESCRIPTION, LINUX_USER_HOME, HDFS_USER_HOME, USER_GROUP, UPD_DT, ENABLED, ORG_ID, AUTH_ID, LEVEL)
-VALUES (2, 'cloudine', '4/Yw449MyCSmvmOJUfn5Iw==', 'all@cloudine.co.kr', 'Cloudine', 'Cloudine', '/data1/cloudine', '/user/cloudine', 'cloudine',  CURRENT_TIMESTAMP, 1, 1, 2, 2);
+VALUES (2, 'exem', '81bQVDItkBD8WGDzFf8JSA==', 'bigdatabusi@ex-em.com', 'EXEM', 'Exem', '/home/exem', '/user/exem', 'exem',  CURRENT_TIMESTAMP, 1, 1, 2, 2);
 
 INSERT INTO flamingo2.FL_USER (ID, USER_NM, PASSWD, EMAIL, NM, DESCRIPTION, LINUX_USER_HOME, HDFS_USER_HOME, USER_GROUP, UPD_DT, ENABLED, ORG_ID, AUTH_ID, LEVEL)
-VALUES (3, 'demo', 'XeOvVrkafW4YJe3tni7ngQ==', 'all@cloudine.co.kr', 'Demo', 'Demo', '/data1/demo', '/user/demo', 'demo', CURRENT_TIMESTAMP, 1, 1, 2, 2);
+VALUES (3, 'demo', 'XeOvVrkafW4YJe3tni7ngQ==', 'bigdatabusi@ex-em.com', 'Demo', 'Demo', '/home/demo', '/user/demo', 'demo', CURRENT_TIMESTAMP, 1, 1, 2, 2);
 
 CREATE TABLE IF NOT EXISTS flamingo2.FL_USER_AUTH (
   USER_ID              BIGINT NOT NULL,
-  AUTH_ID              BIGINT NOT NULL DEFAULT 2,
+  AUTH_ID              SMALLINT NOT NULL DEFAULT 2,
   PRIMARY KEY (USER_ID, AUTH_ID),
   FOREIGN KEY (USER_ID) REFERENCES flamingo2.FL_USER(ID) ON DELETE CASCADE,
   FOREIGN KEY (AUTH_ID) REFERENCES flamingo2.FL_AUTHORITIES(ID)
@@ -95,59 +98,64 @@ INSERT INTO flamingo2.FL_USER_AUTH (USER_ID, AUTH_ID) VALUES(2, 2);
 INSERT INTO flamingo2.FL_USER_AUTH (USER_ID, AUTH_ID) VALUES(3, 2);
 
 CREATE TABLE IF NOT EXISTS flamingo2.FL_HDFS_PATH_AUTH (
-  ID                    BIGINT        NOT NULL  AUTO_INCREMENT,
-  HDFS_PATH_PATTERN     VARCHAR(255)  NOT NULL  COMMENT 'HDFS Path Pattern',
-  CREATE_DIR   			BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Create Directory',
-  COPY_DIR     			BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Copy Directory',
-  MOVE_DIR     			BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Move Directory',
-  RENAME_DIR  			BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Rename Directory',
-  DELETE_DIR    		BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Delete Directory',
-  MERGE_DIR    		    BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Merge All Files In Directory',
-  PERMISSION_DIR    	BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Set Permission To Directories And Files',
-  CREATE_DB_DIR     	BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Create Hive Database',
-  CREATE_TABLE_DIR  	BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Create Hive Table',
-  COPY_FILE     		BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Copy File',
-  MOVE_FILE     		BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Move File',
-  RENAME_FILE  			BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Rename File',
-  DELETE_FILE    		BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Delete File',
-  UPLOAD_FILE    		BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Upload File',
-  DOWNLOAD_FILE     	BOOLEAN       NOT NULL  DEFAULT FALSE COMMENT 'Download File',
-  VIEW_FILE  	        BOOLEAN		  NOT NULL  DEFAULT FALSE COMMENT 'View Contents Into A File',
-  PERMISSION_FILE  	    BOOLEAN		  NOT NULL  DEFAULT FALSE COMMENT 'Set Permission To Files',
-  REG_DT                TIMESTAMP     NOT NULL  DEFAULT CURRENT_TIMESTAMP COMMENT 'Registered Date',
-  UPD_DT                TIMESTAMP     NOT NULL  DEFAULT '0000-00-00 00:00:00' COMMENT 'Updated Date',
-  AUTH_ID				BIGINT        NOT NULL  DEFAULT 2 COMMENT 'Authority ID',
-  LEVEL                 SMALLINT	  NOT NULL  DEFAULT 5 COMMENT 'User Level',
+  ID                    BIGINT        NOT NULL AUTO_INCREMENT,
+  HDFS_PATH_PATTERN     VARCHAR(255)  NOT NULL COMMENT 'HDFS Path Pattern',
+  CREATE_DIR   			BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Create Directory',
+  COPY_DIR     			BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Copy Directory',
+  MOVE_DIR     			BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Move Directory',
+  RENAME_DIR  			BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Rename Directory',
+  DELETE_DIR    		BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Delete Directory',
+  MERGE_DIR    		    BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Merge All Files In Directory',
+  PERMISSION_DIR    	BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Set Permission To Directories And Files',
+  CREATE_DB_DIR     	BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Create Hive Database',
+  CREATE_TABLE_DIR  	BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Create Hive Table',
+  COPY_FILE     		BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Copy File',
+  MOVE_FILE     		BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Move File',
+  RENAME_FILE  			BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Rename File',
+  DELETE_FILE    		BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Delete File',
+  UPLOAD_FILE    		BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Upload File',
+  DOWNLOAD_FILE     	BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Download File',
+  VIEW_FILE  	        BOOLEAN		  NOT NULL DEFAULT FALSE COMMENT 'View Contents Into A File',
+  PERMISSION_FILE  	    BOOLEAN		  NOT NULL DEFAULT FALSE COMMENT 'Set Permission To Files',
+  COPY_TO_LOCAL_FILE  	BOOLEAN		  NOT NULL DEFAULT FALSE COMMENT 'Copy Directories And Files From HDFS To Local',
+--  STREAMING_FILE  	    BOOLEAN		  NOT NULL DEFAULT FALSE COMMENT 'Set RealTime Streaming Configuration To File',
+  REG_DT                TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Registered Date',
+  UPD_DT                TIMESTAMP     NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Updated Date',
+  AUTH_ID				SMALLINT      NOT NULL DEFAULT 2 COMMENT 'Authority ID',
+  LEVEL                 SMALLINT	  NOT NULL DEFAULT 5 COMMENT 'User Level',
+  PRIMARY KEY (ID),
   FOREIGN KEY (AUTH_ID) REFERENCES FL_AUTHORITIES (ID),
   FOREIGN KEY (LEVEL) REFERENCES FL_USER_LEVEL (LEVEL),
-  PRIMARY KEY (ID),
   UNIQUE KEY (HDFS_PATH_PATTERN, AUTH_ID, LEVEL)
-) ENGINE =InnoDB
+) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8;
 
 INSERT INTO flamingo2.FL_HDFS_PATH_AUTH (
   ID,
   HDFS_PATH_PATTERN,
   CREATE_DIR, COPY_DIR, MOVE_DIR, RENAME_DIR, DELETE_DIR, MERGE_DIR, PERMISSION_DIR, CREATE_DB_DIR, CREATE_TABLE_DIR,
-  COPY_FILE, MOVE_FILE, RENAME_FILE, DELETE_FILE, UPLOAD_FILE, DOWNLOAD_FILE, VIEW_FILE, PERMISSION_FILE,
+  COPY_FILE, MOVE_FILE, RENAME_FILE, DELETE_FILE, UPLOAD_FILE, DOWNLOAD_FILE, VIEW_FILE, PERMISSION_FILE, COPY_TO_LOCAL_FILE,
+  --  STREAMING_FILE,
   UPD_DT, AUTH_ID, LEVEL)
-VALUES (1, '/**', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, CURRENT_TIMESTAMP, 1, 1);
+VALUES (1, '/**', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, CURRENT_TIMESTAMP, 1, 1);
 
 INSERT INTO flamingo2.FL_HDFS_PATH_AUTH (
   ID,
   HDFS_PATH_PATTERN,
   CREATE_DIR, COPY_DIR, MOVE_DIR, RENAME_DIR, DELETE_DIR, MERGE_DIR, PERMISSION_DIR, CREATE_DB_DIR, CREATE_TABLE_DIR,
-  COPY_FILE, MOVE_FILE, RENAME_FILE, DELETE_FILE, UPLOAD_FILE, DOWNLOAD_FILE, VIEW_FILE, PERMISSION_FILE,
+  COPY_FILE, MOVE_FILE, RENAME_FILE, DELETE_FILE, UPLOAD_FILE, DOWNLOAD_FILE, VIEW_FILE, PERMISSION_FILE, COPY_TO_LOCAL_FILE,
+  --  STREAMING_FILE,
   UPD_DT, AUTH_ID, LEVEL)
-VALUES (2, '/user/cloudine/**', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, CURRENT_TIMESTAMP, 2, 2);
+VALUES (2, '/user/exem/**', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, CURRENT_TIMESTAMP, 2, 2);
 
 INSERT INTO flamingo2.FL_HDFS_PATH_AUTH (
   ID,
   HDFS_PATH_PATTERN,
   CREATE_DIR, COPY_DIR, MOVE_DIR, RENAME_DIR, DELETE_DIR, MERGE_DIR, PERMISSION_DIR, CREATE_DB_DIR, CREATE_TABLE_DIR,
-  COPY_FILE, MOVE_FILE, RENAME_FILE, DELETE_FILE, UPLOAD_FILE, DOWNLOAD_FILE, VIEW_FILE, PERMISSION_FILE,
+  COPY_FILE, MOVE_FILE, RENAME_FILE, DELETE_FILE, UPLOAD_FILE, DOWNLOAD_FILE, VIEW_FILE, PERMISSION_FILE, COPY_TO_LOCAL_FILE,
+  --  STREAMING_FILE,
   UPD_DT, AUTH_ID, LEVEL)
-VALUES (3, '/user/demo/**', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, CURRENT_TIMESTAMP, 2, 2);
+VALUES (3, '/user/demo/**', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, CURRENT_TIMESTAMP, 2, 2);
 
 CREATE TABLE IF NOT EXISTS flamingo2.FL_ADMIN_MENU_AUTH (
   USERLEVEL       VARCHAR(20),
@@ -218,7 +226,7 @@ CREATE TABLE IF NOT EXISTS flamingo2.FL_TREE (
 INSERT INTO flamingo2.FL_TREE (ID, NAME, TREE, NODE, ROOT, USERNAME)
 VALUES (1, '/', 'WORKFLOW', 'FOLDER', true, 'admin');
 INSERT INTO flamingo2.FL_TREE (ID, NAME, TREE, NODE, ROOT, USERNAME)
-VALUES (2, '/', 'WORKFLOW', 'FOLDER', true, 'cloudine');
+VALUES (2, '/', 'WORKFLOW', 'FOLDER', true, 'exem');
 INSERT INTO flamingo2.FL_TREE (ID, NAME, TREE, NODE, ROOT, USERNAME)
 VALUES (3, '/', 'WORKFLOW', 'FOLDER', true, 'demo');
 
@@ -269,6 +277,9 @@ INSERT INTO flamingo2.FL_COMM_MENU VALUES
 ('MN001004','클러스터 노드','monitoring.clusternode.ClusterNode','MN001',5,'Y','','클러스터 노드','Clusternode','Clusternode','Clusternode'),
 ('MN001005','네임노드','monitoring.namenode.Namenode','MN001',6,'Y','','네임노드','Namenode','Namenode','Namenode'),
 ('MN001006','데이터노드','monitoring.datanode.Datanode','MN001',7,'Y','','데이터노드','Datanode','Datanode','Datanode'),
+('MN001007','Apache Spark','monitoring.spark.Spark','MN001',8,'Y','','Apache Spark','Apache Spark','Apache Spark','Apache Spark'),
+('MN002','실시간 스트림 분석','realtime','TOP',2,'Y','menu-visual','실시간 스트림 분석','Realtime Stream Analysis','Realtime Stream Analysis','Realtime Stream Analysis'),
+('MN002001','Spark Streaming','realtime.spark.streaming.SparkStreaming','MN002',1,'Y','','Spark Streaming','Spark Streaming','Spark Streaming','Spark Streaming'),
 ('MN003','워크플로우','designer','TOP',3,'Y','menu-workflow','워크플로우','Workflow','Workflow','Workflow'),
 ('MN003001','워크플로우 디자이너','designer.Designer','MN003',3,'Y','fa-picture-o','워크플로우 디자이너','Workflow Designer','Workflow Designer','Workflow Designer'),
 ('MN003002','워크플로우 모니터링','dashboard.Dashboard','MN003',3,'Y','fa-pie-chart','워크플로우 모니터링','Workflow Monitoring','Workflow Monitoring','Workflow Monitoring'),
@@ -278,13 +289,16 @@ INSERT INTO flamingo2.FL_COMM_MENU VALUES
 ('MN005002','HDFS Audit 로그','fs.audit.Audit','MN005',2,'Y','','HDFS Audit 로그','HDFS Audit Log','HDFS Audit Log','HDFS Audit Log'),
 ('MN006','Apache Hive','hive.Hive','TOP',6,'Y','menu-hive','Apache Hive','Apache Hive','Apache Hive','Apache Hive'),
 ('MN007','Apache Pig','pig.Pig','TOP',7,'Y','menu-pig','Apache Pig','Apache Pig','Apache Pig','Apache Pig'),
-('MN008','RStudio','r.RStudio','TOP',8,'Y','menu-rstudio','RStudio','RStudio','RStudio','RStudio'),
-('MN009','시각화','visualization.ggplot2.Ggplot2','TOP',9,'Y','menu-visual','시각화','Visualization','Visualization','Visualization'),
-('MN010','Pivotal HAWQ','hawq.Hawq','TOP',10,'Y','menu-hawq','Pivotal HAWQ','Pivotal HAWQ','Pivotal HAWQ','Pivotal HAWQ'),
-('MN011','아카이브','system','TOP',11,'Y','menu-archive','아카이브','Archive','Archive','Archive'),
-('MN011001','YARN 애플리케이션','archive.yarn.YarnApplication','MN011',1,'Y','','YARN 애플리케이션','YARN Application','YARN Application','YARN Application'),
-('MN011002','MapReduce','archive.mapreduce.HistoryServer','MN011',2,'Y','','MapReduce','MapReduce','MapReduce','MapReduce'),
-('MN012','터미널','terminal.Terminals','TOP',12,'Y','menu-terminal','터미널','Terminal','Terminal','Terminal'),
+('MN009','RStudio','r.RStudio','TOP',9,'Y','menu-rstudio','RStudio','RStudio','RStudio','RStudio'),
+('MN010','시각화','visualization.ggplot2.Ggplot2','TOP',10,'Y','menu-visual','시각화','Visualization','Visualization','Visualization'),
+('MN011','SQL on Hadoop','','TOP',11,'Y','menu-hawq','SQL on Hadoop','SQL on Hadoop','SQL on Hadoop','SQL on Hadoop'),
+('MN011001','Pivotal HAWQ','hawq.Hawq','MN011',1,'Y','','Pivotal HAWQ','Pivotal HAWQ','Pivotal HAWQ','Pivotal HAWQ'),
+('MN011002','Apache Tajo','tajo.Tajo','MN011',2,'Y','','Apache Tajo','Apache Tajo','Apache Tajo','Apache Tajo'),
+('MN012','아카이브','archive','TOP',12,'Y','menu-archive','아카이브','Archive','Archive','Archive'),
+('MN012001','YARN 애플리케이션','archive.yarn.ArchiveYarnApplication','MN012',1,'Y','','YARN 애플리케이션','YARN Application','YARN Application','YARN Application'),
+('MN012002','MapReduce','archive.mapreduce.ArchiveMapReduce','MN012',2,'Y','','MapReduce','MapReduce','MapReduce','MapReduce'),
+('MN013','터미널','terminal.Terminals','TOP',13,'Y','menu-terminal','터미널','Terminal','Terminal','Terminal'),
+('MN014','UIMA','uima.Uima','TOP',14,'Y','menu-visual','UIMA','UIMA','UIMA','UIMA'),
 ('MN099','시스템 관리','system','TOP',99,'Y','menu-system','시스템 관리','System Management','System Management','System Management'),
 ('MN099001','다국어 관리','system.language.Language','MN099',1,'Y','','다국어 관리','Language Management','Language Management','Language Management'),
 ('MN099002','메뉴 관리','system.menu.Menu','MN099',1,'Y','','메뉴 관리','Menu Management','Menu Management','Menu Management'),
@@ -333,37 +347,39 @@ CREATE TABLE IF NOT EXISTS flamingo2.FL_CL_YARN (
 --
 
 CREATE TABLE IF NOT EXISTS flamingo2.FL_CL_YARN_DUMP (
-    id                      INT(11) NOT NULL AUTO_INCREMENT,
-    system                  VARCHAR(255) DEFAULT NULL,
-    applicationId           VARCHAR(255) DEFAULT NULL,
-    applicationType         VARCHAR(255) DEFAULT NULL,
-    progress                VARCHAR(10) DEFAULT NULL,
-    queue                   VARCHAR(255) DEFAULT NULL,
-    memorySeconds           INT(11) NULL,
-    rpcPort                 INT(11) NOT NULL,
-    amHost                  VARCHAR(255) DEFAULT NULL,
-    usedResourcesMemory     INT(11) NULL,
-    startTime               DATETIME,
-    reservedResourcesVcores INT(11) NULL,
-    reservedResourcesMemory INT(11) NULL,
-    trackingUrl             LONGTEXT DEFAULT NULL,
-    yarnApplicationState    VARCHAR(255) DEFAULT NULL,
-    neededResourcesVcores   INT(11) NULL,
-    name                    LONGTEXT DEFAULT NULL,
-    numReservedContainers   INT(11) NULL,
-    usedResourcesVcores     INT(11) NULL,
-    finishTime              DATETIME,
-    numUsedContainers       INT(11) NOT NULL,
-    finalApplicationStatus  VARCHAR(255) DEFAULT NULL,
-    user                    VARCHAR(255) DEFAULT NULL,
-    neededResourcesMemory   INT(11) NULL,
-    vcoreSeconds            INT(11) NULL,
-    diagnostics             LONGTEXT DEFAULT NULL,
-    log                     LONGTEXT DEFAULT NULL,
-    reg_dt                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ID                          INT(11) NOT NULL AUTO_INCREMENT,
+    SYSTEM                      VARCHAR(255) DEFAULT NULL,
+    APPLICATION_ID              VARCHAR(255) DEFAULT NULL,
+    APPLICATION_TYPE            VARCHAR(255) DEFAULT NULL,
+    PROGRESS                    VARCHAR(10) DEFAULT NULL,
+    QUEUE                       VARCHAR(255) DEFAULT NULL,
+    MEMORY_SECONDS              INT(11) NULL,
+    RPC_PORT                    INT(11) NOT NULL,
+    AM_HOST                     VARCHAR(255) DEFAULT NULL,
+    USED_RESOURCES_MEMORY       INT(11) NULL,
+    START_TIME                  DATETIME,
+    RESERVED_RESOURCES_VCORES   INT(11) NULL,
+    RESERVED_RESOURCES_MEMORY   INT(11) NULL,
+    TRACKING_URL                LONGTEXT DEFAULT NULL,
+    YARN_APPLICATION_STATE      VARCHAR(255) DEFAULT NULL,
+    NEEDED_RESOURCES_VCORES     INT(11) NULL,
+    NAME                        LONGTEXT DEFAULT NULL,
+    NUM_RESERVED_CONTAINERS     INT(11) NULL,
+    USED_RESOURCES_VCORES       INT(11) NULL,
+    FINISH_TIME                 DATETIME,
+    NUM_USED_CONTAINERS         INT(11) NOT NULL,
+    FINAL_APPLICATION_STATUS    VARCHAR(255) DEFAULT NULL,
+    USER                        VARCHAR(255) DEFAULT NULL,
+    NEEDED_RESOURCES_MEMORY     INT(11) NULL,
+    VCORE_SECONDS               INT(11) NULL,
+    DIAGNOSTICS                 LONGTEXT DEFAULT NULL,
+    LOG                         LONGTEXT DEFAULT NULL,
+    REGISTERED_DATE             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 )
   ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE INDEX IDX_FL_CL_YARN_DUMP_01 ON flamingo2.FL_CL_YARN_DUMP (APPLICATION_ID);
 
 --
 -- MapReduce Job Monitoring
@@ -383,30 +399,39 @@ CREATE TABLE IF NOT EXISTS flamingo2.FL_CL_MR (
 --
 
 CREATE TABLE IF NOT EXISTS flamingo2.FL_CL_MR_DUMP (
-    id                    INT(11) NOT NULL AUTO_INCREMENT,
-    system                VARCHAR(255) DEFAULT NULL,
-    jobId                 VARCHAR(255) DEFAULT NULL,
-    name                  LONGTEXT DEFAULT NULL,
-    queue                 VARCHAR(255) DEFAULT NULL,
-    user                  VARCHAR(255) DEFAULT NULL,
-    state                 VARCHAR(255) DEFAULT NULL,
-    username              VARCHAR(255) DEFAULT '',
-    type                  VARCHAR(255) DEFAULT 'MAPREDUCE',
-    mapsTotal             INT(11),
-    mapsCompleted         INT(11),
-    reducesTotal          INT(11),
-    reducesCompleted      INT(11),
-    submitTime            DATETIME,
-    startTime             DATETIME,
-    finishTime            DATETIME,
-    counters              LONGTEXT DEFAULT NULL,
-    configuration         LONGTEXT DEFAULT NULL,
-    tasks                 LONGTEXT DEFAULT NULL,
-    reg_dt                TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ID                     INT(11) NOT NULL AUTO_INCREMENT,
+    SYSTEM                 VARCHAR(255) DEFAULT NULL,
+    JOB_ID                 VARCHAR(255) DEFAULT NULL,
+    NAME                   LONGTEXT DEFAULT NULL,
+    QUEUE                  VARCHAR(255) DEFAULT NULL,
+    USER                   VARCHAR(255) DEFAULT NULL,
+    STATE                  VARCHAR(255) DEFAULT NULL,
+    USERNAME               VARCHAR(255) DEFAULT '',
+    TYPE                   VARCHAR(255) DEFAULT 'MAPREDUCE',
+    MAPS_TOTAL             INT(11) DEFAULT 0,
+    MAPS_COMPLETED         INT(11) DEFAULT 0,
+    REDUCES_TOTAL          INT(11) DEFAULT 0,
+    REDUCES_COMPLETED      INT(11) DEFAULT 0,
+    FAILED_MAP_ATTEMPTS    INT(11) DEFAULT 0,
+    KILLED_MAP_ATTEMPTS    INT(11) DEFAULT 0,
+    FAILED_REDUCE_ATTEMPTS INT(11) DEFAULT 0,
+    KILLED_REDUCE_ATTEMPTS INT(11) DEFAULT 0,
+    AVG_MAP_TIME           INT(11) DEFAULT 0,
+    AVG_SHUFFLE_TIME       INT(11) DEFAULT 0,
+    AVG_MERGE_TIME         INT(11) DEFAULT 0,
+    AVG_REDUCE_TIME        INT(11) DEFAULT 0,
+    SUBMIT_TIME            DATETIME,
+    START_TIME             DATETIME,
+    FINISH_TIME            DATETIME,
+    COUNTERS               LONGTEXT DEFAULT NULL,
+    CONFIGURATION          LONGTEXT DEFAULT NULL,
+    TASKS                  LONGTEXT DEFAULT NULL,
+    REGISTERED_DATE        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (ID)
 )
   ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE INDEX IDX_FL_CL_MR_DUMP_01 ON flamingo2.FL_CL_MR_DUMP (JOB_ID);
 --
 -- Resource Manager Cluster Metrics Monitoring
 --
@@ -643,14 +668,14 @@ CREATE TABLE IF NOT EXISTS flamingo2.FL_USER_EVENTS
   STATUS             VARCHAR(255),
   MESSAGE            LONGTEXT,
   IS_SEE             BOOLEAN DEFAULT FALSE,
-	IDENTIFIER         VARCHAR(255),
+  IDENTIFIER         VARCHAR(255),
   REF_ID             BIGINT,
   USERNAME           VARCHAR(255),
   YYYY               VARCHAR(8),
   MM                 VARCHAR(8),
   DD                 VARCHAR(8),
   PRIMARY KEY (ID),
-	UNIQUE KEY (IDENTIFIER)
+  UNIQUE KEY (IDENTIFIER)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8;
 
@@ -670,4 +695,286 @@ CREATE TABLE IF NOT EXISTS flamingo2.FL_BATCH
  	UPD_DT	    DATETIME      COMMENT 'UPD_DT',
  	PRIMARY KEY (JOB_ID)
  ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_IOT_SV_METADATA
+(
+	id                  BIGINT          NOT NULL AUTO_INCREMENT,
+ 	dataType            VARCHAR(40)     NOT NULL COMMENT 'Data Type: metadata',
+ 	serviceId	        VARCHAR(40)     NOT NULL COMMENT 'Service ID: 10000001',
+ 	serviceName	        VARCHAR(40)     NOT NULL COMMENT 'Service Name',
+ 	serviceTypeId	    VARCHAR(40)     NOT NULL COMMENT 'Service Type ID',
+ 	serviceTypeName     VARCHAR(100)    NOT NULL COMMENT 'Service Type Name',
+ 	deviceTypeId	    VARCHAR(100)    NOT NULL COMMENT 'Device Type ID',
+ 	deviceTypeName	    VARCHAR(100)    NOT NULL COMMENT 'Device Type Name',
+ 	columnsType	        VARCHAR(40)     NOT NULL COMMENT 'data/custom',
+ 	columnName	        VARCHAR(100)    COMMENT 'Data/Custom Column Name',
+ 	columnType	        VARCHAR(50)     COMMENT 'Data/Custom Column Type',
+ 	columnFiltering	    BOOLEAN         DEFAULT FALSE COMMENT 'Data/Custom Column Filtering',
+ 	columnMasking       BOOLEAN         DEFAULT FALSE COMMENT 'Data/Custom Column Masking',
+ 	workDate            DATETIME        DEFAULT CURRENT_TIMESTAMP COMMENT 'Working Date: YYYY-MM-DD HH:MM:SS.fffffffff',
+ 	orderby             INT             DEFAULT 1 COMMENT 'ASC / DESC',
+ 	PRIMARY KEY (id)
+ ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+CREATE INDEX IDX_FL_IOT_SV_METADATA_01 ON flamingo2.FL_IOT_SV_METADATA (id);
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_IOT (
+  id                BIGINT NOT NULL AUTO_INCREMENT,
+  serviceId         VARCHAR(255) DEFAULT NULL COMMENT 'Service ID: 10000001',
+  serviceName       VARCHAR(255) DEFAULT NULL COMMENT 'Service Name',
+  serviceTypeId     VARCHAR(255) DEFAULT NULL COMMENT 'Service Type ID',
+  serviceTypeName   VARCHAR(255) DEFAULT NULL COMMENT 'Service Type Name',
+  deviceTypeId      VARCHAR(255) DEFAULT NULL COMMENT 'Device Type ID',
+  deviceTypeName    VARCHAR(255) DEFAULT NULL COMMENT 'Device Type Name',
+  columnsType       VARCHAR(255) DEFAULT NULL COMMENT 'data/custom',
+  columnName        VARCHAR(255) DEFAULT NULL COMMENT 'Data/Custom Column Name',
+  columnType        VARCHAR(255) DEFAULT NULL COMMENT 'Data/Custom Column Type',
+  filtering         TINYINT(1) DEFAULT 0 COMMENT 'Data/Custom Column Filtering',
+  masking           TINYINT(1) DEFAULT 0 COMMENT 'Data/Custom Column Masking',
+  orderby           INT(11) DEFAULT 1 COMMENT 'ASC / DESC',
+  workDate          TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Working Date: YYYY-MM-DD HH:MM:SS.fffffffff',
+  PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET = UTF8;
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_SPARK_STREAMING
+(
+	ID                          BIGINT          NOT NULL AUTO_INCREMENT,
+ 	SERVER                      VARCHAR(255)    NOT NULL COMMENT 'Server Location',
+ 	SPARK_USER_WORKING_PATH	    VARCHAR(255)    NOT NULL COMMENT 'Flamingo User Spark Working Path',
+ 	JAR_FILE_FQP	            VARCHAR(255)    NOT NULL COMMENT 'Fully Qualified Path Uploaded Jar File',
+ 	JAR_FILENAME	            VARCHAR(255)    NOT NULL COMMENT 'Jar Filename',
+ 	APPLICATION_ID	            VARCHAR(255)    NOT NULL COMMENT 'Application ID',
+ 	APPLICATION_NAME	        VARCHAR(255)    NOT NULL COMMENT 'Application Name',
+ 	STREAMING_CLASS	            VARCHAR(255)    NOT NULL COMMENT 'Spark Streaming Class',
+ 	JAVA_OPTS	                VARCHAR(255)    NOT NULL COMMENT 'Java Command Line Options',
+ 	VARIABLES	                VARCHAR(255)    COMMENT 'Java Command Line Parameters',
+ 	USERNAME                    VARCHAR(255)    NOT NULL COMMENT 'Username',
+ 	STATE	                    VARCHAR(255)    DEFAULT 'STANDBY' COMMENT 'Application State',
+ 	REGISTERED_DATE             TIMESTAMP       DEFAULT CURRENT_TIMESTAMP COMMENT 'Registered Date',
+ 	START_TIME	                DATETIME        COMMENT 'Start Time',
+ 	FINISH_TIME	                DATETIME        COMMENT 'Finish Time',
+ 	DURATION	                DATETIME        COMMENT 'Duration',
+ 	PRIMARY KEY (ID),
+ 	UNIQUE KEY (APPLICATION_ID)
+ ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+  CREATE TABLE IF NOT EXISTS flamingo2.FL_ESPER
+(
+	ID                          BIGINT          NOT NULL AUTO_INCREMENT,
+ 	SERVER                      VARCHAR(255)    NOT NULL COMMENT 'Server Location',
+ 	SPARK_USER_WORKING_PATH	    VARCHAR(255)    NOT NULL COMMENT 'Flamingo User Spark Working Path',
+ 	JAR_FILE_FQP	            VARCHAR(255)    NOT NULL COMMENT 'Fully Qualified Path Uploaded Jar File',
+ 	JAR_FILENAME	            VARCHAR(255)    NOT NULL COMMENT 'Jar Filename',
+ 	APPLICATION_ID	            VARCHAR(255)    NOT NULL COMMENT 'Application ID',
+ 	APPLICATION_NAME	        VARCHAR(255)    NOT NULL COMMENT 'Application Name',
+ 	STREAMING_CLASS	            VARCHAR(255)    NOT NULL COMMENT 'Spark Streaming Class',
+ 	JAVA_OPTS	                VARCHAR(255)    NOT NULL COMMENT 'Java Command Line Options',
+ 	VARIABLES	                VARCHAR(255)    COMMENT 'Java Command Line Parameters',
+ 	USERNAME                    VARCHAR(255)    NOT NULL COMMENT 'Username',
+ 	STATE	                    VARCHAR(255)    DEFAULT 'STANDBY' COMMENT 'Application State',
+ 	REGISTERED_DATE             TIMESTAMP       DEFAULT CURRENT_TIMESTAMP COMMENT 'Registered Date',
+ 	START_TIME	                DATETIME        COMMENT 'Start Time',
+ 	FINISH_TIME	                DATETIME        COMMENT 'Finish Time',
+ 	DURATION	                DATETIME        COMMENT 'Duration',
+ 	PRIMARY KEY (ID),
+ 	UNIQUE KEY (APPLICATION_ID)
+ ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_SPARK_STREAMING_HISTORY
+(
+	ID                          BIGINT          NOT NULL AUTO_INCREMENT,
+ 	APPLICATION_ID	            VARCHAR(255)    NOT NULL COMMENT 'Application ID',
+ 	APPLICATION_NAME	        VARCHAR(255)    NOT NULL COMMENT 'Application Name',
+ 	USERNAME                    VARCHAR(255)    NOT NULL COMMENT 'Username',
+ 	CPU_USAGE                   DOUBLE(3,1)     NOT NULL COMMENT 'CPU Usage',
+ 	ACTIVE_THREADS              BIGINT          NOT NULL COMMENT 'Active Threads',
+ 	MEMORY_USAGE                BIGINT          NOT NULL COMMENT 'Memory Usage',
+ 	REGISTERED_DATE             TIMESTAMP       DEFAULT CURRENT_TIMESTAMP COMMENT 'Registered Date',
+ 	PRIMARY KEY (ID)
+ ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_SP_APPS
+(
+ 	 APPID	    VARCHAR(100)    NOT NULL COMMENT 'APPID',
+ 	 APPNAME	  VARCHAR(1000)   NOT NULL COMMENT 'APPNAME',
+ 	 STARTED	  TIMESTAMP       NOT NULL COMMENT 'STARTED',
+ 	 COMPLETED  TIMESTAMP       NOT NULL COMMENT 'COMPLETED',
+ 	 USER	      VARCHAR(50)     NOT NULL COMMENT 'USER',
+ 	 LOCATION	  VARCHAR(1000)   COMMENT 'LOCATION'
+ ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+ALTER TABLE flamingo2.FL_SP_APPS ADD CONSTRAINT FL_SP_APPS_PK PRIMARY KEY ( APPID );
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_SP_JOBS
+(
+ 	 APPID	           VARCHAR(100)    NOT NULL COMMENT 'APPID',
+ 	 JOBID	           INT   NOT NULL COMMENT 'JOBID',
+ 	 JOBNAME	         VARCHAR(1000) COMMENT 'JOBNAME',
+ 	 SUBMITTED	       TIMESTAMP   NOT NULL COMMENT 'SUBMITTED',
+ 	 COMPLETED	       TIMESTAMP   NOT NULL COMMENT 'COMPLETED',
+ 	 STAGES	           INT 	 DEFAULT 0  COMMENT 'STAGES',
+ 	 STAGE_COMPLETED	 INT 	 DEFAULT 0  COMMENT 'STAGE_COMPLETED',
+ 	 STAGE_SKIPPED	   INT 	 DEFAULT 0  COMMENT 'STAGE_SKIPPED',
+ 	 STAGE_FAILED	     INT 	 DEFAULT 0  COMMENT 'STAGE_FAILED',
+ 	 TASKS	           INT 	 DEFAULT 0  COMMENT 'TASKS',
+ 	 TASK_COMPLETED	   INT 	 DEFAULT 0  COMMENT 'TASK_COMPLETED',
+ 	 TASK_SKIPPED	     INT 	 DEFAULT 0  COMMENT 'TASK_SKIPPED',
+ 	 TASK_FAILED	     INT 	 DEFAULT 0  COMMENT 'TASK_FAILED',
+ 	 DESCRIPTION	     TEXT  COMMENT 'DESCRIPTION',
+ 	 STATUS	           VARCHAR(20)   COMMENT 'STATUS'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+ALTER TABLE flamingo2.FL_SP_JOBS ADD CONSTRAINT FL_SP_JOBS_PK PRIMARY KEY ( APPID,JOBID );
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_SP_STAGES
+(
+ 	 APPID                	 VARCHAR(100)    NOT NULL COMMENT 'APPID',
+ 	 JOBID	                 INT   NOT NULL COMMENT 'JOBID',
+ 	 STAGEID	               INT   NOT NULL COMMENT 'STAGEID',
+ 	 ATTEMPTID	             INT   NOT NULL COMMENT 'ATTEMPTID',
+ 	 SUBMITTED	             TIMESTAMP  COMMENT 'SUBMITTED',
+ 	 COMPLETED	             TIMESTAMP  COMMENT 'COMPLETED',
+ 	 NAME	                   VARCHAR(1000)   COMMENT 'NAME',
+ 	 DETAILS	               MEDIUMTEXT  COMMENT 'DETAILS',
+ 	 TASKS	                 INT   NOT NULL COMMENT 'TASKS',
+ 	 TASK_COMPLETE	         INT   NOT NULL COMMENT 'TASK_COMPLETE',
+ 	 TASK_FAILED	           INT   NOT NULL COMMENT 'TASK_FAILED',
+ 	 INPUT_BYTES	           BIGINT   NOT NULL COMMENT 'INPUT_BYTES',
+ 	 INPUT_RECORDS	         BIGINT   NOT NULL COMMENT 'INPUT_RECORDS',
+ 	 OUTPUT_BYTES	           BIGINT   NOT NULL COMMENT 'OUTPUT_BYTES',
+ 	 OUTPUT_RECORDS	         BIGINT   NOT NULL COMMENT 'OUTPUT_RECORDS',
+ 	 SHUFFLE_READ_BYTES	     BIGINT   NOT NULL COMMENT 'SHUFFLE_READ_BYTES',
+ 	 SHUFFLE_READ_RECORDS	   BIGINT   NOT NULL COMMENT 'SHUFFLE_READ_RECORDS',
+ 	 SHUFFLE_WRITE_BYTES	   BIGINT   NOT NULL COMMENT 'SHUFFLE_WRITE_BYTES',
+ 	 SHUFFLE_WRITE_RECRODS	 BIGINT   NOT NULL COMMENT 'SHUFFLE_WRITE_RECRODS',
+ 	 STATUS	                 VARCHAR(20)    NOT NULL COMMENT 'STATUS'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+
+ALTER TABLE flamingo2.FL_SP_STAGES ADD CONSTRAINT FL_SP_STAGES_PK PRIMARY KEY ( APPID,JOBID,STAGEID,ATTEMPTID );
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_SP_STAGE_DETAIL
+(
+ 	 APPID	     VARCHAR(100)    NOT NULL COMMENT 'APPID',
+ 	 JOBID	     INT   NOT NULL COMMENT 'JOBID',
+ 	 STAGEID	   INT   NOT NULL COMMENT 'STAGEID',
+ 	 ATTEMPTID	 INT   NOT NULL COMMENT 'ATTEMPTID',
+ 	 TYPE	       VARCHAR(50)    NOT NULL COMMENT 'TYPE',
+ 	 JSON	       TEXT   NOT NULL COMMENT 'JSON'
+ ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+ALTER TABLE flamingo2.FL_SP_STAGE_DETAIL ADD CONSTRAINT FL_SP_STAGE_DETAIL_PK PRIMARY KEY ( APPID,JOBID,STAGEID,ATTEMPTID,TYPE );
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_SP_EXECUTORS
+(
+ 	 APPID	               VARCHAR(100)    NOT NULL COMMENT 'APPID',
+ 	 EXECUTORID	           VARCHAR(100)    NOT NULL COMMENT 'EXECUTORID',
+ 	 ADDRESS	             VARCHAR(20)    NOT NULL COMMENT 'ADDRESS',
+ 	 PORT	                 INT  COMMENT 'PORT',
+ 	 RDD_BLOCKS	           BIGINT 	 DEFAULT 0 COMMENT 'RDD_BLOCKS',
+ 	 MAX_MEMORY	           BIGINT 	 DEFAULT 0 COMMENT 'MAX_MEMORY',
+ 	 MEMORY_USED	         BIGINT 	 DEFAULT 0 COMMENT 'MEMORY_USED',
+ 	 DISK_USED	           BIGINT 	 DEFAULT 0 COMMENT 'DISK_USED',
+ 	 ACTIVE_TASKS	         BIGINT 	 DEFAULT 0 COMMENT 'ACTIVE_TASKS',
+ 	 FAILED_TASKS	         BIGINT 	 DEFAULT 0 COMMENT 'FAILED_TASKS',
+ 	 COMPLETED_TASKS	     BIGINT 	 DEFAULT 0 COMMENT 'COMPLETED_TASKS',
+ 	 TOTAL_TASKS	         BIGINT 	 DEFAULT 0 COMMENT 'TOTAL_TASKS',
+ 	 TOTAL_DURATION	       BIGINT 	 DEFAULT 0 COMMENT 'TOTAL_DURATION',
+ 	 TOTAL_INPUT_BYTES	   BIGINT 	 DEFAULT 0 COMMENT 'TOTAL_INPUT_BYTES',
+ 	 TOTAL_SHUFFLE_READ	   BIGINT 	 DEFAULT 0 COMMENT 'TOTAL_SHUFFLE_READ',
+ 	 TOTAL_SHUFFLE_WRITE	 BIGINT 	 DEFAULT 0 COMMENT 'TOTAL_SHUFFLE_WRITE',
+ 	 TOTAL_CORES	         INT 	 DEFAULT 0 COMMENT 'TOTAL_CORES',
+ 	 STDOUT_URL	           VARCHAR(1000)  COMMENT 'STDOUT_URL',
+ 	 STDERR_URL	           VARCHAR(1000)  COMMENT 'STDERR_URL'
+ ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+ALTER TABLE flamingo2.FL_SP_EXECUTORS ADD CONSTRAINT FL_SP_EXECUTORS_PK PRIMARY KEY ( APPID,EXECUTORID );
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_SP_STORAGE
+(
+ 	 APPID                     VARCHAR(100) NOT NULL COMMENT 'APPID',
+ 	 RDDID	                   INT   NOT NULL COMMENT 'RDDID',
+ 	 RDD_NAME	                 TEXT    NOT NULL COMMENT 'RDD_NAME',
+ 	 CACHED_PARTITIONS	       INT  COMMENT 'CACHED_PARTITIONS',
+ 	 PARTITIONS	               INT  COMMENT 'PARTITIONS',
+ 	 FRACTION_CACHED	         FLOAT COMMENT 'FRACTION_CACHED',
+ 	 MEMORY                    BIGINT  COMMENT 'MEMORY',
+ 	 EXTERNAL_BLOCK_STORE	     BIGINT COMMENT 'EXTERNAL_BLOCK_STORE',
+ 	 DISK	                     BIGINT  COMMENT 'DISK',
+ 	 USE_DISK	                 TINYINT COMMENT 'USE_DISK',
+ 	 USE_MEMORY	               TINYINT COMMENT 'USE_MEMORY',
+ 	 USE_EXTERNAL_BLOCK_STORE	 TINYINT COMMENT 'USE_EXTERNAL_BLOCK_STORE',
+ 	 DESERIALIZAED	           TINYINT COMMENT 'DESERIALIZAED',
+ 	 REPLICATION	             INT COMMENT 'REPLICATION'
+ ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+ALTER TABLE flamingo2.FL_SP_STORAGE ADD CONSTRAINT FL_SP_STORAGE_PK PRIMARY KEY ( APPID,RDDID );
+
+CREATE TABLE IF NOT EXISTS flamingo2.FL_SP_TIMELINE
+(
+ 	 APPID	     VARCHAR(100)    NOT NULL COMMENT 'APPID',
+ 	 JOBID	     INT   NOT NULL COMMENT 'JOBID',
+ 	 STAGEID	   INT   NOT NULL COMMENT 'STAGEID',
+ 	 ATTEMPTID	 INT   NOT NULL COMMENT 'ATTEMPTID',
+ 	 TYPE	       VARCHAR(20)    NOT NULL COMMENT 'TYPE',
+ 	 JSON	       MEDIUMTEXT  COMMENT 'JSON'
+ ) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8;
+
+ALTER TABLE flamingo2.FL_SP_TIMELINE ADD CONSTRAINT FL_SP_TIMELINE_PK PRIMARY KEY ( APPID,JOBID,STAGEID,ATTEMPTID,TYPE );
+
+CREATE
+    ALGORITHM = UNDEFINED
+    SQL SECURITY DEFINER
+VIEW generator_16 AS
+    SELECT 0 AS n
+    UNION ALL SELECT 1
+    UNION ALL SELECT 2
+    UNION ALL SELECT 3
+    UNION ALL SELECT 4
+    UNION ALL SELECT 5
+    UNION ALL SELECT 6
+    UNION ALL SELECT 7
+    UNION ALL SELECT 8
+    UNION ALL SELECT 9
+    UNION ALL SELECT 10
+    UNION ALL SELECT 11
+    UNION ALL SELECT 12
+    UNION ALL SELECT 13
+    UNION ALL SELECT 14
+    UNION ALL SELECT 15;
+
+CREATE
+    ALGORITHM = UNDEFINED
+    SQL SECURITY DEFINER
+VIEW generator_256 AS
+    SELECT
+        ((hi.n * 16) + lo.n) AS n
+    FROM
+        (generator_16 hi
+        JOIN generator_16 lo);
+
+CREATE TABLE IF NOT EXISTS flamingo2.EXO_LOGGING (
+ 	id	                BIGINT          NOT NULL AUTO_INCREMENT,
+ 	processId	        VARCHAR(255)    NOT NULL COMMENT 'Process ID',
+ 	processType	        VARCHAR(255)    NOT NULL COMMENT 'Process Type',
+ 	loggingLevel	    VARCHAR(255)    NOT NULL COMMENT 'Logging Level',
+ 	collectionReader	VARCHAR(255) 	NOT NULL COMMENT 'Collection Reader',
+ 	ip	                VARCHAR(255) 	NOT NULL COMMENT 'IP',
+ 	annotatorType	    VARCHAR(255) 	NOT NULL COMMENT 'Annotator Type',
+ 	data	            LONGTEXT 	    NOT NULL COMMENT 'Data',
+ 	logDate	            DATETIME        DEFAULT CURRENT_TIMESTAMP COMMENT 'Log Date',
+ 	PRIMARY KEY (id)
+) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8;

@@ -37,7 +37,7 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
-    <context:component-scan base-package="org.opencloudengine.flamingo2.agent.system"/>
+    <context:component-scan base-package="org.opencloudengine.flamingo2.agent.system, org.opencloudengine.flamingo2.websocket"/>
 
     <!-- ========================= VIEW RESOLVER ========================= -->
 

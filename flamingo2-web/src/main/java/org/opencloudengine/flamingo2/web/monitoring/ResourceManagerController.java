@@ -41,6 +41,12 @@ import java.util.*;
 @RequestMapping(value = "/monitoring/resourcemanager")
 public class ResourceManagerController extends DefaultController {
 
+    /**
+     * Resource Manager의 Summary 정보를 클라이언트로 전송한다.
+     *
+     * @param clusterName 클러스터명
+     * @return Map
+     */
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Map<String, Object> info(@RequestParam String clusterName) {
@@ -77,7 +83,6 @@ public class ResourceManagerController extends DefaultController {
 
         Response response = new Response();
         response.setSuccess(true);
-
         SortedMap configuration = new TreeMap();
         configuration.putAll(service.getConfiguration(engineConfig));
         Set<String> keys = configuration.keySet();
@@ -156,7 +161,7 @@ public class ResourceManagerController extends DefaultController {
         // FIXME : to MyBATIS, Remote
         ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
         JdbcTemplate jdbcTemplate = applicationContext.getBean(JdbcTemplate.class);
-        String query = "select (@row:=@row+1) as num, count(*) as sum, DATE_FORMAT(MAX(startTime),'%Y-%m-%d %H') as time, startTime from FL_CL_YARN_DUMP, (SELECT @row := 0) r WHERE system ='{}' AND startTime > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(startTime,'%Y-%m-%d %H') ORDER BY startTime asc";
+        String query = "SELECT (@row:=@row+1) as num, COUNT(*) as sum, DATE_FORMAT(MAX(START_TIME),'%Y-%m-%d %H') as time, START_TIME FROM FL_CL_YARN_DUMP, (SELECT @row := 0) r WHERE SYSTEM ='{}' AND START_TIME > DATE_ADD(now(), INTERVAL -7 DAY) GROUP BY DATE_FORMAT(START_TIME,'%Y-%m-%d %H') ORDER BY START_TIME asc";
         List<Map<String, Object>> list = jdbcTemplate.queryForList(MessageFormatter.format(query, clusterName).getMessage());
         response.getList().addAll(list);
         return response;
@@ -341,6 +346,26 @@ public class ResourceManagerController extends DefaultController {
         // FIXME response.getList().add(getItem(jvmHeap, "maxMemory", "Max"));
         response.getList().add(getItem(jvmHeap, "freeMemory", "Free"));
         response.getList().add(getItem(jvmHeap, "usedMemory", "Used"));
+        return response;
+    }
+
+    @RequestMapping(value = "/runningMRJobs", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Response runningMRJobs(@RequestParam String clusterName) {
+        Response response = new Response();
+
+        try {
+            EngineConfig engineConfig = this.getEngineConfig(clusterName);
+            EngineService engineService = this.getEngineService(clusterName);
+            ResourceManagerRemoteService service = engineService.getResourceManagerRemoteService();
+            response.getList().addAll(service.getRunningMRJobs(engineConfig));
+            response.setTotal(response.getList().size());
+            response.setSuccess(true);
+        } catch (Exception ex) {
+            response.setSuccess(false);
+            ex.printStackTrace();
+        }
+
         return response;
     }
 

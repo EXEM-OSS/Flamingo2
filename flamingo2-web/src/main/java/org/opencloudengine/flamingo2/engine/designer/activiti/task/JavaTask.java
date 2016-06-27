@@ -39,6 +39,7 @@ import java.util.*;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.opencloudengine.flamingo2.util.StringUtils.listToDelimitedString;
+import static org.opencloudengine.flamingo2.util.StringUtils.unescape;
 import static org.opencloudengine.flamingo2.web.configuration.ConfigurationHelper.getHelper;
 
 /**
@@ -54,15 +55,8 @@ public class JavaTask extends InterceptorAbstractTask {
      */
     private Logger logger = LoggerFactory.getLogger(JavaTask.class);
 
-    /**
-     * Default HDFS File System URL
-     */
-    private String fsDefaultFS;
-
     @Override
     public void runTask(ProcessInstance instance) throws Exception {
-        fsDefaultFS = String.format("hdfs://%s:%s", getHelper().get(clusterName + ".nn.address"), getHelper().get(clusterName + ".nn.port"));
-
         FileUtils.forceMkdir(new File(working));
 
         buildCoreSiteXml(working);
@@ -81,7 +75,7 @@ public class JavaTask extends InterceptorAbstractTask {
         socketParams.put("type", "workflow");
         socketParams.put("user", getUser());
 
-        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(working), working, logger, fileWriter);
+        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(), working, logger, fileWriter);
         managedProcess.setSocketParams(socketParams);
         managedProcess.run();
     }
@@ -92,7 +86,7 @@ public class JavaTask extends InterceptorAbstractTask {
     private String buildCommand(String working) {
         List<String> command = new LinkedList<>();
 
-        Map<String, String> defaultEnvs = getDefaultEnvs(working);
+        Map<String, String> defaultEnvs = getDefaultEnvs();
         Set<String> keys = defaultEnvs.keySet();
         for (String key : keys) {
             if (!isEmpty(defaultEnvs.get(key))) {
@@ -102,21 +96,21 @@ public class JavaTask extends InterceptorAbstractTask {
 
         command.add(getHelper().get("java.home") + "/bin/java");
 
-        if (variable.get("javaOpts") != null && !StringUtils.isEmpty(variable.get("javaOpts").toString())) {
+        if (variable.get("javaOpts") != null && !isEmpty(variable.get("javaOpts").toString())) {
             command.add(resolve(variable.get("javaOpts").toString().trim()));
         }
 
         command.add("-classpath");
         downloadClasses(command, working);
 
-        if (variable.get("driver") != null && !StringUtils.isEmpty(variable.get("driver").toString())) {
+        if (variable.get("driver") != null && !isEmpty(variable.get("driver").toString())) {
             command.add(resolve(variable.get("driver").toString().trim()));
         }
 
-        if (variable.get("variableValues") != null && !StringUtils.isEmpty(variable.get("variableValues").toString())) {
+        if (variable.get("variableValues") != null && !isEmpty(variable.get("variableValues").toString())) {
             String[] args = variable.get("variableValues").toString().trim().split(",");
             for (String arg : args) {
-                command.add(resolve(arg));
+                command.add(resolve(unescape(arg.trim())));
             }
         }
 
@@ -135,7 +129,7 @@ public class JavaTask extends InterceptorAbstractTask {
 
         dependencies.add(artifactLoader.load(artifactCachePath, variable.get("jar").toString().trim()));
 
-        if (variable.get("path") != null && !StringUtils.isEmpty(variable.get("path").toString())) {
+        if (variable.get("path") != null && !isEmpty(variable.get("path").toString())) {
             String[] classpaths = variable.get("path").toString().trim().split(",");
             for (String classpath : classpaths) {
                 dependencies.add(artifactLoader.load(artifactCachePath, resolve(classpath)));
@@ -191,8 +185,8 @@ public class JavaTask extends InterceptorAbstractTask {
                 Set nnkeys = conf.keySet();
                 for (Object key : nnkeys) {
                     try {
-                        if (configuration.get(key) != null) {
-                            hadoopConf.put((String) key, "<![CDATA[" + configuration.get(key) + "]]>");
+                        if (configuration.get(String.valueOf(key)) != null) {
+                            hadoopConf.put(String.valueOf(key), "<![CDATA[" + configuration.get(String.valueOf(key)) + "]]>");
                         }
                     } catch (Exception ex) {
                         // NPE
@@ -220,7 +214,7 @@ public class JavaTask extends InterceptorAbstractTask {
         hadoopConf.put("flamingo.workflow.name", this.getWorkflowHistory().getWorkflowName());
         hadoopConf.put("flamingo.log.path", this.getTaskHistory().getLogDirectory());
 
-        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !StringUtils.isEmpty(variable.get("hadoopKeys").toString()) && !StringUtils.isEmpty(variable.get("hadoopValues").toString())) {
+        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !isEmpty(variable.get("hadoopKeys").toString()) && !isEmpty(variable.get("hadoopValues").toString())) {
             String[] hadoopKeys = (variable.get("hadoopKeys").toString()).split(",");
             String[] hadoopValues = (variable.get("hadoopValues").toString()).split(",");
 
@@ -263,7 +257,7 @@ public class JavaTask extends InterceptorAbstractTask {
      *
      * @return 환경변수
      */
-    public Map<String, String> getDefaultEnvs(String working) {
+    public Map<String, String> getDefaultEnvs() {
         Map<String, String> envs = new HashMap<>();
 
         envs.put("PATH", "/bin:/usr/bin:/usr/local/bin" + ":" + getHelper().get("hadoop.home") + "/bin" + ":" + getHelper().get("hive.home") + "/bin" + ":" + getHelper().get("pig.home") + "/bin");

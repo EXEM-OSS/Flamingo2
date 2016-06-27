@@ -1,0 +1,1415 @@
+[[designer]]
+
+== 워크플로우 디자이너
+
+워크플로우 디자이너는 각종 빅데이터 분석 기술을 UI 모듈로 제공하며, 이 모듈만으로도 분석 기술을 자유롭게 활용할 수 있습니다. 또한, 마우스만으로 모듈 간의 실행순서를 설계할 수 있으며 설계한 실행순서를 워크플로우로 등록하여 자산화할 수 있습니다.
+
+=== 워크플로우 디자이너 개요
+
+워크플로우 디자이너는 다양한 분석 과정의 편의성을 돕고 분석 및 처리 모듈의 재활용성을 극대화하기 위한 도구입니다.
+워크플로우 디자이너의 핵심 기능은 다음과 같습니다.
+
+* 다양한 분석 모듈 탑재 (예: MapReduce, Pig, Hive, Bash Shell, Python, Spark, R, Mahout, Ankus ...)
+* 분석 및 처리 모듈을 드래그 앤 드롭과 파라메터 입력으로 손쉽게 처리
+* 복잡한 데이터 추출, 가공 및 적재 과정을 처리하는 순서를 신속하게 설계
+* 다양한 알고리즘을 통합하여 적절한 데이터 분석 활동의 편의를 제공
+* 배치작업 관리를 통해 배치작업으로 등록하여 실행 가능
+
+워크플로우 디자이너는 다음과 같이 데이터 분석의 일련의 설계 과정을 실체화할 수 있습니다.
+
+image::designer/save_exec/introduction-00.png[워크플로우 디자이너 개요 화면1]
+
+워크플로우 디자이너는 다음과 같이 워크플로우 관리, 설계, 변수 설정, 실행을 위한 사용자 인터페이스로 구성되어 있습니다.
+
+image::designer/save_exec/introduction-01.png[워크플로우 디자이너 개요 화면2]
+
+=== 워크플로우 저장 및 실행
+
+워크플로우를 구성하기 위해서 가장 먼저 워크플로우를 구성할 각 모듈을 드래그 앤 드롭하여 가운데 영역으로 이동시킵니다.
+
+image::designer/save_exec/save_exec-00.png[모듈 드래그 앤 드롭]
+
+상단의 워크플로우명을 입력하고 시작점에서 모듈로 연결합니다.
+
+image::designer/save_exec/save_exec-01.png[모듈링크]
+
+이제 모듈에서 종료점으로 연결을 합니다. 워크플로우는 반드시 시작과 종료가 하나의 흐름으로 연결되어야 합니다.
+
+image::designer/save_exec/save_exec-02.png[모듈링크]
+
+모듈을 더블클릭하면 다음과 같이 모듈을 설정하는 창이 나타납니다. 각 모듈마다 다른 화면이 나타납니다. 다음은 Apache Pig의 Pig Latin Script를 입력하는 화면입니다.
+
+image::designer/save_exec/save_exec-03.png["스크립트탭",scaledwidth="70%"]
+
+워크플로우를 구성하는 작업이 완료되면 저장 버튼을 선택하여 저장합니다.
+
+image::designer/save_exec/save_exec-04.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+다음의 팝업창이 나타나면 저장할 위치를 선택합니다.
+
+image::designer/save_exec/save_exec-05.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+저장할 위치를 선택한 후 확인 버튼을 선택합니다.
+
+image::designer/save_exec/save_exec-06.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+이제 워크플로우 트리에서 생성된 워크플로우를 확인할 수 있습니다.
+
+image::designer/save_exec/save_exec-07.png[워크플로우 생성 확인]
+
+워크플로우를 실행하기 위해서 실행 버튼을 선택합니다. 빈 화면에서는 실행 버튼을 선택하더라도 실행할 수 없습니다. 실행전에 반드시 1개의 워크플로우를 로딩해야 합니다.
+
+image::designer/save_exec/save_exec-08.png["워크플로우 실행 버튼",scaledwidth="45%"]
+
+다음의 화면에 나타나면 예 버튼을 선택합니다.
+
+image::designer/save_exec/save_exec-09.png["워크플로우 실행 팝업창",scaledwidth="35%"]
+
+이제 워크플로우가 실행됩니다. 워크플로우의 실행 결과는 워크플로우 실행 이력 화면과 <<dashboard, 워크플로우 모니터링>> 메뉴에서 확인할 수 있습니다.
+
+image::designer/save_exec/save_exec-10.png["워크플로우 결과 화면",scaledwidth="70%"]
+
+워크플로우 디자이너는 편의성을 제공하지만 각 모듈의 파라미터를 정상적으로 입력하지 않으면 오류가 발생합니다.
+따라서 각 파라미터의 사용법을 이해하고 값을 제대로 입력하도록 합니다.
+
+=== MapReduce
+
+MapReduce 모듈은 개발자가 작성한 MapReduce를 실행시키기 위한 모듈입니다. MapReduce 모듈을 드래그 앤 드롭하여 가운데 영역으로 이동시킵니다.
+
+image::designer/mapreduce/mapreduce-00.png[모듈 드래그 앤 드롭]
+
+워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.
+
+image::designer/mapreduce/mapreduce-01.png[모듈링크]
+
+그리고 모듈부터 종료 중심점까지 연결합니다.
+
+image::designer/mapreduce/mapreduce-02.png[모듈링크]
+
+모듈을 더블클릭하면 MapReduce 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+맵리듀스 탭을 선택 후 MapReduce JAR 와 드라이버 클래스명을 지정하도록 합니다.
+이 두 설정값은 MapReduce가 실행하는데 있어서 필수값입니다.
+클래스명은 패키지를 포함한 클래스명을 입력해야 하며 MapReduce JAR 파일에 지정한 드라이버 클래스를 포함하고 있어야 합니다.
+
+image::designer/mapreduce/mapreduce-03.png["맵리듀스 탭",scaledwidth="70%"]
+
+MapReduce JAR 파일을 지정하기 위해서 찾기 버튼을 선택 후 HDFS 브라우저 창이 나타나면 JAR 파일을 선택하고 확인 버튼을 선택합니다.
+
+image::designer/mapreduce/mapreduce-04.png["HDFS브라우저 화면",scaledwidth="70%"]
+
+패키지를 포함하는 드라이버 클래스를 지정해줍니다. 하단에 있는 의존 JAR 파일은 MapReduce 실행시 필요한 외부 JAR 파일을 지정하는 옵션으로 HDFS에 파일을 업로드한 후 지정하도록 합니다.
+
+image::designer/mapreduce/mapreduce-05.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/mapreduce/mapreduce-06.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/mapreduce/mapreduce-07.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+커맨드라인 파라미터 탭은 MapReduce를 실행하기 위한 커맨드 라인을 지정할 떄 사용하며 파라미터 1개에 한 라인씩 지정하도록 합니다.
+
+image::designer/mapreduce/mapreduce-08.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+저장버튼을 선택합니다.
+
+image::designer/mapreduce/mapreduce-09.png["저장 버튼",scaledwidth="45%"]
+
+팝업창이 나타나면 예 버튼을 선택합니다.
+
+image::designer/mapreduce/mapreduce-10.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+저장폴더를 선택 후 확인 버튼을 선택합니다.
+
+image::designer/mapreduce/mapreduce-11.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+트리에서 생성된 워크플로우를 확인할 수 있습니다.
+
+image::designer/mapreduce/mapreduce-12.png[워크플로우 생성 확인]
+
+=== Apache Pig
+
+Apache Pig는 Apache Pig의 Pig Latin Script를 실행할 때 사용합니다. Apache Pig를 사용하기 위해서 다음과 같이 드래그 앤 드롭합니다.
+
+image::designer/pig/pig-00.png[모듈 드래그 앤 드롭]
+
+워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.
+
+image::designer/pig/pig-01.png[모듈링크]
+
+그리고 모듈부터 종료 중심점까지 연결합니다.
+
+image::designer/pig/pig-02.png[모듈링크]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 Pig Latin 스크립트 탭을 선택 후 Pig Latin Script를 작성합니다.
+
+image::designer/pig/pig-03.png["Pig Latin 스크립트 탭",scaledwidth="70%"]
+
+스크립트 변수 탭에서는 스크립트 작성시 변수를 사용할 수 있도록 합니다. 스크립트를 실행하면 변수를 해석하여 값으로 치환합니다.
+
+image::designer/pig/pig-04.png["스크립트 변수 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭에서는 `Configuration.set()` 메소드를 통해서 적용할 키와 값을 입력합니다.
+
+image::designer/pig/pig-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+저장버튼을 선택합니다.
+
+image::designer/pig/pig-06.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+팝업창이 나타나면 예 버튼을 선택합니다.
+
+image::designer/pig/pig-07.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+저장폴더를 선택 후 확인 버튼을 선택합니다.
+
+image::designer/pig/pig-08.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+트리에서 생성된 워크플로우를 확인할 수 있습니다.
+
+image::designer/pig/pig-09.png[워크플로우 생성 확인]
+
+=== Apache Hive
+
+Apache Hive 모듈은 Hive QL을 실행하는데 사용합니다. Hive QL을 실행하기 위해서 Apache Hive를 드래드 앤 드롭합니다.
+
+image::designer/hive/hive-00.png[모듈 드래그 앤 드롭]
+
+워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.
+
+image::designer/hive/hive-01.png[모듈링크]
+
+그리고 모듈부터 종료 중심점까지 연결합니다.
+
+image::designer/hive/hive-02.png[모듈링크]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 탭을 선택 후 Hive QL을 작성합니다.
+
+image::designer/hive/hive-03.png["스크립트 탭",scaledwidth="70%"]
+
+스크립트 변수 탭에서는 스크립트 작성시 변수를 사용할 수 있도록 합니다. 스크립트를 실행하면 변수를 해석하여 값으로 치환합니다.
+
+image::designer/hive/hive-04.png["스크립트 변수 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭에서는 `Configuration.set()` 메소드를 통해서 적용할 키와 값을 입력합니다.
+
+image::designer/hive/hive-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+저장버튼을 선택합니다.
+
+image::designer/hive/hive-06.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+팝업창이 나타나면 예 버튼을 선택합니다.
+
+image::designer/hive/hive-07.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+저장폴더를 선택 후 확인 버튼을 선택합니다.
+
+image::designer/hive/hive-08.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+트리에서 생성된 워크플로우를 확인할 수 있습니다.
+
+image::designer/hive/hive-09.png[워크플로우 생성]
+
+=== Spark
+
+Spark은 Apache Spark으로 만든 프로그램을 실행할 때 사용합니다. Spark 모듈을 다음과 같이 드래그 앤 드롭합니다.
+
+image::designer/spark/spark-00.png[모듈 드래그 앤 드롭]
+
+워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.
+
+image::designer/spark/spark-01.png[모듈링크]
+
+그리고 모듈부터 종료 중심점까지 연결합니다.
+
+image::designer/spark/spark-02.png[모듈링크]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타납니다. Spark의 경우 실행시 YARN 모드와 Standalone 모드 사용시 파라미터가 서로 상이하므로 주의해서 입력하도록 합니다.
+MapReduce와 마찬가지로 애플리케이션을 패키징한 Spark JAR 파일을 지정하고 프로그램을 실행하기 위해서 드라이버 클래스를 패키지를 포함하여 지정합니다.
+Flamingo에서 지원하는 Spark은 기본적으로 자바를 사용한다는 전제하에서 개발되었습니다.
+옵션에 대한 상세한 설명은 https://spark.apache.org/docs/1.1.0/running-on-yarn.html[Running Spark on YARN] 문서를 참고하십시오.
+
+image::designer/spark/spark-03.png["스파크 탭",scaledwidth="70%"]
+
+의존 JAR 파일 탭에서는 Spark Job 실행시 필요한 JAR 파일을 추가합니다.
+
+image::designer/spark/spark-04.png["의존 JAR파일 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭에서는 Spark 실행시 필요한 파라미터를 key, value 형식으로 지정하며 이렇게 지정한 파라미터는 `--conf` 옵션으로 설정됩니다.
+
+image::designer/spark/spark-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+커맨드라인 파라미터 탭에서는 Job 실행시 필요한 각종 파라미터를 추가합니다.
+
+image::designer/spark/spark-06.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+저장버튼을 선택합니다.
+
+image::designer/spark/spark-07.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+팝업창이 나타나면 예 버튼을 선택합니다.
+
+image::designer/spark/spark-08.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+저장폴더를 선택 후 확인 버튼을 선택합니다.
+
+image::designer/spark/spark-09.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+트리에서 생성된 워크플로우를 확인할 수 있습니다.
+
+image::designer/spark/spark-10.png[워크플로우 생성]
+
+=== Java
+
+Java 모듈은 Java로 작성된 자바 애플리케이션을 실행할 때 사용합니다. 원격의 클러스터에서 실행되는 모듈이 아니라 Flamingo가 설치되어 있는 서버에서 실행됩니다.
+자바 애플리케이션을 실행하기 위해서 Java 모듈을 드래그 앤 드롭합니다.
+
+image::designer/java/java-00.png[모듈 드래그 앤 드롭]
+
+워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.
+
+image::designer/java/java-01.png[모듈링크]
+
+그리고 모듈부터 종료 중심점까지 연결합니다.
+
+image::designer/java/java-02.png[모듈링크]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 자바 탭을 선택 후 JAR 경로 선택과 드라이버, JVM 옵션 설정을 합니다.
+
+image::designer/java/java-03.png["자바 탭",scaledwidth="70%"]
+
+클래스패스 탭에서는 의존 JAR 파일을 지정할 수 있습니다.
+
+image::designer/java/java-04.png["클래스패스 탭",scaledwidth="70%"]
+
+커맨드라인 파라미터 탭은 자바 애플리케이션을 실행하기 위한 커맨드 라인을 지정할 떄 사용하며 파라미터 1개에 한 라인씩 지정하도록 합니다.
+
+image::designer/java/java-05.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+저장버튼을 선택합니다.
+
+image::designer/java/java-06.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+팝업창이 나타나면 예 버튼을 선택합니다.
+
+image::designer/java/java-07.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+저장폴더를 선택 후 확인 버튼을 선택합니다.
+
+image::designer/java/java-08.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+트리에서 생성된 워크플로우를 확인할 수 있습니다.
+
+image::designer/java/java-09.png[워크플로우 생성]
+
+=== Sqoop Import
+
+Sqoop Import는 RDBMS의 데이터를 HDFS로 저장할 때 사용하는 Apache Sqoop 기능입니다.
+Flamingo가 설치되어있는 서버에는 Apache Sqoop이 반드시 설치되어 있어야만 Sqoop Import를 사용할 수 있습니다.
+Sqoop Import를 사용하기 위해서 Sqoop Import를 다음과 같이 드래그 앤 드롭합니다.
+
+image::designer/sqoopImport/sqoopImport-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 원본(데이터베이스) 탭을 선택 후 데이터베이스 접속에 필요한 JDBC 관련 파라미터를 입력합니다.
+
+image::designer/sqoopImport/sqoopImport-01.png["원본(데이터베이스) 탭",scaledwidth="70%"]
+
+대상(HDFS) 탭에서는 HDFS 출력 경로를 지정할 수 있으며 RDBMS에서 가져온 데이터를 저장할 경로를 1개만 지정할 수 있습니다.
+
+image::designer/sqoopImport/sqoopImport-02.png["대상(HDFS) 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/sqoopImport/sqoopImport-03.png[워크플로우 저장]
+
+=== Sqoop Export
+
+Sqoop Export는 HDFS의 로그 데이터를 RDBMS의 데이터로 저장할 때 사용하는 Apache Sqoop 기능입니다.
+Flamingo가 설치되어있는 서버에는 Apache Sqoop이 반드시 설치되어 있어야만 Sqoop Export를 사용할 수 있습니다.
+Sqoop Export를 사용하기 위해서 Sqoop Export를 다음과 같이 드래그 앤 드롭합니다.
+
+image::designer/sqoopExport/sqoopExport-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 원본(HDFS) 탭을 선택 후 경로와 로그 파일의 컬럼 및 라인 구분자를 입력합니다.
+
+image::designer/sqoopExport/sqoopExport-01.png["원본(HDFS) 탭",scaledwidth="70%"]
+
+대상(데이터베이스) 탭에서는 데이터베이스 접속시 필요한 JDBC 정보를 입력합니다.
+
+image::designer/sqoopExport/sqoopExport-02.png["대상(데이터베이스) 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/sqoopExport/sqoopExport-03.png[워크플로우 저장]
+
+=== Shell
+
+Shell 모듈은 BASH 스크립트를 실행하는 모듈로써 입력한 BASH 스크립튼 Flamingo가 설치되어 있는 서버에서 실행됩니다.
+
+image::designer/shell/shell-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 탭을 선택 후 BASH 스크립트를 작성합니다.
+
+image::designer/shell/shell-01.png["Shell 스크립트 탭",scaledwidth="70%"]
+
+스크립트 변수 탭에서는 스크립트 작성시 변수를 사용할 수 있도록 합니다. 스크립트를 실행하면 변수를 해석하여 값으로 치환합니다.
+
+image::designer/shell/shell-02.png["스크립트 변수 탭",scaledwidth="70%"]
+
+커맨드라인 파라미터 탭은 BASH 스크립트를 실행하기 위한 커맨드 라인을 지정할 떄 사용하며 파라미터 1개에 한 라인씩 지정하도록 합니다.
+
+image::designer/shell/shell-03.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/shell/shell-04.png[워크플로우 생성]
+
+=== R
+
+R 모듈은 R 스크립트를 실행하는 모듈로써 Flamingo가 설치되어 있는 서버에서 실행됩니다. 따라서 Flamingo가 설치되어 있는 서버에는 R이 반드시 설치되어 있어야 합니다.
+R 스크립트를 실행하기 위해서 R을 드래그 앤 드롭합니다.
+
+image::designer/r/r-00.png[모듈 드래그 앤 드롭]
+
+워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.
+
+image::designer/r/r-01.png[모듈링크]
+
+그리고 모듈부터 종료 중심점까지 연결합니다.
+
+image::designer/r/r-02.png[모듈링크]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 탭을 선택 후 R 스크립트를 작성합니다.
+
+image::designer/r/r-03.png["R 스크립트 탭",scaledwidth="70%"]
+
+스크립트 변수 탭에서는 스크립트 작성시 변수를 사용할 수 있도록 합니다. 스크립트를 실행하면 변수를 해석하여 값으로 치환합니다.
+
+image::designer/r/r-04.png["스크립트 변수 탭",scaledwidth="70%"]
+
+커맨드라인 파라미터 탭은 R 스크립트를 실행하기 위한 커맨드 라인을 지정할 떄 사용하며 파라미터 1개에 한 라인씩 지정하도록 합니다.
+
+image::designer/r/r-05.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+R 옵션 탭에서는 회복과 저장에 관한 선택 옵션 설정이 가능합니다.
+
+image::designer/r/r-06.png["R옵션 탭",scaledwidth="70%"]
+
+저장버튼을 선택합니다
+
+image::designer/r/r-07.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+팝업창이 나타나면 예 버튼을 선택합니다.
+
+image::designer/r/r-08.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+저장폴더를 선택 후 확인 버튼을 선택합니다.
+
+image::designer/r/r-09.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+트리에서 생성된 워크플로우를 확인할 수 있습니다.
+
+image::designer/r/r-10.png[워크플로우 생성]
+
+=== Python
+
+Python 모듈은 Python 스크립트를 실행하는 모듈로써 Flamingo가 설치되어 있는 서버에서 실행됩니다.
+따라서 Flamingo가 설치되어 있는 서버에는 Python이 반드시 설치되어 있어야 합니다.
+Python 스크립트를 실행하기 위해서 Python을 드래그 앤 드롭합니다.
+
+image::designer/python/python-00.png[모듈 드래그 앤 드롭]
+
+워크플로우명을 입력 후 시작되는 시작 중심점에서 모듈까지 연결합니다.
+
+image::designer/python/python-01.png[모듈링크]
+
+그리고 모듈부터 종료 중심점까지 연결합니다.
+
+image::designer/python/python-02.png[모듈링크]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파이썬 스크립트 탭을 선택 후 R 스크립트를 작성합니다.
+
+image::designer/python/python-03.png["파이썬 스크립트 탭",scaledwidth="70%"]
+
+스크립트 변수 탭에서는 Python 스크립트의 `${goodbye}` 변수를 `Good Bye!!` 으로 대체할 수 있습니다.
+
+image::designer/python/python-04.png["스크립트 변수 탭",scaledwidth="70%"]
+
+커맨드라인 파라미터 탭은 Python 스크립트를 실행하기 위한 커맨드 라인을 지정할 떄 사용하며 파라미터 1개에 한 라인씩 지정하도록 합니다.
+
+image::designer/python/python-05.png["커맨드라인 파라미터 탭",scaledwidth="70%"]
+
+저장버튼을 선택합니다.
+
+image::designer/python/python-06.png["워크플로우 저장 버튼",scaledwidth="45%"]
+
+팝업창이 나타나면 예 버튼을 선택합니다.
+
+image::designer/python/python-07.png["워크플로우 저장 팝업창",scaledwidth="35%"]
+
+저장폴더를 선택 후 확인 버튼을 선택합니다.
+
+image::designer/python/python-08.png["워크플로우 저장 폴더 선택",scaledwidth="45%"]
+
+트리에서 생성된 워크플로우를 확인할 수 있습니다.
+
+image::designer/python/python-09.png[워크플로우 생성]
+
+=== Numeric Statistics
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/numericStatistics/numericStatistics-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/numericStatistics/numericStatistics-02.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/numericStatistics/numericStatistics-03.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/numericStatistics/numericStatistics-04.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면 Key, Value 값을 설정할 수 있습니다.
+
+image::designer/numericStatistics/numericStatistics-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/numericStatistics/numericStatistics-01.png[워크플로우 저장]
+
+=== Nominal Statistics
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/numericStatistics/numericStatistics-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/numericStatistics/numericStatistics-02.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/numericStatistics/numericStatistics-03.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/numericStatistics/numericStatistics-04.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/numericStatistics/numericStatistics-05.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/numericStatistics/numericStatistics-01.png[워크플로우 저장]
+
+=== Certainty Factor based Sum
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/certaintyFactorSUM/certaintyFactorSUM-05.png[워크플로우 저장]
+
+=== Normalization
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/normalization/normalization-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/normalization/normalization-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/normalization/normalization-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/normalization/normalization-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/normalization/normalization-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/normalization/normalization-05.png[워크플로우 저장]
+
+=== Remove Characters
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/removeChar/removeChar-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/removeChar/removeChar-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/removeChar/removeChar-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/removeChar/removeChar-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/removeChar/removeChar-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/removeChar/removeChar-05.png[워크플로우 저장]
+
+=== Boolean Similarity/Correlation
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/booleanDataCorrelation/booleanDataCorrelation-05.png[워크플로우 저장]
+
+=== Numeric Similarity/Correlation
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/numericDataCorrelation/numericDataCorrelation-05.png[워크플로우 저장]
+
+=== String Similarity
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/stringDataCorrelation/stringDataCorrelation-05.png[워크플로우 저장]
+
+=== ID3 Classification
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/ID3/ID3-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/ID3/ID3-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/ID3/ID3-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/ID3/ID3-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/ID3/ID3-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/ID3/ID3-05.png[워크플로우 저장]
+
+=== K-Means Clustering
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/KMeans/KMeans-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/KMeans/KMeans-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/KMeans/KMeans-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/KMeans/KMeans-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/KMeans/KMeans-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/KMeans/KMeans-05.png[워크플로우 저장]
+
+=== EM Clustering
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/EM/EM-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/EM/EM-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/EM/EM-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/EM/EM-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/EM/EM-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/EM/EM-05.png[워크플로우 저장]
+
+=== CF based Similarity
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/CFBasedSimilarity/CFBasedSimilarity-05.png[워크플로우 저장]
+
+=== Content based Similarity
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/contentBasedSimilarity/contentBasedSimilarity-05.png[워크플로우 저장]
+
+=== User Similarity based Recommendation
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/userRecommendation/userRecommendation-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/userRecommendation/userRecommendation-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/userRecommendation/userRecommendation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/userRecommendation/userRecommendation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/userRecommendation/userRecommendation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/userRecommendation/userRecommendation-05.png[워크플로우 저장]
+
+=== Item Similarity based Recommendation
+
+모듈을 선택 후 드래그 앤 드롭 으로 캔버스화면에 옮겨 놓습니다.
+
+image::designer/itemRecommendation/itemRecommendation-00.png[모듈 드래그 앤 드롭]
+
+모듈을 더블클릭하면 다음과 같은 창이 나타나고 파라미터 탭을 선택 후 파라미터를 입력합니다.
+
+image::designer/itemRecommendation/itemRecommendation-01.png["파라미터 탭",scaledwidth="70%"]
+
+맵리듀스 탭에서는 JAR 경로와 드라이버가 있습니다.
+
+image::designer/itemRecommendation/itemRecommendation-02.png["맵리듀스 탭",scaledwidth="70%"]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/itemRecommendation/itemRecommendation-03.png["입출력 경로 탭",scaledwidth="70%"]
+
+하둡 환경설정 탭을 선택하면  Key, Value 값을 설정할 수 있습니다.
+
+image::designer/itemRecommendation/itemRecommendation-04.png["하둡 환경설정 탭",scaledwidth="70%"]
+
+워크플로우명을 입력하고 시작점에서 모듈, 모듈에서 종료점까지 연결한 후 저장합니다.
+
+image::designer/itemRecommendation/itemRecommendation-05.png[워크플로우 저장]
+
+=== Accounting ETL
+
+Accounting ETL 모듈은 사칙연산을 이용하여 컬럼을 연산하는 MapReduce 모듈입니다.
+
+image::designer/accounting/accounting-00.png[scaledwidth=100%,Accounting 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+입력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+출력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+컬럼의 개수는 필수입니다.
+실행할 수식은 필수이고, `$5` 와 같은 형식으로 `$` 뒤에 컬럼 인덱스를 붙여 컬럼을 표현합니다. 컬럼 인덱스 시작값은 `0` 입니다.
+
+image::designer/accounting/accounting-01.png[scaledwidth=35%,Accounting 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/accounting/accounting-02.png[scaledwidth=35%,Accounting 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/accounting/accounting-03.png[scaledwidth=35%,Accounting 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/accounting/accounting-04.png[scaledwidth=35%,Accounting 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Aggregate ETL
+
+Aggregate ETL 모듈은 하나 이상의 입력 파일을 받아서 합치는 MapReduce 모듈입니다.
+
+image::designer/aggregate/aggregate-00.png[scaledwidth=100%,Aggregate 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+파일당 라인수 측정은 옵션이고, 체크하면 로그에서 파일마다 라인수를 측정합니다.
+파일 합치기는 옵션이고, 체크하면 입력 경로의 파일들을 출력 경로로 merge 합니다.
+
+image::designer/aggregate/aggregate-01.png[scaledwidth=35%,Aggregate 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/aggregate/aggregate-02.png[scaledwidth=35%,Aggregate 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/aggregate/aggregate-03.png[scaledwidth=35%,Aggregate 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/aggregate/aggregate-04.png[scaledwidth=35%,Aggregate 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Apache Access To CSV
+
+Apache Access To CSV 모듈은 Apache HTTP Server 로그를 정형 로그로 변경하는 MapReduce 모듈입니다.
+
+image::designer/apache/apache-00.png[scaledwidth=100%,Apache 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+불일치 처리는 옵션이고, 체크하면 일반적인 형식과 일치하지 않는 열은 표준출력합니다.
+컬럼 구분자는 필수입니다.
+
+image::designer/apache/apache-01.png[scaledwidth=35%,Apache 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/apache/apache-02.png[scaledwidth=35%,Apache 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/apache/apache-03.png[scaledwidth=35%,Apache 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/apache/apache-04.png[scaledwidth=35%,Apache 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Clean ETL
+
+Clean ETL 모듈은 CSV 형식의 입력 파일에서 지정한 컬럼을 삭제하는 MapReduce 모듈입니다.
+
+image::designer/clean/clean-00.png[scaledwidth=100%,Clean 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+입력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+출력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+삭제 할 컬럼은 필수이고, 컬럼의 인덱스를 입력합니다. 인덱스는 0 부터 시작하고 `,` 로 구분합니다.
+컬럼의 개수는 필수입니다.
+
+image::designer/clean/clean-01.png[scaledwidth=35%,Clean 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/clean/clean-02.png[scaledwidth=35%,Clean 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/clean/clean-03.png[scaledwidth=35%,Clean 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/clean/clean-04.png[scaledwidth=35%,Clean 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Filter ETL
+
+Filter ETL 모듈은 지정한 컬럼의 값을 기준으로 필터링할 조건에 부합하는 경우 해당 ROW를 사용하는 MapReduce 모듈입니다.
+
+image::designer/filter/filter-00.png[scaledwidth=100%,Filter 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+입력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+필터 옵션은 필수이고, `EMPTY, NEMPTY, EQSTR, NEQSTR, EQNUM, NEQNUM, LT, LTE, GT, GTE, STARTWITH, ENDWITH` 중에서 `,` 로 구분하여 필터링 할 컬럼의 개수만큼 입력합니다.
+필터링 할 컬럼은 필수이고, 컬럼의 인덱스를 입력합니다. 인덱스는 0 부터 시작하고 `,` 로 구분하여 필터링 할 컬럼의 개수만큼 입력합니다.
+필터링 할 정규 표현식 또는 숫자는 필수이고, `,` 로 구분하여 필터링 할 컬럼의 개수만큼 입력합니다.
+필터링 할 컬럼값의 데이터 유형은 옵션이고, `int, long, float, double, string` 중에서 `,` 로 구분하여 필터링 할 컬럼의 개수만큼 입력합니다. 기본값은 `long` 입니다.
+컬럼의 개수는 필수입니다.
+
+image::designer/filter/filter-01.png[scaledwidth=35%,Filter 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/filter/filter-02.png[scaledwidth=35%,Filter 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/filter/filter-03.png[scaledwidth=35%,Filter 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/filter/filter-04.png[scaledwidth=35%,Filter 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Generate ETL
+
+Generate ETL 모듈은 CSV 형식의 입력 파일에서 지정한 위치에 새로운 키값을 생성하는 MapReduce 모듈입니다.
+
+image::designer/generate/generate-00.png[scaledwidth=100%,Generate 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+입력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+출력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+컬럼의 개수는 필수입니다.
+시퀀스를 삽입할 컬럼의 인덱스는 옵션이고, 인덱스는 0 부터 시작하고 기본값은 `0` 입니다.
+생성할 시퀀스의 유형은 옵션이고, `SEQUENCE, TIMESTAMP` 중에서 선택하고 기본값은 `SEQUENCE` 입니다. `SEQUENCE` 를 선택하면 시퀀스 번호의 시작값이 적용되고, `TIMESTAMP` 를 선택하면 날짜 패턴이 적용됩니다.
+시퀀스 번호의 시작값은 옵션이고, 기본값은 `0` 입니다.
+날짜 패턴은 옵션이고, `java.text.SimpleDateFormat` 의 형식을 사용합니다. 기본값은 `yyyyMMdd` 입니다.
+
+image::designer/generate/generate-01.png[scaledwidth=35%,Generate 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/generate/generate-02.png[scaledwidth=35%,Generate 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/generate/generate-03.png[scaledwidth=35%,Generate 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/generate/generate-04.png[scaledwidth=35%,Generate 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Grep ETL
+
+Grep ETL 모듈은 정규표현식을 이용하여 Row를 Grep하는 MapReduce 모듈입니다.
+
+image::designer/grep/grep-00.png[scaledwidth=100%,Grep 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+입력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+컬럼의 개수는 필수입니다.
+Grep Mode 는 필수이고, `ROW, COLUMN` 중에서 선택합니다. `COLUMN` 을 선택하면 grep할 컬럼이 적용됩니다.
+grep할 컬럼은 옵션이고, 컬럼의 인덱스를 입력합니다. 인덱스는 0 부터 시작합니다.
+정규표현식은 필수입니다.
+
+image::designer/grep/grep-01.png[scaledwidth=35%,Grep 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/grep/grep-02.png[scaledwidth=35%,Grep 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/grep/grep-03.png[scaledwidth=35%,Grep 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/grep/grep-04.png[scaledwidth=35%,Grep 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Group by ETL
+
+Group by ETL 모듈은 지정한 키로 Group By하여 하나의 Row로 키와 값을 취합하는 MapReduce 모듈입니다.
+
+image::designer/groupby/groupby-00.png[scaledwidth=100%,Group by 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+입력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+출력 컬럼 구분자는 옵션이고, 기본값은 `탭` 입니다.
+아이템의 구분자는 옵션이고, 기본값은 `,` 입니다.
+기준 컬럼 위치는 필수이고, Group By의 기준이 될 컬럼의 인덱스를 입력합니다. 인덱스는 0 부터 시작하고 기본값은 0 입니다.
+중복 허용은 옵션이고, 체크하면 출력값에 중복된 값도 포함됩니다.
+정렬은 옵션이고, 체크하면 출력 결과를 정렬합니다.
+
+image::designer/groupby/groupby-01.png[scaledwidth=35%,Group by 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/groupby/groupby-02.png[scaledwidth=35%,Group by 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/groupby/groupby-03.png[scaledwidth=35%,Group by 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/groupby/groupby-04.png[scaledwidth=35%,Group by 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Replace Column ETL
+
+Replace Column ETL 모듈은 지정한 컬럼의 값을 변경하는 MapReduce 모듈입니다.
+
+image::designer/replace/replace_column-00.png[scaledwidth=100%,Replace Column 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+입력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+출력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+컬럼의 개수는 필수입니다.
+변경할 컬럼의 위치는 필수이고, 컬럼의 인덱스를 입력합니다. 인덱스는 0 부터 시작하고 `,` 로 구분하여 변경할 컬럼 개수만큼 입력합니다.
+원본값은 필수이고 `,` 로 구분하여 변경할 컬럼 개수만큼 입력합니다.
+변경할 값은 필수이고 `,` 로 구분하여 변경할 컬럼 개수만큼 입력합니다.
+
+image::designer/replace/replace_column-01.png[scaledwidth=35%,Replace Column 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/replace/replace_column-02.png[scaledwidth=35%,Replace Column 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+
+image::designer/replace/replace_column-03.png[scaledwidth=35%,Replace Column 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/replace/replace_column-04.png[scaledwidth=35%,Replace Column 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Replace Delimiter ETL
+
+Replace Delimiter ETL 모듈은 Delimiter를 변경하는 MapReduce 모듈입니다.
+
+image::designer/replace/replace_delimiter-00.png[scaledwidth=100%,Replace Delimiter 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+
+image::designer/replace/replace_delimiter-01.png[scaledwidth=35%,Replace Delimiter 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/replace/replace_delimiter-02.png[scaledwidth=35%,Replace Delimiter 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+변경 전 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+변경 후 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+
+image::designer/replace/replace_delimiter-03.png[scaledwidth=35%,Replace Delimiter 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/replace/replace_delimiter-04.png[scaledwidth=35%,Replace Delimiter 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Sequence ETL
+
+Sequence ETL 모듈은 Full Text File 에서 Sequence File 로 변경하는 MapReduce 모듈입니다.
+
+image::designer/sequence/sequence-00.png[scaledwidth=100%,Sequence 모듈]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/sequence/sequence-02.png[scaledwidth=35%,Sequence 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/sequence/sequence-03.png[scaledwidth=35%,Sequence 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/sequence/sequence-04.png[scaledwidth=35%,Sequence 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Rank ETL
+
+Rank ETL 모듈은 지정한 컬럼에 으로 순위를 지정하는 MapReduce 모듈입니다.
+
+image::designer/rank/rank-00.png[scaledwidth=100%,Rank 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+입력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+출력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+키 컬럼 인덱스는 옵션이고, 순위의 기준이 되는 컬럼 인덱스를 입력합니다. 인덱스는 0부터 시작하고, 기본값은 `0` 입니다.
+랭킹 번호의 시작값은 옵션이고, 기본값은 `1` 입니다.
+개수 제한은 옵션이고, 상위 특정 순위까지만 기록합니다. 기본값은 `-1` 이고, -1 일 경우 적용되지 않습니다.
+컬럼의 개수는 필수입니다.
+
+image::designer/rank/rank-01.png[scaledwidth=35%,Rank 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/rank/rank-02.png[scaledwidth=35%,Rank 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/rank/rank-03.png[scaledwidth=35%,Rank 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/rank/rank-04.png[scaledwidth=35%,Rank 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Expression (Editor)
+
+Expression (Editor) 모듈은 MVEL 스크립트를 실행하는 MapReduce 모듈입니다.
+
+image::designer/mvel/mvel_editor-00.png[scaledwidth=100%,MVEL editor 모듈]
+
+모듈을 더블클릭하면 실행을 위한 스크립트를 작성하는 화면이 나타납니다.
+스크립트에 변수 사용시 변수설정을 해야합니다.
+파일의 한 라인은 row 라는 변수로 사용할 수 있습니다.
+
+image::designer/mvel/mvel_editor-01.png[scaledwidth=35%,MVEL editor 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/mvel/mvel_editor-02.png[scaledwidth=35%,MVEL editor 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/mvel/mvel_editor-03.png[scaledwidth=35%,MVEL editor 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/mvel/mvel_editor-04.png[scaledwidth=35%,MVEL editor 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Expression (File)
+
+Expression (File) 모듈은 MVEL 파일을 실행하는 MapReduce 모듈입니다.
+
+image::designer/mvel/mvel_file-00.png[scaledwidth=100%,MVEL file 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+MVEL 파일 HDFS 경로는 필수이고, 파일의 한 라인은 row 라는 변수로 사용할 수 있습니다.
+
+image::designer/mvel/mvel_file-01.png[scaledwidth=35%,MVEL file 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/mvel/mvel_file-02.png[scaledwidth=35%,MVEL file 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/mvel/mvel_file-03.png[scaledwidth=35%,MVEL file 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/mvel/mvel_file-04.png[scaledwidth=35%,MVEL file 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Drools Rule (Editor)
+
+Drools Rule (Editor) 모듈은 Drools Rule 파일을 실행하는 MapReduce 모듈입니다.
+
+image::designer/drools/drools_editor-00.png[scaledwidth=100%,Drools Editor 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+로그 컬럼 구분자는 필수입니다.
+로그의 컬럼명은 필수이고, `,` 로 구분하여 컬럼의 개수만큼 지정합니다.
+Drools 스크립트는 필수입니다.
+
+image::designer/drools/drools_editor-01.png[scaledwidth=35%,Drools Editor 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/drools/drools_editor-02.png[scaledwidth=35%,Drools Editor 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/drools/drools_editor-03.png[scaledwidth=35%,Drools Editor 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/drools/drools_editor-04.png[scaledwidth=35%,Drools Editor 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Drools Rule (File)
+
+Drools Rule (File) 모듈은 Drools Rule 파일을 실행하는 MapReduce 모듈입니다.
+
+image::designer/drools/drools_file-00.png[scaledwidth=100%,Drools File 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+로그 컬럼 구분자는 필수입니다.
+로그의 컬럼명은 필수이고, `,` 로 구분하여 컬럼의 개수만큼 지정합니다.
+Drools 파일 HDFS 경로는 필수입니다.
+
+image::designer/drools/drools_file-01.png[scaledwidth=35%,Drools File 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/drools/drools_file-02.png[scaledwidth=35%,Drools File 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/drools/drools_file-03.png[scaledwidth=35%,Drools File 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/drools/drools_file-04.png[scaledwidth=35%,Drools File 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Esper (Editor)
+
+Esper (Editor) 모듈은 Esper EPL 파일을 실행하는 MapReduce 모듈입니다.
+
+image::designer/esper/esper_editor-00.png[scaledwidth=100%,Esper Editor 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+로그 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+로그의 컬럼명은 필수이고, `,` 로 구분하여 컬럼의 개수만큼 입력합니다.
+컬럼 자료형은 필수이고, `string, int, integer, long, boolean, byte, float, double` 중에서 `,` 로 구분하여 컬럼의 개수만큼 입력합니다.
+Esper 스크립트는 필수입니다.
+
+image::designer/esper/esper_editor-01.png[scaledwidth=35%,Esper Editor 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/esper/esper_editor-02.png[scaledwidth=35%,Esper Editor 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/esper/esper_editor-03.png[scaledwidth=35%,Esper Editor 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/esper/esper_editor-04.png[scaledwidth=35%,Esper Editor 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== Esper (File)
+
+Esper (File) 모듈은 Esper EPL 파일을 실행하는 MapReduce 모듈입니다.
+
+image::designer/esper/esper_file-00.png[scaledwidth=100%,Esper File 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+로그 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+로그의 컬럼명은 필수이고, `,` 로 구분하여 컬럼의 개수만큼 입력합니다.
+컬럼 자료형은 필수이고, `string, int, integer, long, boolean, byte, float, double` 중에서 `,` 로 구분하여 컬럼의 개수만큼 입력합니다.
+Esper 파일 HDFS 경로는 필수입니다.
+
+image::designer/esper/esper_file-01.png[scaledwidth=35%,Esper File 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/esper/esper_file-02.png[scaledwidth=35%,Esper File 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/esper/esper_file-03.png[scaledwidth=35%,Esper File 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/esper/esper_file-04.png[scaledwidth=35%,Esper File 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.
+
+=== DBF To CSV
+
+DBF To CSV 모듈은 DBF 파일을 CSV 파일로 변환하는 MapReduce 모듈입니다.
+
+image::designer/dbftocsv/dbftocsv-00.png[scaledwidth=100%,DBF To CSV 모듈]
+
+모듈을 더블클릭하면 실행을 위한 파라미터를 설정하는 화면이 나타납니다.
+파라미터에 변수 사용시 변수설정을 해야합니다.
+출력 컬럼 구분자는 옵션이고, 기본값은 `,` 입니다.
+파일 인코딩은 옵션이고, 기본값은 `UTF-8` 입니다.
+파일 인코딩에 적절한 값을 주지 않을 경우 한글이 정상적으로 출력되지 않을 수 있습니다.
+헤더 쓰기는 옵션이고, 체크하면 출력경로 아래에 hive table 로 변환하기 위한 column 정보가 포함된 COLUMNS 파일과
+DBF 파일의 헤더가 포함된 HEADER 파일을 생성합니다.
+shp 파일의 HDFS 경로는 옵션이고, 입력하면 출력파일의 마지막 라인마다 좌표가 추가되고,
+COLUMNS 파일에는 제일 마지막에 `COORDINATES string` 이 추가되고,
+HEADER 파일에는 제일 마지막에 `COORDINATES` 가 추가됩니다.
+x 좌표와 y 좌표의 구분자는 띄어쓰기이며
+Line, MultiLine, Polygon 의 경우 좌표마다 구분자는 출력 컬럼 구분자가 `,` 일때는 `|` 이고
+출력 컬럼 구분자가 `|` 일때는 `,` 입니다.
+shp 파일명은 `.shp` 로 끝나야 합니다.
+
+image::designer/dbftocsv/dbftocsv-01.png[scaledwidth=35%,DBF To CSV 파라미터]
+
+맵리듀스 탭을 선택하면 JAR 파일 경로와 드라이버명이 지정되어 있습니다.
+
+image::designer/dbftocsv/dbftocsv-02.png[scaledwidth=35%,DBF To CSV 맵리듀스]
+
+입출력 경로 탭에서는 실행할 경우 필요한 입출력 경로를 지정할 수 있으며 입력 경로는 하나 이상 지정이 가능하나 출력 경로는 하나만 가능합니다.
+입력 파일은 dbf 파일이어야 하며 파일명은 `.dbf` 로 끝나야 합니다.
+입력 경로, 출력 경로 모두 필수입니다.
+
+image::designer/dbftocsv/dbftocsv-03.png[scaledwidth=35%,DBF To CSV 입출력 경로]
+
+하둡 환경설정 탭은 `Configuration.set()` 메소드를 통해서 설정하는 값을 지정할 때 사용합니다.
+
+image::designer/dbftocsv/dbftocsv-04.png[scaledwidth=35%,DBF To CSV 하둡 환경설정 탭]
+
+입력 완료 후 확인버튼을 누르고 저장 버튼을 눌러서 워크플로우를 저장합니다.

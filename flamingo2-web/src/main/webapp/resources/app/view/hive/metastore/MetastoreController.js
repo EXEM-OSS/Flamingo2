@@ -20,7 +20,8 @@ Ext.define('Flamingo2.view.hive.metastore.MetastoreController', {
 
     requires: [
         'Flamingo2.view.fs.hdfs.simple.SimpleHdfsBrowser',
-        'Flamingo2.view.hive.metastore._CreateDatabase'
+        'Flamingo2.view.hive.metastore._CreateDatabase',
+        'Flamingo2.view.hive.metastore._DatabaseProperties'
     ],
 
     listen: {
@@ -29,7 +30,8 @@ Ext.define('Flamingo2.view.hive.metastore.MetastoreController', {
                 tableRefreshClick: 'onTableRefreshClick',
                 tableCreateClick: 'onTableCreateClick',
                 tableAlterClick: 'onTableAlterClick',
-                tableDropClick: 'onTableDropClick'
+                tableDropClick: 'onTableDropClick',
+                tablePropertiesClick: 'onTablePropertiesClick'
             },
             'metastoreCreateTableController': {
                 refreshTable: 'onTableRefreshClick'
@@ -52,7 +54,7 @@ Ext.define('Flamingo2.view.hive.metastore.MetastoreController', {
             },
             callback: function (records, operation, success) {
                 if (!success) {
-                    error('Hive 오류', '데이터 베이스 목록을 가져오는데 실패하였습니다.');
+                    error(message.msg('hive.error'), message.msg('common.msg.get_databases'));
                 }
             }
         });
@@ -184,6 +186,30 @@ Ext.define('Flamingo2.view.hive.metastore.MetastoreController', {
         refs.btnTableRemove.setDisabled(true);
     },
 
+    /**
+     * Show Database script
+     * */
+    onPropDatabaseClick: function() {
+        var me = this;
+        var refs = this.getReferences();
+
+        var database = refs.cbxDatabase.getValue();
+
+        if (Ext.isEmpty(database)) {
+            Ext.MessageBox.show({
+                title: message.msg('common.check'),
+                message: message.msg('hive.msg.select_database'),
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.INFO
+            });
+            return;
+        }
+
+        Ext.create('Flamingo2.view.hive.metastore._DatabaseProperties', {
+            database: database
+        }).show();
+    },
+
     //----------------------Table List Grid----------------------
     /**
      * Table List Grid row select event
@@ -310,6 +336,12 @@ Ext.define('Flamingo2.view.hive.metastore.MetastoreController', {
                     iconCls: 'common-table-remove',
                     handler: function () {
                         me.fireEvent('tableDropClick');
+                   }
+                }, {
+                    text: message.msg('hive.tableScript'),
+                    iconCls: 'common-information',
+                    handler: function () {
+                        me.fireEvent('tablePropertiesClick');
                     }
                 }]
             });
@@ -419,6 +451,20 @@ Ext.define('Flamingo2.view.hive.metastore.MetastoreController', {
                 }
             }
         });
+    },
+
+    /**
+     * 테이블 속성 버튼 클릭 이벤트
+     * */
+    onTablePropertiesClick: function() {
+        var me = this;
+        var refs = me.getReferences();
+        var record = refs.grdTable.getSelectionModel().getSelection()[0];
+
+        Ext.create('Flamingo2.view.hive.metastore._TableProperties', {
+            database: refs.cbxDatabase.getValue(),
+            table: record.get('tableName')
+        }).show();
     },
 
     /**

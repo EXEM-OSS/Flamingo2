@@ -71,6 +71,8 @@ public class BatchServiceImpl implements BatchService {
             vars.put(JobVariable.JOB_NAME, params.get("jobName").toString());
             vars.put(JobVariable.JOB_KEY, key);
             vars.put(JobVariable.JOB_VARIABLES, jobVariable);
+            vars.put("clusterName", params.get("clusterName"));
+            vars.put("executeFrom", "batch");
 
             //Insert batch table
             params.put("job_id", key);

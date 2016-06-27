@@ -1,0 +1,93 @@
+[[audit]]
+
+== HDFS Audit 로그
+
+Flamingo는 사용자가 HDFS 브라우저에서 수행한 로그 정보를 관리하기 위해 다음의 기능 들을 제공합니다.
+
+image::fs/audit/hdfs-audit.png[scaledwidth=100%,HDFS Audit Log 메인 화면]
+
+=== 통계 조건
+
+통계 조건은 조회유형, 시작일 및 종료일 조건을 통해 HDFS 브라우저에서 실행한 로그 정보를 확인할 수 있습니다. 각 조회조건을 입력 후 조회 버튼을 클릭하면 해당 결과가 유형 목록, 유형별 통계, 날짜별 유형 통계에 표시됩니다. 입력한 조회조건을 모두 삭제하려면 초기화 버튼을 선택하십시오.
+
+image::fs/audit/hdfs-audit-statistics0.png[scaledwidth=100%,HDFS Audit Log 통계 조건 화면]
+
+조회조건은 다음의 두 가지 조건을 제공합니다.
+
+* 조회유형
+* 시작일/종료일
+
+==== 조회유형
+
+조회유형은 액션, 사용자, 파일유형, 접근방법의 조건으로 로그 정보를 조회할 수 있습니다.
+
+image::fs/audit/hdfs-audit-statistics1.png[scaledwidth=100%,HDFS Audit Log 조회유형 화면]
+
+==== 시작일/종료일
+
+시작일 및 종료일은 기본적으로 매달 1일 부터 현재 날짜까지의 로그 정보를 표시합니다. 또한 사용자가 직접 날짜를 지정해서 해당 기간의 로그 정보를 확인할 수 있습니다.
+
+image::fs/audit/hdfs-audit-statistics2.png[scaledwidth=100%,HDFS Audit Log 조회유형 화면]
+
+=== 유형 목록
+
+조회유형에 맞는 목록을 건수가 많은 순서대로 표시합니다.
+
+image::fs/audit/hdfs-audit-typeList.png[scaledwidth=100%,HDFS Audit Log 유형 목록 화면]
+
+=== 유형별 통계
+
+유형 목록의 정보를 차트에 표시합니다.
+
+image::fs/audit/hdfs-audit-typeStat.png[scaledwidth=100%,HDFS Audit Log 유형별 화면]
+
+=== 날짜별 유형 통계
+
+날짜별로 조회된 로그 정보를 차트에 표시합니다.
+
+image::fs/audit/hdfs-audit-dateTypeStat.png[scaledwidth=100%,HDFS Audit Log 날짜별 유형 통계 화면]
+
+=== Audit 목록
+
+Audit 목록은 Audit 로그에 저장된 모든 정보를 표합니다. 기본값은 모든 기간에 해당되는 로그 정보를 가져오며, 조회조건을 통해 특정 기간 또는 조회유형, 경로를 입력 후 조회 버튼을 클릭해서 결과를 확인할 수 있습니다. 입력한 조회조건은 초기화 버튼을 선택 시 모두 삭제됩니다.
+
+조회조건은 다음과 같은 조건을 제공합니다.
+
+* 시작일/종료일
+* 조회유형
+* 경로
+* 페이징
+
+image::fs/audit/hdfs-audit-list0.png[scaledwidth=100%,HDFS Audit 목록 화면]
+
+시작일 및 종료일을 입력 후 조회 버튼을 클릭하면 가장 최근에 저장된 로그 정보부터 정렬되어 표시됩니다.
+
+==== 시작일/종료일
+
+image::fs/audit/hdfs-audit-list1.png[scaledwidth=100%,HDFS Audit 목록 화면]
+
+내용보기 목록은 HDFS 브라우저에서 제공되는 기능 목록과 동일합니다.
+
+==== 조회유형
+
+image::fs/audit/hdfs-audit-list2.png[scaledwidth=100%,HDFS Audit 목록 화면]
+
+선택한 기능에 해당되는 로그 정보가 조회됩니다.
+
+image::fs/audit/hdfs-audit-list3.png[scaledwidth=100%,HDFS Audit 목록 화면]
+
+==== 경로
+
+경로에는 HDFS 브라우저의 경로를 입력할 경우 입력한 경로를 포함하는 로그 정보가 표시됩니다.
+
+image::fs/audit/hdfs-audit-list4.png[scaledwidth=100%,HDFS Audit 목록 화면]
+
+==== 페이징
+
+페이지 버튼 및 입력 필드에 특정 페이지 입력을 통해 전체 목록을 조회 할 수 있습니다. 
+
+image::fs/audit/hdfs-audit-list5.png[scaledwidth=100%,HDFS Audit 목록 화면]
+
+갱신 버튼을 선택할 경우 조회조건에서 입력한 조건에 해당하는 결과값으로 첫 페이지로 Audit 목록이 업데이트됩니다.
+
+image::fs/audit/hdfs-audit-list6.png[scaledwidth=100%,HDFS Audit 목록 화면]

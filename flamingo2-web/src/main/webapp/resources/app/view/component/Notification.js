@@ -17,94 +17,99 @@
 Ext.define('Flamingo2.view.component.Notification', {
     extend: 'Ext.container.Container',
     alias: 'widget.progressnoti',
-    id: 'Notification',
-    controller: 'notification',
-    layout: 'anchor',
+
     requires: [
         'Flamingo2.view.component.ProgressDetail',
         'Flamingo2.view.component.NotificationController'
     ],
-    items: [{
-        xtype: 'dataview',
-        id: 'grdNotification',
-        anchor: '100%',
-        style: {
-            maxHeight: '190px',
-            overflowY: 'auto'
-        },
-        tplWriteMode: 'insertBefore',
-        itemSelector: 'list-group-item',
-        store: Ext.create('Ext.data.Store', {
-            storeId: 'progressnoti',
-            fields: ['id', 'title', 'type', 'cnt'],
-            listeners: {
-                add: function (store) {
-                    $('#badge-count').text(store.getCount());
-                },
-                remove: function (store) {
-                    if (store.getCount() == 0) {
-                        $('#badge-count').text('');
-                    }
-                    else {
+    controller: 'notification',
+
+    id: 'Notification',
+    layout: 'anchor',
+
+    items: [
+        {
+            xtype: 'dataview',
+            id: 'grdNotification',
+            anchor: '100%',
+            style: {
+                maxHeight: '190px',
+                overflowY: 'auto'
+            },
+            tplWriteMode: 'insertBefore',
+            itemSelector: 'list-group-item',
+            store: Ext.create('Ext.data.Store', {
+                storeId: 'progressnoti',
+                fields: ['id', 'title', 'type', 'cnt'],
+                listeners: {
+                    add: function (store) {
                         $('#badge-count').text(store.getCount());
-                    }
-                },
-                clear: function (store) {
-                    if (store.getCount() == 0) {
-                        $('#badge-count').text('');
-                    }
-                    else {
-                        $('#badge-count').text(store.getCount());
+                    },
+                    remove: function (store) {
+                        if (store.getCount() == 0) {
+                            $('#badge-count').text('');
+                        }
+                        else {
+                            $('#badge-count').text(store.getCount());
+                        }
+                    },
+                    clear: function (store) {
+                        if (store.getCount() == 0) {
+                            $('#badge-count').text('');
+                        }
+                        else {
+                            $('#badge-count').text(store.getCount());
+                        }
                     }
                 }
+            }),
+            tpl: [
+                '<ul class="list-notification list-group">',
+                '<tpl for=".">',
+                '<tpl if="type == \'progress\'">',
+                '<li class="list-group-item">',
+                '<div class="progress-title"><span class="sr-only">{title}</span></div>',
+                '<div class="progress progress-mini">',
+                '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">',
+                '</div>',
+                '</li>',
+                '</tpl>',
+                '<tpl if="type != \'progress\'">',
+                '<li class="list-group-item">',
+                '<a href="#">',
+                '<div class="clearfix">',
+                '<span class="pull-left"><i class="btn btn-xs no-hover btn-pink fa fa-exclamation-triangle"></i>{title}</span>',
+                '<span class="pull-right badge badge-info">{cnt}</span>',
+                '</div>',
+                '</a>',
+                '</li>',
+                '</tpl>',
+                '</tpl>',
+                '</ul>'
+            ],
+            listeners: {
+                /*            viewready: function (panel) {
+                 $('#progress-detail').on('click', function () {
+                 panel.fireEvent('detailClick', panel, this);
+                 });
+                 },
+                 detailClick: function (panel, item) {
+                 Ext.create('Flamingo2.view.component.ProgressDetail').show();
+                 },*/
+                select: function () {
+                    console.debug('1');
+                },
+                itemclick: function () {
+                    console.debug('click');
+                }
             }
-        }),
-        tpl: [
-            '<ul class="list-notification list-group">',
-            '<tpl for=".">',
-            '<tpl if="type == \'progress\'">',
-            '<li class="list-group-item">',
-            '<div class="progress-title"><span class="sr-only">{title}</span></div>',
-            '<div class="progress progress-mini">',
-            '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">',
-            '</div>',
-            '</li>',
-            '</tpl>',
-            '<tpl if="type != \'progress\'">',
-            '<li class="list-group-item">',
-            '<a href="#">',
-            '<div class="clearfix">',
-            '<span class="pull-left"><i class="btn btn-xs no-hover btn-pink fa fa-exclamation-triangle"></i>{title}</span>',
-            '<span class="pull-right badge badge-info">{cnt}</span>',
-            '</div>',
-            '</a>',
-            '</li>',
-            '</tpl>',
-            '</tpl>',
-            '</ul>'
-        ],
-        listeners: {
-            /*            viewready: function (panel) {
-             $('#progress-detail').on('click', function () {
-             panel.fireEvent('detailClick', panel, this);
-             });
-             },
-             detailClick: function (panel, item) {
-             Ext.create('Flamingo2.view.component.ProgressDetail').show();
-             },*/
-            select: function () {
-                console.debug('1');
-            },
-            itemclick: function () {
-                console.debug('click');
-            }
-        }
-    }/*, {
-     xtype: 'component',
-     html: [
-     '<li class="dropdown-footer"><a id="progress-detail" href="#">상세보기 <i class="ace-icon fa fa-arrow-right"></i></a></li>'
-     ]
-     }*/],
+        }/*, {
+         xtype: 'component',
+         html: [
+         '<li class="dropdown-footer"><a id="progress-detail" href="#">상세보기 <i class="ace-icon fa fa-arrow-right"></i></a></li>'
+         ]
+         }*/
+    ],
 
     addNoti: function (id, title, type, cnt) {
         this.items.items[0].getStore().insert(0, {id: id, title: title, type: type, cnt: cnt});
@@ -125,7 +130,7 @@ Ext.define('Flamingo2.view.component.Notification', {
     merge: function (id, title, type, cnt) {
         var view = this.items.items[0];
         var store = view.getStore();
-        var row = store.find('id', id)
+        var row = store.find('id', id);
 
         if (row < 0) {
             store.insert(0, {id: id, title: title, type: type, cnt: cnt});

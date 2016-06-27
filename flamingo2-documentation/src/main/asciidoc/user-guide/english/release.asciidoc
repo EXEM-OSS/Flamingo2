@@ -1,0 +1,24 @@
+[[release]]
+
+== 릴리즈 노트
+
+=== Release 2.0.0
+
+* Resource Manager, Namenode 모니터링
+* YARN 애플리케이션, MapReduce Job 모니터링
+* 클러스터 노드 및 데이터 노드 모니터링
+* MapR CLDB모니터링
+* R/RStudio Server 연계 (RHive, RHadoop 포함)
+* Apache Hive Metastore 관리
+* Apache Hive 쿼리 개발 및 실행
+* Apache Hive Latin Script 개발 및 실행
+* Pivotal HAWQ 관리
+* Pivotal HAWQ 쿼리 개발 및 실행
+* MapR File System 관리
+* HDFS 브라우저를 이용한 관리
+* HDFS Audit 로깅 및 관리
+* 워크플로우 디자이너를 이용한 관리
+* 워크플로우 모니터링
+* 배치 작업 관리
+* 사용자 권한관리
+* 메뉴 관리

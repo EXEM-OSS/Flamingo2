@@ -130,6 +130,28 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.ResourceManagerModel', {
                     direction: 'DESC'
                 }
             ]
+        },
+
+        configurationStore: {
+            fields: ['key', 'value'],
+            autoLoad: false,
+            proxy: {
+                type: 'ajax',
+                url: CONSTANTS.MONITORING.RM.CONFIGURATION,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'total'
+                }
+            },
+            remoteSort: false,  // groupField가 설정되면 groupField 기준으로 정렬이 됨
+            sorters: [
+                {
+                    property: 'file',
+                    direction: 'DESC'
+                },
+                'file'
+            ]
         }
     }
 });

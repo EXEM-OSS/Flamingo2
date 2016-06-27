@@ -24,8 +24,7 @@ Ext.define('Flamingo2.view.system.authority.combo.UserAuthCombo', {
     displayField: 'auth_name',
     valueField: 'auth_id',
     queryMode: 'local',
-    editable: true,
-    selectOnFocus: true,
+    editable: false,
     width: 120,
     collapsible: false,
     emptyText: message.msg('system.authority.auth.emptyText')

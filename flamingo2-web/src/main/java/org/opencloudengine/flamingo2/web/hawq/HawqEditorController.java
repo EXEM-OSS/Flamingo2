@@ -38,7 +38,7 @@ import java.util.Map;
 /**
  * Pivotal HAWQ Editor Controller.
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  */
 @Controller

@@ -19,16 +19,9 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.RunningApplications', {
     alias: 'widget.runningApplications',
 
     title: message.msg('monitoring.rm.run_yarn_app'),
-
-    listeners: {
-        itemclick: 'onItemClick',
-        afterrender: 'onAfterrender'
-    },
-
     bind: {
         store: '{runningApplicationsStore}'
     },
-
     viewConfig: {
         emptyText: message.msg('monitoring.rm.no_running_application'),
         deferEmptyText: false,
@@ -38,22 +31,13 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.RunningApplications', {
             return 'cell-height-30';
         }
     },
-
     tools: [
         {
             type: 'refresh',
-            tooltip: message.msg('monitoring.msg.refresh_yarn_list'),
-            handler: function (event, toolEl, panel) {
-                var grid = query('runningApplications');
-                grid.getStore().load({
-                    callback: function (records, operation, success) {
-                        grid.setTitle(format(message.msg('monitoring.rm.total_run_app'), this.getCount()))
-                    }
-                });
-            }
+            tooltip: message.msg('common.refresh'),
+            handler: 'onRunningYarnAppRefreshClick'
         }
     ],
-
     columns: [
         {
             xtype: 'rownumberer',
@@ -157,5 +141,8 @@ Ext.define('Flamingo2.view.monitoring.resourcemanager.RunningApplications', {
                 }
             }
         }
-    ]
+    ],
+    listeners: {
+        afterrender: 'onAfterrender'
+    }
 });

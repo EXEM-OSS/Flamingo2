@@ -18,34 +18,14 @@ Ext.define('Flamingo2.view.monitoring.applications.ApplicationSumChart', {
     extend: 'Ext.Panel',
     alias: 'widget.applicationSumChart',
 
-    initComponent: function () {
-        var me = this;
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['time', 'sum'],
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: '/monitoring/resourcemanager/apps/timeseries.json',
-                extraParams: {
-                    clusterName: ENGINE.id
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'total'
-                }
-            },
-            remoteSort: true,
-            sorters: [{
-                property: 'num',
-                direction: 'ASC'
-            }]
-        });
-
-        me.items = {
+    items: [
+        {
             xtype: 'cartesian',
+            itemId: 'appSumChart',
             height: 160,
-            store: store,
+            bind: {
+                store: '{timeSeriesStore}'
+            },
             interactions: 'itemhighlight',
             axes: [
                 {
@@ -102,7 +82,8 @@ Ext.define('Flamingo2.view.monitoring.applications.ApplicationSumChart', {
                         trackMouse: true,
                         style: 'background: #fff',
                         renderer: function (storeItem, item) {
-                            this.setHtml(storeItem.get('time') + ' : <font color="#CC2900"><b>' + storeItem.get('sum') + message.msg('monitoring.yarn.tip.count') + '</b></font>');
+                            this.setHtml(storeItem.get('time') + ' : <span style="color: #CC2900; "><b>'
+                                + storeItem.get('sum') + message.msg('monitoring.yarn.tip.count') + '</b></font>');
                         }
                     },
                     label: {
@@ -113,9 +94,17 @@ Ext.define('Flamingo2.view.monitoring.applications.ApplicationSumChart', {
                         }
                     }
                 }
-            ]
-        };
-
-        me.callParent(arguments);
-    }
+            ],
+            listeners: {
+                afterrender: 'onApplicationSumChartAfterRender'
+            }
+        }
+    ],
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onApplicationSumChartRefreshClick'
+        }
+    ]
 });

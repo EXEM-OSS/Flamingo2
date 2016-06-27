@@ -126,11 +126,11 @@ public class MetastoreController extends DefaultController {
         try {
             String clusterName = params.get("clusterName").toString();
             String username = getSessionUsername();
+            params.put("username", username);
 
             if (Boolean.valueOf(params.get("external").toString())) {
                 List<String> paths = hdfsBrowserAuthService.getHdfsBrowserPatternAll(username);
                 String hdfsAuthPattern = hdfsBrowserAuthService.validateHdfsPathPattern((String) params.get("location"), paths);
-                params.put("username", username);
                 params.put("hdfsPathPattern", hdfsAuthPattern);
                 params.put("condition", "createDbDir");
                 hdfsBrowserAuthService.getHdfsBrowserUserDirAuth(params);
@@ -252,6 +252,49 @@ public class MetastoreController extends DefaultController {
             response.setSuccess(true);
         } catch (Exception ex) {
             throw new ServiceException("Unable to alter a table", ex);
+        }
+        return response;
+    }
+
+    @RequestMapping(value = "/tableScript", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Response getTableScript(@RequestParam Map params) {
+
+        Response response = new Response();
+        try {
+            String clusterName = params.get("clusterName").toString();
+            String database = params.get("database").toString();
+            String table = params.get("table").toString();
+
+            EngineConfig engineConfig = this.getEngineConfig(clusterName);
+            EngineService engineService = this.getEngineService(clusterName);
+            HiveMetastoreService service = engineService.getHiveMetastoreServcice();
+            Map returnMap = service.getTableScript(engineConfig, params);
+            response.setMap(returnMap);
+            response.setSuccess(true);
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to get a table", ex);
+        }
+        return response;
+    }
+
+    @RequestMapping(value = "/databaseScript", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Response getDatabaseScript(@RequestParam Map params) {
+
+        Response response = new Response();
+        try {
+            String clusterName = params.get("clusterName").toString();
+            String database = params.get("database").toString();
+
+            EngineConfig engineConfig = this.getEngineConfig(clusterName);
+            EngineService engineService = this.getEngineService(clusterName);
+            HiveMetastoreService service = engineService.getHiveMetastoreServcice();
+            Map returnMap = service.getDatabaseScript(engineConfig, params);
+            response.setMap(returnMap);
+            response.setSuccess(true);
+        } catch (Exception ex) {
+            throw new ServiceException("Unable to get a table", ex);
         }
         return response;
     }

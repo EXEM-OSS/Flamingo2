@@ -102,9 +102,37 @@ public class FileUtils {
      * @return 마지막 Path Separator를 기준으로 우측 경로
      */
     public static String getDirectoryName(String fullyQualifiedPath) {
-        int sep = fullyQualifiedPath.lastIndexOf(SystemUtils.FILE_SEPARATOR);
-        int length = fullyQualifiedPath.getBytes().length;
-        return fullyQualifiedPath.substring(sep + 1, length);
+        int lastIndex = fullyQualifiedPath.lastIndexOf(SystemUtils.FILE_SEPARATOR);
+        return fullyQualifiedPath.substring(lastIndex + 1);
+    }
+
+    /**
+     * 파일시스템 경로에서 마지막에 위치한 구분자를 기준으로 우측 마지막 경로명을 반환한다.
+     * ex. /home/cloudine/flamingo/web -> web
+     * Path 문자열이 길 경우 getDirectoryName() 메소드 대신 사용 : String index out of range
+     *
+     * @param path 파일시스템 경로
+     * @return  마지막 구분자를 기준으로 우측 경로
+     */
+    public static String getLastPathName(String path) {
+        String separator = SystemUtils.FILE_SEPARATOR;
+        return org.apache.commons.lang.StringUtils.substringAfterLast(path, separator);
+    }
+
+    /**
+     * 피일시스템 경로에서 잘못된 문자열의 포함 여부를 검증한다.
+     *
+     * @param path  파일시스템 경로
+     * @return  true or false
+     */
+    public static boolean pathValidator(String path) {
+        String[] invalidString = {"//", "/ /", "null"};
+        for (String str : invalidString) {
+            if (org.apache.commons.lang.StringUtils.contains(path, String.valueOf(str))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -174,5 +202,4 @@ public class FileUtils {
             IOUtils.closeQuietly(inputStream);
         }
     }
-
 }

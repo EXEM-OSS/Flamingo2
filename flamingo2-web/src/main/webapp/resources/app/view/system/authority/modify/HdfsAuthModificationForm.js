@@ -66,6 +66,7 @@ Ext.define('Flamingo2.view.system.authority.register.HdfsAuthModificationForm', 
                             inputValue: 'isNewValue',
                             handler: function (checkbox) {
                                 var hdfsPathPattern = query('hdfsAuthModificationForm #hdfsPathPattern');
+
                                 if (checkbox.checked) {
                                     hdfsPathPattern.setReadOnly(0);
                                 } else
@@ -113,6 +114,7 @@ Ext.define('Flamingo2.view.system.authority.register.HdfsAuthModificationForm', 
                             inputValue: 'isNewValue',
                             handler: function (checkbox) {
                                 var userAuthCombo = query('hdfsAuthModificationForm #userAuthCombo');
+
                                 if (checkbox.checked) {
                                     userAuthCombo.setReadOnly(0);
                                 } else
@@ -147,6 +149,7 @@ Ext.define('Flamingo2.view.system.authority.register.HdfsAuthModificationForm', 
                             inputValue: 'isNewValue',
                             handler: function (checkbox) {
                                 var userLevelCombo = query('hdfsAuthModificationForm #userLevelCombo');
+
                                 if (checkbox.checked) {
                                     userLevelCombo.setReadOnly(0);
                                 } else
@@ -330,6 +333,19 @@ Ext.define('Flamingo2.view.system.authority.register.HdfsAuthModificationForm', 
                             name: 'permission_file',
                             uncheckedValue: 0,
                             inputValue: 1
+                        },
+                        {
+                            boxLabel: message.msg('system.authority.common.copyToLocal'),
+                            name: 'copy_to_local_file',
+                            uncheckedValue: 0,
+                            inputValue: 1
+                        },
+                        {
+                            boxLabel: message.msg('system.authority.common.streaming'),
+                            name: 'streaming_file',
+                            uncheckedValue: 0,
+                            inputValue: 1,
+                            hidden: true
                         }
                     ]
                 }

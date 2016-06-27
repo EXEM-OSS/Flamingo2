@@ -143,18 +143,27 @@ Ext.define('Flamingo2.view.designer.editor.WorkMixin', {
         var script = this.editor.getSession().getValue();
         var saveField = me.saveField;
         var saveId = me.saveId;
-        var conditions = saveField.getValue();
-        conditions = JSON.parse(conditions);
-        if (conditions[saveId]) {
-            conditions[saveId] = script;
-        }
-        saveField.setValue(JSON.stringify(conditions));
+        if (saveField) {
+            var conditions = saveField.getValue();
+            conditions = JSON.parse(conditions);
+            if (conditions[saveId]) {
+                conditions[saveId] = script;
+            }
+            saveField.setValue(JSON.stringify(conditions));
 
-        Ext.MessageBox.show({
-            title: 'Status',
-            message: format(message.msg('workflow.msg_editorwork'), saveId),
-            buttons: Ext.MessageBox.OK,
-            icon: Ext.MessageBox.INFO
-        });
+            Ext.MessageBox.show({
+                title: 'Status',
+                message: format(message.msg('workflow.msg_editorwork'), saveId),
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.INFO
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Status',
+                message: format(message.msg('workflow.msg_toast_fail'), saveId),
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.INFO
+            });
+        }
     }
 });

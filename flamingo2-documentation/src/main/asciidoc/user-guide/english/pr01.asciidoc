@@ -1,0 +1,81 @@
+[[pre]]
+
+== Introduction
+
+This document gives instructions on how to install and use Flamingo 2 Big Data Platform.
+
+=== What is Flamingo?
+
+Flamingo 2 is a big data analytics platform based on Apache Hadoop 2. Flamingo provides a suitable environment for analysts, developers, and system administrators.
+
+image::screenshot1.jpg[scaledwidth=100%,Flamingo 메인 화면]
+
+Flamingo's features are as below.
+
+* Resource Manager, Namenode Monitors
+* YARN Application, MapReduce Job Monitors
+* Cluster Node and Datanode Monitors
+* MapR CLDB Monitor
+* R/RStudio Server Integration (including RHive and RHadoop)
+* Apache Hive Metastore Management
+* Apache Hive Query Editor
+* Apache Hive Latin Script Editor
+* Pivotal HAWQ Management
+* Pivotal HAWQ  Query Editor
+* MapR File System Management
+* HDFS Browser
+* HDFS Audit Log
+* Workflow Designer
+* Workflow Monitor
+* Batch Job Scheduler
+* Authorization
+* Menu Management
+* etc
+
+=== Architecture
+
+=== Components
+
+[width="100%",cols="10,10,20",options="header"]
+|=======
+|Component  |Filename    |Description
+|Flamingo Web | `flmaingo2-web-2.0.0.tar.gz` | Flamingo's main web application.
+|Flamingo System Agent | `flmaingo2-system-agent-2.0.0.tar.gz` | Web application for integrating Flamingo user accounts with Linux user accounts
+|Flamingo Resource Manager Agent | `flmaingo2-hadoop2-rm-agent-2.0.0.jar` | An agent that communicates with Hadoop ResourceManager. Flamingo uses the agent to collect YARN applications information.
+|Flamingo Namenode Agent for Hadoop 2.0 이상 | `flmaingo2-hadoop20-nn-agent-2.0.0.jar` | An agent that communicates with Hadoop 2.0 Namenode. Flamingo uses the agent to collect namenode information.
+|Flamingo Namenode Agent for Hadoop 2.6 이상 | `flmaingo2-hadoop26-nn-agent-2.0.0.jar` | An agent that communicates with Hadoop 2.6 Namenode. Flamingo uses the agent to collect namenode information.
+|Flamingo Collector | `flmaingo2-collector-2.0.0.tar.gz` | A web application that collects information from the Flamingo Resource Manager Agent and the Namenode Agent
+|Flamingo MapReduce Job Agent | `flamingo2-hadoop2-mr-agent-2.0.0.jar` | An agent that retrieves MapReduce job IDs and YARN application IDs.
+|=======
+
+=== License
+
+Flamingo license policy is as below.
+
+[width="80%",options="header"]
+|=======
+|License  |Description
+|GPL v3 |The OpenSource license for non-commercial uses only.
+|Commercial |For commercial uses.
+|=======
+
+==== OpenSource License
+
+Flamingo is licensed under the GPL v3, and http://www.cloudine.io[Cloudine] is responsible for its development and deployment. It is required for those who download and install Flamingo to follow the GPL v3 policy.
+
+* https://www.olis.or.kr/ossw/license/license/detail.do?lid=1072[GNU General Public License (Korean)]
+* https://en.wikipedia.org/wiki/GNU_General_Public_License[GNU General Public License (English)]
+
+Flamingo GPL version does *NOT* provide technical support, and must *NOT* be used for commercial purposes. All issues can be discussed and supported in the community.
+
+==== Commercial License
+
+If you want to avoid using the GPL v3 license, receive technical support, and use Flamingo for commercial purposes, we also provide the commercial version. Two types of the commercial version are available.
+
+[width="80%",cols="5,20",options="header"]
+|=======
+|Type  |Description
+|Subscription |Yearly subscription. Valid for one year after the license is issued. When expired, log-in is restricted. Must be renewed after one year.
+|OEM |For customizing Flamingo or changing its product title. Yearly license. We handle each case separately. For more details about OEM licensing, please contact us at sales@cloudine.co.kr..
+|=======
+

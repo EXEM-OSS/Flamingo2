@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.opencloudengine.flamingo2.util.StringUtils.listToDelimitedString;
 import static org.opencloudengine.flamingo2.util.StringUtils.unescape;
 import static org.opencloudengine.flamingo2.web.configuration.ConfigurationHelper.getHelper;
 
@@ -47,20 +48,8 @@ public class RTask extends InterceptorAbstractTask {
      */
     private Logger logger = LoggerFactory.getLogger(RTask.class);
 
-    /**
-     * Hadoop Configuration
-     */
-    private Map<String, Object> hadoopConf = new HashMap<>();
-
-    /**
-     * Default HDFS File System URL
-     */
-    private String fsDefaultFS;
-
     @Override
     public void runTask(ProcessInstance instance) throws Exception {
-        fsDefaultFS = String.format("hdfs://%s:%s", getHelper().get(clusterName + ".nn.address"), getHelper().get(clusterName + ".nn.port"));
-
         FileUtils.forceMkdir(new File(working));
 
         // 쉘 스크립트 내용을 저장한다.
@@ -71,7 +60,7 @@ public class RTask extends InterceptorAbstractTask {
         saveCommandFile(cli, working);
 
         // 실행 스크립트를 저장한다.
-        if (variable.get("script") != null && !StringUtils.isEmpty(variable.get("script").toString())) {
+        if (variable.get("script") != null && !isEmpty(variable.get("script").toString())) {
             saveRScriptFile(unescape(resolve(variable.get("script").toString())), working);
         }
 
@@ -103,7 +92,7 @@ public class RTask extends InterceptorAbstractTask {
         Map<String, String> defaultEnvs = getDefaultEnvs();
         Set<String> keys = defaultEnvs.keySet();
         for (String key : keys) {
-            if (!StringUtils.isEmpty(defaultEnvs.get(key))) {
+            if (!isEmpty(defaultEnvs.get(key))) {
                 command.add(MessageFormatter.arrayFormat("export {}={}\n", new Object[]{
                         key, defaultEnvs.get(key)
                 }).getMessage());
@@ -114,11 +103,11 @@ public class RTask extends InterceptorAbstractTask {
         command.add("CMD");
         command.add("BATCH");
 
-        if (variable.get("nosave") != null && !StringUtils.isEmpty(variable.get("nosave").toString())) {
+        if (variable.get("nosave") != null && !isEmpty(variable.get("nosave").toString())) {
             command.add("--no-save");
         }
 
-        if (variable.get("norestore") != null && !StringUtils.isEmpty(variable.get("norestore").toString())) {
+        if (variable.get("norestore") != null && !isEmpty(variable.get("norestore").toString())) {
             command.add("--no-restore");
         }
 
@@ -127,11 +116,14 @@ public class RTask extends InterceptorAbstractTask {
         command.add(working + "/script.R");
         command.add(working + "/task.log");
 
-        return org.opencloudengine.flamingo2.util.StringUtils.listToDelimitedString(command, " ");
+        return listToDelimitedString(command, " ");
     }
 
+    /**
+     * 커맨드 라인 파라미터를 처리함.
+     */
     private void injectCommandLineParameters(List<String> command) {
-        if (variable.get("commandlineValues") != null && !org.apache.commons.lang.StringUtils.isEmpty(variable.get("commandlineValues").toString())) {
+        if (variable.get("commandlineValues") != null && !isEmpty(variable.get("commandlineValues").toString())) {
             String[] args = variable.get("commandlineValues").toString().trim().split(",");
             StringBuilder builder = new StringBuilder();
             if (args.length > 0) {
@@ -217,7 +209,7 @@ public class RTask extends InterceptorAbstractTask {
 
         if (environmentKeys != null) {
             for (int i = 0; i < environmentKeys.length; i++) {
-                envs.put(environmentKeys[i], environmentValues[i]);
+                envs.put(environmentKeys[i], unescape(environmentValues[i]));
             }
         }
 

@@ -16,12 +16,14 @@
  */
 package org.opencloudengine.flamingo2.engine.remote;
 
-import org.opencloudengine.flamingo2.agent.system.SystemUserService;
+import org.opencloudengine.flamingo2.engine.archive.mapreduce.ArchiveMapReduceRemoteService;
+import org.opencloudengine.flamingo2.engine.archive.yarn.ArchiveYarnRemoteService;
 import org.opencloudengine.flamingo2.engine.batch.BatchService;
 import org.opencloudengine.flamingo2.engine.designer.DesignerService;
 import org.opencloudengine.flamingo2.engine.fs.FileSystemRemoteService;
 import org.opencloudengine.flamingo2.engine.fs.audit.FileSystemAuditRemoteService;
 import org.opencloudengine.flamingo2.engine.hadoop.HistoryServerRemoteService;
+import org.opencloudengine.flamingo2.engine.hadoop.MapReduceRemoteService;
 import org.opencloudengine.flamingo2.engine.hadoop.NamenodeRemoteService;
 import org.opencloudengine.flamingo2.engine.hadoop.ResourceManagerRemoteService;
 import org.opencloudengine.flamingo2.engine.hawq.HawqService;
@@ -32,7 +34,11 @@ import org.opencloudengine.flamingo2.engine.hive.HiveQueryRemoteService;
 import org.opencloudengine.flamingo2.engine.monitoring.AlarmRemoteService;
 import org.opencloudengine.flamingo2.engine.monitoring.CLDBRemoteService;
 import org.opencloudengine.flamingo2.engine.pig.PigRemoteService;
+import org.opencloudengine.flamingo2.engine.realtime.spark.streaming.SparkStreamingRemoteService;
 import org.opencloudengine.flamingo2.engine.scheduler.SchedulerRemoteService;
+import org.opencloudengine.flamingo2.engine.spark.SparkRemoteService;
+import org.opencloudengine.flamingo2.engine.system.UserRemoteService;
+import org.opencloudengine.flamingo2.engine.tajo.TajoRemoteService;
 import org.opencloudengine.flamingo2.engine.tree.TreeService;
 import org.opencloudengine.flamingo2.engine.visual.VisualService;
 import org.opencloudengine.flamingo2.util.ApplicationContextRegistry;
@@ -109,12 +115,6 @@ public class LocalEngineServiceImpl implements EngineService {
     }
 
     @Override
-    public SystemUserService getSystemUserService() {
-        ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
-        return applicationContext.getBean(SystemUserService.class);
-    }
-
-    @Override
     public PigRemoteService getPigRemoteService() {
         ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
         return applicationContext.getBean(PigRemoteService.class);
@@ -166,5 +166,47 @@ public class LocalEngineServiceImpl implements EngineService {
     public TreeService getTreeRemoteService() {
         ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
         return applicationContext.getBean(TreeService.class);
+    }
+
+    @Override
+    public TajoRemoteService getTajoRemoteService() {
+        ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
+        return applicationContext.getBean(TajoRemoteService.class);
+    }
+
+    @Override
+    public ArchiveYarnRemoteService getArchiveYarnApplicationRemoteService() {
+        ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
+        return applicationContext.getBean(ArchiveYarnRemoteService.class);
+    }
+
+    @Override
+    public ArchiveMapReduceRemoteService getArchiveMapReduceRemoteService() {
+        ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
+        return applicationContext.getBean(ArchiveMapReduceRemoteService.class);
+    }
+
+    @Override
+    public MapReduceRemoteService getMapReduceRemoteService() {
+        ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
+        return applicationContext.getBean(MapReduceRemoteService.class);
+    }
+
+    @Override
+    public SparkStreamingRemoteService getSparkStreamingRemoteService() {
+        ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
+        return applicationContext.getBean(SparkStreamingRemoteService.class);
+    }
+
+    @Override
+    public SparkRemoteService getSparkRemoteService() {
+        ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
+        return applicationContext.getBean(SparkRemoteService.class);
+    }
+
+    @Override
+    public UserRemoteService getUserRemoteService() {
+        ApplicationContext applicationContext = ApplicationContextRegistry.getApplicationContext();
+        return applicationContext.getBean(UserRemoteService.class);
     }
 }

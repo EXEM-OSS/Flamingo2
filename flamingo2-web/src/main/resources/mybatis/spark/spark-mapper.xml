@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.flamingo2.engine.spark.SparkRepository">
+
+    <!-- ==================================================================================== -->
+    <!-- 1. Result and Parameter Maps -->
+    <!-- ==================================================================================== -->
+
+    <!-- ==================================================================================== -->
+    <!-- 2. Sql Fragments -->
+    <!-- ==================================================================================== -->
+
+    <!-- ==================================================================================== -->
+    <!-- 3. Select Statement -->
+    <!-- ==================================================================================== -->
+
+    <select id="selectJobChart" resultType="map">
+        SELECT X.CRITERIA AS date,
+               IFNULL(Y.CNT, 0) AS cnt
+        FROM (
+                SELECT DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - A.n HOUR), '%Y-%m-%d %H') AS CRITERIA
+                FROM  (
+                    SELECT n
+                    FROM generator_256
+                    ORDER BY 1
+                    LIMIT 168
+                ) A
+            ) X
+            LEFT OUTER JOIN
+            (
+                SELECT DATE_FORMAT(A.SUBMITTED, '%Y-%m-%d %H') AS SUBMIT_HOUR,
+                   COUNT(*) AS CNT
+                FROM FL_SP_JOBS A
+                WHERE A.SUBMITTED BETWEEN DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 7 DAY), '%Y-%m-%d 00:00:00') AND DATE_FORMAT(NOW(), '%Y-%m-%d 23:59:59')
+                GROUP BY DATE_FORMAT(A.SUBMITTED, '%Y-%m-%d %H')
+            ) Y
+            ON X.CRITERIA = Y.SUBMIT_HOUR
+        ORDER BY X.CRITERIA
+    </select>
+
+    <select id="selectApplications" parameterType="map" resultType="map">
+        SELECT APPID AS appid,
+               APPNAME AS appname,
+               DATE_FORMAT(STARTED, '%Y-%m-%d %H:%i:%s') AS started,
+               DATE_FORMAT(COMPLETED, '%Y-%m-%d %H:%i:%s') AS completed,
+               USER as user,
+               SEC_TO_TIME(UNIX_TIMESTAMP(COMPLETED) - UNIX_TIMESTAMP(STARTED)) AS duration
+        FROM FL_SP_APPS
+        ORDER BY STARTED DESC
+        LIMIT #{start}, #{limit}
+    </select>
+
+    <select id="selectJobs" parameterType="map" resultType="map">
+        SELECT APPID AS appid,
+               JOBID AS jobid,
+               JOBNAME AS jobname,
+               DATE_FORMAT(SUBMITTED, '%Y-%m-%d %H:%i:%s') AS submitted,
+               DATE_FORMAT(COMPLETED, '%Y-%m-%d %H:%i:%s') AS completed,
+               SEC_TO_TIME(UNIX_TIMESTAMP(COMPLETED) - UNIX_TIMESTAMP(SUBMITTED)) AS duration,
+               STAGE_COMPLETED / (STAGES - STAGE_SKIPPED) AS stage_rate,
+               STAGES - STAGE_SKIPPED AS stages,
+               STAGE_SKIPPED AS stage_skipped,
+               STAGE_COMPLETED AS stage_completed,
+               STAGE_FAILED AS stage_failed,
+               TASK_COMPLETED / TASKS AS task_rate,
+               TASKS AS tasks,
+               TASK_COMPLETED AS task_completed,
+               TASK_SKIPPED AS task_skipped,
+               TASK_FAILED AS task_failed,
+               DESCRIPTION AS description,
+               STATUS AS status,
+               CASE STATUS WHEN 'JobSucceeded' THEN 0 ELSE 1 END AS sorter
+        FROM FL_SP_JOBS
+        WHERE APPID = #{appid}
+        ORDER BY submitted DESC
+    </select>
+
+    <select id="selectStages" parameterType="map" resultType="map">
+        SELECT APPID AS appid,
+               JOBID AS jobid,
+               STAGEID AS stageid,
+               ATTEMPTID AS attemptid,
+               DATE_FORMAT(SUBMITTED, '%Y-%m-%d %H:%i:%s') AS submitted,
+               DATE_FORMAT(COMPLETED, '%Y-%m-%d %H:%i:%s') AS completed,
+               NAME AS name,
+               TASKS AS tasks,
+               TASK_COMPLETE AS task_complete,
+               TASK_FAILED AS task_failed,
+               INPUT_BYTES AS input_bytes,
+               INPUT_RECORDS AS input_records,
+               OUTPUT_BYTES AS output_bytes,
+               OUTPUT_RECORDS AS output_records,
+               SHUFFLE_READ_BYTES AS shuffle_read_bytes,
+               SHUFFLE_READ_RECORDS AS shuffle_read_records,
+               SHUFFLE_WRITE_BYTES AS shuffle_write_bytes,
+               SHUFFLE_WRITE_RECRODS AS shuffle_write_recrods,
+               STATUS AS status,
+               CASE STATUS WHEN 'Succeeded' THEN 0 WHEN "Failed" THEN 1 ELSE 2 END AS sorter
+        FROM FL_SP_STAGES
+        WHERE APPID = #{appid}
+        ORDER BY STATUS DESC, STAGEID DESC;
+    </select>
+
+    <select id="selectExecutors" parameterType="map" resultType="map">
+        SELECT APPID AS appid,
+               EXECUTORID AS executorid,
+               ADDRESS AS address,
+               PORT AS port,
+               RDD_BLOCKS AS rdd_blocks,
+               MAX_MEMORY AS max_memory,
+               MEMORY_USED AS memory_used,
+               DISK_USED AS disk_used,
+               ACTIVE_TASKS AS active_tasks,
+               FAILED_TASKS AS failed_tasks,
+               COMPLETED_TASKS AS completed_tasks,
+               TOTAL_TASKS AS total_tasks,
+               TOTAL_DURATION AS total_duration,
+               TOTAL_INPUT_BYTES AS total_input_bytes,
+               TOTAL_SHUFFLE_READ AS total_shuffle_read,
+               TOTAL_SHUFFLE_WRITE AS total_shuffle_write,
+               TOTAL_CORES AS total_cores,
+               STDOUT_URL AS stdout_url,
+               STDERR_URL AS stderr_url
+        FROM FL_SP_EXECUTORS
+        WHERE APPID = #{appid}
+        ORDER BY executorid
+    </select>
+
+    <select id="selectStorage" parameterType="map" resultType="map">
+        SELECT APPID AS appid,
+               RDDID AS rddid,
+               RDD_NAME AS rdd_name,
+               CACHED_PARTITIONS AS cached_partitions,
+               PARTITIONS AS partitions,
+               FRACTION_CACHED AS fraction_cached,
+               MEMORY AS memory,
+               EXTERNAL_BLOCK_STORE AS external_block_store,
+               DISK AS disk,
+               USE_DISK AS use_disk,
+               USE_MEMORY AS use_memory,
+               USE_EXTERNAL_BLOCK_STORE AS use_external_block_store,
+               DESERIALIZAED AS deserializaed,
+               REPLICATION AS replication
+        FROM FL_SP_STORAGE
+        WHERE APPID = #{appid};
+    </select>
+
+    <select id="selectTimeline" parameterType="map" resultType="map">
+        SELECT APPID AS appid,
+               JOBID AS jobid,
+               STAGEID AS stageid,
+               ATTEMPTID AS attemptid,
+               TYPE AS type,
+               JSON AS json
+          FROM FL_SP_TIMELINE
+         WHERE APPID = #{appid}
+        <if test="jobid != null and jobid != ''">
+           AND JOBID = #{jobid}
+        </if>
+        <if test="stageid != null and stageid != ''">
+           AND STAGEID = #{stageid}
+        </if>
+        <if test="attemptid != null and attemptid != ''">
+           AND ATTEMPTID = #{attemptid}
+        </if>
+        <if test="type != null and type != ''">
+           AND TYPE = #{type}
+        </if>
+    </select>
+
+    <select id="selectStageDetail" parameterType="map" resultType="map">
+        SELECT APPID AS appid,
+               JOBID AS jobid,
+               STAGEID AS stageid,
+               ATTEMPTID AS attemptid,
+               TYPE AS type,
+               JSON AS json
+          FROM FL_SP_STAGE_DETAIL
+         WHERE APPID = #{appid}
+           AND JOBID = #{jobid}
+           AND STAGEID = #{stageid}
+           AND ATTEMPTID = #{attemptid}
+           AND TYPE = #{type}
+    </select>
+    <!-- ==================================================================================== -->
+    <!-- 3. Exist Statement -->
+    <!-- ==================================================================================== -->
+
+
+    <!-- ==================================================================================== -->
+    <!-- 4. Insert Statements -->
+    <!-- ==================================================================================== -->
+
+
+    <!-- ==================================================================================== -->
+    <!-- 5. Update Statements -->
+    <!-- ==================================================================================== -->
+
+
+    <!-- ==================================================================================== -->
+    <!-- 6. Delete Statements -->
+    <!-- ==================================================================================== -->
+
+</mapper>

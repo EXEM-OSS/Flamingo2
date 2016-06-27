@@ -77,7 +77,7 @@ public class SparkTask extends InterceptorAbstractTask {
 
         variable.setProperty("jarLocalPath", downloadJar(working, variable.get("jar").toString().trim()));
 
-        saveScriptFile(buildCommand(working), working);
+        saveScriptFile(buildCommand(), working);
 
         String cli = MessageFormatter.arrayFormat("sh {}/script.sh", new Object[]{working}).getMessage();
         saveCommandFile(cli, working);
@@ -91,7 +91,7 @@ public class SparkTask extends InterceptorAbstractTask {
         socketParams.put("type", "workflow");
         socketParams.put("user", getUser());
 
-        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(working), working, logger, fileWriter);
+        ManagedProcess managedProcess = new ManagedProcess(cmds, getDefaultEnvs(), working, logger, fileWriter);
         managedProcess.setSocketParams(socketParams);
         managedProcess.run();
     }
@@ -99,13 +99,13 @@ public class SparkTask extends InterceptorAbstractTask {
     /**
      * command line 명령어를 생성한다.
      */
-    private String buildCommand(String working) {
+    private String buildCommand() {
         List<String> command = new LinkedList<>();
 
-        Map<String, String> defaultEnvs = getDefaultEnvs(working);
+        Map<String, String> defaultEnvs = getDefaultEnvs();
         Set<String> keys = defaultEnvs.keySet();
         for (String key : keys) {
-            if (!StringUtils.isEmpty(defaultEnvs.get(key))) {
+            if (!isEmpty(defaultEnvs.get(key))) {
                 command.add(MessageFormatter.arrayFormat("export {}={}\n", new Object[]{
                         key, defaultEnvs.get(key)
                 }).getMessage());
@@ -118,37 +118,37 @@ public class SparkTask extends InterceptorAbstractTask {
         command.add(variable.get("driver").toString().trim());
 
 
-        if (variable.get("sparkMasterUrl") != null && !StringUtils.isEmpty(variable.get("sparkMasterUrl").toString())) {
+        if (variable.get("sparkMasterUrl") != null && !isEmpty(variable.get("sparkMasterUrl").toString())) {
             command.add("--master");
             command.add(variable.get("sparkMasterUrl").toString().trim());
         }
 
-        if (variable.get("totalExecutorCores") != null && !StringUtils.isEmpty(variable.get("totalExecutorCores").toString())) {
+        if (variable.get("totalExecutorCores") != null && !isEmpty(variable.get("totalExecutorCores").toString())) {
             command.add("--total-executor-cores");
             command.add(variable.get("totalExecutorCores").toString().trim());
         }
 
-        if (variable.get("executorMemory") != null && !StringUtils.isEmpty(variable.get("executorMemory").toString())) {
+        if (variable.get("executorMemory") != null && !isEmpty(variable.get("executorMemory").toString())) {
             command.add("--executor-memory");
             command.add(variable.get("executorMemory").toString().trim());
         }
 
-        if (variable.get("numExecutors") != null && !StringUtils.isEmpty(variable.get("numExecutors").toString())) {
+        if (variable.get("numExecutors") != null && !isEmpty(variable.get("numExecutors").toString())) {
             command.add("--num-executors");
             command.add(variable.get("numExecutors").toString().trim());
         }
 
-        if (variable.get("driverMemory") != null && !StringUtils.isEmpty(variable.get("driverMemory").toString())) {
+        if (variable.get("driverMemory") != null && !isEmpty(variable.get("driverMemory").toString())) {
             command.add("--driver-memory");
             command.add(variable.get("driverMemory").toString().trim());
         }
 
-        if (variable.get("executorCores") != null && !StringUtils.isEmpty(variable.get("executorCores").toString())) {
+        if (variable.get("executorCores") != null && !isEmpty(variable.get("executorCores").toString())) {
             command.add("--executor-cores");
             command.add(variable.get("executorCores").toString().trim());
         }
 
-        if (variable.get("queue") != null && !StringUtils.isEmpty(variable.get("queue").toString())) {
+        if (variable.get("queue") != null && !isEmpty(variable.get("queue").toString())) {
             command.add("--queue");
             command.add(variable.get("queue").toString().trim());
         }
@@ -156,7 +156,7 @@ public class SparkTask extends InterceptorAbstractTask {
         __conf(command);
         __jars(command);
 
-        if (variable.get("jarLocalPath") != null && !StringUtils.isEmpty(variable.get("jarLocalPath").toString())) {
+        if (variable.get("jarLocalPath") != null && !isEmpty(variable.get("jarLocalPath").toString())) {
             command.add(variable.get("jarLocalPath").toString().trim());
         }
         _commandlineValues(command);
@@ -173,7 +173,7 @@ public class SparkTask extends InterceptorAbstractTask {
         List<String> dependencies = new ArrayList<>();
         dependencies.add(getHelper().get("flamingo.mr.agent.jar.path"));
 
-        if (variable.get("dependencies") != null && !StringUtils.isEmpty(variable.get("dependencies").toString())) {
+        if (variable.get("dependencies") != null && !isEmpty(variable.get("dependencies").toString())) {
             String[] paths = (variable.get("dependencies").toString()).split(",");
 
             for (String path : paths) {
@@ -191,7 +191,7 @@ public class SparkTask extends InterceptorAbstractTask {
      * Hadoop 커맨드 라인의 <tt>-Dkey=value</tt> 옵션을 구성한다.
      */
     private void __conf(List<String> command) {
-        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !StringUtils.isEmpty(variable.get("hadoopKeys").toString()) && !StringUtils.isEmpty(variable.get("hadoopValues").toString())) {
+        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !isEmpty(variable.get("hadoopKeys").toString()) && !isEmpty(variable.get("hadoopValues").toString())) {
             String[] hadoopKeys = (variable.get("hadoopKeys").toString()).split(",");
             String[] hadoopValues = (variable.get("hadoopValues").toString()).split(",");
 
@@ -199,7 +199,7 @@ public class SparkTask extends InterceptorAbstractTask {
             List<String> list = new ArrayList<>();
 
             for (int i = 0; i < hadoopKeys.length; i++) {
-                list.add(StringUtils.unescape(hadoopKeys[i]) + "=" + StringUtils.unescape(hadoopValues[i]));
+                list.add(unescape(hadoopKeys[i]) + "=" + unescape(hadoopValues[i]));
             }
 
             command.add(Joiner.on(" ").join(list));
@@ -208,13 +208,10 @@ public class SparkTask extends InterceptorAbstractTask {
     }
 
     private void _commandlineValues(List<String> command) {
-        if (variable.get("commandlineValues") != null && !org.apache.commons.lang.StringUtils.isEmpty(variable.get("commandlineValues").toString())) {
+        if (variable.get("commandlineValues") != null && !isEmpty(variable.get("commandlineValues").toString())) {
             String[] args = variable.get("commandlineValues").toString().trim().split(",");
             for (String arg : args) {
-                String unescape = unescape(arg);
-                String resolve = resolve(unescape);
-                String e = encloseSpace(resolve);
-                command.add(e);
+                command.add(encloseSpace(resolve(unescape(arg))));
             }
         }
     }
@@ -223,11 +220,11 @@ public class SparkTask extends InterceptorAbstractTask {
      * MapReduce JAR 파일을 다운로드한다.
      */
     private String downloadJar(String actionBasePath, String filename) {
-        if (filename != null && !StringUtils.isEmpty(filename)) {
+        if (filename != null && !isEmpty(filename)) {
             ArtifactLoader artifactLoader = ArtifactLoaderFactory.getArtifactLoader(clusterName);
             return artifactLoader.load(actionBasePath, filename);
         } else {
-            throw new ServiceException("You can download the MapReduce JAR file.");
+            throw new ServiceException("You can't download the MapReduce JAR file.");
         }
     }
 
@@ -304,7 +301,7 @@ public class SparkTask extends InterceptorAbstractTask {
                 Set nnkeys = conf.keySet();
                 for (Object key : nnkeys) {
                     try {
-                        if (configuration.get(key) != null) {
+                        if (configuration.get(String.valueOf(key)) != null) {
                             hadoopConf.put((String) key, "<![CDATA[" + configuration.get(key) + "]]>");
                         }
                     } catch (Exception ex) {
@@ -329,12 +326,12 @@ public class SparkTask extends InterceptorAbstractTask {
         hadoopConf.put("flamingo.job.name", this.getWorkflowHistory().getJobName());
         hadoopConf.put("flamingo.workflow.id", this.getWorkflowHistory().getWorkflowId());
         hadoopConf.put("flamingo.workflow.instance.id", this.getTaskHistory().getProcessId());
-        hadoopConf.put("flamingo.usenname", this.getTaskHistory().getUsername());
+        hadoopConf.put("flamingo.username", this.getTaskHistory().getUsername());
         hadoopConf.put("flamingo.workflow.name", this.getWorkflowHistory().getWorkflowName());
         hadoopConf.put("flamingo.log.path", this.getTaskHistory().getLogDirectory());
         hadoopConf.put("fs.defaultFS", fsDefaultFS);
 
-        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !StringUtils.isEmpty(variable.get("hadoopKeys").toString()) && !StringUtils.isEmpty(variable.get("hadoopValues").toString())) {
+        if (variable.get("hadoopKeys") != null && variable.get("hadoopValues") != null && !isEmpty(variable.get("hadoopKeys").toString()) && !isEmpty(variable.get("hadoopValues").toString())) {
             String[] hadoopKeys = (variable.get("hadoopKeys").toString()).split(",");
             String[] hadoopValues = (variable.get("hadoopValues").toString()).split(",");
 
@@ -349,7 +346,7 @@ public class SparkTask extends InterceptorAbstractTask {
      *
      * @return 환경변수
      */
-    public Map<String, String> getDefaultEnvs(String working) {
+    public Map<String, String> getDefaultEnvs() {
         Map<String, String> envs = new HashMap<>();
 
         envs.put("PATH", "/bin:/usr/bin:/usr/local/bin" + ":" + getHelper().get("hadoop.home") + "/bin" + ":" + getHelper().get("hive.home") + "/bin" + ":" + getHelper().get("pig.home") + "/bin");

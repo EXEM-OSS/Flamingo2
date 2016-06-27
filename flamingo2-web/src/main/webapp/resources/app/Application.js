@@ -21,7 +21,7 @@ Ext.define('Flamingo2.Application', {
     name: 'Flamingo2',
 
     controllers: [
-        'MainController'
+        'MainAppController'
     ],
     stores: [
         // TODO: add global / shared stores here
@@ -29,5 +29,10 @@ Ext.define('Flamingo2.Application', {
 
     launch: function () {
         // TODO - Launch the application
+        var head = document.getElementsByTagName('head')[0];
+        var el = document.createElement("script");
+        el.type = "text/javascript";
+        el.src = '/resources/js/locale/ext-locale-' + config['default.locale'] + '.js';
+        head.appendChild(el);
     }
 });

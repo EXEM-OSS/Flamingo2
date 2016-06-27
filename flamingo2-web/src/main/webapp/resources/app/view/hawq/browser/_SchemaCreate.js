@@ -17,7 +17,7 @@
 /**
  * HAWQ > Browser > Connection Manager > Schema Menu > create menu click
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  * @see Flamingo2.view.hawq.browser._SchemaCreateController
  * @see Flamingo2.view.hawq.browser._SchemaCreateModel

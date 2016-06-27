@@ -19,26 +19,9 @@ Ext.define('Flamingo2.view.monitoring.historyserver.MapReduceJobs', {
     alias: 'widget.mapReduceJobs',
 
     title: message.msg('monitoring.history.title.finished'),
-
-    height: 310,
-
-    tools: [
-        {
-            type: 'refresh',
-            tooltip: message.msg('monitoring.history.refresh'),
-            handler: 'onRefreshClick'
-        }
-    ],
-
-    listeners: {
-        itemclick: 'onItemClick',
-        afterrender: 'onAfterrender'
-    },
-
     bind: {
         store: '{mapReduceJobsStore}'
     },
-
     columns: [
         {
             xtype: 'rownumberer',
@@ -102,7 +85,6 @@ Ext.define('Flamingo2.view.monitoring.historyserver.MapReduceJobs', {
             text: message.msg('common.finish'), dataIndex: 'finishTime', width: 140, align: 'center'
         }
     ],
-
     viewConfig: {
         emptyText: message.msg('monitoring.history.msg.no_mapreduce.jog'),
         deferEmptyText: false,
@@ -111,5 +93,16 @@ Ext.define('Flamingo2.view.monitoring.historyserver.MapReduceJobs', {
         getRowClass: function (b, e, d, c) {
             return 'cell-height-30';
         }
+    },
+    tools: [
+        {
+            type: 'refresh',
+            tooltip: message.msg('common.refresh'),
+            handler: 'onCompletedMRJobRefreshClick'
+        }
+    ],
+    listeners: {
+        itemclick: 'onMRJobGridItemClick',
+        afterrender: 'onCompletedMRJobAfterRender'
     }
 });

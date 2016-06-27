@@ -17,7 +17,7 @@
 /**
  * ViewModel for Flamingo2.view.system.hawq.HawqAuth
  *
- * @author Ha Neul, Kim
+ * @author Haneul, Kim
  * @since 2.0
  * @see Flamingo2.view.system.hawq.HawqAuth
  * @see Flamingo2.view.system.hawq.role.HawqRole

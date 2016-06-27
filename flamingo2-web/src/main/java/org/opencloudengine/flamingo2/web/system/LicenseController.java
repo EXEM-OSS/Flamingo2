@@ -137,4 +137,36 @@ public class LicenseController extends DefaultController {
 
         return response;
     }
+
+    @RequestMapping(value = "registTrial", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Response registTrial(@RequestBody Map map) {
+        Response response = new Response();
+
+        try {
+            String license = licenseService.getTrial();
+
+            licenseService.regist("temp", license);
+
+            if (!licenseService.isValid("temp")) {
+                response.setSuccess(false);
+            } else {
+                licenseService.regist(licenseFilename, license);
+                response.getMap().putAll(licenseService.getLicenseInfo());
+                response.setSuccess(true);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.setSuccess(false);
+        } finally {
+            if (!response.isSuccess()) {
+                licenseService.deleteLicense(licenseFilename);
+            }
+            licenseService.deleteLicense("temp");
+        }
+
+        return response;
+    }
 }

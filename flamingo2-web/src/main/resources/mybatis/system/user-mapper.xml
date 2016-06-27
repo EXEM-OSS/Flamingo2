@@ -13,16 +13,16 @@
         <result property="password"         column="PASSWD"             jdbcType="VARCHAR"/>
         <result property="email"            column="EMAIL"              jdbcType="VARCHAR"/>
         <result property="name"             column="NM"                 jdbcType="VARCHAR"/>
+        <result property="orgId"            column="ORG_ID"             jdbcType="BIGINT"/>
+        <result property="authId"           column="AUTH_ID"            jdbcType="SMALLINT"/>
         <result property="level"            column="LEVEL"              jdbcType="SMALLINT"/>
-        <result property="description"      column="DESCRIPTION"        jdbcType="VARCHAR"/>
+        <result property="enabled"          column="ENABLED"            jdbcType="BOOLEAN"/>
+        <result property="registerDate"     column="REG_DT"             jdbcType="TIMESTAMP"/>
+        <result property="updateDate"       column="UPD_DT"             jdbcType="TIMESTAMP"/>
         <result property="linuxUserHome"    column="LINUX_USER_HOME"    jdbcType="VARCHAR"/>
         <result property="hdfsUserHome"     column="HDFS_USER_HOME"     jdbcType="VARCHAR"/>
         <result property="userGroup"        column="USER_GROUP"         jdbcType="VARCHAR"/>
-        <result property="registerDate"     column="REG_DT"             jdbcType="TIMESTAMP"/>
-        <result property="updateDate"       column="UPD_DT"             jdbcType="TIMESTAMP"/>
-        <result property="enabled"          column="ENABLED"            jdbcType="BOOLEAN"/>
-        <result property="orgId"            column="ORG_ID"             jdbcType="BIGINT"/>
-        <result property="authId"           column="AUTH_ID"            jdbcType="BIGINT"/>
+        <result property="description"      column="DESCRIPTION"        jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- ==================================================================================== -->
@@ -31,13 +31,14 @@
 
     <sql id="wherePK">WHERE USER_NM = #{username}</sql>
     <sql id="whereOrgPK">WHERE ORG_ID = #{id}</sql>
+    <sql id="whereDSUserPK">WHERE USERNAME = #{username}</sql>
 
     <!-- ==================================================================================== -->
     <!-- 3. Select Statement -->
     <!-- ==================================================================================== -->
 
     <select id="selectByUsername" parameterType="string" resultMap="userMap">
-        SELECT ID, USER_NM, PASSWD, EMAIL, NM, LEVEL, ORG_ID, USER_GROUP
+        SELECT ID, USER_NM, PASSWD, EMAIL, NM, LEVEL, ORG_ID, AUTH_ID, USER_GROUP
         FROM FL_USER
         <include refid="wherePK"/>
     </select>
@@ -78,16 +79,16 @@
             AND usr.ORG_ID = #{orgId}
         </if>
         <if test="conditionKey == 'NAME'">
-            AND usr.NM = #{condition}
+            AND usr.NM LIKE '%${condition}%'
         </if>
         <if test="conditionKey == 'ORG'">
-            AND org.ORG_NM = #{condition}
+            AND usr.ORG_NM LIKE '%${condition}%'
         </if>
         <if test="conditionKey == 'EMAIL'">
-            AND usr.EMAIL = #{condition}
+            AND usr.EMAIL LIKE '%${condition}%'
         </if>
         <if test="conditionKey == 'USERNAME'">
-            AND usr.USER_NM = #{condition}
+            AND usr.USER_NM LIKE '%${condition}%'
         </if>
     </select>
 
@@ -97,7 +98,7 @@
         <include refid="wherePK"/>
     </select>
 
-    <select id="selectPasswordByUsername" parameterType="string" resultType="String">
+    <select id="selectPasswordByUsername" parameterType="String" resultType="String">
         SELECT PASSWD
         FROM FL_USER
         <include refid="wherePK"/>
@@ -113,8 +114,8 @@
     <!-- 3. Exist Statement -->
     <!-- ==================================================================================== -->
 
-    <select id="exist" parameterType="string" resultType="Integer">
-        SELECT COUNT(1)
+    <select id="exist" parameterType="string" resultMap="userMap">
+        SELECT *
         FROM FL_USER
         <include refid="wherePK"/>
     </select>
@@ -124,14 +125,17 @@
     <!-- ==================================================================================== -->
 
     <select id="insertByUser" parameterType="map">
-        INSERT INTO FL_USER (USER_NM, PASSWD, NM, EMAIL, USER_GROUP, UPD_DT)
+        INSERT INTO FL_USER (USER_NM, PASSWD, NM, EMAIL, UPD_DT, ORG_ID, AUTH_ID, LEVEL, USER_GROUP)
         VALUES (
             #{username},
             #{password},
             #{name},
             #{email},
-            #{username},
-            NOW()
+            NOW(),
+            #{orgId},
+            #{authId},
+            #{level},
+            #{username}
         )
     </select>
 
@@ -157,6 +161,19 @@
         )
     </select>
 
+    <select id="insertWorkflowDesignerUser" parameterType="string">
+        INSERT INTO FL_TREE (NAME, TREE, NODE, ROOT, USERNAME)
+        VALUES (
+            '/', 'WORKFLOW', 'FOLDER', true, #{username}
+        )
+    </select>
+
+    <select id="insertUserAuth" parameterType="map">
+        INSERT INTO FL_USER_AUTH (USER_ID, AUTH_ID)
+        VALUES
+        ((SELECT ID FROM FL_USER WHERE USER_NM = #{username}), 1)
+    </select>
+
     <!-- ==================================================================================== -->
     <!-- 5. Update Statements -->
     <!-- ==================================================================================== -->
@@ -164,14 +181,24 @@
     <update id="updateUserInfo" parameterType="map">
         UPDATE FL_USER
         <set>
-            <if test="password != '' and password != null">
-                PASSWD = #{password},
+            <if test="newPassword != '' and newPassword != null">
+                PASSWD = #{encodedNewPassword},
             </if>
-            NM = #{name},
-            EMAIL = #{email},
-            LEVEL = #{level},
-            ORG_ID = #{orgId},
-            AUTH_ID = #{authId},
+            <if test="name != '' and name != null">
+                NM = #{name},
+            </if>
+            <if test="email != '' and email != null">
+                EMAIL = #{email},
+            </if>
+            <if test="level != '' and level != null">
+                LEVEL = #{level},
+            </if>
+            <if test="orgId != '' and orgId != null">
+                ORG_ID = #{orgId},
+            </if>
+            <if test="authId != '' and authId != null">
+                AUTH_ID = #{authId},
+            </if>
             UPD_DT = CURRENT_TIMESTAMP
         </set>
         <include refid="wherePK"/>
@@ -180,7 +207,7 @@
     <select id="updateByAck" parameterType="string">
         UPDATE FL_USER
         SET
-            PASSWD = #{password},
+            PASSWD = #{encodedPassword},
             ENABLED = TRUE,
             UPD_DT = CURRENT_TIMESTAMP
         <include refid="wherePK"/>
@@ -190,7 +217,7 @@
     <update id="updatePassword" parameterType="map">
         UPDATE FL_USER
         SET
-            PASSWD = #{password},
+            PASSWD = #{encodedNewPassword},
 	        UPD_DT = CURRENT_TIMESTAMP
         <include refid="wherePK"/>
     </update>
@@ -206,9 +233,9 @@
     <update id="updateUserHomeInfo" parameterType="map">
         UPDATE FL_USER
         SET
-          LINUX_USER_HOME = #{linuxUserHome},
-          HDFS_USER_HOME = #{hdfsUserHome},
-          UPD_DT = CURRENT_TIMESTAMP
+            LINUX_USER_HOME = #{linuxUserHome},
+            HDFS_USER_HOME = #{hdfsUserHome},
+            UPD_DT = CURRENT_TIMESTAMP
         <include refid="wherePK"/>
     </update>
 
@@ -219,6 +246,17 @@
     <delete id="deleteByUsername" parameterType="string">
         DELETE FROM FL_USER
         <include refid="wherePK"/>
+    </delete>
+
+    <delete id="deleteWorkflowDesigner" parameterType="string">
+        DELETE FROM FL_TREE
+        <include refid="whereDSUserPK"/>
+    </delete>
+
+    <delete id="deleteUserAuth" parameterType="map">
+        DELETE FROM FL_USER_AUTH
+        WHERE USER_ID = (SELECT ID FROM FL_USER WHERE USER_NM = #{username})
+        AND AUTH_ID = 1
     </delete>
 
 </mapper>
