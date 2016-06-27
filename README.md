@@ -1,3 +1,5 @@
+## [Flamingo 2.1.x binaries download](http://gitlab.exem-oss.org/flamingo2/flamingo2/tree/2.1.x)
+
 ## Flamingo 2
 
 Flamingo는 Apache Hadoop EcoSystem을 기반으로한 빅데이터 인프라 환경을 보다 편리하고 분석 및 개발에 집중할 수 있으면서, 다양한 사용자들이 협업할 수 있는 환경을 제공해주는 빅데이터 플랫폼입니다.
