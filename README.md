@@ -1,4 +1,4 @@
-## [Flamingo 2.1.x binaries download](http://gitlab.exem-oss.org/flamingo2/flamingo2/tree/2.1.x)
+## [Flamingo 2.1.0 binaries download](http://gitlab.exem-oss.org/flamingo2/flamingo2/tree/2.1.0)
 
 ## Flamingo 2
 
