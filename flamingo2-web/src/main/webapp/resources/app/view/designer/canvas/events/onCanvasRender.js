@@ -35,17 +35,17 @@ Ext.define('Flamingo2.view.designer.canvas.events.onCanvasRender', {
         canvas.graph = new OG.Canvas(canvas.body.dom, [1024, 768], 'white');
 
         // OpenGraph 디폴트 스타일 설정
-        canvas.graph._CONFIG.DEFAULT_STYLE.EDGE = {
-            'stroke': 'blue',
-            'stroke-width': 1,
-            'stroke-opacity': 1,
-            'edge-type': 'straight', // FIXME : 선의 유형
-            'edge-direction': 'c c',
-            'arrow-start': 'none',
-            'arrow-end': 'classic-wide-long',
-            'stroke-dasharray': '',
-            'label-position': 'center'
-        };
+        //canvas.graph._CONFIG.DEFAULT_STYLE.EDGE = {
+        //    'stroke': 'blue',
+        //    'stroke-width': 1,
+        //    'stroke-opacity': 1,
+        //    'edge-type': 'straight', // FIXME : 선의 유형
+        //    'edge-direction': 'c c',
+        //    'arrow-start': 'none',
+        //    'arrow-end': 'classic-wide-long',
+        //    'stroke-dasharray': '',
+        //    'label-position': 'center'
+        //};
 
         // OpenGraph 기능 활성화 여부
         canvas.graph._CONFIG.MOVABLE_.EDGE = false;

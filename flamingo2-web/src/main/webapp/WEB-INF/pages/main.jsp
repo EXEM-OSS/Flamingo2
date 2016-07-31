@@ -50,7 +50,7 @@
 
     <!-- OpenGraph -->
     <!-- app.json으로 이동하지 마세요 오류납니다.-->
-    <script src="${pageContext.request.contextPath}/resources/lib/opengraph/OpenGraph-0.1-SNAPSHOT.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/lib/opengraph/OpenGraph-0.1.1-SNAPSHOT.js"></script>
     <script src="${pageContext.request.contextPath}/resources/lib/opengraph/lib/jquery-ui-1.11.4/jquery-ui.min.js"></script>
     <script src="${pageContext.request.contextPath}/resources/lib/opengraph/lib/contextmenu/jquery.contextMenu-min.js"></script>
     <script src="${pageContext.request.contextPath}/resources/lib/jquery-cookie/jquery.cookie.js"></script>
