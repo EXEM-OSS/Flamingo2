@@ -72,14 +72,22 @@ Ext.define('Flamingo2.view.fs.hdfs.BrowserModel', {
                         if (newChildNode.raw.spaceConsumed > 0) {
                             qtip = qtip + '<br/>' + message.msg('fs.hdfs.directorySize') + ' : ' + fileSize(newChildNode.raw.spaceConsumed)
                                 + '<br/>'
-                                + message.msg('fs.hdfs.fileSize') + ' : ' + fileSize(newChildNode.raw.spaceConsumed / 2);
+                             // + message.msg('fs.hdfs.fileSize') + ' : ' + fileSize(newChildNode.raw.spaceConsumed / 2);
+                                + message.msg('fs.hdfs.fileSize') + ' : ' + fileSize(newChildNode.raw.spaceConsumed / 3);
                         }
 
                         newChildNode.set('qtip', qtip);
 
                         /*
-                         // spaceConsumed는 복제를 포함한 용량이므로 복제를 제외한 용량은 1/2로 나눈다.
-                         var consumed = newChildNode.raw.spaceConsumed / 2;
+                         // spaceConsumed는 복제를 포함한 용량이므로 복제를 제외한 용량은 1/2로 나눈다. 
+                        
+                        // 수정
+                         -> hdfs 2.x version : 3 copy replication
+                         3으로 나눈다.
+                         
+                         // var consumed = newChildNode.raw.spaceConsumed / 2;
+                         var consumed = newChildNode.raw.spaceConsumed / 3;
+                         
                          if (consumed > (_50GB)) {
                          newChildNode.set('iconCls', 'common-refresh');
                          }
